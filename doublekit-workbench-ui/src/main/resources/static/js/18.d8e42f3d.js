@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[18],{803:function(e,n,t){"use strict";t.r(n);var r=t(41),c=t.n(r),o=t(0),i=t.n(o),s=t(53),u=t(103);n.default=Object(s.inject)(u.SYSTEM_ROLE_STORE)(Object(s.observer)((function(e){return i.a.createElement(u.PrivilegeProjectRole,c()({},e,{group:"system"}))})))}}]);

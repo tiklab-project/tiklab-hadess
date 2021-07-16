@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[10],{797:function(e,n,r){"use strict";r.r(n);var o=r(41),t=r.n(o),a=r(0),d=r.n(a),s=r(206);n.default=function(e){return d.a.createElement("div",null,d.a.createElement(s.User,t()({},e,{domainId:"111",addUserPromiseCode:"111",exportUserPromiseCode:"222"})))}}}]);
