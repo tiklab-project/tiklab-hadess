@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[14],{801:function(e,t,n){"use strict";n.r(t);var r=n(0),c=n.n(r),a=n(53),i=n(103);t.default=Object(a.inject)(i.PRIVILEGE_SYSTEM_STORE,i.SYSTEM_ROLE_STORE)(Object(a.observer)((function(e){return c.a.createElement("div",null,c.a.createElement(i.PrivilegeSystemFeature,e))})))}}]);

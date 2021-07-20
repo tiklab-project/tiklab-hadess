@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[8],{796:function(e,n,t){"use strict";t.r(n);var r=t(0),c=t.n(r),o=t(53),a=t(206);n.default=Object(o.inject)("orgStore")(Object(o.observer)((function(e){return c.a.createElement("div",null,c.a.createElement(a.OrgContent,e))})))}}]);

@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{798:function(e,n,t){"use strict";t.r(n);var i=t(41),r=t.n(i),a=t(0),c=t.n(a),o=t(103),s=t(206),u=t(53);n.default=Object(u.inject)(o.SYSTEM_ROLE_STORE)(Object(u.observer)((function(e){return c.a.createElement("div",null,c.a.createElement(s.PrivilegeDomainUser,r()({},e,{domainId:"111"})))})))}}]);
