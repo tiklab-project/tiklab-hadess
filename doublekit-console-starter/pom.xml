@@ -6,17 +6,17 @@
 
     <parent>
         <groupId>com.doublekit</groupId>
-        <artifactId>doublekit-workbench</artifactId>
+        <artifactId>doublekit-console</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>doublekit-workbench-starter</artifactId>
+    <artifactId>doublekit-console-starter</artifactId>
     <name>${project.artifactId}</name>
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-workbench-server</artifactId>
+            <artifactId>doublekit-console-server</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -43,7 +43,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution.xml</descriptor>
                             </descriptors>
-                            <finalName>doublekit-workbench-${project.version}</finalName>
+                            <finalName>doublekit-console-${project.version}</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>

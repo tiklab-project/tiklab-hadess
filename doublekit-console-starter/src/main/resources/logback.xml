@@ -2,7 +2,7 @@
 <configuration>
     <contextListener class="com.doublekit.web.logging.LogbackInitListener" />
     <!-- 应用名称：和统一配置中的项目代码保持一致（小写） -->
-    <property name="app.name" value="doublekit-workbench"/>
+    <property name="app.name" value="doublekit-console"/>
     <!--在没有定义${LOG_HOME}系统变量的时候，可以设置此本地变量。提交测试、上线时，要将其注释掉，使用系统变量。-->
     <property name="LOG_HOME" value="${DATA_HOME}/apps/${app.name}/logs" />
     <!--日志文件保留天数-->
