@@ -1,4 +1,4 @@
-package com.doublekit.console;
+package com.doublekit.oms;
 
 import com.doublekit.apibox.client.annotation.EnableApiboxClient;
 import com.doublekit.toolkit.annotation.EnableToolkitServer;
@@ -19,6 +19,6 @@ import com.doublekit.plugin.annotation.EnablePluginServer;
 @EnableToolkitServer
 //@EnableGateway
 @EnableApiboxClient
-public class ConsoleServerAutoConfiguration {
+public class OmsServerAutoConfiguration {
 }
 

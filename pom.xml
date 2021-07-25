@@ -10,14 +10,14 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <groupId>com.doublekit</groupId>
-    <artifactId>doublekit-console</artifactId>
+    <artifactId>doublekit-oms</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>doublekit-console-server</module>
-        <module>doublekit-console-starter</module>
+        <module>doublekit-oms-server</module>
+        <module>doublekit-oms-starter</module>
     </modules>
 
 </project>

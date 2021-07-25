@@ -4,7 +4,7 @@ if [ ! -n "$JAVA_HOME" ]; then
 fi
 
 #APP_MAIN=${application.main.class}
-APP_MAIN="com.doublekit.console.ConsoleApplication"
+APP_MAIN="com.doublekit.oms.OmsApplication"
 
 PID=0
 getPID(){
@@ -16,16 +16,29 @@ getPID(){
     fi
 }
 
-status(){
+shutdown(){
     getPID
     echo "================================================================================================================"
     if [ $PID -ne 0 ]; then
-        echo "$APP_MAIN is running(PID=$PID)"
-        echo "================================================================================================================"
+        echo -n "stopping $APP_MAIN(PID=$PID)..."
+        kill -9 $PID
+        if [ $? -eq 0 ]; then
+            echo "[success]"
+            echo "================================================================================================================"
+        else
+            echo "[failed]"
+            echo "================================================================================================================"
+        fi
+
+        getPID
+
+        if [ $PID -ne 0 ]; then
+            shutdown
+        fi
     else
         echo "$APP_MAIN is not running"
         echo "================================================================================================================"
     fi
 }
 
-status
+shutdown

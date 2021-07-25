@@ -1,6 +1,6 @@
-package com.doublekit.console;
+package com.doublekit.oms;
 
-import com.doublekit.console.annotation.EnableConsoleServer;
+import com.doublekit.oms.annotation.EnableOmsServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -12,13 +12,13 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication
 @PropertySource(value = "classpath:application-${env:local}.properties")
-@EnableConsoleServer
-public class ConsoleApplication {
+@EnableOmsServer
+public class OmsApplication {
 
-    public static final Logger logger = LoggerFactory.getLogger(ConsoleApplication.class);
+    public static final Logger logger = LoggerFactory.getLogger(OmsApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsoleApplication.class, args);
+        SpringApplication.run(OmsApplication.class, args);
     }
 
 }
