@@ -16,9 +16,8 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>doublekit-workbench-server</module>
-        <module>doublekit-workbench-ui</module>
-        <module>doublekit-workbench-starter</module>
+        <module>doublekit-console-server</module>
+        <module>doublekit-console-starter</module>
     </modules>
 
 </project>
