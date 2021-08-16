@@ -16,7 +16,17 @@
     <dependencies>
         <dependency>
             <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-rpc-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
             <artifactId>doublekit-oms-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-fcc-auth-client</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -43,7 +53,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution.xml</descriptor>
                             </descriptors>
-                            <finalName>doublekit-console-${project.version}</finalName>
+                            <finalName>doublekit-oms-${project.version}</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>

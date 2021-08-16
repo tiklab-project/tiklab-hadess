@@ -24,29 +24,77 @@
             <artifactId>doublekit-gateway-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--fcc基础组件依赖-->
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-platform-user-server</artifactId>
+            <artifactId>doublekit-fcc-user-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-platform-privilege-server</artifactId>
+            <artifactId>doublekit-fcc-privilege-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-platform-message-server</artifactId>
+            <artifactId>doublekit-fcc-message-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-platform-plugin-server</artifactId>
+            <artifactId>doublekit-fcc-toolkit-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--ssc共享服务接口依赖-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-member-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-platform-toolkit-server</artifactId>
+            <artifactId>doublekit-ssc-iam-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-tenant-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-product-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-trade-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--引接口实现，TODO-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-member-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-iam-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-tenant-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-product-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ssc-trade-server</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

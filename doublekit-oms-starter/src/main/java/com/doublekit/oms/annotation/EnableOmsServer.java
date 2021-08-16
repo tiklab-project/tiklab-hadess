@@ -1,6 +1,6 @@
 package com.doublekit.oms.annotation;
 
-import com.doublekit.oms.OmsServerAutoConfiguration;
+import com.doublekit.oms.config.OmsServerAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
