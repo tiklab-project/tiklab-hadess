@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-fcc-auth-client</artifactId>
+            <artifactId>doublekit-fcc-eam-client</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
