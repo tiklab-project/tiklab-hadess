@@ -31,10 +31,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableDatafly
 //modules
 @EnableUserServer
-@EnableEamServer
-@EnableEamClient
 @EnablePrivilegeServer
 @EnableToolkitServer
+@EnableEamServer
+@EnableEamClient
 @EnableApiboxClient
 public class OmsServerAutoConfiguration {
 }
