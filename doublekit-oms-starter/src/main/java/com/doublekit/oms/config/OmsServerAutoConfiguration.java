@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Configuration;
 @EnablePrivilegeServer
 @EnableToolkitServer
 @EnableEamServer
-@EnableEamClient
 @EnableApiboxClient
 public class OmsServerAutoConfiguration {
 }
