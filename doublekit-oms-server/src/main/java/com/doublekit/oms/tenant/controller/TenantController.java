@@ -33,15 +33,6 @@ public class TenantController {
     @Autowired
     private TenantService tenantService;
 
-    @RequestMapping(path="/createTenant",method = RequestMethod.POST)
-    @ApiMethod(name = "createTenant",desc = "创建租户")
-    @ApiParam(name = "tenant",desc = "租户DTO",required = true)
-    public Result<String> createTenant(@RequestBody @NotNull @Valid Tenant tenant){
-        String id = tenantService.createTenant(tenant);
-
-        return Result.ok(id);
-    }
-
     @RequestMapping(path="/updateTenant",method = RequestMethod.POST)
     @ApiMethod(name = "updateTenant",desc = "更新租户")
     @ApiParam(name = "tenant",desc = "租户DTO",required = true)
