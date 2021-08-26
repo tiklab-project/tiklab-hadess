@@ -8,7 +8,7 @@ import com.doublekit.dfs.starter.annotation.EnableDfs;
 import com.doublekit.dss.starter.annotation.EnableDss;
 import com.doublekit.eam.server.annotation.EnableEamServer;
 import com.doublekit.framework.starter.annotation.EnableFramework;
-import com.doublekit.iam.server.annotation.EnableIamServer;
+import com.doublekit.iam.annotation.EnableIamServer;
 import com.doublekit.member.annotation.EnableMemberServer;
 import com.doublekit.privilege.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
