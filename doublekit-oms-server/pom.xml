@@ -58,6 +58,11 @@
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ocs-tenant-server</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
             <artifactId>doublekit-ocs-iam-server</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -75,6 +80,22 @@
             <groupId>com.doublekit</groupId>
             <artifactId>doublekit-ocs-subscribe-server</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-dfs-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--ocs依赖-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ocs-subscribe-server</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ocs-licence-server</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
