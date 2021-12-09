@@ -37,8 +37,8 @@
 
     <repositories>
         <repository>
-            <id>doublekit-maven</id>
-            <name>doublekit maven</name>
+            <id>maven-public</id>
+            <name>maven public</name>
             <url>http://192.168.2.102:8081/repository/maven-public/</url>
         </repository>
     </repositories>
