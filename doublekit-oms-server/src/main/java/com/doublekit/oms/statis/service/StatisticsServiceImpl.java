@@ -30,27 +30,15 @@ public class StatisticsServiceImpl implements StatisticsService{
         //存放增加数量
         List<Integer> numberList = new ArrayList<>();
 
-        List<Member> memberList = manageDate(month, dateList, numberList,type);
-        for (int i=0;i<dateList.size();i++){
-            String s = dateList.get(i);
-            List<Member> collect = memberList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(collect)){
-                Integer value = Integer.valueOf(collect.get(0).getNumber());
-                if (numberList.size()>i){
-                    //更新数据
-                    numberList.set(i,value);
-                }
-            }
-        }
+        manageDate(month,dateList,numberList,type);
+
         Map<String, List> resultMap = new HashMap<>();
         resultMap.put("day",dateList);
         resultMap.put("number",numberList);
         return resultMap;
     }
 
-    public void addMember(){
 
-    }
 
 
     /**
@@ -58,9 +46,9 @@ public class StatisticsServiceImpl implements StatisticsService{
      * @param month 传进来月份
      * @param dateList 每月时间的list
      * @param numberList 增长数量的list
-     * @param type 类型 member会员  tenant租户
+     * @param type 类型 member会员  tenant租户 order订单   subscribe订阅
      */
-    public List manageDate(Date month, List<String> dateList,List<Integer> numberList,String type){
+    public void manageDate(Date month, List<String> dateList,List<Integer> numberList,String type){
         Date nowDate = new Date();
         //年
         SimpleDateFormat year = new SimpleDateFormat("yyyy");
@@ -105,25 +93,103 @@ public class StatisticsServiceImpl implements StatisticsService{
         //会员
         if("member".equals(type)){
             List<Member> memberList= statisticsDao.statisticsMember(starTime,endTime);
-            return memberList;
+            addMember(dateList,numberList,memberList);
         }
         //租户
         if("tenant".equals(type)){
             List<Tenant> tenantList = statisticsDao.statisticsTenant(starTime, endTime);
-            return tenantList;
+            addTenant(dateList,numberList,tenantList);
         }
         //订单
         if("order".equals(type)){
             List<Order> orderList = statisticsDao.statisticsOrder(starTime, endTime);
-            return orderList;
+            addOrder(dateList,numberList,orderList);
+
         }
         //订阅
         if ("subscribe".equals(type)){
             List<Subscribe> subscribeList = statisticsDao.statisticsSubscribe(starTime, endTime);
-            return subscribeList;
+            addSubscribe(dateList,numberList,subscribeList);
         }
-        return null;
+
     }
+    /**
+     * 添加会员数据
+     * @param dateList 每月时间的list
+     * @param numberList 增长数量的list
+     * @param memberList 类型 member会员
+     */
+    public void addMember( List<String> dateList,List<Integer> numberList, List<Member> memberList ){
+        for (int i=0;i<dateList.size();i++){
+            String s = dateList.get(i);
+            List<Member> collect = memberList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                Integer value = Integer.valueOf(collect.get(0).getNumber());
+                if (numberList.size()>i){
+                    //更新数据
+                    numberList.set(i,value);
+                }
+            }
+        }
+    }
+    /**
+     * 添加租户数据
+     * @param dateList 每月时间的list
+     * @param numberList 增长数量的list
+     * @param tenantList 类型 tenant
+     */
+    public void addTenant( List<String> dateList,List<Integer> numberList,  List<Tenant> tenantList){
+        for (int i=0;i<dateList.size();i++){
+            String s = dateList.get(i);
+            List<Tenant> collect = tenantList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                Integer value = Integer.valueOf(collect.get(0).getNumber());
+                if (numberList.size()>i){
+                    //更新数据
+                    numberList.set(i,value);
+                }
+            }
+        }
+    }
+    /**
+     * 添加订单
+     * @param dateList 每月时间的list
+     * @param numberList 增长数量的list
+     * @param orderList 类型 order
+     */
+    public void addOrder( List<String> dateList,List<Integer> numberList,  List<Order> orderList){
+        for (int i=0;i<dateList.size();i++){
+            String s = dateList.get(i);
+            List<Order> collect = orderList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                Integer value = Integer.valueOf(collect.get(0).getNumber());
+                if (numberList.size()>i){
+                    //更新数据
+                    numberList.set(i,value);
+                }
+            }
+        }
+    }
+    /**
+     * 添加订阅
+     * @param dateList 每月时间的list
+     * @param numberList 增长数量的list
+     * @param subscribeList 类型 subscribe
+     */
+    public void addSubscribe( List<String> dateList,List<Integer> numberList,  List<Subscribe> subscribeList){
+        for (int i=0;i<dateList.size();i++){
+            String s = dateList.get(i);
+            List<Subscribe> collect = subscribeList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                Integer value = Integer.valueOf(collect.get(0).getNumber());
+                if (numberList.size()>i){
+                    //更新数据
+                    numberList.set(i,value);
+                }
+            }
+        }
+    }
+
 
     /**
      * 将每月数量存放list
