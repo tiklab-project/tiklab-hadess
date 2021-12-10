@@ -48,6 +48,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableLicenceServer
 //@EnableTradeServer
 @EnableApiboxClient
-public class OmsServerAutoConfiguration {
+
+public class OmsAutoConfiguration {
 }
 

@@ -1,6 +1,6 @@
 package com.doublekit.oms.annotation;
 
-import com.doublekit.oms.config.OmsServerAutoConfiguration;
+import com.doublekit.oms.config.OmsAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({OmsServerAutoConfiguration.class})
-public @interface EnableOmsServer {
+@Import({OmsAutoConfiguration.class})
+public @interface EnableOms {
 }
