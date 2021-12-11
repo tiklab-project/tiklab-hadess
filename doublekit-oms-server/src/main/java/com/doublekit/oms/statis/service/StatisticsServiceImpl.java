@@ -1,11 +1,9 @@
 package com.doublekit.oms.statis.service;
 
-import com.doublekit.member.member.dao.MemberDao;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.oms.statis.dao.StatisticsDao;
-import com.doublekit.subscribe.subscribe.model.Order;
+import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
-import com.doublekit.tenant.server.tenant.dao.TenantDao;
 import com.doublekit.tenant.tenant.model.Tenant;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +68,6 @@ public class StatisticsServiceImpl implements StatisticsService{
         String nowDay = day.format(nowDate);
         //BETWEEN  范围查询不包含结束时间
         int now = Integer.valueOf(nowDay) + 1;
-        //传进来的日
-        String dayData = day.format(month);
 
         //传进来月份的1号
         String starTime = yearData+"-"+monthData+"-01";

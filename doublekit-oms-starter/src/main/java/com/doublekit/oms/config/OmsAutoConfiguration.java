@@ -10,7 +10,6 @@ import com.doublekit.dss.starter.annotation.EnableDss;
 
 import com.doublekit.eam.server.annotation.EnableEamServer;
 import com.doublekit.iam.server.annotation.EnableIamServer;
-import com.doublekit.licence.annotation.EnableLicenceServer;
 import com.doublekit.member.annotation.EnableMemberServer;
 import com.doublekit.privilege.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
@@ -45,7 +44,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableTenantServer
 @EnableProductServer
 @EnableSubscribeServer
-@EnableLicenceServer
 //@EnableTradeServer
 @EnableApiboxClient
 

@@ -2,7 +2,7 @@ package com.doublekit.oms.statis.dao;
 
 import com.doublekit.dal.jpa.JpaTemplate;
 import com.doublekit.member.member.model.Member;
-import com.doublekit.subscribe.subscribe.model.Order;
+import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
 import com.doublekit.tenant.tenant.model.Tenant;
 import org.slf4j.Logger;
