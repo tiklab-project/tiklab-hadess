@@ -105,7 +105,9 @@ public class StatisticsServiceImpl implements StatisticsService{
         //订阅
         if ("subscribe".equals(type)){
             List<Subscribe> subscribeList = statisticsDao.statisticsSubscribe(starTime, endTime);
-            addSubscribe(dateList,numberList,subscribeList);
+            if (CollectionUtils.isNotEmpty(subscribeList)){
+                addSubscribe(dateList,numberList,subscribeList);
+            }
         }
 
     }
