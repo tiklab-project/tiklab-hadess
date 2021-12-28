@@ -92,11 +92,6 @@
             <artifactId>doublekit-ocs-subscribe-server</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-ocs-licence-server</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
         <!--其他引入-->
         <dependency>
             <groupId>com.doublekit</groupId>
