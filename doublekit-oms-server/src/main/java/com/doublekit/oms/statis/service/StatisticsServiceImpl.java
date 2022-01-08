@@ -48,32 +48,32 @@ public class StatisticsServiceImpl implements StatisticsService{
      */
     public void manageDate(Date month, List<String> dateList,List<Integer> numberList,String type){
         Date nowDate = new Date();
-        //年
+        //年格式
         SimpleDateFormat year = new SimpleDateFormat("yyyy");
         //当前年
         String nowYear = year.format(nowDate);
         //传进来的年
         String yearData = year.format(month);
 
-        //月
+        //月格式
         SimpleDateFormat moth = new SimpleDateFormat("MM");
         //当前月
         String nowMonth = moth.format(nowDate);
         //传进来的月
         String monthData = moth.format(month);
 
-        //日
+        //日格式
         SimpleDateFormat day = new SimpleDateFormat("dd");
         //当前日
         String nowDay = day.format(nowDate);
         //BETWEEN  范围查询不包含结束时间
         int now = Integer.valueOf(nowDay) + 1;
 
-        //传进来月份的1号
+        //获取传进来月份的1号
         String starTime = yearData+"-"+monthData+"-01";
-        String endTime;
 
-        //当前月天数
+        String endTime;
+        //获取当前月天数
         Integer endDay = findDay(yearData + "/" + monthData);
 
         addData(dateList,endDay);
