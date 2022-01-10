@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableToolkitServer
 //ocs
 @EnableMemberServer
-@EnableIamServer
+//@EnableIamServer
 @EnableTenantServer
 @EnableProductServer
 @EnableSubscribeServer
