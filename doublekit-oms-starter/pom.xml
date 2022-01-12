@@ -14,6 +14,23 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
+        <!--platform-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-plat-gateway-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--pcs-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-pcs-eam-server</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-pcs-eam-client</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
             <artifactId>doublekit-oms-server</artifactId>

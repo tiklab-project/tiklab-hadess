@@ -7,9 +7,8 @@ import com.doublekit.dcs.starter.annotation.EnableDcs;
 import com.doublekit.dfs.starter.annotation.EnableDfs;
 import com.doublekit.dsl.starter.annotation.EnableDsl;
 import com.doublekit.dss.starter.annotation.EnableDss;
-
+import com.doublekit.eam.client.annotation.EnableEamClient;
 import com.doublekit.eam.server.annotation.EnableEamServer;
-import com.doublekit.iam.server.annotation.EnableIamServer;
 import com.doublekit.member.annotation.EnableMemberServer;
 import com.doublekit.privilege.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
@@ -33,18 +32,18 @@ import org.springframework.context.annotation.Configuration;
 @EnableDcs
 @EnableDsl
 @EnableDss
-//modules
+//pcs
 @EnableUserServer
 @EnableEamServer
+@EnableEamClient
 @EnablePrivilegeServer
 @EnableToolkitServer
 //ocs
 @EnableMemberServer
-//@EnableIamServer
 @EnableTenantServer
 @EnableProductServer
 @EnableSubscribeServer
-//@EnableTradeServer
+//other
 @EnableApiboxClient
 
 public class OmsAutoConfiguration {

@@ -24,11 +24,6 @@
             <artifactId>doublekit-rpc-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-gateway-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!--fcc基础组件依赖-->
         <dependency>
             <groupId>com.doublekit</groupId>
@@ -42,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-message-server</artifactId>
+            <artifactId>doublekit-plat-message-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
