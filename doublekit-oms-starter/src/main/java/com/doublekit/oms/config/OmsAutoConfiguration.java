@@ -5,6 +5,7 @@ import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
 import com.doublekit.dcs.starter.annotation.EnableDcs;
 import com.doublekit.dfs.starter.annotation.EnableDfs;
+import com.doublekit.doc.annotation.EnableDocServer;
 import com.doublekit.dsl.starter.annotation.EnableDsl;
 import com.doublekit.dss.starter.annotation.EnableDss;
 import com.doublekit.eam.client.annotation.EnableEamClient;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableTenantServer
 @EnableProductServer
 @EnableSubscribeServer
+@EnableDocServer
 //other
 @EnableApiboxClient
 
