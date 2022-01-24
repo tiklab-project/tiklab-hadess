@@ -1,4 +1,4 @@
-package com.doublekit.oms.statis.controller;
+package com.doublekit.oms.statistics.controller;
 
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;

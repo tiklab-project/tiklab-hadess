@@ -1,4 +1,4 @@
-package com.doublekit.oms.statis.dao;
+package com.doublekit.oms.statistics.dao;
 
 import com.doublekit.dal.jpa.JpaTemplate;
 import com.doublekit.member.member.model.Member;
