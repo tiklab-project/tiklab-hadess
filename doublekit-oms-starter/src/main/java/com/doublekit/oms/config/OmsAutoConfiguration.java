@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
         "tenant",
         "doc",
         "member",
+        "user"
 })
 @EnableDataFly
 //pcs
