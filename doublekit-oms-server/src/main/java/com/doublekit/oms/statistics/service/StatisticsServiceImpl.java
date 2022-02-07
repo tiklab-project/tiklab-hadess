@@ -1,7 +1,8 @@
-package com.doublekit.oms.statis.service;
+package com.doublekit.oms.statistics.service;
 
 import com.doublekit.member.member.model.Member;
-import com.doublekit.oms.statis.dao.StatisticsDao;
+import com.doublekit.oms.statistics.dao.StatisticsDao;
+import com.doublekit.oms.statis.service.StatisticsService;
 import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
 import com.doublekit.tenant.tenant.model.Tenant;
@@ -15,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class StatisticsServiceImpl implements StatisticsService{
+public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     StatisticsDao statisticsDao;
@@ -23,9 +24,9 @@ public class StatisticsServiceImpl implements StatisticsService{
     @Override
     public Map<String, List> statistics(Date month,String type) {
 
-        //存放当前月天数
+        //存放当前月天数的list
         List<String> dateList = new ArrayList<>();
-        //存放增加数量
+        //存放增加数量的list
         List<Integer> numberList = new ArrayList<>();
 
         manageDate(month,dateList,numberList,type);
@@ -75,8 +76,7 @@ public class StatisticsServiceImpl implements StatisticsService{
         String endTime;
         //获取当前月天数
         Integer endDay = findDay(yearData + "/" + monthData);
-
-        addData(dateList,endDay);
+        addCurrentMonthDay(dateList,endDay);
         //传进来的年  月份小于当前时间
         if (Integer.valueOf(yearData)<=Integer.valueOf(nowYear)
                 &&Integer.valueOf(monthData)<Integer.valueOf(nowMonth)){
@@ -86,27 +86,28 @@ public class StatisticsServiceImpl implements StatisticsService{
             endTime = nowYear+"-"+nowMonth+"-"+now;
             addNumber(numberList,Integer.valueOf(nowDay));
         }
+
         //会员
         if("member".equals(type)){
             List<Member> memberList= statisticsDao.statisticsMember(starTime,endTime);
-            addMember(dateList,numberList,memberList);
+            addMemberData(dateList,numberList,memberList);
         }
         //租户
         if("tenant".equals(type)){
             List<Tenant> tenantList = statisticsDao.statisticsTenant(starTime, endTime);
-            addTenant(dateList,numberList,tenantList);
+            addTenantData(dateList,numberList,tenantList);
         }
         //订单
         if("order".equals(type)){
             List<Order> orderList = statisticsDao.statisticsOrder(starTime, endTime);
-            addOrder(dateList,numberList,orderList);
+            addOrderData(dateList,numberList,orderList);
 
         }
         //订阅
         if ("subscribe".equals(type)){
             List<Subscribe> subscribeList = statisticsDao.statisticsSubscribe(starTime, endTime);
             if (CollectionUtils.isNotEmpty(subscribeList)){
-                addSubscribe(dateList,numberList,subscribeList);
+                addSubscribeData(dateList,numberList,subscribeList);
             }
         }
 
@@ -117,10 +118,10 @@ public class StatisticsServiceImpl implements StatisticsService{
      * @param numberList 增长数量的list
      * @param memberList 类型 member会员
      */
-    public void addMember( List<String> dateList,List<Integer> numberList, List<Member> memberList ){
+    public void addMemberData( List<String> dateList,List<Integer> numberList, List<Member> memberList ){
         for (int i=0;i<dateList.size();i++){
-            String s = dateList.get(i);
-            List<Member> collect = memberList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
+            String data = dateList.get(i);
+            List<Member> collect = memberList.stream().filter(a -> data.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(collect)){
                 Integer value = Integer.valueOf(collect.get(0).getNumber());
                 if (numberList.size()>i){
@@ -136,7 +137,7 @@ public class StatisticsServiceImpl implements StatisticsService{
      * @param numberList 增长数量的list
      * @param tenantList 类型 tenant
      */
-    public void addTenant( List<String> dateList,List<Integer> numberList,  List<Tenant> tenantList){
+    public void addTenantData( List<String> dateList,List<Integer> numberList,  List<Tenant> tenantList){
         for (int i=0;i<dateList.size();i++){
             String s = dateList.get(i);
             List<Tenant> collect = tenantList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
@@ -155,7 +156,7 @@ public class StatisticsServiceImpl implements StatisticsService{
      * @param numberList 增长数量的list
      * @param orderList 类型 order
      */
-    public void addOrder( List<String> dateList,List<Integer> numberList,  List<Order> orderList){
+    public void addOrderData( List<String> dateList,List<Integer> numberList,  List<Order> orderList){
         for (int i=0;i<dateList.size();i++){
             String s = dateList.get(i);
             List<Order> collect = orderList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
@@ -174,7 +175,7 @@ public class StatisticsServiceImpl implements StatisticsService{
      * @param numberList 增长数量的list
      * @param subscribeList 类型 subscribe
      */
-    public void addSubscribe( List<String> dateList,List<Integer> numberList,  List<Subscribe> subscribeList){
+    public void addSubscribeData( List<String> dateList,List<Integer> numberList,  List<Subscribe> subscribeList){
         for (int i=0;i<dateList.size();i++){
             String s = dateList.get(i);
             List<Subscribe> collect = subscribeList.stream().filter(a -> s.equals(a.getGroupCreateTime().substring(8, 10)) ).collect(Collectors.toList());
@@ -193,7 +194,7 @@ public class StatisticsServiceImpl implements StatisticsService{
      * 将每月数量存放list
      * @param endDay 传进来月份的最后一天（
      */
-    public void   addData(List<String> dateList,Integer endDay){
+    public void  addCurrentMonthDay(List<String> dateList,Integer endDay){
         for (int i=1;i<endDay+1;i++){
             if (i<10){
                 String month="0"+i;

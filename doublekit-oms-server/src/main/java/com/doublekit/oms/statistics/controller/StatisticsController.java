@@ -1,4 +1,4 @@
-package com.doublekit.oms.statis.controller;
+package com.doublekit.oms.statistics.controller;
 
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
@@ -21,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/statistics")
 @Api(name = "MemberController",desc = "统计")
-public class StatisticsController {
+public class  StatisticsController {
     @Autowired
     StatisticsService statisticsService;
 
@@ -30,7 +30,6 @@ public class StatisticsController {
     @ApiParam(name = "month",desc = "月份数",required = true)
     public Result<Map> statistics(@NotNull Date month,String type){
         Map<String, List> statistics =statisticsService .statistics(month,type);
-
         return Result.ok(statistics);
     }
 

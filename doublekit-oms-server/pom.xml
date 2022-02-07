@@ -78,7 +78,17 @@
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ocs-doc-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
             <artifactId>doublekit-dfs-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-ocs-sns-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--ocs依赖-->
