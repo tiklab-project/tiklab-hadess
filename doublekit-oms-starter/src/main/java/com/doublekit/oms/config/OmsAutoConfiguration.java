@@ -17,7 +17,7 @@ import com.doublekit.privilege.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
 import com.doublekit.sns.annotation.EnableSnsServer;
 import com.doublekit.subscribe.annotation.EnableSubscribeServer;
-import com.doublekit.tenant.server.annotation.EnableTenantServer;
+import com.doublekit.tenant.annotation.EnableTenantServer;
 import com.doublekit.toolkit.annotation.EnableToolkitServer;
 import com.doublekit.user.annotation.EnableUserServer;
 import com.doublekit.web.starter.annotation.EnableWeb;
@@ -36,19 +36,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableDcs
 @EnableDsl
 @EnableDss
-@DataFly({
-        "subscribe",
-        "sns",
-        "product",
-        "tenant",
-        "doc",
-        "member",
-        "user",
-        "eam",
-        "privilege",
-        "tool"
-
-})
 @EnableDataFly
 //pcs
 @EnableUserServer
