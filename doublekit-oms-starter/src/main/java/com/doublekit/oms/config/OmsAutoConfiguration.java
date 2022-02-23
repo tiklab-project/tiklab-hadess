@@ -3,7 +3,6 @@ package com.doublekit.oms.config;
 import com.doublekit.apibox.client.annotation.EnableApiboxClient;
 import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
-import com.doublekit.datafly.annotation.DataFly;
 import com.doublekit.datafly.starter.annotation.EnableDataFly;
 import com.doublekit.dcs.starter.annotation.EnableDcs;
 import com.doublekit.dfs.starter.annotation.EnableDfs;
