@@ -17,8 +17,8 @@
         <!--platform-->
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-plat-gateway-server</artifactId>
-            <version>${project.version}</version>
+            <artifactId>doublekit-plat-gateway</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <!--pcs-->
         <dependency>
