@@ -1,10 +1,10 @@
-package com.doublekit.oms.statistics.controller;
+package com.doublekit.product.statistics.controller;
 
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;
 import com.doublekit.common.Result;
-import com.doublekit.oms.statis.service.StatisticsService;
+import com.doublekit.product.statis.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

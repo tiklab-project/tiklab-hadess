@@ -1,8 +1,8 @@
-package com.doublekit.oms.statistics.service;
+package com.doublekit.product.statistics.service;
 
 import com.doublekit.member.member.model.Member;
-import com.doublekit.oms.statistics.dao.StatisticsDao;
-import com.doublekit.oms.statis.service.StatisticsService;
+import com.doublekit.product.statistics.dao.StatisticsDao;
+import com.doublekit.product.statis.service.StatisticsService;
 import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
 import com.doublekit.tenant.tenant.model.Tenant;

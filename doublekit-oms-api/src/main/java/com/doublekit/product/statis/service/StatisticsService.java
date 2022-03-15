@@ -1,4 +1,4 @@
-package com.doublekit.oms.statis.service;
+package com.doublekit.product.statis.service;
 
 import java.util.Date;
 import java.util.List;
