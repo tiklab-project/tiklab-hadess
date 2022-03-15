@@ -1,4 +1,4 @@
-package com.doublekit.oms.config;
+package com.doublekit.product.config;
 
 import com.doublekit.apibox.client.annotation.EnableApiboxClient;
 import com.doublekit.beans.starter.annotation.EnableBeans;
