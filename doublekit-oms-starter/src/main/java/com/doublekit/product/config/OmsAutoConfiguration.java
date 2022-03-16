@@ -12,9 +12,11 @@ import com.doublekit.dss.starter.annotation.EnableDss;
 import com.doublekit.eam.client.annotation.EnableEamClient;
 import com.doublekit.eam.server.annotation.EnableEamServer;
 import com.doublekit.member.annotation.EnableMemberServer;
+import com.doublekit.message.annotation.EnableMessage;
 import com.doublekit.privilege.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
 import com.doublekit.sns.annotation.EnableSnsServer;
+import com.doublekit.ssm.annotation.EnableSsmServer;
 import com.doublekit.subscribe.annotation.EnableSubscribeServer;
 import com.doublekit.tenant.annotation.EnableTenantServer;
 import com.doublekit.toolkit.annotation.EnableToolkitServer;
@@ -49,9 +51,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableSubscribeServer
 @EnableDocServer
 @EnableSnsServer
+@EnableSsmServer
 //other
 @EnableApiboxClient
-
+@EnableMessage
 public class OmsAutoConfiguration {
 }
 

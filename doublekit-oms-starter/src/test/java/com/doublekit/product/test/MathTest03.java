@@ -21,9 +21,9 @@ public class MathTest03 {
     }
 
 
-    @Test
+   /* @Test
     public void add02(){
         String integer = mathTest.testAdd(1, 3);
         assertEquals("3",integer);
-    }
+    }*/
 }
