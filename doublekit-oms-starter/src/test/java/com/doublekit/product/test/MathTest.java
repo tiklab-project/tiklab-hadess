@@ -7,18 +7,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-public class MathTest03 {
+//@SpringBootTest(classes = {ProductServerAutoConfiguration.class})
+public class MathTest {
 
     @Test
-    public void add(){
-        int result=1+3;
-        assertEquals(4,result);
+    public void add() {
+        int result = 1 + 3;
+        assertEquals(4, result);
     }
 
     @Test
-    public void add02(){
-        int result=1+3;
-        assertEquals(5,result);
+    public void add02() {
+        int result = 1 + 3;
+        assertEquals(5, result);
     }
 
    /* @Test
