@@ -82,13 +82,16 @@
                 </executions>
             </plugin>
 
-           <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <!--<includes>
+                        <include>com.doublekit.product.test</include>
+                    </includes>-->
                     <skip>false</skip>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
