@@ -16,11 +16,11 @@ public class MathTest {
         assertEquals(4, result);
     }
 
-    @Test
+    /*@Test
     public void add02() {
         int result = 1 + 3;
         assertEquals(5, result);
-    }
+    }*/
 
    /* @Test
     public void add02(){
