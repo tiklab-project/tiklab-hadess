@@ -87,7 +87,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--<includes>
-                        <include>com.doublekit.product.test</include>
+                        <include>test.com.doublekit.product.MathTest03</include>
                     </includes>-->
                     <skip>false</skip>
                 </configuration>
