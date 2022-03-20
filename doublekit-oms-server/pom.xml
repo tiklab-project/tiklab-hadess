@@ -27,22 +27,22 @@
         <!--fcc基础组件依赖-->
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-user-server</artifactId>
+            <artifactId>doublekit-pcs-user-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-privilege-server</artifactId>
+            <artifactId>doublekit-pcs-privilege-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-plat-message-server</artifactId>
+            <artifactId>doublekit-plat-message-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-toolkit-server</artifactId>
+            <artifactId>doublekit-pcs-toolkit-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--ssc共享服务接口依赖-->

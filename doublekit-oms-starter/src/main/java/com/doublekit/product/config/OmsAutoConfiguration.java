@@ -9,18 +9,18 @@ import com.doublekit.dfs.starter.annotation.EnableDfs;
 import com.doublekit.doc.annotation.EnableDocServer;
 import com.doublekit.join.starter.annotation.EnableJoin;
 import com.doublekit.dss.starter.annotation.EnableDss;
-import com.doublekit.eam.client.annotation.EnableEamClient;
-import com.doublekit.eam.server.annotation.EnableEamServer;
+import com.doublekit.eam.starter.annotation.EnableEamClient;
+import com.doublekit.eam.starter.annotation.EnableEamServer;
 import com.doublekit.member.annotation.EnableMemberServer;
-import com.doublekit.message.annotation.EnableMessage;
-import com.doublekit.privilege.annotation.EnablePrivilegeServer;
+import com.doublekit.message.starter.annotation.EnableMessage;
+import com.doublekit.privilege.starter.annotation.EnablePrivilegeServer;
 import com.doublekit.product.annotation.EnableProductServer;
 import com.doublekit.sns.annotation.EnableSnsServer;
 import com.doublekit.ssm.annotation.EnableSsmServer;
 import com.doublekit.subscribe.annotation.EnableSubscribeServer;
 import com.doublekit.tenant.annotation.EnableTenantServer;
-import com.doublekit.toolkit.annotation.EnableToolkitServer;
-import com.doublekit.user.annotation.EnableUserServer;
+import com.doublekit.toolkit.starter.annotation.EnableToolkitServer;
+import com.doublekit.user.starter.annotation.EnableUserServer;
 import com.doublekit.web.starter.annotation.EnableWeb;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 //common
-//@EnableFramework
 @EnableBeans
 @EnableWeb
 @EnableDal
