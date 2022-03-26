@@ -14,28 +14,6 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
-        <!--platform-->
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-plat-gateway</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <!--pcs-->
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-eam-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-pcs-eam-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-oms-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -47,6 +25,23 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <!--platform-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-plat-gateway-spring-boot-starter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <!--pcs-->
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-pcs-eam-spring-boot-starter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-oms-server</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
