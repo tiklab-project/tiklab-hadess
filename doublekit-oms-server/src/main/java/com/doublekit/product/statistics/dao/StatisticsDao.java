@@ -1,8 +1,13 @@
 package com.doublekit.product.statistics.dao;
 
 import com.doublekit.dal.jpa.JpaTemplate;
+import com.doublekit.dal.jpa.criterial.condition.QueryCondition;
+import com.doublekit.dal.jpa.criterial.conditionbuilder.QueryBuilders;
+import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
+import com.doublekit.product.product.entity.ProductEntity;
 import com.doublekit.subscribe.order.model.Order;
+import com.doublekit.subscribe.subscribe.entity.SubscribeEntity;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
 import com.doublekit.tenant.tenant.model.Tenant;
 import org.slf4j.Logger;
@@ -89,7 +94,6 @@ public class StatisticsDao {
      * @param endTime 结束时间
      */
     public List<Subscribe> statisticsSubscribe(String starTime, String endTime) {
-
         String  sql = "select group_create_time, sum(1)  as math from trc_subscribe  where subscribe_type=2  and create_time BETWEEN  ? and  ? GROUP BY group_create_time";
         List<Subscribe> scribeList = new ArrayList();
         getJdbcTemplate().query(sql, new Object[]{starTime, endTime},  new RowCallbackHandler() {
@@ -106,5 +110,13 @@ public class StatisticsDao {
     public JdbcTemplate getJdbcTemplate() {
 
         return jpaTemplate.getJdbcTemplate();
+    }
+
+
+    public List<MemberEntity> findMemberByLikeTime(String time) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(MemberEntity.class)
+                .like("groupCreateTime", time)
+                .get();
+        return jpaTemplate.findList(queryCondition, MemberEntity.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.doublekit.product.statistics.service;
 
+import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.product.statistics.dao.StatisticsDao;
 import com.doublekit.product.statis.service.StatisticsService;
@@ -10,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,10 +36,59 @@ public class StatisticsServiceImpl implements StatisticsService {
         Map<String, List> resultMap = new HashMap<>();
         resultMap.put("day",dateList);
         resultMap.put("number",numberList);
+
         return resultMap;
     }
 
+    @Override
+    public Map<String, List> statisticsByWeek(Date month, String type) {
 
+        //存放当前月的周数
+        List<String> dateList = new ArrayList<>();
+
+        //年格式
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+        //月格式
+        SimpleDateFormat moth = new SimpleDateFormat("MM");
+        //传进来的年
+        String yearData = year.format(month);
+        //传进来的月
+        String monthData = moth.format(month);
+        //获取当前月天数
+        Integer endDay = findDay(yearData + "/" + monthData);
+
+        mathWeek(endDay);
+
+        return null;
+    }
+
+    @Override
+    public Map<String, List> statisticsByMonth(String year,String type) {
+
+        Map<String, List> resultMap = new HashMap<>();
+
+        //存放每月数量
+        List<String> dateList = new ArrayList<>();
+
+        //存放增加数量的list
+        List<Integer> numberList = new ArrayList<>();
+
+        for (int a=1;a<13;a++){
+            String date=null;
+            dateList.add(a+"月");
+            if (a<11){
+                 date=year+"-0"+a;
+            }else {
+                date =year+"-"+a;
+            }
+
+            addNumberList(numberList,type,date);
+        }
+
+        resultMap.put("day",dateList);
+        resultMap.put("number",numberList);
+        return resultMap;
+    }
 
 
     /**
@@ -113,7 +164,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     }
     /**
-     * 添加会员数据
+     * 添加每天会员数量
      * @param dateList 每月时间的list
      * @param numberList 增长数量的list
      * @param memberList 类型 member会员
@@ -132,7 +183,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
     /**
-     * 添加租户数据
+     * 添加每天租户数量
      * @param dateList 每月时间的list
      * @param numberList 增长数量的list
      * @param tenantList 类型 tenant
@@ -151,7 +202,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
     /**
-     * 添加订单
+     * 添加每天订单数量
      * @param dateList 每月时间的list
      * @param numberList 增长数量的list
      * @param orderList 类型 order
@@ -170,7 +221,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
     /**
-     * 添加订阅
+     * 添加每天订阅数量
      * @param dateList 每月时间的list
      * @param numberList 增长数量的list
      * @param subscribeList 类型 subscribe
@@ -232,4 +283,28 @@ public class StatisticsServiceImpl implements StatisticsService {
         int maximum = rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);
         return maximum;
     }
+
+    /**
+     * 根据年月计算当前月周
+     * @param endDay  当月天数
+     */
+    public void mathWeek( Integer endDay){
+        //当月周数量
+      int weekMath= endDay/7;
+    }
+
+    /**
+     *月统计   添加每月增长数量
+     *   @param numberList  每月增长数量的list
+     *   @param type  类型
+     */
+    public void addNumberList( List<Integer> numberList,String type,String time){
+        List<MemberEntity> member = statisticsDao.findMemberByLikeTime(time);
+        if (CollectionUtils.isNotEmpty(member)){
+            numberList.add(member.size());
+        }else {
+            numberList.add(0);
+        }
+    }
+
 }

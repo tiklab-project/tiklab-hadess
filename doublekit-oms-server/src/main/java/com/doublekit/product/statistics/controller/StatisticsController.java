@@ -25,12 +25,29 @@ public class  StatisticsController {
     @Autowired
     StatisticsService statisticsService;
 
-    @RequestMapping(path = "/statistics",method = RequestMethod.POST)
-    @ApiMethod(name = "statistics",desc = "增长统计")
-    @ApiParam(name = "month",desc = "月份数",required = true)
-    public Result<Map> statistics(@NotNull Date month,String type){
-        Map<String, List> statistics =statisticsService .statistics(month,type);
+    @RequestMapping(path = "/statisticsByDate",method = RequestMethod.POST)
+    @ApiMethod(name = "statisticsByDate",desc = "增长统计 日统计")
+    @ApiParam(name = "time",desc = "月份数",required = true)
+    public Result<Map> statisticsByDate(@NotNull Date time,String type){
+        Map<String, List> statistics =statisticsService .statistics(time,type);
         return Result.ok(statistics);
     }
+
+    @RequestMapping(path = "/statisticsByWeek",method = RequestMethod.POST)
+    @ApiMethod(name = "statisticsByWeek",desc = "增长统计 周统计")
+    @ApiParam(name = "time",desc = "月份数",required = true)
+    public Result<Map> statisticsByWeek(@NotNull Date time,String type){
+        Map<String, List> statistics =statisticsService .statisticsByWeek(time,type);
+        return Result.ok(statistics);
+    }
+
+    @RequestMapping(path = "/statisticsByMonth",method = RequestMethod.POST)
+    @ApiMethod(name = "statisticsByMonth",desc = "增长统计 月统计")
+    @ApiParam(name = "time",desc = "年",required = true)
+    public Result<Map> statisticsByMonth(@NotNull String time,String type){
+        Map<String, List> statistics =statisticsService .statisticsByMonth(time,type);
+        return Result.ok(statistics);
+    }
+
 
 }
