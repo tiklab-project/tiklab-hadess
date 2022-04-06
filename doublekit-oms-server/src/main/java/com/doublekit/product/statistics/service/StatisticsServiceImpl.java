@@ -4,8 +4,11 @@ import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.product.statistics.dao.StatisticsDao;
 import com.doublekit.product.statis.service.StatisticsService;
+import com.doublekit.subscribe.order.entity.OrderEntity;
 import com.doublekit.subscribe.order.model.Order;
+import com.doublekit.subscribe.subscribe.entity.SubscribeEntity;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
+import com.doublekit.tenant.tenant.entity.TenantEntity;
 import com.doublekit.tenant.tenant.model.Tenant;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +83,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                  date=year+"-0"+a;
             }else {
                 date =year+"-"+a;
+
             }
 
             addNumberList(numberList,type,date);
@@ -299,11 +303,41 @@ public class StatisticsServiceImpl implements StatisticsService {
      *   @param type  类型
      */
     public void addNumberList( List<Integer> numberList,String type,String time){
-        List<MemberEntity> member = statisticsDao.findMemberByLikeTime(time);
-        if (CollectionUtils.isNotEmpty(member)){
-            numberList.add(member.size());
-        }else {
-            numberList.add(0);
+        //会员
+        if("member".equals(type)){
+            List<MemberEntity> member = statisticsDao.findMemberByLikeTime(time);
+            if (CollectionUtils.isNotEmpty(member)){
+                numberList.add(member.size());
+            }else {
+                numberList.add(0);
+            }
+        }
+        //租户
+        if("tenant".equals(type)){
+            List<TenantEntity> tenant = statisticsDao.findTenantByLikeTime(time);
+            if (CollectionUtils.isNotEmpty(tenant)){
+                numberList.add(tenant.size());
+            }else {
+                numberList.add(0);
+            }
+        }
+        //订单
+        if("order".equals(type)){
+            List<OrderEntity> order = statisticsDao.findOrderByLikeTime(time);
+            if (CollectionUtils.isNotEmpty(order)){
+                numberList.add(order.size());
+            }else {
+                numberList.add(0);
+            }
+        }
+        //支付统计
+        if ("subscribe".equals(type)){
+            List<SubscribeEntity> subscribe = statisticsDao.findSubscribeByLikeTime(time);
+            if (CollectionUtils.isNotEmpty(subscribe)){
+                numberList.add(subscribe.size());
+            }else {
+                numberList.add(0);
+            }
         }
     }
 

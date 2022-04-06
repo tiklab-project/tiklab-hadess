@@ -6,9 +6,11 @@ import com.doublekit.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.product.product.entity.ProductEntity;
+import com.doublekit.subscribe.order.entity.OrderEntity;
 import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.subscribe.entity.SubscribeEntity;
 import com.doublekit.subscribe.subscribe.model.Subscribe;
+import com.doublekit.tenant.tenant.entity.TenantEntity;
 import com.doublekit.tenant.tenant.model.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,5 +120,26 @@ public class StatisticsDao {
                 .like("groupCreateTime", time)
                 .get();
         return jpaTemplate.findList(queryCondition, MemberEntity.class);
+    }
+
+    public List<TenantEntity> findTenantByLikeTime(String time) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(TenantEntity.class)
+                .like("groupCreateTime", time)
+                .get();
+        return jpaTemplate.findList(queryCondition, TenantEntity.class);
+    }
+
+    public List<OrderEntity> findOrderByLikeTime(String time) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(OrderEntity.class)
+                .like("groupCreateTime", time)
+                .get();
+        return jpaTemplate.findList(queryCondition, OrderEntity.class);
+    }
+
+    public List<SubscribeEntity> findSubscribeByLikeTime(String time) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(SubscribeEntity.class)
+                .like("groupCreateTime", time)
+                .get();
+        return jpaTemplate.findList(queryCondition, SubscribeEntity.class);
     }
 }
