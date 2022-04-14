@@ -7,6 +7,7 @@ import com.doublekit.datafly.starter.annotation.EnableDataFly;
 import com.doublekit.dcs.starter.annotation.EnableDcs;
 import com.doublekit.dfs.starter.annotation.EnableDfs;
 import com.doublekit.doc.annotation.EnableDocServer;
+import com.doublekit.gateway.starter.annotation.EnableGateway;
 import com.doublekit.join.starter.annotation.EnableJoin;
 import com.doublekit.dss.starter.annotation.EnableDss;
 import com.doublekit.eam.client.EnableEamClient;
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableJoin
 @EnableDss
 @EnableDataFly
+@EnableGateway
 //pcs
 @EnableUserServer
 @EnableEamServer
