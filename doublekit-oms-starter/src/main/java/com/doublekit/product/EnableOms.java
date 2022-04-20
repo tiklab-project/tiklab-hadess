@@ -1,6 +1,5 @@
-package com.doublekit.product.annotation;
+package com.doublekit.product;
 
-import com.doublekit.product.config.OmsAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

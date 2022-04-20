@@ -1,6 +1,5 @@
 package com.doublekit.product;
 
-import com.doublekit.product.annotation.EnableOms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
