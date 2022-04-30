@@ -18,7 +18,7 @@ import com.doublekit.sns.EnableSnsServer;
 import com.doublekit.ssm.EnableSsmServer;
 import com.doublekit.subscribe.EnableSubscribeServer;
 import com.doublekit.tenant.EnableTenantServer;
-import com.doublekit.toolkit.EnableToolkitServer;
+//import com.doublekit.toolkit.EnableToolkitServer;
 import com.doublekit.user.EnableUserServer;
 import com.doublekit.web.starter.annotation.EnableWeb;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableUserServer
 @EnableEamServer
 @EnablePrivilegeServer
-@EnableToolkitServer
+//@EnableToolkitServer
 //ocs
 @EnableMemberServer
 @EnableTenantServer
