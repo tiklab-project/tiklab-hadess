@@ -1,6 +1,6 @@
 package com.doublekit.product.statistics.service;
 
-import com.doublekit.common.exception.ApplicationException;
+import com.doublekit.core.exception.ApplicationException;
 import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.product.statistics.dao.StatisticsDao;
