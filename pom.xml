@@ -31,7 +31,7 @@
             </dependency>
             <dependency>
                 <groupId>com.doublekit</groupId>
-                <artifactId>doublekit-dfs-spring-boot-starter</artifactId>
+                <artifactId>doublekit-dss-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
