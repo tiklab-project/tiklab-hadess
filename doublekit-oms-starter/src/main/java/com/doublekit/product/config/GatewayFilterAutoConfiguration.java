@@ -64,6 +64,8 @@ public class GatewayFilterAutoConfiguration {
                         "/wechatapplication/syncdata",
                         "/wechatapplication/vaildTentant",
 
+                        "/dfs/upload",
+
                         "/passport/member/authCodeLogin",
                         "/passport/member/logout",
                         "/passport/member/valid",
