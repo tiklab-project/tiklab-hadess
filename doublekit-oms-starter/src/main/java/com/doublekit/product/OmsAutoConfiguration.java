@@ -3,10 +3,10 @@ package com.doublekit.product;
 import com.doublekit.apibox.client.EnableApiboxClient;
 import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
-import com.doublekit.dsm.starter.annotation.EnableDsm;
 import com.doublekit.doc.EnableDocServer;
+import com.doublekit.dsm.starter.annotation.EnableDsm;
 import com.doublekit.dss.starter.EnableDss;
-import com.doublekit.eam.server.EnableEamServer;
+import com.doublekit.eam.starter.EnableEam;
 import com.doublekit.gateway.starter.EnableGateway;
 import com.doublekit.join.starter.annotation.EnableJoin;
 import com.doublekit.member.EnableMemberServer;
@@ -16,7 +16,7 @@ import com.doublekit.sns.EnableSnsServer;
 import com.doublekit.ssm.EnableSsmServer;
 import com.doublekit.subscribe.EnableSubscribeServer;
 import com.doublekit.tenant.EnableTenantServer;
-import com.doublekit.user.EnableUserServer;
+import com.doublekit.user.starter.EnableUser;
 import com.doublekit.web.starter.annotation.EnableWeb;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,8 +33,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableDsm
 @EnableGateway
 //pcs
-@EnableUserServer
-@EnableEamServer
+@EnableUser
+@EnableEam
 @EnablePrivilegeServer
 //@EnableToolkitServer
 //ocs
