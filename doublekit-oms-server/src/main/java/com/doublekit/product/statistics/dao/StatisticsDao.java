@@ -6,9 +6,9 @@ import com.doublekit.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import com.doublekit.member.member.entity.MemberEntity;
 import com.doublekit.member.member.model.Member;
 import com.doublekit.product.product.entity.ProductEntity;
-import com.doublekit.ssm.statis.entity.VisitEntity;
-import com.doublekit.ssm.statis.model.Visit;
-import com.doublekit.ssm.statis.model.VisitQuery;
+
+import com.doublekit.statistics.visit.entity.VisitEntity;
+import com.doublekit.statistics.visit.model.Visit;
 import com.doublekit.subscribe.order.entity.OrderEntity;
 import com.doublekit.subscribe.order.model.Order;
 import com.doublekit.subscribe.payment.entity.PaymentEntity;

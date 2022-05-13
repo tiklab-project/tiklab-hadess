@@ -13,7 +13,7 @@ import com.doublekit.member.EnableMemberServer;
 import com.doublekit.message.starter.EnableMessage;
 import com.doublekit.privilege.EnablePrivilegeServer;
 import com.doublekit.sns.EnableSnsServer;
-import com.doublekit.ssm.EnableSsmServer;
+import com.doublekit.statistics.EnableStatisticsServer;
 import com.doublekit.subscribe.EnableSubscribeServer;
 import com.doublekit.tenant.EnableTenantServer;
 import com.doublekit.user.starter.EnableUser;
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableSubscribeServer
 @EnableDocServer
 @EnableSnsServer
-@EnableSsmServer
+@EnableStatisticsServer
 //other
 @EnableApiboxClient
 @EnableMessage
