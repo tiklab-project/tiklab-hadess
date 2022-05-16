@@ -4,6 +4,7 @@ import com.doublekit.apibox.client.EnableApiboxClient;
 import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
 import com.doublekit.doc.EnableDocServer;
+import com.doublekit.download.EnableDownLoadServer;
 import com.doublekit.dsm.starter.annotation.EnableDsm;
 import com.doublekit.dss.starter.EnableDss;
 import com.doublekit.eam.starter.EnableEam;
@@ -45,6 +46,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableDocServer
 @EnableSnsServer
 @EnableStatisticsServer
+@EnableDownLoadServer
 //other
 @EnableApiboxClient
 @EnableMessage
