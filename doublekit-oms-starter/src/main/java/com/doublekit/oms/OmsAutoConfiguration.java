@@ -1,9 +1,8 @@
-package com.doublekit.product;
+package com.doublekit.oms;
 
 
 import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
-
 import com.doublekit.dsm.starter.annotation.EnableDsm;
 import com.doublekit.dss.starter.EnableDss;
 import com.doublekit.eam.starter.EnableEam;
@@ -12,7 +11,6 @@ import com.doublekit.join.starter.annotation.EnableJoin;
 import com.doublekit.message.starter.EnableMessage;
 import com.doublekit.oms.annotation.EnableOmsServer;
 import com.doublekit.privilege.EnablePrivilegeServer;
-
 import com.doublekit.rpc.starter.annotation.EnableRpc;
 import com.doublekit.user.starter.EnableUser;
 import com.doublekit.web.starter.annotation.EnableWeb;

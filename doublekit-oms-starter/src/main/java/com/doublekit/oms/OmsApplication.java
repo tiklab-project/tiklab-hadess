@@ -1,4 +1,4 @@
-package com.doublekit.product;
+package com.doublekit.oms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
  * WorkbenchApplication
  */
 @SpringBootApplication
-@PropertySource(value = "classpath:application-${env:dev}.properties")
+@PropertySource(value = "classpath:application-${env:test}.properties")
 @EnableOms
 public class OmsApplication {
 

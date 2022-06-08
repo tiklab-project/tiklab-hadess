@@ -1,4 +1,4 @@
-package com.doublekit.product;
+package com.doublekit.oms;
 
 import org.springframework.context.annotation.Import;
 

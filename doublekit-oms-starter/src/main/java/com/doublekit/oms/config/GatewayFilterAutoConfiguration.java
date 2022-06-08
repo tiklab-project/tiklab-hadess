@@ -1,4 +1,4 @@
-package com.doublekit.product.config;
+package com.doublekit.oms.config;
 
 import com.doublekit.gateway.author.config.IgnoreConfig;
 import com.doublekit.gateway.author.config.IgnoreConfigBuilder;

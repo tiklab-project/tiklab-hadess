@@ -11,7 +11,7 @@ fi
 #       系统运行参数
 #-------------------------------------------------------------------------------------------------------------
 #application.main.class="com.doublekit.platform.AccountSaasApplication"
-APP_MAIN="com.doublekit.product.OmsApplication"
+APP_MAIN="com.doublekit.oms.OmsApplication"
 
 DIR=$(cd "$(dirname "$0")"; pwd)
 APP_HOME=${DIR}/..
