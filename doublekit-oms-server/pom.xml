@@ -45,7 +45,8 @@
             <artifactId>doublekit-toolkit-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--ssc共享服务接口依赖-->
+
+        <!--ocs依赖-->
         <dependency>
             <groupId>com.doublekit</groupId>
             <artifactId>doublekit-member-api</artifactId>
@@ -91,11 +92,14 @@
             <artifactId>doublekit-download-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        <!--ocs依赖-->
-
         <dependency>
             <groupId>com.doublekit</groupId>
             <artifactId>doublekit-ssm-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.doublekit</groupId>
+            <artifactId>doublekit-activity-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--其他引入-->
