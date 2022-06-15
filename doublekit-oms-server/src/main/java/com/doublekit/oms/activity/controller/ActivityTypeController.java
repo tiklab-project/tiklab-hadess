@@ -8,6 +8,7 @@ import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;
 import com.doublekit.core.Result;
 import com.doublekit.core.page.Pagination;
+import com.doublekit.rpc.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class ActivityTypeController {
     private static Logger logger = LoggerFactory.getLogger(ActivityTypeController.class);
 
     @Autowired
+    @Reference(address = "${ocs.service.address}")
     private ActivityTypeService activityTypeService;
 
     @RequestMapping(path="/createActivityType",method = RequestMethod.POST)
