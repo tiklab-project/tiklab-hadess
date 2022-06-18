@@ -1,8 +1,8 @@
-package com.doublekit.oms.activity.controller;
+package com.doublekit.oms.activity.activity.controller;
 
-import com.doublekit.activity.model.ActivityType;
-import com.doublekit.activity.model.ActivityTypeQuery;
-import com.doublekit.activity.service.ActivityTypeService;
+import com.doublekit.promotion.activity.model.ActivityType;
+import com.doublekit.promotion.activity.model.ActivityTypeQuery;
+import com.doublekit.promotion.activity.service.ActivityTypeService;
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;

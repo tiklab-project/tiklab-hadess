@@ -1,8 +1,8 @@
-package com.doublekit.oms.activity.controller;
+package com.doublekit.oms.activity.activity.controller;
 
-import com.doublekit.activity.model.Discount;
-import com.doublekit.activity.model.DiscountQuery;
-import com.doublekit.activity.service.DiscountService;
+import com.doublekit.promotion.activity.model.Discount;
+import com.doublekit.promotion.activity.model.DiscountQuery;
+import com.doublekit.promotion.activity.service.DiscountService;
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;

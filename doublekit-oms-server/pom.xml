@@ -99,7 +99,7 @@
         </dependency>
         <dependency>
             <groupId>com.doublekit</groupId>
-            <artifactId>doublekit-activity-api</artifactId>
+            <artifactId>doublekit-promotion-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--其他引入-->

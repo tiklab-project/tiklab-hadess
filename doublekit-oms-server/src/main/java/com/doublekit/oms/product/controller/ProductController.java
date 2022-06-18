@@ -141,4 +141,12 @@ public class ProductController {
 
         return Result.ok(product);
     }
+
+    @RequestMapping(path="/findChargeProductList",method = RequestMethod.POST)
+    @ApiMethod(name = "findChargeProductList",desc = "查询收费的产品 （saas收费版本 ，线下企业版本）")
+    public Result<List<Product>> findChargeProductList(){
+        List<Product>  product= productService.findChargeProductList();
+
+        return Result.ok(product);
+    }
 }

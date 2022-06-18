@@ -1,13 +1,13 @@
-package com.doublekit.oms.activity.controller;
+package com.doublekit.oms.activity.coupon.controller;
 
-import com.doublekit.activity.model.CashVolume;
-import com.doublekit.activity.model.CashVolumeQuery;
-import com.doublekit.activity.service.CashVolumeService;
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;
 import com.doublekit.core.Result;
 import com.doublekit.core.page.Pagination;
+import com.doublekit.promotion.coupon.model.CashVolume;
+import com.doublekit.promotion.coupon.model.CashVolumeQuery;
+import com.doublekit.promotion.coupon.service.CashVolumeService;
 import com.doublekit.rpc.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/cashVolume")
-@Api(name = "CashVolumeController",desc = "现金卷活动管理")
+@Api(name = "CashVolumeController",desc = "现金卷管理")
 public class CashVolumeController {
 
     private static Logger logger = LoggerFactory.getLogger(CashVolumeController.class);
@@ -96,5 +96,16 @@ public class CashVolumeController {
 
         return Result.ok(pagination);
     }
+
+    @RequestMapping(path = "/findMergeCashVolumePage",method = RequestMethod.POST)
+    @ApiMethod(name = "findCashVolumePage",desc = "合并条件分页查询的数据")
+    @ApiParam(name = "cashVolumeQuery",desc = "cashVolumeQuery",required = true)
+    public Result<Pagination<CashVolume>> findMergeCashVolumePage(@RequestBody @Valid @NotNull CashVolumeQuery cashVolumeQuery){
+        Pagination<CashVolume> pagination = cashVolumeService.findMergeCashVolumePage(cashVolumeQuery);
+
+        return Result.ok(pagination);
+    }
+
+
 
 }

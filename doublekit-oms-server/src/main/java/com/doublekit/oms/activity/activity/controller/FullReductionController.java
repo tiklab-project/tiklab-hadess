@@ -1,8 +1,8 @@
-package com.doublekit.oms.activity.controller;
+package com.doublekit.oms.activity.activity.controller;
 
-import com.doublekit.activity.model.FullReduction;
-import com.doublekit.activity.model.FullReductionQuery;
-import com.doublekit.activity.service.FullReductionService;
+import com.doublekit.promotion.activity.model.FullReduction;
+import com.doublekit.promotion.activity.model.FullReductionQuery;
+import com.doublekit.promotion.activity.service.FullReductionService;
 import com.doublekit.apibox.annotation.Api;
 import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;
