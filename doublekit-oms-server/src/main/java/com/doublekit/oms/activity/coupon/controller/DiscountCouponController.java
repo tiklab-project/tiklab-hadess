@@ -97,4 +97,12 @@ public class DiscountCouponController {
         return Result.ok(pagination);
     }
 
+    @RequestMapping(path = "/findMergeDiscountCouponPage",method = RequestMethod.POST)
+    @ApiMethod(name = "findMergeDiscountCouponPage",desc = "折扣券的领取使用情况")
+    @ApiParam(name = "discountCouponQuery",desc = "discountCouponQuery",required = true)
+    public Result<Pagination<DiscountCoupon>> findMergeDiscountCouponPage(@RequestBody @Valid @NotNull DiscountCouponQuery discountCouponQuery){
+        Pagination<DiscountCoupon> pagination = discountCouponService.findMergeDiscountCouponPage(discountCouponQuery);
+
+        return Result.ok(pagination);
+    }
 }
