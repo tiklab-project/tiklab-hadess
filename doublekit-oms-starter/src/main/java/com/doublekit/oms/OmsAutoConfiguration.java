@@ -3,6 +3,8 @@ package com.doublekit.oms;
 
 import com.doublekit.beans.starter.annotation.EnableBeans;
 import com.doublekit.dal.starter.annotation.EnableDal;
+import com.doublekit.dcs.starter.EnableDcs;
+import com.doublekit.dfs.starter.EnableDfs;
 import com.doublekit.dsm.starter.annotation.EnableDsm;
 import com.doublekit.dss.starter.EnableDss;
 import com.doublekit.eam.starter.EnableEam;
@@ -26,6 +28,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableWeb
 @EnableDal
 @EnableDss
+@EnableDfs
+@EnableDcs
 @EnableDsm
 @EnableGateway
 //pcs
