@@ -8,6 +8,8 @@ import com.doublekit.apibox.annotation.ApiMethod;
 import com.doublekit.apibox.annotation.ApiParam;
 import com.doublekit.core.Result;
 import com.doublekit.core.page.Pagination;
+import com.doublekit.promotion.coupon.model.DiscountCoupon;
+import com.doublekit.promotion.coupon.model.DiscountCouponQuery;
 import com.doublekit.rpc.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
