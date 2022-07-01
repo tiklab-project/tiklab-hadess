@@ -45,7 +45,6 @@ public class GatewayFilterAutoConfiguration {
                         "/question/findQuestionPage",
                         "/question/findQuestionList",
                         "/question/findQuestion",
-                        "/weChatSign/findWeChatSignList",
                         "/comment/findCommentAndLike",
                         "/artifact/findNewArtifactPage",
                         "/artifactVersion/findArtifactVersionList",
