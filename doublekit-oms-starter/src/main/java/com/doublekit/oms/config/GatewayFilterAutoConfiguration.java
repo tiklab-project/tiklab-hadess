@@ -81,6 +81,7 @@ public class GatewayFilterAutoConfiguration {
                         "/third/passport/valid",
                         "/artifact/findNewArtifactPage",
                         "/sockjs-node/info"
+
                 })
                 .ignorePreUrls(new String[]{
                         "/service",
