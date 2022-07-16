@@ -36,6 +36,8 @@ public class CategoryController {
     @Reference(address = "${ocs.service.address}")
     private CategoryService categoryService;
 
+
+
     @RequestMapping(path="/createCategory",method = RequestMethod.POST)
     @ApiMethod(name = "createCategory",desc = "创建目录")
     @ApiParam(name = "category",desc = "category",required = true)
