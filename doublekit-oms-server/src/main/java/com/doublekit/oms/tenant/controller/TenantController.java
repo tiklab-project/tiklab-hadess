@@ -8,7 +8,7 @@ import com.doublekit.core.page.Pagination;
 import com.doublekit.rpc.annotation.Reference;
 import com.doublekit.tenant.tenant.model.Tenant;
 import com.doublekit.tenant.tenant.model.TenantQuery;
-import com.doublekit.tenant.tenant.service.TenantService;
+import com.doublekit.tenant.tenant.service.TenantManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ManagerController
@@ -37,7 +35,7 @@ public class TenantController {
 
     @Autowired
     @Reference(address = "${ocs.service.address}")
-    private TenantService tenantService;
+    private TenantManagerService tenantService;
 
     @RequestMapping(path="/createTenant",method = RequestMethod.POST)
     @ApiMethod(name = "createTenant",desc = "创建租户")

@@ -9,6 +9,7 @@ import com.doublekit.rpc.annotation.Reference;
 import com.doublekit.tenant.tenant.model.TenantDatabase;
 import com.doublekit.tenant.tenant.model.TenantDatabaseQuery;
 import com.doublekit.tenant.tenant.service.TenantDatabaseService;
+import com.doublekit.tenant.tenant.service.TenantManagerDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class TenantDatabaseController {
 
     @Autowired
     @Reference(address = "${ocs.service.address}")
-    private TenantDatabaseService tenantDatabaseService;
+    private TenantManagerDatabaseService tenantDatabaseService;
 
     @RequestMapping(path="/createTenantDatabase",method = RequestMethod.POST)
     @ApiMethod(name = "createTenantDatabase",desc = "createTenantDatabase")

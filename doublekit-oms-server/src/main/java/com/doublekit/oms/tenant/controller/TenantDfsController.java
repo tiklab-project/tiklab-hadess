@@ -8,8 +8,6 @@ import com.doublekit.core.page.Pagination;
 import com.doublekit.rpc.annotation.Reference;
 import com.doublekit.tenant.tenant.model.TenantDfs;
 import com.doublekit.tenant.tenant.model.TenantDfsQuery;
-import com.doublekit.tenant.tenant.model.TenantDis;
-import com.doublekit.tenant.tenant.model.TenantDisQuery;
 import com.doublekit.tenant.tenant.service.TenantDfsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
