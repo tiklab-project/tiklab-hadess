@@ -98,9 +98,9 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/findNewProductAll",method = RequestMethod.POST)
-    @ApiMethod(name = "findNewProductAll",desc = "查询下载产品（ce ee版）的所有数据")
-    public Result<List<Product>> findNewProductAll(){
-        List<Product> downProductList= productService.findNewProductAll();
+    @ApiMethod(name = "findNewProductAll",desc = "通过系统类型查询下载产品（ce ee版）的所有数据")
+    public Result<List<Product>> findNewProductAll(String systemType){
+        List<Product> downProductList= productService.findNewProductAll(systemType);
 
         return Result.ok(downProductList);
     }
