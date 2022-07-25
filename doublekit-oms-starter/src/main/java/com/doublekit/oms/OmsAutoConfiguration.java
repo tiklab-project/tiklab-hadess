@@ -12,7 +12,7 @@ import com.doublekit.gateway.starter.EnableGateway;
 import com.doublekit.join.starter.annotation.EnableJoin;
 import com.doublekit.message.starter.EnableMessage;
 import com.doublekit.oms.annotation.EnableOmsServer;
-import com.doublekit.privilege.EnablePrivilegeServer;
+//import com.doublekit.privilege.EnablePrivilegeServer;
 import com.doublekit.rpc.starter.annotation.EnableRpc;
 import com.doublekit.user.starter.EnableUser;
 import com.doublekit.web.starter.annotation.EnableWeb;
@@ -30,14 +30,12 @@ import org.springframework.context.annotation.Configuration;
 @EnableDss
 @EnableDfs
 @EnableDcs
-@EnableDsm
 @EnableGateway
-//@EnableTenantServer
 //pcs
 @EnableRpc
 @EnableUser
 @EnableEam
-@EnablePrivilegeServer
+//@EnablePrivilegeServer
 //@EnableToolkitServer
 //ocs
 @EnableOmsServer
