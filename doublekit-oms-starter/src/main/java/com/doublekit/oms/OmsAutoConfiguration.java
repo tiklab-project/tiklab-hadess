@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableDss
 @EnableDfs
 @EnableDcs
+@EnableDsm
 @EnableGateway
 //pcs
 @EnableRpc
