@@ -6,32 +6,32 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.doublekit</groupId>
-        <artifactId>doublekit-dependencies</artifactId>
+        <groupId>com.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.doublekit</groupId>
-    <artifactId>doublekit-oms</artifactId>
+    <groupId>com.tiklab</groupId>
+    <artifactId>tiklab-oms</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>doublekit-oms-api</module>
-        <module>doublekit-oms-server</module>
-        <module>doublekit-oms-starter</module>
+        <module>tiklab-oms-api</module>
+        <module>tiklab-oms-server</module>
+        <module>tiklab-oms-starter</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.doublekit</groupId>
-                <artifactId>doublekit-dfs-api</artifactId>
+                <groupId>com.tiklab</groupId>
+                <artifactId>tiklab-dfs-api</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.doublekit</groupId>
-                <artifactId>doublekit-dss-spring-boot-starter</artifactId>
+                <groupId>com.tiklab</groupId>
+                <artifactId>tiklab-dss-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
