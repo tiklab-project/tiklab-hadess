@@ -7,6 +7,5 @@ target/
 data/
 logs/
 plugin/
-doc/
 APP_HOME_IS_UNDEFINED/
 DATA_HOME_IS_UNDEFINED/
