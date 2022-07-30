@@ -4,7 +4,7 @@ if [ ! -n "$JAVA_HOME" ]; then
 fi
 
 #APP_MAIN=${application.main.class}
-APP_MAIN="com.doublekit.oms.OmsApplication"
+APP_MAIN="com.tiklab.oms.OmsApplication"
 
 PID=0
 getPID(){
