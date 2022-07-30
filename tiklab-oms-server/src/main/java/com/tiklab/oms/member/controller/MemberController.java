@@ -1,9 +1,9 @@
 package com.tiklab.oms.member.controller;
 
-import com.tiklab.postlink.annotation.Api;
-import com.tiklab.postlink.annotation.ApiMethod;
-import com.tiklab.postlink.annotation.ApiParam;
-import com.tiklab.postlink.annotation.ApiParams;
+import com.tiklab.postin.annotation.Api;
+import com.tiklab.postin.annotation.ApiMethod;
+import com.tiklab.postin.annotation.ApiParam;
+import com.tiklab.postin.annotation.ApiParams;
 import com.tiklab.core.Result;
 import com.tiklab.core.exception.ApplicationException;
 import com.tiklab.core.page.Pagination;

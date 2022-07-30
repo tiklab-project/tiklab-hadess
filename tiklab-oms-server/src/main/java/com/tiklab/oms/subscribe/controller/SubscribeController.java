@@ -1,8 +1,8 @@
 package com.tiklab.oms.subscribe.controller;
 
-import com.tiklab.postlink.annotation.Api;
-import com.tiklab.postlink.annotation.ApiMethod;
-import com.tiklab.postlink.annotation.ApiParam;
+import com.tiklab.postin.annotation.Api;
+import com.tiklab.postin.annotation.ApiMethod;
+import com.tiklab.postin.annotation.ApiParam;
 import com.tiklab.core.Result;
 import com.tiklab.core.page.Pagination;
 import com.tiklab.product.product.model.ProductQuery;
@@ -128,7 +128,7 @@ public class SubscribeController {
     }
 
     @RequestMapping(path = "/openServe",method = RequestMethod.POST)
-    @ApiMethod(name = "openServe",desc = "企业微信 创建企业 默认开通portal并开通对应的产品")
+    @ApiMethod(name = "openServe",desc = "企业微信 创建企业 默认开通eas并开通对应的产品")
     @ApiParam(name = "subscribe",desc = "subscribe",required = true)
     public Result<Void> openServe(@RequestBody @Valid @NotNull Subscribe subscribe){
         String id  = subscribeService.openServe(subscribe);
