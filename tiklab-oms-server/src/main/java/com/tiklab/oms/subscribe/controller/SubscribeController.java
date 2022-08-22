@@ -118,14 +118,7 @@ public class SubscribeController {
 
         return Result.ok(pagination);
     }
-
-    @RequestMapping(path = "/findSubscribes",method = RequestMethod.POST)
-    @ApiMethod(name = "findSubscribes",desc = "通过条件查询订阅  homes展示使用 将一个租户的一个产品的多条记录合并一条展示")
-    @ApiParam(name = "subscribeQuery",desc = "subscribeQuery",required = true)
-    public Result<List<Subscribe>> findSubscribes(@RequestBody @Valid @NotNull SubscribeQuery subscribeQuery){
-        List<Subscribe> subscribeList = subscribeService.findSubscribes(subscribeQuery);
-        return Result.ok(subscribeList);
-    }
+    
 
     @RequestMapping(path = "/openServe",method = RequestMethod.POST)
     @ApiMethod(name = "openServe",desc = "企业微信 创建企业 默认开通eas并开通对应的产品")
