@@ -1,13 +1,33 @@
 package com.tiklab.oms.config;
 
 
-import com.tiklab.iam.server.author.config.IgnoreConfig;
-import com.tiklab.iam.server.author.config.IgnoreConfigBuilder;
+import com.tiklab.gateway.GatewayFilter;
+import com.tiklab.iam.author.Authenticator;
+import com.tiklab.iam.client.config.IgnoreConfig;
+import com.tiklab.iam.client.config.IgnoreConfigBuilder;
+import com.tiklab.iam.client.handler.AuthorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GatewayFilterAutoConfiguration {
+
+
+    //网关filter
+  /*  @Bean
+    GatewayFilter gatewayFilter(AuthorHandler authorHandler){
+        return new GatewayFilter()
+                .addHandler(authorHandler);
+    }
+
+    //认证handler
+    @Bean
+    AuthorHandler authorHandler(Authenticator authenticator, com.tiklab.iam.client.config.IgnoreConfig ignoreConfig){
+        return new AuthorHandler()
+                .setAuthenticator(authenticator)
+                .setIgnoreConfig(ignoreConfig);
+
+    }*/
 
     @Bean
     public IgnoreConfig ignoreConfig(){
