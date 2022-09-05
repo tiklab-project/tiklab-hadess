@@ -22,8 +22,32 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!--tiklab-->
-
+        <!--common-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tiklab</groupId>
+            <artifactId>tiklab-postin-client</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tiklab</groupId>
+            <artifactId>tiklab-codegen-core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <!--fcc基础组件依赖-->
         <dependency>
             <groupId>com.tiklab</groupId>
@@ -45,6 +69,7 @@
             <artifactId>tiklab-toolkit-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+
 
         <!--ocs依赖-->
         <dependency>
@@ -103,7 +128,6 @@
             <artifactId>tiklab-promotion-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--其他引入-->
         <!--其他引入-->
         <dependency>
             <groupId>com.tiklab</groupId>
