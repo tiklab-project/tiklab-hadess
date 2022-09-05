@@ -1,11 +1,15 @@
 package com.tiklab.oms.config;
 
 
+import com.tiklab.eam.author.Authenticator;
+import com.tiklab.eam.client.author.AuthorHandler;
+import com.tiklab.eam.client.author.config.IgnoreConfig;
+import com.tiklab.eam.client.author.config.IgnoreConfigBuilder;
 import com.tiklab.gateway.GatewayFilter;
-import com.tiklab.iam.author.Authenticator;
-import com.tiklab.iam.client.config.IgnoreConfig;
-import com.tiklab.iam.client.config.IgnoreConfigBuilder;
-import com.tiklab.iam.client.handler.AuthorHandler;
+import com.tiklab.gateway.router.RouterHandler;
+import com.tiklab.gateway.router.config.RouterConfig;
+import com.tiklab.gateway.router.config.RouterConfigBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,21 +17,27 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayFilterAutoConfiguration {
 
 
-    //网关filter
-  /*  @Bean
-    GatewayFilter gatewayFilter(AuthorHandler authorHandler){
+    @Bean
+    GatewayFilter gatewayFilter(RouterHandler routerHandler, AuthorHandler authorHandler){
         return new GatewayFilter()
+                .setRouterHandler(routerHandler)
                 .addHandler(authorHandler);
     }
 
     //认证handler
     @Bean
-    AuthorHandler authorHandler(Authenticator authenticator, com.tiklab.iam.client.config.IgnoreConfig ignoreConfig){
+    AuthorHandler authorHandler(Authenticator authenticator, IgnoreConfig ignoreConfig){
         return new AuthorHandler()
                 .setAuthenticator(authenticator)
                 .setIgnoreConfig(ignoreConfig);
 
-    }*/
+    }
+
+    @Bean
+    RouterHandler routerHandler(RouterConfig routerConfig){
+        return new RouterHandler()
+                .setRouterConfig(routerConfig);
+    }
 
     @Bean
     public IgnoreConfig ignoreConfig(){
@@ -114,6 +124,22 @@ public class GatewayFilterAutoConfiguration {
                         "/authConfig",
                         "/services"
                 })
+                .get();
+    }
+
+
+    //路由转发配置
+    @Value("${eas.address:null}")
+    String authUrl;
+
+    @Bean
+    RouterConfig routerConfig(){
+        return RouterConfigBuilder.instance()
+                .preRoute(new String[]{
+                        "/user",
+                        "/eam",
+                        "/message",
+                },authUrl)
                 .get();
     }
 }

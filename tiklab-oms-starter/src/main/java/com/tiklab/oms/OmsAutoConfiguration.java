@@ -7,8 +7,7 @@ import com.tiklab.dcs.starter.EnableDcs;
 import com.tiklab.dfs.starter.EnableDfs;
 import com.tiklab.dsm.starter.annotation.EnableDsm;
 import com.tiklab.dss.starter.EnableDss;
-import com.tiklab.eam.saas.stater.EnableEamSaas;
-import com.tiklab.iam.client.EnableIamClient;
+import com.tiklab.eam.client.EnableEamClient;
 import com.tiklab.join.starter.annotation.EnableJoin;
 import com.tiklab.licence.starter.EnableLicenceServer;
 import com.tiklab.message.starter.EnableMessage;
@@ -31,17 +30,17 @@ import org.springframework.context.annotation.Configuration;
 @EnableDfs
 @EnableDcs
 @EnableDsm
-//pcs
 @EnableRpc
+
+//eam
+@EnableEamClient
 @EnableUserClient
-@EnableIamClient
 @EnableLicenceServer
 //@EnablePrivilegeServer
 //@EnableToolkitServer
 //ocs
 @EnableOmsServer
 @EnableMessage
-@EnableEamSaas
 public class OmsAutoConfiguration {
 }
 

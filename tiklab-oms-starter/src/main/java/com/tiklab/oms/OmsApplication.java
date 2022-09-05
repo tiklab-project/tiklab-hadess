@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
  * WorkbenchApplication
  */
 @SpringBootApplication
-@PropertySource(value = "classpath:application-${env:dev}.properties" )
+@PropertySource(value = "classpath:application-${env:dev}.yaml" ,factory = PropertyAndYamlSourceFactory.class )
 @EnableOms
 public class OmsApplication {
 
