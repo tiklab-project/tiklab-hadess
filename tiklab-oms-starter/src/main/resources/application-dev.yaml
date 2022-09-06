@@ -28,7 +28,7 @@ mysql:
   server:
     port: 3306
   version: mysql-8.0.28
-  name: tiklab_teamwire
+  name: tiklab_oms
 
 #eas config
 eas:

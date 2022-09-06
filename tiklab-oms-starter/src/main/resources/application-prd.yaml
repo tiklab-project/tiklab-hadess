@@ -50,7 +50,7 @@ mysql:
   server:
     port: 3306
   version: mysql-8.0.28
-  name: tiklab_teamwire
+  name: tiklab_oms
 
 #eas config
 eas:
@@ -58,9 +58,9 @@ eas:
     enable: true
   server:
     port: 8080
-  address: http://101.132.102.247:8080
+  address: http://101.132.102.247:8070
   web:
-    address: http://101.132.102.247:8080
+    address: http://101.132.102.247:8070
   jdbc:
     driverClassName: ${jdbc.driverClassName}
     url: ${jdbc.url}
