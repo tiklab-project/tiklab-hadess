@@ -32,7 +32,7 @@ public class SubActivityController {
     private static Logger logger = LoggerFactory.getLogger(SubActivityController.class);
 
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private SubActivityService subActivityService;
 
     @RequestMapping(path="/createSubActivity",method = RequestMethod.POST)

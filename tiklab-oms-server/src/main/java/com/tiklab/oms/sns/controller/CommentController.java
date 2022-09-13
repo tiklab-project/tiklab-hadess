@@ -31,7 +31,7 @@ public class CommentController {
 
     private static Logger logger = LoggerFactory.getLogger(CommentController.class);
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private CommentService commentService;
 
     @RequestMapping(path="/createComment",method = RequestMethod.POST)

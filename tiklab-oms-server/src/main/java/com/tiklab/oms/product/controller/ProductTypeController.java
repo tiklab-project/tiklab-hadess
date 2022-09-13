@@ -29,7 +29,7 @@ public class ProductTypeController {
 
 
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private ProductTypeService productTypeService;
 
     @RequestMapping(path="/createProductType",method = RequestMethod.POST)

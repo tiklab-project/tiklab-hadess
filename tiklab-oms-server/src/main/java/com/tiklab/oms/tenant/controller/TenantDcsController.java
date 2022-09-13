@@ -32,7 +32,7 @@ public class TenantDcsController {
     private static Logger logger = LoggerFactory.getLogger(TenantDcsController.class);
 
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private TenantDcsService tenantDcsService;
 
     @RequestMapping(path="/createTenantDcs",method = RequestMethod.POST)

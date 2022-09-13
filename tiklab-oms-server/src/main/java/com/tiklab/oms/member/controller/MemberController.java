@@ -35,7 +35,7 @@ public class MemberController {
     private static Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private MemberService memberService;
 
     @RequestMapping(path = "/registeMember",method = RequestMethod.POST)

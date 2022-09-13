@@ -25,7 +25,7 @@ import java.util.Map;
 @Api(name = "MemberController",desc = "统计")
 public class StatisticsController {
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     StatisticsService statisticsService;
 
     @RequestMapping(path = "/statisticsByDate",method = RequestMethod.POST)

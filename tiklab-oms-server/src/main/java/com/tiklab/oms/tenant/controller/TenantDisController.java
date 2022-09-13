@@ -32,7 +32,7 @@ public class TenantDisController {
     private static Logger logger = LoggerFactory.getLogger(TenantDisController.class);
 
     @Autowired
-    @Reference(address = "${ocs.service.address}")
+    @Reference(address = "${homes.address}")
     private TenantDisService tenantDssService;
 
     @RequestMapping(path="/createTenantDss",method = RequestMethod.POST)
