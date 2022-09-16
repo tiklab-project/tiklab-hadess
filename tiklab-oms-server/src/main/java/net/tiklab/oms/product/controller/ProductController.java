@@ -1,13 +1,13 @@
 package  net.tiklab.oms.product.controller;
 
+import net.tiklab.core.page.Pagination;
 import  net.tiklab.postin.annotation.Api;
 import  net.tiklab.postin.annotation.ApiMethod;
 import  net.tiklab.postin.annotation.ApiParam;
 import  net.tiklab.core.Result;
-import  net.tiklab.core.page.Pagination;
-import net.tiklab.product.model.Product;
-import net.tiklab.product.model.ProductQuery;
-import net.tiklab.product.service.ProductService;
+import net.tiklab.product.product.model.Product;
+import net.tiklab.product.product.model.ProductQuery;
+import net.tiklab.product.product.service.ProductService;
 import  net.tiklab.rpc.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

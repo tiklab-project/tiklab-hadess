@@ -1,5 +1,8 @@
 package  net.tiklab.oms.member.controller;
 
+import net.tiklab.member.member.model.Member;
+import net.tiklab.member.member.model.MemberQuery;
+import net.tiklab.member.member.service.MemberService;
 import  net.tiklab.postin.annotation.Api;
 import  net.tiklab.postin.annotation.ApiMethod;
 import  net.tiklab.postin.annotation.ApiParam;
@@ -7,9 +10,6 @@ import  net.tiklab.postin.annotation.ApiParams;
 import  net.tiklab.core.Result;
 import  net.tiklab.core.exception.ApplicationException;
 import  net.tiklab.core.page.Pagination;
-import net.tiklab.member.model.Member;
-import net.tiklab.member.model.MemberQuery;
-import net.tiklab.member.service.MemberService;
 import  net.tiklab.rpc.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,7 +3,6 @@ package  net.tiklab.oms.role.codegen;
 import  net.tiklab.codegen.CodeGeneratorTemplate;
 import  net.tiklab.codegen.config.CodeGeneratorConfig;
 import  net.tiklab.codegen.config.ProjectGeneratorConfig;
-import  net.tiklab.oms.role.entity.RoleEntity;
 import  net.tiklab.oms.role.entity.RoleUserEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;

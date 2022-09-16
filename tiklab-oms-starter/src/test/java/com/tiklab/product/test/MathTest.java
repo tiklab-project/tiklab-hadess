@@ -1,4 +1,4 @@
-package com.tiklab.product.test;
+package  net.tiklab.product.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

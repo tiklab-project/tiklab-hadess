@@ -16,8 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
-
 /**
 * RoleUserServiceImpl
 */
