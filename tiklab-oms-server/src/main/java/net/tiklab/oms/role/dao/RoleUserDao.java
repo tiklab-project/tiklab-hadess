@@ -1,6 +1,8 @@
 package  net.tiklab.oms.role.dao;
 
 import  net.tiklab.core.page.Pagination;
+import net.tiklab.dal.jpa.criterial.condition.QueryCondition;
+import net.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import  net.tiklab.oms.role.entity.RoleUserEntity;
 import  net.tiklab.oms.role.model.RoleUserQuery;
 import  net.tiklab.dal.jpa.JpaTemplate;
@@ -74,10 +76,17 @@ public class RoleUserDao{
     }
 
     public List<RoleUserEntity> findRoleUserList(RoleUserQuery roleUserQuery) {
-        return jpaTemplate.findList(roleUserQuery,RoleUserEntity.class);
+        QueryCondition queryCondition = QueryBuilders.createQuery(RoleUserEntity.class)
+                .orders(roleUserQuery.getOrderParams())
+                .get();
+        return jpaTemplate.findList(queryCondition,RoleUserEntity.class);
     }
 
     public Pagination<RoleUserEntity> findRoleUserPage(RoleUserQuery roleUserQuery) {
-        return jpaTemplate.findPage(roleUserQuery,RoleUserEntity.class);
+        QueryCondition queryCondition = QueryBuilders.createQuery(RoleUserEntity.class)
+                .orders(roleUserQuery.getOrderParams())
+                .pagination(roleUserQuery.getPageParam())
+                .get();
+        return jpaTemplate.findPage(queryCondition,RoleUserEntity.class);
     }
 }
