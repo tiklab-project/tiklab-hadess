@@ -95,6 +95,7 @@ public class GatewayFilterAutoConfiguration {
                         "/wechatapplication/vaildTentant",
 
                         "/dfs/upload",
+                        "/uploadFile/ftpUpload",
 
                         "/passport/member/authCodeLogin",
                         "/passport/member/logout",

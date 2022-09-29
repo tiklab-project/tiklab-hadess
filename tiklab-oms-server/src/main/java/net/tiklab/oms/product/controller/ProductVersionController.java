@@ -1,14 +1,14 @@
 package  net.tiklab.oms.product.controller;
 
+import net.tiklab.core.page.Pagination;
 import  net.tiklab.postin.annotation.Api;
 import  net.tiklab.postin.annotation.ApiMethod;
 import  net.tiklab.postin.annotation.ApiParam;
 import  net.tiklab.core.Result;
-import  net.tiklab.core.page.Pagination;
-import  net.tiklab.download.product.model.ProductVersion;
-import  net.tiklab.download.product.model.ProductVersionQuery;
-import  net.tiklab.download.product.service.ProductVersionService;
 import  net.tiklab.rpc.annotation.Reference;
+import net.tiklab.updownload.product.model.ProductVersion;
+import net.tiklab.updownload.product.model.ProductVersionQuery;
+import net.tiklab.updownload.product.service.ProductVersionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
