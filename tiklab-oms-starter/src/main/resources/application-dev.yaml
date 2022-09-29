@@ -32,18 +32,13 @@ mysql:
 
 #eas config
 eas:
-  embbed:
-    enable: true
-  server:
-    port: 8080
   address: http://192.168.10.14:8080
   web:
-    address: http://192.168.10.14:8080
-  jdbc:
-    driverClassName: ${jdbc.driverClassName}
-    url: ${jdbc.url}
-    username: ${jdbc.username}
-    password: ${jdbc.password}
+    address: http://192.168.10.14:3001
+  embbed:
+    enable: false
+
+
 
 #dfs config
 #dfs.server.enabled=false

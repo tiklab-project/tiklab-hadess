@@ -54,18 +54,12 @@ mysql:
 
 #eas config
 eas:
-  embbed:
-    enable: true
-  server:
-    port: 8080
-  address: http://101.132.102.247:8070
+  address: http://101.132.102.247:8080
   web:
-    address: http://101.132.102.247:8070
-  jdbc:
-    driverClassName: ${jdbc.driverClassName}
-    url: ${jdbc.url}
-    username: ${jdbc.username}
-    password: ${jdbc.password}
+    address: http://101.132.102.247:8080
+  embbed:
+    enable: false
+
 
 
 
