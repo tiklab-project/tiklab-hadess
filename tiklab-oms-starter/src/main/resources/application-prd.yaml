@@ -54,9 +54,9 @@ mysql:
 
 #eas config
 eas:
-  address: http://101.132.102.247:8080
+  address: http://101.132.102.247:8081
   web:
-    address: http://101.132.102.247:8080
+    address: http://101.132.102.247:8081
   embbed:
     enable: false
 
@@ -69,11 +69,11 @@ plugin.path: ${APP_HOME}/plugin
 #rpc
 ocs:
   service:
-    address: http://172.19.6.134:8080
+    address: http://139.196.76.221:8080
 
 
 homes:
-  address: http://172.11.1.11:8080
+  address: http://139.196.76.221:8080
   return:
     path: ''
 
