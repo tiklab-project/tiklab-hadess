@@ -66,6 +66,7 @@ public class GatewayFilterAutoConfiguration {
                         "/category/likeFindCategoryListTree",
                         "/document/findDocument",
                         "/comment/findCommentTreePage",
+                        "/document/findDocumentList",
                         "/product/findNewProductAll",
                         "/product/findProductList",
                         "/product/findProduct",

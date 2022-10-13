@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DocumentController
@@ -97,4 +98,39 @@ public class DocumentController {
         return Result.ok(pagination);
     }
 
+    @RequestMapping(path = "/findDocumentTree",method = RequestMethod.POST)
+    @ApiMethod(name = "findDocumentList",desc = "条件查询tree")
+    @ApiParam(name = "documentQuery",desc = "documentQuery",required = true)
+    public Result<List<Document>> findDocumentTree(@RequestBody @Valid @NotNull DocumentQuery documentQuery){
+        List<Document> documentList = documentService.findDocumentTree(documentQuery);
+
+        return Result.ok(documentList);
+    }
+
+    @RequestMapping(path = "/likeFindDocumentTree",method = RequestMethod.POST)
+    @ApiMethod(name = "likeFindDocumentTree",desc = "模糊查询tree")
+    @ApiParam(name = "documentQuery",desc = "documentQuery",required = true)
+    public Result<List<Document>> likeFindDocumentTree(@RequestBody @Valid @NotNull DocumentQuery documentQuery){
+        List<Document> documentList = documentService.likeFindDocumentTree(documentQuery);
+
+        return Result.ok(documentList);
+    }
+
+    @RequestMapping(path = "/findHandoverDocument",method = RequestMethod.POST)
+    @ApiMethod(name = "findHandoverDocument",desc = "查询上下篇文章")
+    @ApiParam(name = "documentQuery",desc = "documentQuery",required = true)
+    public Result<Map> findHandoverDocument(@RequestBody @Valid @NotNull DocumentQuery documentQuery){
+        Map documentMap = documentService.findHandoverDocument(documentQuery);
+
+        return Result.ok(documentMap);
+    }
+
+    @RequestMapping(path = "/findDocumentTreeId",method = RequestMethod.POST)
+    @ApiMethod(name = "findDocumentTreeId",desc = "通过文档ID 查询该文档上级目录树的id")
+    @ApiParam(name = "id",desc = "id",required = true)
+    public Result<List> findDocumentTreeId(@NotNull String id){
+        List documentIdList = documentService.findDocumentTreeId(id);
+
+        return Result.ok(documentIdList);
+    }
 }
