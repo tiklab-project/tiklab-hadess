@@ -134,14 +134,28 @@ public class GatewayFilterAutoConfiguration {
     @Value("${eas.address:null}")
     String authUrl;
 
+
+    @Value("${eas.embbed.enable:false}")
+    Boolean enableEam;
+
+
+    //gateway路由配置
     @Bean
     RouterConfig routerConfig(){
+        String[] s = {
+                "/user",
+                "/eam",
+                "/message",
+                "/oplog",
+                "/todo"
+        };
+
+        if (!enableEam){
+            s = new String[]{};
+        }
+
         return RouterConfigBuilder.instance()
-                .preRoute(new String[]{
-                        "/user",
-                        "/eam",
-                        "/message",
-                },authUrl)
+                .preRoute(s, authUrl)
                 .get();
     }
 }
