@@ -21,6 +21,24 @@ jdbc:
 
 DATA_HOME: ${user.home}/tiklab/${app.name}
 
+
+#enable mysql
+mysql:
+  embbed:
+    enable: false
+  server:
+    port: 3306
+  version: mysql-8.0.28
+  name: tiklab_oms
+
+#eas config
+eas:
+  address: http://172.11.1.12:8080
+  web:
+    address: http://172.11.1.12:8080
+  embbed:
+    enable: false
+
 #dfs config
 #dfs.server.enabled=false
 dfs:
