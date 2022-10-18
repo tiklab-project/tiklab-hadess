@@ -32,9 +32,9 @@ mysql:
 
 #eas config
 eas:
-  address: http://192.168.10.14:8080
+  address: http://172.11.1.12:8080
   web:
-    address: http://192.168.10.14:3001
+    address: http://172.11.1.12:8080
   embbed:
     enable: false
 
