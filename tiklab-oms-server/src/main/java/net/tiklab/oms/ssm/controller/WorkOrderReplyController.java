@@ -32,7 +32,7 @@ public class WorkOrderReplyController {
     private static Logger logger = LoggerFactory.getLogger(WorkOrderReplyController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private WorkOrderReplyService workOrderReplyService;
 
     @RequestMapping(path="/createWorkOrderReply",method = RequestMethod.POST)

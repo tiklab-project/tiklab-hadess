@@ -36,7 +36,7 @@ public class SubscribeController {
     private static Logger logger = LoggerFactory.getLogger(SubscribeController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private SubscribeService subscribeService;
 
     @Value("${app.path}")

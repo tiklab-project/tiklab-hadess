@@ -32,7 +32,7 @@ public class ActivityController {
     private static Logger logger = LoggerFactory.getLogger(ActivityController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private ActivityService activityService;
 
     @RequestMapping(path="/createActivity",method = RequestMethod.POST)

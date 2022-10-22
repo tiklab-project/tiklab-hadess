@@ -32,7 +32,7 @@ public class InvoiceController {
     private static Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private InvoiceService invoiceService;
 
     @RequestMapping(path="/createInvoice",method = RequestMethod.POST)

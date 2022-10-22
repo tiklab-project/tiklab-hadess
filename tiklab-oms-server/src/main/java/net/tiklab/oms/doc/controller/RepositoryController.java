@@ -32,7 +32,7 @@ public class RepositoryController {
     private static Logger logger = LoggerFactory.getLogger(RepositoryController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private RepositoryService repositoryService;
 
     @RequestMapping(path="/createRepository",method = RequestMethod.POST)

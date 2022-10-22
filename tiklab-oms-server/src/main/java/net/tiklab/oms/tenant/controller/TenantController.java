@@ -34,7 +34,7 @@ public class TenantController {
 
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private TenantManagerService tenantManagerService;
 
     @RequestMapping(path="/createTenant",method = RequestMethod.POST)

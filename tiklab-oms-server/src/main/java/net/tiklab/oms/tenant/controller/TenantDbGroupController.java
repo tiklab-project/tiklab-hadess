@@ -32,7 +32,7 @@ public class TenantDbGroupController {
     private static Logger logger = LoggerFactory.getLogger(TenantDbGroupController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private TenantDbGroupService tenantDbGroupService;
 
     @RequestMapping(path="/createTenantDbGroup",method = RequestMethod.POST)

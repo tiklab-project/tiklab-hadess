@@ -33,7 +33,7 @@ public class CategoryController {
     private static Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private CategoryService categoryService;
 
 

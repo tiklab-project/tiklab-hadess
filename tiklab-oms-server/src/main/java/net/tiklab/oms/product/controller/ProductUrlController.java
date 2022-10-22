@@ -1,4 +1,4 @@
-package  net.tiklab.oms.product.controller;
+package net.tiklab.oms.product.controller;
 
 import net.tiklab.core.page.Pagination;
 import  net.tiklab.postin.annotation.Api;
@@ -32,7 +32,7 @@ public class ProductUrlController {
     private static Logger logger = LoggerFactory.getLogger(ProductUrlController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private ProductUrlService productUrlService;
 
     @RequestMapping(path="/createProductUrl",method = RequestMethod.POST)

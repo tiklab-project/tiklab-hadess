@@ -32,7 +32,7 @@ public class FullReductionController {
     private static Logger logger = LoggerFactory.getLogger(FullReductionController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private FullReductionService fullReductionService;
 
     @RequestMapping(path="/createFullReduction",method = RequestMethod.POST)

@@ -33,7 +33,7 @@ public class TenantMemberController {
     private static Logger logger = LoggerFactory.getLogger(TenantMemberController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private TenantManagerMemberService tenantManagerMemberService;
 
     @RequestMapping(path="/createTenantMember",method = RequestMethod.POST)

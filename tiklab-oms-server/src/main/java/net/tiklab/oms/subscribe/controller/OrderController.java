@@ -32,7 +32,7 @@ public class OrderController {
     private static Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private OrderService orderService;
 
     @RequestMapping(path="/createOrder",method = RequestMethod.POST)

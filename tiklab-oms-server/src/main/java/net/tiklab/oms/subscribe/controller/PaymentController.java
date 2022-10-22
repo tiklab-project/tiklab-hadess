@@ -34,7 +34,7 @@ public class PaymentController {
     private static Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private PaymentService paymentService;
 
 

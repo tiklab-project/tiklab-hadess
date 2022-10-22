@@ -32,7 +32,7 @@ public class SubscribeRecordController {
     private static Logger logger = LoggerFactory.getLogger(SubscribeRecordController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private SubscribeRecordService subscribeRecordService;
 
     @RequestMapping(path="/createSubscribeRecord",method = RequestMethod.POST)

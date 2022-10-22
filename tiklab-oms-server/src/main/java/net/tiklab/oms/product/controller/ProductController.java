@@ -32,7 +32,7 @@ public class ProductController {
     private static Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private ProductService productService;
 
     @RequestMapping(path="/createProduct",method = RequestMethod.POST)

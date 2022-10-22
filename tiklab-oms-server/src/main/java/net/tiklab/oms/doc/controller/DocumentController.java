@@ -33,7 +33,7 @@ public class DocumentController {
     private static Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private DocumentService documentService;
 
     @RequestMapping(path="/createDocument",method = RequestMethod.POST)

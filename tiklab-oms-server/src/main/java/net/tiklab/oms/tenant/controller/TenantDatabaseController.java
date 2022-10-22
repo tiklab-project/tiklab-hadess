@@ -32,7 +32,7 @@ public class TenantDatabaseController {
     private static Logger logger = LoggerFactory.getLogger(TenantDatabaseController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private TenantManagerDatabaseService tenantDatabaseService;
 
     @RequestMapping(path="/createTenantDatabase",method = RequestMethod.POST)

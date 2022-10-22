@@ -32,7 +32,7 @@ public class CouponCashController {
     private static Logger logger = LoggerFactory.getLogger(CouponCashController.class);
 
     @Autowired
-    @Reference(address = "${homes.address}")
+    @Reference(address = "${ocs.address}")
     private CouponCashService couponCashService;
 
     @RequestMapping(path="/createCouponCash",method = RequestMethod.POST)
