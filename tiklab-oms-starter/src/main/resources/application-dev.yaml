@@ -67,8 +67,7 @@ plugin.path: ${APP_HOME}/plugin
 
 #rpc
 ocs:
-  service:
-    address: http://192.168.10.19:8080
+  address: http://192.168.10.19:8080
 
 
 homes:
