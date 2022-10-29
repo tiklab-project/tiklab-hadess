@@ -98,6 +98,9 @@ public class GatewayFilterAutoConfiguration {
                         "/dfs/upload",
                         "/uploadFile/ftpUpload",
 
+                        "/message/mailcfg/config",
+                        "/message/messageSendType/findMessageSendTypePage",
+                        "/message/messageSendType/createMessageSendType",
                         "/passport/member/authCodeLogin",
                         "/passport/member/logout",
                         "/passport/member/valid",
@@ -113,7 +116,9 @@ public class GatewayFilterAutoConfiguration {
                         "/third/passport/logout",
                         "/third/passport/valid",
                         "/artifact/findNewArtifactPage",
-                        "/sockjs-node/info"
+                        "/sockjs-node/info",
+
+
 
                 })
                 .ignorePreUrls(new String[]{

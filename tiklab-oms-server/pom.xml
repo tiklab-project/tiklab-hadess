@@ -59,11 +59,11 @@
             <artifactId>tiklab-privilege-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId> net.tiklab</groupId>
             <artifactId>tiklab-message-spring-boot-starter</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId> net.tiklab</groupId>
             <artifactId>tiklab-toolkit-spring-boot-starter</artifactId>

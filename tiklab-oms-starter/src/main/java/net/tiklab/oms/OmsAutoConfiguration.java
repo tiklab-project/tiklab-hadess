@@ -8,7 +8,6 @@ import  net.tiklab.dsm.starter.annotation.EnableDsm;
 import  net.tiklab.dss.starter.EnableDss;
 import  net.tiklab.eam.client.EnableEamClient;
 import  net.tiklab.licence.starter.EnableLicenceServer;
-import  net.tiklab.message.starter.EnableMessage;
 import  net.tiklab.oms.annotation.EnableOmsServer;
 import  net.tiklab.rpc.starter.annotation.EnableRpc;
 import net.tiklab.tks.annotation.EnableTks;
@@ -38,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 //@EnableToolkitServer
 //ocs
 @EnableOmsServer
-@EnableMessage
+//@EnableMessage
 public class OmsAutoConfiguration {
 }
 
