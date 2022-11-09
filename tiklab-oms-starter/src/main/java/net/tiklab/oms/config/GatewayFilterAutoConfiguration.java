@@ -140,7 +140,7 @@ public class GatewayFilterAutoConfiguration {
     String authUrl;
 
 
-    @Value("${eas.embbed.enable:false}")
+    @Value("${eas.embbed.enable}")
     Boolean enableEam;
 
 
@@ -148,13 +148,14 @@ public class GatewayFilterAutoConfiguration {
     @Bean
     RouterConfig routerConfig(){
         String[] s = {
-                "/user",
+               /* "/user",
                 "/message",
                 "/oplog",
-                "/todo"
+                "/todo"*/
         };
 
         if (!enableEam){
+
             s = new String[]{};
         }
 

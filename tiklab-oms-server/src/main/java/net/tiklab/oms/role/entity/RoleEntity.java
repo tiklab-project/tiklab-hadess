@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name="prc_role")
+@Table(name="pcs_prc_role")
 public class RoleEntity implements Serializable {
 
     @Id

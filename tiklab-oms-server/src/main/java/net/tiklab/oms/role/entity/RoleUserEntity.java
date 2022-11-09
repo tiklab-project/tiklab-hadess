@@ -9,7 +9,7 @@ import  net.tiklab.dal.jpa.annotation.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name="prc_role_user")
+@Table(name="pcs_prc_role_user")
 public class RoleUserEntity implements Serializable {
 
     @Id

@@ -54,11 +54,8 @@ mysql:
 
 #eas config
 eas:
-  address: http://101.132.102.247:8081
-  web:
-    address: http://101.132.102.247:8081
   embbed:
-    enable: false
+    enable: true
 
 
 
