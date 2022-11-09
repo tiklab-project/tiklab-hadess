@@ -1,7 +1,7 @@
 package  net.tiklab.oms.config;
 
 
-import  net.tiklab.eam.author.Authenticator;
+import net.tiklab.eam.author.Authenticator;
 import  net.tiklab.eam.client.author.AuthorHandler;
 import  net.tiklab.eam.client.author.config.IgnoreConfig;
 import  net.tiklab.eam.client.author.config.IgnoreConfigBuilder;
@@ -117,7 +117,7 @@ public class GatewayFilterAutoConfiguration {
                         "/third/passport/valid",
                         "/artifact/findNewArtifactPage",
                         "/sockjs-node/info",
-
+                        "/eam/auth/login",
 
 
                 })
@@ -149,7 +149,6 @@ public class GatewayFilterAutoConfiguration {
     RouterConfig routerConfig(){
         String[] s = {
                 "/user",
-                "/eam",
                 "/message",
                 "/oplog",
                 "/todo"
