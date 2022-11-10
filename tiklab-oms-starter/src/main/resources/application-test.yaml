@@ -39,9 +39,9 @@ mysql:
  # embbed:
   #  enable: false
 
-  eas:
-    embbed:
-      enable: true
+eas:
+  embbed:
+    enable: true
 
 #dfs config
 #dfs.server.enabled=false
