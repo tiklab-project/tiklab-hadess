@@ -150,8 +150,8 @@ public class GatewayFilterAutoConfiguration {
         String[] s = {
                /* "/user",
                 "/message",
-                "/oplog",
-                "/todo"*/
+                "/oplog",*/
+                "/todo"
         };
 
         if (!enableEam){
