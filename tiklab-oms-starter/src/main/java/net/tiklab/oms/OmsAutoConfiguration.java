@@ -9,6 +9,7 @@ import  net.tiklab.dss.starter.EnableDss;
 import  net.tiklab.eam.client.EnableEamClient;
 import net.tiklab.eam.starter.EnableEam;
 import  net.tiklab.licence.starter.EnableLicenceServer;
+import net.tiklab.message.starter.EnableMessage;
 import  net.tiklab.oms.annotation.EnableOmsServer;
 import net.tiklab.oplog.stater.EnableLog;
 import  net.tiklab.rpc.starter.annotation.EnableRpc;
