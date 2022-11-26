@@ -12,6 +12,7 @@ import  net.tiklab.licence.starter.EnableLicenceServer;
 import net.tiklab.message.starter.EnableMessage;
 import  net.tiklab.oms.annotation.EnableOmsServer;
 import net.tiklab.oplog.stater.EnableLog;
+import net.tiklab.privilege.stater.EnablePrivilegeServer;
 import  net.tiklab.rpc.starter.annotation.EnableRpc;
 import net.tiklab.tks.annotation.EnableTks;
 import net.tiklab.toolkit.EnableToolkitServer;
@@ -40,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableLicenceServer
 @EnableUser
 @EnableToolkitServer
+@EnablePrivilegeServer
 //@EnablePrivilegeServer
 //@EnableToolkitServer
 //ocs
