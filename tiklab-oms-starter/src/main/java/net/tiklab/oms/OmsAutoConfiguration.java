@@ -42,11 +42,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableUser
 @EnableToolkitServer
 @EnablePrivilegeServer
-//@EnablePrivilegeServer
-//@EnableToolkitServer
+@EnableMessage
 //ocs
 @EnableOmsServer
-//@EnableMessage
 public class OmsAutoConfiguration {
 }
 

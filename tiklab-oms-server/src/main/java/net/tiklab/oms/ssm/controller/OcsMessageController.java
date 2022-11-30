@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,21 +26,20 @@ import java.util.List;
  * Created by Zhangzhihua on 2017/9/25.
  */
 @RestController
-@RequestMapping("/message/message")
+@RequestMapping("/ocs/message/message")
 //@Api(name = "MessageController",desc = "消息管理")
-public class MessageController {
+public class OcsMessageController {
 
-    private static Logger logger = LoggerFactory.getLogger(MessageController.class);
+    private static Logger logger = LoggerFactory.getLogger(OcsMessageController.class);
 
-    @Autowired
-    @Reference(address = "${ocs.address}")
-    private MessageService messageService;
+    @Resource(name="ocsMessageService")
+    private MessageService ocsMessageService;
 
     @RequestMapping(path="/createMessage",method = RequestMethod.POST)
     //@ApiMethod(name = "createMessage",desc = "createMessage")
     //@ApiParam(name = "message",desc = "message",required = true)
     public Result<String> createMessage(@RequestBody @NotNull @Valid Message message){
-        String id = messageService.createMessage(message);
+        String id = ocsMessageService.createMessage(message);
 
         return Result.ok(id);
     }
@@ -48,7 +48,7 @@ public class MessageController {
     //@ApiMethod(name = "sendMessage",desc = "发送消息")
     //@ApiParam(name = "message",desc = "message",required = true)
     public Result<String> sendMessage(@RequestBody @NotNull @Valid Message message){
-        String id = messageService.sendMessage(message);
+        String id = ocsMessageService.sendMessage(message);
 
         return Result.ok(id);
     }
@@ -57,7 +57,7 @@ public class MessageController {
     //@ApiMethod(name = "updateMessage",desc = "updateMessage")
     //@ApiParam(name = "message",desc = "message",required = true)
     public Result<Void> updateMessage(@RequestBody @NotNull @Valid Message message){
-        messageService.updateMessage(message);
+        ocsMessageService.updateMessage(message);
 
         return Result.ok();
     }
@@ -66,7 +66,7 @@ public class MessageController {
     //@ApiMethod(name = "deleteMessage",desc = "deleteMessage")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteMessage(@NotNull String id){
-        messageService.deleteMessage(id);
+        ocsMessageService.deleteMessage(id);
 
         return Result.ok();
     }
@@ -75,7 +75,7 @@ public class MessageController {
     //@ApiMethod(name = "findMessage",desc = "findMessage")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Message> findMessage(@NotNull String id){
-        Message message = messageService.findMessage(id);
+        Message message = ocsMessageService.findMessage(id);
 
         return Result.ok(message);
     }
@@ -85,7 +85,7 @@ public class MessageController {
     //@ApiMethod(name = "findMessageWithNest",desc = "findMessageWithNest")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Message> findMessageWithNest(@NotNull String id){
-        Message message = messageService.findMessageWithNest(id);
+        Message message = ocsMessageService.findMessageWithNest(id);
 
         return Result.ok(message);
     }
@@ -93,7 +93,7 @@ public class MessageController {
     @RequestMapping(path="/findAllMessage",method = RequestMethod.POST)
     //@ApiMethod(name = "findAllMessage",desc = "findAllMessage")
     public Result<List<Message>> findAllMessage(){
-        List<Message> messageList = messageService.findAllMessage();
+        List<Message> messageList = ocsMessageService.findAllMessage();
 
         return Result.ok(messageList);
     }
@@ -103,7 +103,7 @@ public class MessageController {
     //@ApiMethod(name = "findMessageList",desc = "findMessageList")
     //@ApiParam(name = "messageQuery",desc = "messageQuery",required = true)
     public Result<List<Message>> findMessageList(@RequestBody @Valid @NotNull MessageQuery messageQuery){
-        List<Message> messageList = messageService.findMessageList(messageQuery);
+        List<Message> messageList = ocsMessageService.findMessageList(messageQuery);
 
         return Result.ok(messageList);
     }
@@ -113,7 +113,7 @@ public class MessageController {
     //@ApiMethod(name = "findMessagePage",desc = "findMessagePage")
     //@ApiParam(name = "messageQuery",desc = "messageQuery",required = true)
     public Result<Pagination<Message>> findMessagePage(@RequestBody @Valid @NotNull MessageQuery messageQuery){
-        Pagination<Message> pagination = messageService.findMessagePage(messageQuery);
+        Pagination<Message> pagination = ocsMessageService.findMessagePage(messageQuery);
 
         return Result.ok(pagination);
     }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,21 +26,20 @@ import java.util.List;
  * Created by Zhangzhihua on 2017/9/25.
  */
 @RestController
-@RequestMapping("/message/messageType")
+@RequestMapping("/ocs/message/messageType")
 //@Api(name = "MessageTypeController",desc = "消息类型管理")
-public class MessageTypeController {
+public class OcsMessageTypeController {
 
-    private static Logger logger = LoggerFactory.getLogger(MessageTypeController.class);
+    private static Logger logger = LoggerFactory.getLogger(OcsMessageTypeController.class);
 
-    @Autowired
-    @Reference(address = "${ocs.address}")
-    private MessageTypeService messageTypeService;
+    @Resource(name="ocsMessageTypeService")
+    private MessageTypeService ocsMessageTypeService;
 
     @RequestMapping(path="/createMessageType",method = RequestMethod.POST)
     //@ApiMethod(name = "createMessageType",desc = "createMessageType")
     //@ApiParam(name = "messageType",desc = "messageType",required = true)
     public Result<String> createMessageType(@RequestBody @NotNull @Valid MessageType messageType){
-        String id = messageTypeService.createMessageType(messageType);
+        String id = ocsMessageTypeService.createMessageType(messageType);
 
         return Result.ok(id);
     }
@@ -48,7 +48,7 @@ public class MessageTypeController {
     //@ApiMethod(name = "updateMessageType",desc = "updateMessageType")
     //@ApiParam(name = "messageType",desc = "messageType",required = true)
     public Result<Void> updateMessageType(@RequestBody @NotNull @Valid MessageType messageType){
-        messageTypeService.updateMessageType(messageType);
+        ocsMessageTypeService.updateMessageType(messageType);
 
         return Result.ok();
     }
@@ -57,7 +57,7 @@ public class MessageTypeController {
     //@ApiMethod(name = "deleteMessageType",desc = "deleteMessageType")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteMessageType(@NotNull String id){
-        messageTypeService.deleteMessageType(id);
+        ocsMessageTypeService.deleteMessageType(id);
 
         return Result.ok();
     }
@@ -66,7 +66,7 @@ public class MessageTypeController {
     //@ApiMethod(name = "findMessageType",desc = "findMessageType")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<MessageType> findMessageType(@NotNull String id){
-        MessageType messageType = messageTypeService.findMessageType(id);
+        MessageType messageType = ocsMessageTypeService.findMessageType(id);
 
         return Result.ok(messageType);
     }
@@ -74,7 +74,7 @@ public class MessageTypeController {
     @RequestMapping(path="/findAllMessageType",method = RequestMethod.POST)
     //@ApiMethod(name = "findAllMessageType",desc = "findAllMessageType")
     public Result<List<MessageType>> findAllMessageType(){
-        List<MessageType> messageTypeList = messageTypeService.findAllMessageType();
+        List<MessageType> messageTypeList = ocsMessageTypeService.findAllMessageType();
 
         return Result.ok(messageTypeList);
     }
@@ -84,7 +84,7 @@ public class MessageTypeController {
     //@ApiMethod(name = "findMessageTypeList",desc = "findMessageTypeList")
     //@ApiParam(name = "messageTypeQuery",desc = "messageTypeQuery",required = true)
     public Result<List<MessageType>> findMessageTypeList(@RequestBody @Valid @NotNull MessageTypeQuery messageTypeQuery){
-        List<MessageType> messageTypeList = messageTypeService.findMessageTypeList(messageTypeQuery);
+        List<MessageType> messageTypeList = ocsMessageTypeService.findMessageTypeList(messageTypeQuery);
 
         return Result.ok(messageTypeList);
     }
@@ -94,7 +94,7 @@ public class MessageTypeController {
     //@ApiMethod(name = "findMessageTypePage",desc = "findMessageTypePage")
     //@ApiParam(name = "messageTypeQuery",desc = "messageTypeQuery",required = true)
     public Result<Pagination<MessageType>> findMessageTypePage(@RequestBody @Valid @NotNull MessageTypeQuery messageTypeQuery){
-        Pagination<MessageType> pagination = messageTypeService.findMessageTypePage(messageTypeQuery);
+        Pagination<MessageType> pagination = ocsMessageTypeService.findMessageTypePage(messageTypeQuery);
 
         return Result.ok(pagination);
     }

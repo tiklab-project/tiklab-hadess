@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,21 +26,21 @@ import java.util.List;
  * Created by Zhangzhihua on 2017/9/25.
  */
 @RestController
-@RequestMapping("/message/messageTemplate")
+@RequestMapping("/ocs/message/messageTemplate")
 //@Api(name = "MessageTemplateController",desc = "消息模板管理")
-public class MessageTemplateController {
+public class OcsMessageTemplateController {
 
-    private static Logger logger = LoggerFactory.getLogger(MessageTemplateController.class);
+    private static Logger logger = LoggerFactory.getLogger(OcsMessageTemplateController.class);
 
-    @Autowired
-    @Reference(address = "${ocs.address}")
-    private MessageTemplateService messageTemplateService;
+    @Resource(name="ocsMessageTemplateService")
+
+    private MessageTemplateService ocsMessageTemplateService;
 
     @RequestMapping(path="/createMessageTemplate",method = RequestMethod.POST)
     //@ApiMethod(name = "createMessageTemplate",desc = "createMessageTemplate")
     //@ApiParam(name = "messageTemplate",desc = "messageTemplate",required = true)
     public Result<String> createMessageTemplate(@RequestBody @NotNull @Valid MessageTemplate messageTemplate){
-        String id = messageTemplateService.createMessageTemplate(messageTemplate);
+        String id = ocsMessageTemplateService.createMessageTemplate(messageTemplate);
 
         return Result.ok(id);
     }
@@ -48,7 +49,7 @@ public class MessageTemplateController {
     //@ApiMethod(name = "updateMessageTemplate",desc = "updateMessageTemplate")
     //@ApiParam(name = "messageTemplate",desc = "messageTemplate",required = true)
     public Result<Void> updateMessageTemplate(@RequestBody @NotNull @Valid MessageTemplate messageTemplate){
-        messageTemplateService.updateMessageTemplate(messageTemplate);
+        ocsMessageTemplateService.updateMessageTemplate(messageTemplate);
 
         return Result.ok();
     }
@@ -57,7 +58,7 @@ public class MessageTemplateController {
     //@ApiMethod(name = "deleteMessageTemplate",desc = "deleteMessageTemplate")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteMessageTemplate(@NotNull String id){
-        messageTemplateService.deleteMessageTemplate(id);
+        ocsMessageTemplateService.deleteMessageTemplate(id);
 
         return Result.ok();
     }
@@ -66,7 +67,7 @@ public class MessageTemplateController {
     //@ApiMethod(name = "findMessageTemplate",desc = "findMessageTemplate")
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<MessageTemplate> findMessageTemplate(@NotNull String id){
-        MessageTemplate messageTemplate = messageTemplateService.findMessageTemplate(id);
+        MessageTemplate messageTemplate = ocsMessageTemplateService.findMessageTemplate(id);
 
         return Result.ok(messageTemplate);
     }
@@ -74,7 +75,7 @@ public class MessageTemplateController {
     @RequestMapping(path="/findAllMessageTemplate",method = RequestMethod.POST)
     //@ApiMethod(name = "findAllMessageTemplate",desc = "findAllMessageTemplate")
     public Result<List<MessageTemplate>> findAllMessageTemplate(){
-        List<MessageTemplate> messageTemplateList = messageTemplateService.findAllMessageTemplate();
+        List<MessageTemplate> messageTemplateList = ocsMessageTemplateService.findAllMessageTemplate();
 
         return Result.ok(messageTemplateList);
     }
@@ -84,7 +85,7 @@ public class MessageTemplateController {
     //@ApiMethod(name = "findMessageTemplateList",desc = "findMessageTemplateList")
     //@ApiParam(name = "messageTemplateQuery",desc = "messageTemplateQuery",required = true)
     public Result<List<MessageTemplate>> findMessageTemplateList(@RequestBody @Valid @NotNull MessageTemplateQuery messageTemplateQuery){
-        List<MessageTemplate> messageTemplateList = messageTemplateService.findMessageTemplateList(messageTemplateQuery);
+        List<MessageTemplate> messageTemplateList = ocsMessageTemplateService.findMessageTemplateList(messageTemplateQuery);
 
         return Result.ok(messageTemplateList);
     }
@@ -94,7 +95,7 @@ public class MessageTemplateController {
     //@ApiMethod(name = "findMessageTemplatePage",desc = "findMessageTemplatePage")
     //@ApiParam(name = "messageTemplateQuery",desc = "messageTemplateQuery",required = true)
     public Result<Pagination<MessageTemplate>> findMessageTemplatePage(@RequestBody @Valid @NotNull MessageTemplateQuery messageTemplateQuery){
-        Pagination<MessageTemplate> pagination = messageTemplateService.findMessageTemplatePage(messageTemplateQuery);
+        Pagination<MessageTemplate> pagination = ocsMessageTemplateService.findMessageTemplatePage(messageTemplateQuery);
 
         return Result.ok(pagination);
     }

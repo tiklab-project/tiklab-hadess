@@ -11,6 +11,7 @@ import net.tiklab.message.mail.modal.MailCfg;
 import net.tiklab.message.mail.modal.MailCfgQuery;
 import net.tiklab.message.mail.modal.MailQuery;
 import net.tiklab.message.mail.service.MailCfgService;
+import net.tiklab.oms.rpcConfig.RpcConfig;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.rpc.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @RestController
-@RequestMapping("/message/mailcfg")
+@RequestMapping("/ocs/message/mailcfg")
 @Api(name = "MailCfgController",desc = "邮箱配置")
-public class MailCfgController {
+public class OcsMailCfgController {
 
-    @Autowired
-    @Reference(address = "${ocs.address}")
-    private MailCfgService mailCfgService;
-
+    @Resource(name="ocsMailCfgService")
+    MailCfgService ocsMailCfgService;
     @RequestMapping(path = "/findMailCfgPage",method = RequestMethod.POST)
     //@ApiMethod(name = "findMailCfgPage",desc = "分页查询邮箱配置数据")
     //@ApiParam(name = "mailCfgQuery",desc = "mailCfgQuery",required = true)
     public Result<Pagination<MailCfg>> findMailCfgPage(@RequestBody @Valid @NotNull MailCfgQuery mailCfgQuery) {
-        Pagination<MailCfg> pagination = mailCfgService.findMailCfgPage(mailCfgQuery);
+
+
+        Pagination<MailCfg> pagination = ocsMailCfgService.findMailCfgPage(mailCfgQuery);
         return Result.ok(pagination);
     }
 
@@ -45,11 +47,11 @@ public class MailCfgController {
     public Result<String> setMailConfig(@RequestBody @NotNull @Valid MailCfg mailCfg){
         MailQuery mailQuery = new MailQuery();
         mailQuery.setUserName(mailCfg.getUserName());
-        MailCfg hasAccount = mailCfgService.findMailAccount(mailQuery);
+        MailCfg hasAccount = ocsMailCfgService.findMailAccount(mailQuery);
         if (hasAccount !=null) {
             return Result.error(6000, "存在邮箱账号");
         }
-        String id = mailCfgService.createMailConfig(mailCfg);
+        String id = ocsMailCfgService.createMailConfig(mailCfg);
         return Result.ok(id);
     }
 
@@ -58,7 +60,7 @@ public class MailCfgController {
     //@ApiMethod(name = "delete",desc = "删除配置邮箱")
     //@ApiParam(name = "id",desc = "message config id",required = true)
     public Result<Void> setMailConfig(@NotNull @Valid String id){
-        mailCfgService.deleteMailCfg(id);
+        ocsMailCfgService.deleteMailCfg(id);
         return Result.ok();
     }
 
@@ -68,13 +70,13 @@ public class MailCfgController {
     public Result<Void> updateMailCfg(@RequestBody @NotNull @Valid MailCfg mailCfg) {
         MailQuery mailQuery = new MailQuery();
         mailQuery.setUserName(mailCfg.getUserName());
-        MailCfg hasAccount = mailCfgService.findMailAccount(mailQuery);
+        MailCfg hasAccount = ocsMailCfgService.findMailAccount(mailQuery);
         if (hasAccount !=null) {
             if (!hasAccount.getId().equals(mailCfg.getId())) {
                 return Result.error(6000, "存在邮箱账号");
             }
         }
-        mailCfgService.updateMailCfg(mailCfg);
+        ocsMailCfgService.updateMailCfg(mailCfg);
         return Result.ok();
     }
 

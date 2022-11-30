@@ -101,6 +101,7 @@ public class GatewayFilterAutoConfiguration {
                         "/message/mailcfg/config",
                         "/message/messageSendType/findMessageSendTypePage",
                         "/message/messageSendType/createMessageSendType",
+                        "/message/messageTemplate/findMessageTemplateList",
                         "/passport/member/authCodeLogin",
                         "/passport/member/logout",
                         "/passport/member/valid",
