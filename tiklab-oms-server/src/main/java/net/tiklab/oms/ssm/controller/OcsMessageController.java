@@ -53,14 +53,6 @@ public class OcsMessageController {
         return Result.ok(id);
     }
 
-    @RequestMapping(path="/updateMessage",method = RequestMethod.POST)
-    //@ApiMethod(name = "updateMessage",desc = "updateMessage")
-    //@ApiParam(name = "message",desc = "message",required = true)
-    public Result<Void> updateMessage(@RequestBody @NotNull @Valid Message message){
-        ocsMessageService.updateMessage(message);
-
-        return Result.ok();
-    }
 
     @RequestMapping(path="/deleteMessage",method = RequestMethod.POST)
     //@ApiMethod(name = "deleteMessage",desc = "deleteMessage")
@@ -76,16 +68,6 @@ public class OcsMessageController {
     //@ApiParam(name = "id",desc = "id",required = true)
     public Result<Message> findMessage(@NotNull String id){
         Message message = ocsMessageService.findMessage(id);
-
-        return Result.ok(message);
-    }
-
-
-    @RequestMapping(path="/findMessageWithNest",method = RequestMethod.POST)
-    //@ApiMethod(name = "findMessageWithNest",desc = "findMessageWithNest")
-    //@ApiParam(name = "id",desc = "id",required = true)
-    public Result<Message> findMessageWithNest(@NotNull String id){
-        Message message = ocsMessageService.findMessageWithNest(id);
 
         return Result.ok(message);
     }
