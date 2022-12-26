@@ -11,15 +11,15 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <groupId> net.tiklab</groupId>
-    <artifactId>tiklab-oms</artifactId>
+    <artifactId>tiklab-xpack</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>tiklab-oms-api</module>
-        <module>tiklab-oms-server</module>
-        <module>tiklab-oms-starter</module>
+        <module>tiklab-xpack-api</module>
+        <module>tiklab-xpack-server</module>
+        <module>tiklab-xpack-starter</module>
     </modules>
 
     <dependencyManagement>
