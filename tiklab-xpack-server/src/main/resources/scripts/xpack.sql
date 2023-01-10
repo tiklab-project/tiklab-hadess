@@ -9,9 +9,11 @@ CREATE TABLE pack_storage(
 CREATE TABLE pack_repository(
      id VARCHAR(32) PRIMARY KEY,
      name varchar (128) NOT NULL,
-     repository_type varchar(12),
+     repository_type varchar(12) NOT NULL,
+     repository_url varchar (64),
+     type varchar (12) NOT NULL,
      storage_id varchar (32) NOT NULL,
-     desc varchar(160),
+     description varchar(160),
      create_user varchar (32) NOT NULL,
      create_time timestamp,
      update_time timestamp
@@ -29,53 +31,24 @@ CREATE TABLE pack_repository_maven(
        verify varchar(8),
        create_time timestamp
 );
-CREATE TABLE pack_repository_local(
-      id VARCHAR(32) PRIMARY KEY,
-      repository_id varchar (32) NOT NULL,
-      repository_url varchar(32),
-      type varchar(12) NOT NULL,
-      create_time timestamp
-);
-CREATE TABLE pack_repository_remote(
-      id VARCHAR(32) PRIMARY KEY,
-      repository_id varchar (32) NOT NULL,
-      repository_url varchar(32),
-      type varchar(12) NOT NULL,
-      create_time timestamp
-);
-CREATE TABLE pack_repository_group(
-    id VARCHAR(32) PRIMARY KEY,
-    repository_id varchar (32) NOT NULL,
-    repository_url varchar(32),
-    type varchar(12) NOT NULL,
-    create_time timestamp
-);
 
 CREATE TABLE pack_repository_remote_proxy(
       id VARCHAR(32) PRIMARY KEY,
       repository_id varchar (32) NOT NULL,
-      repository_remote_id (32) NOT NULL,
       agency_url varchar (32) NOT NULL,
       agency_name varchar (32),
       user_name varchar(16),
       password varchar (16),
-      create_time timestamp
+      create_time timestamp,
+      update_time timestamp
 );
 CREATE TABLE pack_repository_group_items(
      id VARCHAR(32) PRIMARY KEY,
      repository_group_id varchar (32) NOT NULL,
-     repository_remote_id (32) NOT NULL,
-     repository_local_id (32) NOT NULL,
+     repository_remote_id varchar (32) NOT NULL,
+     repository_local_id varchar (32) NOT NULL,
      create_time timestamp,
      update_time timestamp
-);
-CREATE TABLE pack_repository_group_items(
-    id VARCHAR(32) PRIMARY KEY,
-    repository_group_id varchar (32) NOT NULL,
-    repository_remote_id (32) NOT NULL,
-    repository_local_id (32) NOT NULL,
-    create_time timestamp,
-    update_time timestamp
 );
 CREATE TABLE pack_repository_cluster_cfg(
     id VARCHAR(32) PRIMARY KEY,
@@ -94,8 +67,9 @@ CREATE TABLE pack_repository_cluster_cfg(
 CREATE TABLE pack_library(
     id VARCHAR(32) PRIMARY KEY,
     name varchar (32) NOT NULL,
-    type varchar (12) NOT NULL,
+    library_type varchar (12) NOT NULL,
     repository_id varchar (32) NOT NULL,
+    new_version varchar (32),
     create_time timestamp,
     update_time timestamp
 );
@@ -110,6 +84,16 @@ CREATE TABLE pack_library_version(
      push_time timestamp,
      create_time timestamp,
      update_time timestamp
+
+);
+CREATE TABLE pack_library_file(
+      id VARCHAR(32) PRIMARY KEY,
+      library_id varchar(32) NOT NULL,
+      library_version_id varchar(32) NOT NULL,
+      file_size varchar (32) NOT NULL,
+      file_name varchar (32) NOT NULL,
+      file_url varchar (128) NOT NULL,
+      create_time  timestamp
 );
 CREATE TABLE pack_library_pulls(
      id VARCHAR(32) PRIMARY KEY,

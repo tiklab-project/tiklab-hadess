@@ -130,7 +130,10 @@ public class GatewayFilterAutoConfiguration {
                         "/image",
                         "/plugin",
                         "/authConfig",
-                        "/services"
+                        "/services",
+                        "/repository",
+                        "/library"
+
                 })
                 .get();
     }

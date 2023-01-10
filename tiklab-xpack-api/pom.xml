@@ -29,6 +29,11 @@
             <artifactId>tiklab-tks-annotation</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId> net.tiklab</groupId>
+            <artifactId>tiklab-user-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
