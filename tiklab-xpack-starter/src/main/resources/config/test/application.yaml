@@ -97,3 +97,5 @@ portal:
   return:
     path: ""
 
+repository:
+  library: /usr/local/repository
