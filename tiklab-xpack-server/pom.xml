@@ -14,10 +14,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -129,11 +126,6 @@
             <version>${project.version}</version>
         </dependency>
         <!--其他引入-->
-        <dependency>
-            <groupId> net.tiklab</groupId>
-            <artifactId>tiklab-xpack</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId> net.tiklab</groupId>
@@ -198,7 +190,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

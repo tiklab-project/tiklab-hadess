@@ -11,6 +11,7 @@ import net.tiklab.integration.starter.EnableIntegration;
 import  net.tiklab.licence.starter.EnableLicenceServer;
 import net.tiklab.logging.stater.EnableLog;
 import net.tiklab.message.starter.EnableMessage;
+import net.tiklab.mysql.starter.EnableMysql;
 import net.tiklab.xpack.annotation.EnableXpackServer;
 import net.tiklab.privilege.stater.EnablePrivilegeServer;
 import  net.tiklab.rpc.starter.annotation.EnableRpc;
@@ -26,12 +27,15 @@ import org.springframework.context.annotation.Configuration;
 //common
 @EnableTks
 @EnableWeb
+@EnableMysql
 @EnableDal
 @EnableDss
 @EnableDfs
 @EnableDcs
 @EnableDsm
 @EnableRpc
+
+
 
 //eam
 @EnableEam

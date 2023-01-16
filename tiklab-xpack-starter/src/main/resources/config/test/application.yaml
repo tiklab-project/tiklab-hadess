@@ -8,7 +8,7 @@ spring:
 
 #web config
 server:
-  port: 8083
+  port: 8080
 
 #dal config
 
@@ -26,6 +26,7 @@ DATA_HOME: ${user.home}/tiklab/${app.name}
 mysql:
   embbed:
     enable: false
+  database: tiklab_xcode
   server:
     port: 3306
   version: mysql-8.0.28

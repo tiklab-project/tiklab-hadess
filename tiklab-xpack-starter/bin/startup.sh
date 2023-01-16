@@ -3,9 +3,20 @@
 #该脚本的使用方式为-->[sh startup.sh]
 #该脚本可在服务器上的任意目录下执行,不会影响到日志的输出位置等
 #-------------------------------------------------------------------------------------------------------------
-if [ ! -n "$JAVA_HOME" ]; then
-    export JAVA_HOME="/export/server/jdk1.8.0_141"
+DIRS=$(dirname "$PWD")
+
+APP_MAIN="net.tiklab.xcode.XcodeApplication"
+JAVA_HOME="/usr/local/jdk-16.0.2"
+
+JDK_VERSION=jdk-16.0.2
+
+#判断是否自定义jdk
+JAVA_HOME="/usr/local/${JDK_VERSION}"
+if [ -e "${DIRS}/embbed/${JDK_VERSION}" ]; then
+      JAVA_HOME="${DIRS}/embbed/${JDK_VERSION}"
 fi
+
+find ${DIRS}/ -name '*.sh' | xargs dos2unix;
 
 #-------------------------------------------------------------------------------------------------------------
 #       系统运行参数

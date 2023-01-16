@@ -146,15 +146,29 @@ public class LibraryServiceImpl implements LibraryService {
         if (!file.exists()){
             file.createNewFile();
         }
-        BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        //写入内容
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 
-        while((line=reader.readLine())!=null){
-            writer.write(line+"\n");
+        int available = inputStream.available();
+        boolean endsWith = contextPath.endsWith(".jar");
+        if (endsWith){
+            //jar文件用FileOutputStream 写入
+            FileOutputStream fos = new FileOutputStream(filePath);
+            byte[] b = new byte[1024];
+            while ((inputStream.read(b)) != -1) {
+                fos.write(b);// 写入数据
+            }
+            inputStream.close();
+            fos.close();// 保存数据
+        }else {
+            String line=null;
+            BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+            //写入内容
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+
+            while((line=reader.readLine())!=null){
+                writer.write(line+"\n");
+            }
+            writer.close();
         }
-        writer.close();
 
         //创建制品
         librarySplice(contextPath);

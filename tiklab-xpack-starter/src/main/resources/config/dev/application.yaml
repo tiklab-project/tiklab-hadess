@@ -27,8 +27,7 @@ mysql:
     enable: false
   server:
     port: 3306
-  version: mysql-8.0.28
-  name: tiklab_oms
+ database: tiklab_xcode
 
 #eas config
 eas:
