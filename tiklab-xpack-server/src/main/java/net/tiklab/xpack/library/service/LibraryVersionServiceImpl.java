@@ -6,6 +6,8 @@ import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
 import net.tiklab.xpack.library.dao.LibraryVersionDao;
 import net.tiklab.xpack.library.entity.LibraryVersionEntity;
+import net.tiklab.xpack.library.model.LibraryMaven;
+import net.tiklab.xpack.library.model.LibraryMavenQuery;
 import net.tiklab.xpack.library.model.LibraryVersion;
 import net.tiklab.xpack.library.model.LibraryVersionQuery;
 
@@ -33,6 +35,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Autowired
     JoinTemplate joinTemplate;
+
+    @Autowired
+    LibraryMavenService libraryMavenService;
 
     @Override
     public String createLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion) {
@@ -119,6 +124,11 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         if (CollectionUtils.isNotEmpty(libraryVersionList)){
             List<LibraryVersion> versions = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
              libraryVersion = versions.get(0);
+            List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
+            if (CollectionUtils.isNotEmpty(libraryMavenList)){
+                libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
+                libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+            }
         }
         return libraryVersion;
     }

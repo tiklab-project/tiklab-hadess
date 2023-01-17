@@ -53,6 +53,9 @@ public class LibraryServiceImpl implements LibraryService {
     @Value("${repository.library:null}")
     String repositoryLibrary;
 
+    @Value("${repository.test:null}")
+    String testLibrary;
+
     @Override
     public String createLibrary(@NotNull @Valid Library library) {
         LibraryEntity libraryEntity = BeanMapper.map(library, LibraryEntity.class);
@@ -133,21 +136,20 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public void mavenSubmit(String contextPath, OutputStream outputStream, InputStream inputStream) throws IOException {
+       String test =testLibrary;
+
         String url = StringUtils.substringBeforeLast(contextPath, "/");
         String path=repositoryLibrary+url;
 
         File folder = new File(path);
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
-            System.out.println("创建文件夹");
         }
         String filePath=repositoryLibrary+contextPath;
         File file = new File(filePath);
         if (!file.exists()){
             file.createNewFile();
         }
-
-        int available = inputStream.available();
         boolean endsWith = contextPath.endsWith(".jar");
         if (endsWith){
             //jar文件用FileOutputStream 写入
@@ -240,11 +242,15 @@ public class LibraryServiceImpl implements LibraryService {
      * @return
      */
     public void libraryMavenSplice(String artifactId,String groupId, Library library ){
-        LibraryMaven libraryMaven = new LibraryMaven();
-        libraryMaven.setArtifactId(artifactId);
-        libraryMaven.setGroupId(groupId);
-        libraryMaven.setLibrary(library);
-        libraryMavenService.createLibraryMaven(libraryMaven);
+        List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId())
+                .setArtifactId(artifactId).setGroupId(groupId));
+        if (CollectionUtils.isEmpty(libraryMavenList)){
+            LibraryMaven libraryMaven = new LibraryMaven();
+            libraryMaven.setArtifactId(artifactId);
+            libraryMaven.setGroupId(groupId);
+            libraryMaven.setLibrary(library);
+            libraryMavenService.createLibraryMaven(libraryMaven);
+        }
     }
 
     /**

@@ -70,6 +70,14 @@ public class LibraryVersion extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
     private java.sql.Timestamp updateTime;
 
+
+    /*--------------其他字段-------------*/
+    @ApiProperty(name="groupId",desc="groupId")
+    private java.lang.String groupId;
+
+    @ApiProperty(name="artifactId",desc="artifactId")
+    private java.lang.String artifactId;
+
     public java.lang.String getId() {
         return id;
     }
@@ -144,5 +152,21 @@ public class LibraryVersion extends BaseModel {
 
     public void setUpdateTime(java.sql.Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 }

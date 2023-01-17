@@ -3,6 +3,8 @@ package net.tiklab.xpack.library.dao;
 import net.tiklab.core.page.Pagination;
 import net.tiklab.dal.jpa.JpaTemplate;
 import net.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import net.tiklab.dal.jpa.criterial.condition.QueryCondition;
+import net.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import net.tiklab.xpack.library.entity.LibraryMavenEntity;
 import net.tiklab.xpack.library.model.LibraryMavenQuery;
 import org.slf4j.Logger;
@@ -74,10 +76,23 @@ public class LibraryMavenDao{
     }
 
     public List<LibraryMavenEntity> findLibraryMavenList(LibraryMavenQuery libraryMavenQuery) {
-        return jpaTemplate.findList(libraryMavenQuery,LibraryMavenEntity.class);
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryMavenEntity.class)
+                .eq("libraryId", libraryMavenQuery.getLibraryId())
+                .eq("groupId", libraryMavenQuery.getGroupId())
+                .eq("artifactId", libraryMavenQuery.getArtifactId())
+                .orders(libraryMavenQuery.getOrderParams())
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryMavenEntity.class);
     }
 
     public Pagination<LibraryMavenEntity> findLibraryMavenPage(LibraryMavenQuery libraryMavenQuery) {
-        return jpaTemplate.findPage(libraryMavenQuery,LibraryMavenEntity.class);
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryMavenEntity.class)
+                .eq("libraryId", libraryMavenQuery.getLibraryId())
+                .eq("groupId", libraryMavenQuery.getGroupId())
+                .eq("artifactId", libraryMavenQuery.getArtifactId())
+                .orders(libraryMavenQuery.getOrderParams())
+                .pagination(libraryMavenQuery.getPageParam())
+                .get();
+        return jpaTemplate.findPage(queryCondition,LibraryMavenEntity.class);
     }
 }
