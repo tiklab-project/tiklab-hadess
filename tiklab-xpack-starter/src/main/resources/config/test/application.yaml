@@ -98,4 +98,4 @@ portal:
     path: ""
 
 repository:
-  library: /Usr/local/repository
+  library: /usr/local/repository
