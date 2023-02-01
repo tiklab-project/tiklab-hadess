@@ -85,6 +85,7 @@ public class LibraryServiceImpl implements LibraryService {
         LibraryEntity libraryEntity = libraryDao.findLibrary(id);
 
         Library library = BeanMapper.map(libraryEntity, Library.class);
+
         return library;
     }
 
@@ -143,9 +144,8 @@ public class LibraryServiceImpl implements LibraryService {
        String test =testLibrary;
         logger.warn("传入路径:{}",contextPath);
         String url = StringUtils.substringBeforeLast(contextPath, "/");
-        logger.info("传入路径url:{}",url);
         String path=repositoryLibrary+url;
-
+        logger.warn("传入路径repositoryLibrary:{}",repositoryLibrary);
         File folder = new File(path);
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();

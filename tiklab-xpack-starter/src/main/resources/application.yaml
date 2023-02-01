@@ -77,4 +77,5 @@ licences:
   path: ${DATA_HOME}/data/dfs/default
 
 
-
+repository:
+  library: ${user.home}

@@ -27,6 +27,9 @@ public class LibraryQuery {
         @ApiProperty(name ="name",desc = "制品名称")
         private String name;
 
+        @ApiProperty(name ="newVersion",desc = "最新版本")
+        private String newVersion;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -65,6 +68,15 @@ public class LibraryQuery {
 
         public LibraryQuery setName(String name) {
             this.name = name;
+            return this;
+        }
+
+        public String getNewVersion() {
+            return newVersion;
+        }
+
+        public LibraryQuery setNewVersion(String newVersion) {
+            this.newVersion = newVersion;
             return this;
         }
 }

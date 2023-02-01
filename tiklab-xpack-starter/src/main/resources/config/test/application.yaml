@@ -94,4 +94,4 @@ template:
     path: ${APP_HOME}/script/create_db_local_02.sh
 
 repository:
-  library: ${user.home}/repository
+  library: ${user.home}

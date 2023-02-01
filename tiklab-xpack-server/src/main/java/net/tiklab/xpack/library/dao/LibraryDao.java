@@ -81,6 +81,7 @@ public class LibraryDao{
                 .eq("repositoryId",libraryQuery.getRepositoryId())
                 .eq("libraryType",libraryQuery.getLibraryType())
                 .like("name",libraryQuery.getName())
+                .eq("newVersion",libraryQuery.getNewVersion())
                 .orders(libraryQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
@@ -91,6 +92,7 @@ public class LibraryDao{
                 .eq("repositoryId",libraryQuery.getRepositoryId())
                 .eq("libraryType",libraryQuery.getLibraryType())
                 .like("name",libraryQuery.getName())
+                .eq("newVersion",libraryQuery.getNewVersion())
                 .orders(libraryQuery.getOrderParams())
                 .pagination(libraryQuery.getPageParam())
                 .get();

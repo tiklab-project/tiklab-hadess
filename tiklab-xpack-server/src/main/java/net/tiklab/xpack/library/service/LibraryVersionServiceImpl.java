@@ -64,6 +64,12 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         LibraryVersionEntity libraryVersionEntity = libraryVersionDao.findLibraryVersion(id);
 
         LibraryVersion libraryVersion = BeanMapper.map(libraryVersionEntity, LibraryVersion.class);
+
+        List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
+        if (CollectionUtils.isNotEmpty(libraryMavenList)){
+            libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
+            libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+        }
         return libraryVersion;
     }
 
@@ -124,11 +130,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         if (CollectionUtils.isNotEmpty(libraryVersionList)){
             List<LibraryVersion> versions = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
              libraryVersion = versions.get(0);
-            List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
-            if (CollectionUtils.isNotEmpty(libraryMavenList)){
-                libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
-                libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
-            }
         }
         return libraryVersion;
     }

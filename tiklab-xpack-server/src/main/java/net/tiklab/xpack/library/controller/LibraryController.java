@@ -88,7 +88,6 @@ public class LibraryController {
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<List<Library>> findLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         List<Library> libraryList = libraryService.findLibraryList(libraryQuery);
-
         return Result.ok(libraryList);
     }
 
