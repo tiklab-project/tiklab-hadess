@@ -5,6 +5,7 @@ import net.tiklab.core.page.Pagination;
 import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
 import net.tiklab.user.user.model.User;
+import net.tiklab.xpack.library.controller.LibraryController;
 import net.tiklab.xpack.library.dao.LibraryDao;
 import net.tiklab.xpack.library.entity.LibraryEntity;
 import net.tiklab.xpack.library.model.*;
@@ -14,6 +15,8 @@ import net.tiklab.xpack.repository.model.RepositoryQuery;
 import net.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ import org.springframework.beans.BeanUtils;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
+    private static Logger logger = LoggerFactory.getLogger(LibraryServiceImpl.class);
     @Autowired
     LibraryDao libraryDao;
 
@@ -137,8 +141,9 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public void mavenSubmit(String contextPath, OutputStream outputStream, InputStream inputStream) throws IOException {
        String test =testLibrary;
-
+        logger.warn("传入路径:{}",contextPath);
         String url = StringUtils.substringBeforeLast(contextPath, "/");
+        logger.info("传入路径url:{}",url);
         String path=repositoryLibrary+url;
 
         File folder = new File(path);

@@ -28,7 +28,7 @@ CREATE TABLE pack_repository_docker(
 CREATE TABLE pack_repository_maven(
        id VARCHAR(32) PRIMARY KEY,
        repository_id varchar (32) NOT NULL,
-       verify varchar(8),
+       verify varchar(12),
        create_time timestamp
 );
 
@@ -67,9 +67,9 @@ CREATE TABLE pack_repository_cluster_cfg(
 CREATE TABLE pack_library(
     id VARCHAR(32) PRIMARY KEY,
     name varchar (32) NOT NULL,
-    library_type varchar (12) NOT NULL,
+    library_type varchar (32) NOT NULL,
     repository_id varchar (32) NOT NULL,
-    new_version varchar (32),
+    new_version varchar (64),
     create_time timestamp,
     update_time timestamp
 );
@@ -77,7 +77,7 @@ CREATE TABLE pack_library_version(
      id VARCHAR(32) PRIMARY KEY,
      library_id varchar (32) NOT NULL,
      repository_id varchar(32) NOT NULL,
-     version varchar(12) NOT NULL,
+     version varchar(64) NOT NULL,
      size varchar(12),
      hash varchar (32),
      pusher varchar(32),
@@ -91,7 +91,7 @@ CREATE TABLE pack_library_file(
       library_id varchar(32) NOT NULL,
       library_version_id varchar(32) NOT NULL,
       file_size varchar (32) NOT NULL,
-      file_name varchar (32) NOT NULL,
+      file_name varchar (64) NOT NULL,
       file_url varchar (128) NOT NULL,
       create_time  timestamp
 );

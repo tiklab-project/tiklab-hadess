@@ -106,8 +106,8 @@ public class LibraryController {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Result<Repository> mavenSubmit(HttpServletRequest request, HttpServletResponse response){
 
-
         String contextPath = request.getRequestURI();
+
         OutputStream outputStream=null;
         InputStream inputStream=null;
         try {

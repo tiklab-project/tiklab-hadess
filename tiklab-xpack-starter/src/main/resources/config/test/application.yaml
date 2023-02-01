@@ -93,9 +93,5 @@ template:
   shell:
     path: ${APP_HOME}/script/create_db_local_02.sh
 
-portal:
-  return:
-    path: ""
-
 repository:
   library: ${user.home}/repository

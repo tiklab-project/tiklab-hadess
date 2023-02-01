@@ -4,8 +4,6 @@ app:
   path: ${APP_HOME}
 
 spring:
-  profiles:
-    active: prd
   config:
     import: optional:classpath:/config/${env:dev}/application.yaml
 #web config
@@ -51,7 +49,7 @@ mysql:
     enable: false
   server:
     port: 3306
-  database: tiklab_xcode
+  database: tiklab_xpack
 
 #eas config
 eas:
@@ -78,17 +76,5 @@ homes:
 licences:
   path: ${DATA_HOME}/data/dfs/default
 
-db:
-  path: 101.132.162.74:3306
-  shell:
-    path: ${APP_HOME}/script/create_db_local_02.sh
 
-
-template:
-  shell:
-    path: ${APP_HOME}/script/create_db_local_03.sh
-
-portal:
-  return:
-    path: ""
 
