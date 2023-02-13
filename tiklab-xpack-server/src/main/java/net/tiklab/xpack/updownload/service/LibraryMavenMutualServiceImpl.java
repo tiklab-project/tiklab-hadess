@@ -96,7 +96,7 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
     @Override
     public byte[] mavenInstall(String contextPath) {
         String mavenInstall = contextPath.substring(contextPath.indexOf("maven-install")+13);
-        String fileUrl=repositoryLibrary+"/test"+mavenInstall;
+        String fileUrl=repositoryLibrary+mavenInstall;
         try {
             byte[] bytes = readFileContent(fileUrl);
             return bytes;
