@@ -20,6 +20,9 @@ public class LibraryVersionEntity extends BaseModel {
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 
+    @Column(name = "library_type",length = 32,notNull = true)
+    private String libraryType;
+
     @Column(name = "version",length = 32,notNull = true)
     private String version;
 
@@ -31,6 +34,9 @@ public class LibraryVersionEntity extends BaseModel {
 
     @Column(name = "pusher",length = 32)
     private String pusher;
+
+    @Column(name = "Content_json")
+    private String contentJson;
 
     @Column(name = "push_time")
     private Timestamp pushTime;
@@ -120,5 +126,21 @@ public class LibraryVersionEntity extends BaseModel {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getLibraryType() {
+        return libraryType;
+    }
+
+    public void setLibraryType(String libraryType) {
+        this.libraryType = libraryType;
+    }
+
+    public String getContentJson() {
+        return contentJson;
+    }
+
+    public void setContentJson(String contentJson) {
+        this.contentJson = contentJson;
     }
 }

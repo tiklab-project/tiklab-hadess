@@ -45,8 +45,7 @@ CREATE TABLE pack_repository_remote_proxy(
 CREATE TABLE pack_repository_group_items(
      id VARCHAR(32) PRIMARY KEY,
      repository_group_id varchar (32) NOT NULL,
-     repository_remote_id varchar (32) NOT NULL,
-     repository_local_id varchar (32) NOT NULL,
+     repository_id varchar (32) NOT NULL,
      create_time timestamp,
      update_time timestamp
 );
@@ -77,10 +76,12 @@ CREATE TABLE pack_library_version(
      id VARCHAR(32) PRIMARY KEY,
      library_id varchar (32) NOT NULL,
      repository_id varchar(32) NOT NULL,
+     library_type varchar (32) NOT NULL,
      version varchar(64) NOT NULL,
      size varchar(12),
      hash varchar (32),
      pusher varchar(32),
+     content_json longtext,
      push_time timestamp,
      create_time timestamp,
      update_time timestamp

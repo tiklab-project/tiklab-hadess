@@ -31,6 +31,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     JoinTemplate joinTemplate;
 
+    @Autowired
+    RepositoryGroupItemsService groupItemsService;
+
     @Value("${repository.library:null}")
     String repositoryLibrary;
 
@@ -55,6 +58,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Override
     public void deleteRepository(@NotNull String id) {
         repositoryDao.deleteRepository(id);
+
+        groupItemsService.deleteRepositoryGroupItems(id);
     }
 
     @Override

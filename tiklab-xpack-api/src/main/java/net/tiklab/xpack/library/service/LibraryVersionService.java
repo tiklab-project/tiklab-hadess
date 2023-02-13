@@ -6,8 +6,10 @@ import net.tiklab.join.annotation.FindAll;
 import net.tiklab.join.annotation.FindList;
 import net.tiklab.join.annotation.FindOne;
 import net.tiklab.join.annotation.JoinProvider;
+import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryVersion;
 import net.tiklab.xpack.library.model.LibraryVersionQuery;
+import net.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -76,4 +78,11 @@ public interface LibraryVersionService {
      * @return
      */
     LibraryVersion findLibraryNewVersion(LibraryVersionQuery libraryVersionQuery);
+
+    /**
+     *  制品版本创建、修改
+     * @param libraryVersion    制品版本数据
+     * @return
+     */
+     String libraryVersionSplice( LibraryVersion libraryVersion);
 }

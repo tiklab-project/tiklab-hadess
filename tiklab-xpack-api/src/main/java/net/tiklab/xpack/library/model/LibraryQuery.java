@@ -30,6 +30,20 @@ public class LibraryQuery {
         @ApiProperty(name ="newVersion",desc = "最新版本")
         private String newVersion;
 
+        /*-----------其他字段------------*/
+
+
+        @ApiProperty(name ="repositoryIds",desc = "制品库ids")
+        private List<String> repositoryIds;
+
+        @ApiProperty(name ="groupId",desc = "groupId")
+        private String groupId;
+
+        @ApiProperty(name ="artifactId",desc = "artifactId")
+        private String artifactId;
+
+
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -50,8 +64,9 @@ public class LibraryQuery {
             return repositoryId;
         }
 
-        public void setRepositoryId(String repositoryId) {
+        public LibraryQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
         }
 
         public String getLibraryType() {
@@ -78,5 +93,29 @@ public class LibraryQuery {
         public LibraryQuery setNewVersion(String newVersion) {
             this.newVersion = newVersion;
             return this;
+        }
+
+        public List<String> getRepositoryIds() {
+            return repositoryIds;
+        }
+
+        public void setRepositoryIds(List<String> repositoryIds) {
+            this.repositoryIds = repositoryIds;
+        }
+
+        public String getGroupId() {
+                return groupId;
+            }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
         }
 }

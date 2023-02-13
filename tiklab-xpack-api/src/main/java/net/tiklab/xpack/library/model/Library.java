@@ -49,6 +49,14 @@ public class Library extends BaseModel {
     @ApiProperty(name="newVersion",desc="最新版本")
     private java.lang.String newVersion;
 
+    /*---------其他字段----------*/
+    @ApiProperty(name="groupId",desc="groupId")
+    private java.lang.String groupId;
+
+    @ApiProperty(name="artifactId",desc="artifactId")
+    private java.lang.String artifactId;
+
+
     public java.lang.String getId() {
         return id;
     }
@@ -100,5 +108,21 @@ public class Library extends BaseModel {
 
     public void setNewVersion(String newVersion) {
         this.newVersion = newVersion;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 }

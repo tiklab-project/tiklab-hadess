@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -128,4 +132,26 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         }
         return libraryFileList;
     }
+
+    /**
+     *  制品文件创建、修改
+     *  @param libraryFile     制品文件
+     *  @param versionId   制品版本id
+     * @return
+     */
+    public void libraryFileSplice(LibraryFile libraryFile,String versionId){
+        LibraryVersion libraryVersion = new LibraryVersion();
+        libraryVersion.setId(versionId);
+        libraryFile.setLibraryVersion(libraryVersion);
+
+        List<LibraryFile> libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(versionId)
+                .setFileName(libraryFile.getFileName()));
+        if (CollectionUtils.isNotEmpty(libraryFileList)){
+            libraryFile.setId(libraryFileList.get(0).getId());
+            this.updateLibraryFile(libraryFile);
+        }else {
+            this.createLibraryFile(libraryFile);
+        }
+    }
+
 }

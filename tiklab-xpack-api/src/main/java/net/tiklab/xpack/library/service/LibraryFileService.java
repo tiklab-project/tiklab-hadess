@@ -69,4 +69,13 @@ public interface LibraryFileService {
      * @return
      */
     List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery);
+
+    /**
+     * 查询最新版本的文件列表
+     * @param libraryFile
+     * @param versionId
+     * @return
+     */
+     void libraryFileSplice(LibraryFile libraryFile,String versionId);
+
 }

@@ -8,6 +8,7 @@ import net.tiklab.join.annotation.FindOne;
 import net.tiklab.join.annotation.JoinProvider;
 import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryQuery;
+import net.tiklab.xpack.repository.model.Repository;
 import net.tiklab.xpack.repository.model.Storage;
 
 import javax.validation.Valid;
@@ -69,6 +70,14 @@ public interface LibraryService {
     */
     List<Library> findLibraryList(LibraryQuery libraryQuery);
 
+
+    /**
+     * 查询maven制品
+     * @param libraryQuery
+     * @return
+     */
+    List<Library> findMavenLibraryList(LibraryQuery libraryQuery);
+
     /**
     * 按分页查询
     * @param libraryQuery
@@ -77,9 +86,37 @@ public interface LibraryService {
     Pagination<Library> findLibraryPage(LibraryQuery libraryQuery);
 
     /**
-     * 按分页查询
+     * maven提交
      * @param contextPath
      * @return
      */
-    void mavenSubmit(String contextPath, OutputStream outputStream, InputStream inputStream) throws IOException;
+    void mavenSubmit(String contextPath,  InputStream inputStream) throws IOException;
+
+    /**
+     * maven拉取
+     * @param contextPath
+     * @return
+     */
+    byte[] mavenInstall(String contextPath);
+
+
+
+    /**
+     * npm 拉取
+     * @param contextPath
+     * @return
+     */
+    Object npmPull(String contextPath);
+
+    /**
+     *  制品创建
+     * @param libraryName     制品文件
+     * @param libraryType  制品类型
+     * @param repository  制品库信息
+     * @return
+     */
+     Library createLibraryData(String libraryName, String libraryType, Repository repository);
+
+
+
 }

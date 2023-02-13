@@ -119,7 +119,7 @@ public class GatewayFilterAutoConfiguration {
                         "/artifact/findNewArtifactPage",
                         "/sockjs-node/info",
                         "/eam/auth/login",
-
+                        "/libraryFile/tag",
 
                 })
                 .ignorePreUrls(new String[]{
@@ -132,7 +132,8 @@ public class GatewayFilterAutoConfiguration {
                         "/authConfig",
                         "/services",
                         "/repository",
-                        "/library"
+                        "/library",
+
 
                 })
                 .get();

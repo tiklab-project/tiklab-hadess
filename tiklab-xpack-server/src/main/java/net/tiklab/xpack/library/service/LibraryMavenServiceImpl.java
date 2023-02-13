@@ -6,9 +6,11 @@ import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
 import net.tiklab.xpack.library.dao.LibraryMavenDao;
 import net.tiklab.xpack.library.entity.LibraryMavenEntity;
+import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryMaven;
 import net.tiklab.xpack.library.model.LibraryMavenQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -106,5 +108,32 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
         joinTemplate.joinQuery(libraryMavenList);
 
         return PaginationBuilder.build(pagination,libraryMavenList);
+    }
+
+    public void libraryMavenSplice(String artifactId, String[]  single, Library library ){
+        int length = single.length;
+        String groupId=null;
+        for (int a= 1; a<length-3-3;a++){
+            String s = single[3 + a];
+            if (groupId==null){
+                groupId=s+".";
+            }else {
+                if(a==length-7){
+                    groupId =  groupId+s;
+                }else {
+                    groupId =  groupId+s+".";
+                }
+
+            }
+        }
+        List<LibraryMaven> libraryMavenList = this.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId())
+                .setArtifactId(artifactId).setGroupId(groupId));
+        if (CollectionUtils.isEmpty(libraryMavenList)){
+            LibraryMaven libraryMaven = new LibraryMaven();
+            libraryMaven.setArtifactId(artifactId);
+            libraryMaven.setGroupId(groupId);
+            libraryMaven.setLibrary(library);
+            this.createLibraryMaven(libraryMaven);
+        }
     }
 }

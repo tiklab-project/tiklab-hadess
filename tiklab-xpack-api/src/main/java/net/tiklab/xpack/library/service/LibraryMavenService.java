@@ -2,6 +2,7 @@ package net.tiklab.xpack.library.service;
 
 
 import net.tiklab.core.page.Pagination;
+import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryMaven;
 import net.tiklab.xpack.library.model.LibraryMavenQuery;
 
@@ -63,5 +64,14 @@ public interface LibraryMavenService {
     * @return
     */
     Pagination<LibraryMaven> findLibraryMavenPage(LibraryMavenQuery libraryMavenQuery);
+
+    /**
+     *  制品maven创建、修改
+     * @param artifactId     artifactId
+     * @param single  single
+     * @param library  library
+     * @return
+     */
+    void libraryMavenSplice(String artifactId, String[]  single, Library library );
 
 }

@@ -1,4 +1,4 @@
-package net.tiklab.xpack.library.entity;
+package net.tiklab.xpack.repository.entity;
 
 import net.tiklab.core.BaseModel;
 import net.tiklab.dal.jpa.annotation.*;
@@ -6,25 +6,19 @@ import net.tiklab.dal.jpa.annotation.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name="pack_library")
-public class LibraryEntity extends BaseModel {
+@Table(name="pack_repository_group_items")
+public class RepositoryGroupItemsEntity extends BaseModel {
 
     @Id
     @GeneratorValue
     @Column(name = "id",length = 32)
     private String id;
 
-    @Column(name = "name",length = 128,notNull = true)
-    private String name;
-
-    @Column(name = "library_type",length = 32,notNull = true)
-    private String libraryType;
-
-    @Column(name = "new_version",length = 32)
-    private String newVersion;
+    @Column(name = "repository_group_id",length = 32,notNull = true)
+    private String  repositoryGroupId;
 
     @Column(name = "repository_id",length = 32,notNull = true)
-    private String repositoryId;
+    private String  repositoryId;
 
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -40,20 +34,12 @@ public class LibraryEntity extends BaseModel {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRepositoryGroupId() {
+        return repositoryGroupId;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLibraryType() {
-        return libraryType;
-    }
-
-    public void setLibraryType(String libraryType) {
-        this.libraryType = libraryType;
+    public void setRepositoryGroupId(String repositoryGroupId) {
+        this.repositoryGroupId = repositoryGroupId;
     }
 
     public String getRepositoryId() {
@@ -78,13 +64,5 @@ public class LibraryEntity extends BaseModel {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getNewVersion() {
-        return newVersion;
-    }
-
-    public void setNewVersion(String newVersion) {
-        this.newVersion = newVersion;
     }
 }

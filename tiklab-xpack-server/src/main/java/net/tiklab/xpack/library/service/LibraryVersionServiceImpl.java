@@ -4,13 +4,12 @@ import net.tiklab.beans.BeanMapper;
 import net.tiklab.core.page.Pagination;
 import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
+import net.tiklab.user.user.model.User;
 import net.tiklab.xpack.library.dao.LibraryVersionDao;
 import net.tiklab.xpack.library.entity.LibraryVersionEntity;
-import net.tiklab.xpack.library.model.LibraryMaven;
-import net.tiklab.xpack.library.model.LibraryMavenQuery;
-import net.tiklab.xpack.library.model.LibraryVersion;
-import net.tiklab.xpack.library.model.LibraryVersionQuery;
+import net.tiklab.xpack.library.model.*;
 
+import net.tiklab.xpack.repository.model.Repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Autowired
     LibraryMavenService libraryMavenService;
+
+    @Autowired
+    LibraryService libraryService;
 
     @Override
     public String createLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion) {
@@ -132,5 +134,31 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
              libraryVersion = versions.get(0);
         }
         return libraryVersion;
+    }
+
+    /**
+     *  制品版本创建、修改
+     * @param libraryVersion    libraryVersion
+     * @return
+     */
+    public String libraryVersionSplice( LibraryVersion libraryVersion){
+
+        libraryVersion.setPushTime(new Timestamp(System.currentTimeMillis()));
+        String libraryVersionId=null;
+
+        List<LibraryVersion> libraryVersionList = this.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryVersion.getLibrary().getId()).
+                setRepositoryId(libraryVersion.getRepository().getId()).setVersion(libraryVersion.getVersion()));
+        if (CollectionUtils.isNotEmpty(libraryVersionList)){
+            libraryVersionId = libraryVersionList.get(0).getId();
+            libraryVersion.setId(libraryVersionId);
+            this.updateLibraryVersion(libraryVersion);
+        }else {
+            libraryVersionId = this.createLibraryVersion(libraryVersion);
+
+            //更新最新版本
+            libraryVersion.getLibrary().setNewVersion(libraryVersion.getVersion());
+            libraryService.updateLibrary(libraryVersion.getLibrary());
+        }
+        return libraryVersionId;
     }
 }

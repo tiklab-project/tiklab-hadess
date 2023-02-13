@@ -77,5 +77,5 @@ licences:
 
 
 repository:
-  library: /Users/limingliang/Documents
+  library: /Users/limingliang/publicData
   test: ${user.home}

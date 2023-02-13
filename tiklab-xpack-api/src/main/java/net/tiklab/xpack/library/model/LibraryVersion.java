@@ -22,7 +22,6 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private java.lang.String id;
 
-
     @NotNull
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
@@ -40,6 +39,10 @@ public class LibraryVersion extends BaseModel {
     private Repository repository;
 
     @NotNull
+    @ApiProperty(name="libraryType",desc="类型 maven、npm",required = true)
+    private java.lang.String libraryType;
+
+    @NotNull
     @ApiProperty(name="version",desc="版本",required = true)
     private java.lang.String version;
 
@@ -49,7 +52,6 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="hash",desc="hash")
     private java.lang.String hash;
 
-
     @NotNull
     @ApiProperty(name="User",desc="推送人",required = true)
     @Mappings({
@@ -57,6 +59,10 @@ public class LibraryVersion extends BaseModel {
     })
     @JoinQuery(key = "id")
     private User User;
+
+
+    @ApiProperty(name="contentJson",desc="内容json  mpm用")
+    private java.lang.String contentJson;
 
     @ApiProperty(name="pushTime",desc="推送时间")
     @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
@@ -168,5 +174,21 @@ public class LibraryVersion extends BaseModel {
 
     public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
+    }
+
+    public String getLibraryType() {
+        return libraryType;
+    }
+
+    public void setLibraryType(String libraryType) {
+        this.libraryType = libraryType;
+    }
+
+    public String getContentJson() {
+        return contentJson;
+    }
+
+    public void setContentJson(String contentJson) {
+        this.contentJson = contentJson;
     }
 }

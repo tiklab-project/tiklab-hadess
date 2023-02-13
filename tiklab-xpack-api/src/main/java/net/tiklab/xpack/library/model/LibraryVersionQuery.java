@@ -13,7 +13,7 @@ import java.util.List;
 public class LibraryVersionQuery {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
-        private List<Order> orderParams = OrderBuilders.instance().asc("id").get();
+        private List<Order> orderParams = OrderBuilders.instance().asc("createTime").get();
 
         @ApiProperty(name ="pageParam",desc = "分页参数")
         private Page pageParam = new Page();
@@ -26,6 +26,9 @@ public class LibraryVersionQuery {
 
         @ApiProperty(name ="version",desc = "版本")
         private String version;
+
+        @ApiProperty(name ="libraryType",desc = "制品类型")
+        private String libraryType;
 
 
         public List<Order> getOrderParams() {
@@ -68,6 +71,15 @@ public class LibraryVersionQuery {
 
         public LibraryVersionQuery setVersion(String version) {
             this.version = version;
+            return this;
+        }
+
+        public String getLibraryType() {
+            return libraryType;
+        }
+
+        public LibraryVersionQuery setLibraryType(String libraryType) {
+            this.libraryType = libraryType;
             return this;
         }
 }

@@ -16,8 +16,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -103,5 +111,32 @@ public class LibraryFileController {
 
         return Result.ok(libraryFileList);
     }
+
+    @RequestMapping(path = "/downloadSingleFile",method = RequestMethod.GET)
+    @ApiMethod(name = "download",desc = "单个制品文件下载")
+    @ApiParam(name = "requestParam",desc = "requestParam")
+    public void downloadSingleFile(HttpServletResponse response) {
+
+        LibraryFile libraryFile = libraryFileService.findLibraryFile("efafcf784ac69ee96af40b1200c7ffac");
+        try {
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("tiklab-xpack-ui-1.0.1.tgz", "utf-8"));
+
+            File file = new File("/Users/limingliang/publicData/repository/npm/npm-local/tiklab-xpack-ui/tiklab-xpack-ui-1.0.1.tgz");
+            InputStream inputStream = new FileInputStream(file);
+            //获取输出流
+            ServletOutputStream outputStream = response.getOutputStream();
+            //每次下载1024位
+            byte[] b = new byte[1024];
+            int len = -1;
+            while ((len = inputStream.read(b)) != -1) {
+                outputStream.write(b, 0, len);
+            }
+            inputStream.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 }
