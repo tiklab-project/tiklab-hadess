@@ -30,7 +30,7 @@ public class LibraryMavenMutualController {
     LibraryMavenMutualService libraryMavenMutualService;
 
 
-    @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
+    @RequestMapping(path = "/maven-commit/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "mavne制品提交")
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Result<Repository> mavenSubmit(HttpServletRequest request, HttpServletResponse response){
