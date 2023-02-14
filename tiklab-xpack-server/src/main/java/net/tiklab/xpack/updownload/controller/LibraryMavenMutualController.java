@@ -1,11 +1,13 @@
 package net.tiklab.xpack.updownload.controller;
 
+import com.alibaba.fastjson.JSON;
 import net.tiklab.core.Result;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.postin.annotation.ApiMethod;
 import net.tiklab.postin.annotation.ApiParam;
 import net.tiklab.xpack.repository.model.Repository;
 import net.tiklab.xpack.updownload.service.LibraryMavenMutualService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,11 +17,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.Base64;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/repository")
@@ -30,37 +32,60 @@ public class LibraryMavenMutualController {
     LibraryMavenMutualService libraryMavenMutualService;
 
 
-    @RequestMapping(path = "/maven-commit/**",method = {RequestMethod.PUT,RequestMethod.GET})
+    @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "mavne制品提交")
     @ApiParam(name = "requestParam",desc = "requestParam")
-    public Result<Repository> mavenSubmit(HttpServletRequest request, HttpServletResponse response){
+    public void mavenSubmit(HttpServletRequest request, HttpServletResponse response){
         String contextPath = request.getRequestURI();
-        String referer = request.getHeader("referer");
-        Enumeration<String> headerNames = request.getHeaderNames();
-        InputStream inputStream=null;
-        try {
-            HttpSession session = request.getSession();
+        String method = request.getMethod();
+        String authorization = request.getHeader("Authorization");
+        String basic = authorization.replace("Basic", "").trim();
+        byte[] decode = Base64.getDecoder().decode(basic);
 
-            inputStream = request.getInputStream();
-            libraryMavenMutualService.mavenSubmit(contextPath,inputStream);
+        try {
+            //用户信息
+            String userData = new String(decode, "UTF-8");
+            InputStream inputStream = request.getInputStream();
+            Map map = libraryMavenMutualService.mavenSubmit(contextPath, inputStream, userData,method);
+            int code = (int)map.get("code");
+            if (code==220) {
+                response.setHeader("Content-type", "text/plain;charset=UTF-8");
+                String data = map.get("data").toString();
+                response.setStatus(200);
+                response.getWriter().write(data);
+            }
+            if(code==200){
+                response.setHeader("Content-type", "text/xml;charset=UTF-8");
+                String data = map.get("data").toString();
+                response.setStatus(200);
+                response.getWriter().write(data);
+            }
+            else {
+                response.setStatus((int)map.get("code"));
+
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
+
     }
 
     @RequestMapping(path = "/maven-install/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "mavne制品拉取")
     @ApiParam(name = "requestParam",desc = "requestParam")
-    public void mavenInstall(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+    public void mavenInstall(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
-        byte[] fileData = libraryMavenMutualService.mavenInstall(contextPath);
-        Enumeration<String> headerNames = request.getHeaderNames();
+        Map map = libraryMavenMutualService.mavenInstall(contextPath);
         response.setCharacterEncoding("UTF-8");
         try {
-            ServletOutputStream outputStream = response.getOutputStream();
-            outputStream.write(fileData);
-
+            if ((int)map.get("code")==200){
+                response.setStatus(200,map.get("msg").toString());
+                ServletOutputStream outputStream = response.getOutputStream();
+                outputStream.write((byte[])map.get("data"));
+            }else {
+                response.setStatus((int)map.get("code"),map.get("msg").toString());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -99,9 +99,9 @@ public class RepositoryController {
 
     @RequestMapping(path = "/findLocalAndRemoteRepository",method = RequestMethod.POST)
     @ApiMethod(name = "findLocalAndRemoteRepository",desc = "通过条件查询本地库和远程库")
-    @ApiParam(name = "repositoryQuery",desc = "repositoryQuery",required = true)
-    public Result<List<Repository>> findLocalAndRemoteRepository(){
-        List<Repository> repositoryList = repositoryService.findLocalAndRemoteRepository();
+    @ApiParam(name = "type",desc = "库类型",required = true)
+    public Result<List<Repository>> findLocalAndRemoteRepository(@NotNull String type){
+        List<Repository> repositoryList = repositoryService.findLocalAndRemoteRepository(type);
 
         return Result.ok(repositoryList);
     }
@@ -135,7 +135,7 @@ public class RepositoryController {
             try {
                 uri = new URI(newCfg);
             }catch (URISyntaxException e1){
-                 new Exception(e1)  ;
+                 new Exception(e1);
             }
 
         }

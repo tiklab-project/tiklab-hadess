@@ -114,40 +114,6 @@ public class LibraryController {
     }
 
 
-    @RequestMapping(path = "/mavenSubmit/**",method = {RequestMethod.PUT,RequestMethod.GET})
-    @ApiMethod(name = "mavenSubmit",desc = "mavne制品提交")
-    @ApiParam(name = "requestParam",desc = "requestParam")
-    public Result<Repository> mavenSubmit(HttpServletRequest request, HttpServletResponse response){
-
-        String contextPath = request.getRequestURI();
-        OutputStream outputStream=null;
-        InputStream inputStream=null;
-        try {
-            inputStream = request.getInputStream();
-            libraryService.mavenSubmit(contextPath,inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    @RequestMapping(path = "/maven-install/**",method = {RequestMethod.PUT,RequestMethod.GET})
-    @ApiMethod(name = "mavenSubmit",desc = "mavne制品拉取")
-    @ApiParam(name = "requestParam",desc = "requestParam")
-    public void mavenInstall(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
-        String contextPath = request.getRequestURI();
-        byte[] fileData = libraryService.mavenInstall(contextPath);
-        response.setCharacterEncoding("UTF-8");
-        try {
-            ServletOutputStream outputStream = response.getOutputStream();
-            outputStream.write(fileData);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 }
 
 

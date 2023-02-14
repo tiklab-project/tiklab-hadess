@@ -74,7 +74,7 @@ public interface RepositoryService {
      * @param
      * @return
      */
-    List<Repository> findLocalAndRemoteRepository();
+    List<Repository> findLocalAndRemoteRepository(String type);
 
 
     /**

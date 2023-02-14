@@ -11,6 +11,7 @@ import net.tiklab.xpack.library.model.*;
 
 import net.tiklab.xpack.repository.model.Repository;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Autowired
     LibraryService libraryService;
+
+    @Autowired
+    LibraryFileService libraryFileService;
 
     @Override
     public String createLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion) {
@@ -71,6 +75,11 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         if (CollectionUtils.isNotEmpty(libraryMavenList)){
             libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
             libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+        }
+        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
+        if (!CollectionUtils.isEmpty(libraryFileList)){
+            int allKb = libraryFileList.stream().mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "kb"))).sum();
+            libraryVersion.setSize(allKb+"kb");
         }
         return libraryVersion;
     }
@@ -150,6 +159,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                 setRepositoryId(libraryVersion.getRepository().getId()).setVersion(libraryVersion.getVersion()));
         if (CollectionUtils.isNotEmpty(libraryVersionList)){
             libraryVersionId = libraryVersionList.get(0).getId();
+            if (StringUtils.isEmpty(libraryVersion.getHash())){
+                libraryVersion.setHash(libraryVersionList.get(0).getHash());
+            }
             libraryVersion.setId(libraryVersionId);
             this.updateLibraryVersion(libraryVersion);
         }else {

@@ -46,9 +46,6 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="version",desc="版本",required = true)
     private java.lang.String version;
 
-    @ApiProperty(name="size",desc="大小")
-    private java.lang.String size;
-
     @ApiProperty(name="hash",desc="hash")
     private java.lang.String hash;
 
@@ -84,6 +81,9 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="artifactId",desc="artifactId")
     private java.lang.String artifactId;
 
+    @ApiProperty(name="size",desc="size 大小")
+    private java.lang.String size;
+
     public java.lang.String getId() {
         return id;
     }
@@ -115,13 +115,7 @@ public class LibraryVersion extends BaseModel {
     public void setVersion(java.lang.String version) {
         this.version = version;
     }
-    public java.lang.String getSize() {
-        return size;
-    }
 
-    public void setSize(java.lang.String size) {
-        this.size = size;
-    }
     public java.lang.String getHash() {
         return hash;
     }
@@ -190,5 +184,13 @@ public class LibraryVersion extends BaseModel {
 
     public void setContentJson(String contentJson) {
         this.contentJson = contentJson;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

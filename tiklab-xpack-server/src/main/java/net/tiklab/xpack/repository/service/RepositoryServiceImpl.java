@@ -110,8 +110,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public List<Repository> findLocalAndRemoteRepository() {
-        List<RepositoryEntity> repositoryEntityList = repositoryDao.findLocalAndRemoteRepository();
+    public List<Repository> findLocalAndRemoteRepository(String type) {
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findLocalAndRemoteRepository(type);
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
 

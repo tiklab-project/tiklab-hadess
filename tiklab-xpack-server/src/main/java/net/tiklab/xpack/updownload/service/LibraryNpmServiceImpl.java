@@ -175,6 +175,15 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
         Set<String> tgaKey = tgaData.keySet();
         String tgzName = tgaKey.stream().findFirst().orElse("null");
 
+        //version的内容
+        JSONObject versionsObject =(JSONObject) allData.get("versions");
+        Set<String> versionsKey = versionsObject.keySet();
+        String versionsKeyName = versionsKey.stream().findFirst().orElse("null");
+        JSONObject versionObject =(JSONObject)versionsObject.get(versionsKeyName);
+        JSONObject distObject =(JSONObject)versionObject.get("dist");
+        String dist = distObject.get("shasum").toString();
+
+
         //制品名称
         String frontUrl = path.substring(0, path.lastIndexOf("/"));
         String repositoryName = frontUrl.substring(frontUrl.lastIndexOf("/") + 1);
@@ -210,9 +219,12 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
             //创建tgz文件
             writeFile(path,filePath,decodedBytes);
 
+            int length = decodedBytes.length;
+            double i =(double)length / 1000;
+            long round = Math.round(i);
+
             //创建制品
             Library library = libraryService.createLibraryData(libraryName, "npm",repositoryList.get(0));
-
 
             JSONObject jsonUserData =(JSONObject) UserData;
             String name = jsonUserData.get("name").toString();
@@ -224,17 +236,15 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
             libraryVersion.setContentJson(npmData);
             libraryVersion.setLibrary(library);
             libraryVersion.setRepository(repositoryList.get(0));
+            libraryVersion.setHash(dist);
             libraryVersion.setVersion(version);
             libraryVersion.setLibraryType("npm");
-            libraryVersion.setSize("100mb");
             if (!CollectionUtils.isEmpty(userList)){
                 libraryVersion.setUser(userList.get(0));
             }
             String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion);
 
-            int length = decodedBytes.length;
-            double i =(double)length / 1000;
-            long round = Math.round(i);
+
             //创建制品文件
             LibraryFile libraryFile = new LibraryFile();
             libraryFile.setLibrary(library);
@@ -279,7 +289,6 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
         while((len=dataInputStream.read(buf)) != -1){
             dataOutputStream.write(buf,0,len);
         }
-        int size = dataOutputStream.size();
         inputStream.close();
     }
 
@@ -313,16 +322,5 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
         return contentJson;
     }
 
-    public void test(List<LibraryVersion>  libraryVersionList){
-        for (LibraryVersion libraryVersion:libraryVersionList){
-            String contentJson = libraryVersion.getContentJson();
-            JSONObject allData =(JSONObject) JSONObject.parse(contentJson);
-            JSONObject versions =(JSONObject) allData.get("versions");
-            Set<String> versionKey = versions.keySet();
-
-
-        }
-
-    }
 
 }

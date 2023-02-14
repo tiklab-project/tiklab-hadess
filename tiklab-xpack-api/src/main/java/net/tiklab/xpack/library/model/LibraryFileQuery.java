@@ -20,11 +20,15 @@ public class LibraryFileQuery {
         @ApiProperty(name ="libraryId",desc = "制品id")
         private String libraryId;
 
+
         @ApiProperty(name ="libraryVersionId",desc = "制品版本id")
         private String libraryVersionId;
 
-        @ApiProperty(name ="fileName",desc = "制品文件地址")
+        @ApiProperty(name ="fileName",desc = "制品文件文件")
         private String fileName;
+
+        @ApiProperty(name ="fileUrl",desc = "制品文件地址")
+        private String fileUrl;
 
         public List<Order> getOrderParams() {
             return orderParams;
@@ -65,6 +69,15 @@ public class LibraryFileQuery {
 
         public LibraryFileQuery setFileName(String fileName) {
             this.fileName = fileName;
+            return this;
+        }
+
+        public String getFileUrl() {
+            return fileUrl;
+        }
+
+        public LibraryFileQuery setFileUrl(String fileUrl) {
+            this.fileUrl = fileUrl;
             return this;
         }
 }

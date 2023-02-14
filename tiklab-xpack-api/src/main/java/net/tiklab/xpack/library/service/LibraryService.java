@@ -85,28 +85,6 @@ public interface LibraryService {
     */
     Pagination<Library> findLibraryPage(LibraryQuery libraryQuery);
 
-    /**
-     * maven提交
-     * @param contextPath
-     * @return
-     */
-    void mavenSubmit(String contextPath,  InputStream inputStream) throws IOException;
-
-    /**
-     * maven拉取
-     * @param contextPath
-     * @return
-     */
-    byte[] mavenInstall(String contextPath);
-
-
-
-    /**
-     * npm 拉取
-     * @param contextPath
-     * @return
-     */
-    Object npmPull(String contextPath);
 
     /**
      *  制品创建

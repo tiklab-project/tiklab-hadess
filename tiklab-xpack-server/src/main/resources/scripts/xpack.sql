@@ -78,7 +78,6 @@ CREATE TABLE pack_library_version(
      repository_id varchar(32) NOT NULL,
      library_type varchar (32) NOT NULL,
      version varchar(64) NOT NULL,
-     size varchar(12),
      hash varchar (32),
      pusher varchar(32),
      content_json longtext,

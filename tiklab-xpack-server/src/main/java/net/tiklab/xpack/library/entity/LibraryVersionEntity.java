@@ -26,10 +26,7 @@ public class LibraryVersionEntity extends BaseModel {
     @Column(name = "version",length = 32,notNull = true)
     private String version;
 
-    @Column(name = "size",length = 12)
-    private String size;
-
-    @Column(name = "hash",length = 32)
+    @Column(name = "hash",length = 320)
     private String hash;
 
     @Column(name = "pusher",length = 32)
@@ -80,13 +77,6 @@ public class LibraryVersionEntity extends BaseModel {
         this.version = version;
     }
 
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 
     public String getHash() {
         return hash;

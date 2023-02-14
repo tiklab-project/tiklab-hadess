@@ -84,9 +84,10 @@ public class RepositoryDao{
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryEntity.class);
     }
-    public List<RepositoryEntity> findLocalAndRemoteRepository() {
+    public List<RepositoryEntity> findLocalAndRemoteRepository(String type) {
         String[] strings = new String[]{"local","remote"};
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryEntity.class)
+                .eq("type",type)
                 .in("repositoryType",strings)
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryEntity.class);
