@@ -55,7 +55,7 @@ public class LibraryMavenMutualController {
                 response.getWriter().write(data);
             }
             if(code==200){
-                response.setHeader("Content-type", "text/xml;charset=UTF-8");
+                response.setHeader("Content-type", "text/xml");
                 String data = map.get("data").toString();
                 response.setStatus(200);
                 response.getWriter().write(data);
