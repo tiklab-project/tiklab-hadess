@@ -125,7 +125,7 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
         inputStream.close();
         fos.close();// 保存数据
 
-        if (indexOf!=-1){
+        if (indexOf==-1){
             //创建制品
             return librarySplice(contextPath,file,user) ;
         }else {
