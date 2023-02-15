@@ -95,3 +95,4 @@ template:
 
 repository:
   library: ${user.home}
+  url: http://172.12.1.11:8081/repository/maven

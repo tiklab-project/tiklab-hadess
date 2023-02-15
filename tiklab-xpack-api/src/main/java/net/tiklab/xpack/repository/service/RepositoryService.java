@@ -84,11 +84,17 @@ public interface RepositoryService {
     */
     Pagination<Repository> findRepositoryPage(RepositoryQuery repositoryQuery);
 
-
     /**
-     * maven制品提交
-     * @param contextPath
+     * 根据组合库id查询相关联的制品库
+     * @param repositoryGroupId 组合库id
      * @return
      */
-    void mavenSubmit(String contextPath, OutputStream outputStream, InputStream inputStream) throws IOException;
+    List<Repository> findRepositoryByGroup(String repositoryGroupId);
+
+    /**
+     * 通过类型查询未关联组合库的本地和远程库list
+     * @param repositoryType 类型
+     * @return
+     */
+    List<Repository> findUnRelevanceRepository(String repositoryType,String repositoryGroupId);
 }

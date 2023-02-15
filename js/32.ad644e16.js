@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[32],{484:function(e,n,a){"use strict";a.r(n);a(460);var o=a(398),t=a(370),c=a.n(t),r=a(0),i=a.n(r),l=a(60);n.default=Object(l.b)("privilegeDomainRoleStore")(Object(l.c)((function(e){var n=e.match.params.id;return console.log(n),i.a.createElement("div",null,i.a.createElement(o.a,c()({},e,{domainId:n,bgroup:"xpack"})))})))}}]);

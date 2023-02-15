@@ -56,6 +56,10 @@ public class Repository extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
     private java.sql.Timestamp updateTime;
 
+    /*------------其他字段----------*/
+    @ApiProperty(name="libraryNum",desc="制品数量")
+    private Integer  libraryNum;
+
     public java.lang.String getId() {
         return id;
     }
@@ -130,5 +134,13 @@ public class Repository extends BaseModel {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Integer getLibraryNum() {
+        return libraryNum;
+    }
+
+    public void setLibraryNum(Integer libraryNum) {
+        this.libraryNum = libraryNum;
     }
 }

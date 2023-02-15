@@ -78,4 +78,6 @@ licences:
 
 repository:
   library: /Users/limingliang/publicData
-  test: ${user.home}
+
+
+

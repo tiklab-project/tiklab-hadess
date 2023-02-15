@@ -3,10 +3,16 @@ import net.tiklab.beans.BeanMapper;
 import net.tiklab.core.page.Pagination;
 import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
+import net.tiklab.xpack.library.model.Library;
+import net.tiklab.xpack.library.model.LibraryQuery;
+import net.tiklab.xpack.library.service.LibraryService;
 import net.tiklab.xpack.repository.dao.RepositoryDao;
 import net.tiklab.xpack.repository.entity.RepositoryEntity;
 import net.tiklab.xpack.repository.model.Repository;
+import net.tiklab.xpack.repository.model.RepositoryGroupItems;
+import net.tiklab.xpack.repository.model.RepositoryGroupItemsQuery;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +22,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -34,8 +42,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     RepositoryGroupItemsService groupItemsService;
 
-    @Value("${repository.library:null}")
-    String repositoryLibrary;
+    @Autowired
+    LibraryService libraryService;
 
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
@@ -104,6 +112,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
 
+        findLibrary(repositoryList);
+
         joinTemplate.joinQuery(repositoryList);
 
         return repositoryList;
@@ -114,6 +124,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<RepositoryEntity> repositoryEntityList = repositoryDao.findLocalAndRemoteRepository(type);
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+
+        findLibrary(repositoryList);
 
         joinTemplate.joinQuery(repositoryList);
 
@@ -132,33 +144,36 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public void mavenSubmit(String contextPath, OutputStream outputStream, InputStream inputStream) throws IOException {
-        String url = StringUtils.substringBeforeLast(contextPath, "/");
-        String path=repositoryLibrary+url;
-
-        File folder = new File(path);
-        if (!folder.exists() && !folder.isDirectory()) {
-            folder.mkdirs();
-            System.out.println("创建文件夹");
-        }
-        String filePath=repositoryLibrary+contextPath;
-        File file = new File(filePath);
-        if (!file.exists()){
-            file.createNewFile();
-        }
-        BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        //写入内容
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-        StringBuffer buf=new StringBuffer();
-        while((line=reader.readLine())!=null){
-            buf.append(line);
-            writer.write(line+"\n");
-        }
-        writer.close();
-        String s = buf.toString();
-
-        System.out.println("文件夹已存在");
-
+    public List<Repository> findRepositoryByGroup(String repositoryGroupId) {
+        List<RepositoryGroupItems> repositoryGroupItemsList = groupItemsService.findRepositoryGroupItemsList(new RepositoryGroupItemsQuery().setRepositoryGroupId(repositoryGroupId));
+        List<Repository> repositoryList = repositoryGroupItemsList.stream().map(RepositoryGroupItems::getRepository).collect(Collectors.toList());
+        return repositoryList;
     }
+
+    @Override
+    public List<Repository> findUnRelevanceRepository(String repositoryType,String repositoryGroupId) {
+        List<Repository> localAndRemoteRepository = findLocalAndRemoteRepository(repositoryType);
+        List<Repository> repositoryByGroup = findRepositoryByGroup(repositoryGroupId);
+        if (CollectionUtils.isNotEmpty(repositoryByGroup)){
+            for (Repository repository:repositoryByGroup){
+                localAndRemoteRepository = localAndRemoteRepository.stream().filter(a -> !repository.getId().equals(a.getId())).collect(Collectors.toList());
+            }
+        }
+        return localAndRemoteRepository;
+    }
+
+    public void findLibrary(List<Repository> repositoryList){
+        if (CollectionUtils.isNotEmpty(repositoryList)){
+            for ( Repository repository:repositoryList){
+                List<Library> libraryList = libraryService.findLibraryList(new LibraryQuery().setRepositoryId(repository.getId()));
+                if (CollectionUtils.isNotEmpty(libraryList)){
+                    repository.setLibraryNum(libraryList.size());
+                }else {
+                    repository.setLibraryNum(0);
+                }
+            }
+        }
+
+
+   }
 }

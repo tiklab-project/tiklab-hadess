@@ -70,4 +70,10 @@ public interface RepositoryGroupItemsService {
     */
     Pagination<RepositoryGroupItems> findRepositoryGroupItemsPage(RepositoryGroupItemsQuery repositoryGroupItemsQuery);
 
+    /**
+     * 根据条件编辑组合库关联
+     * @param repositoryGroupItems
+     * @return
+     */
+    String compileRepositoryGroupItems(RepositoryGroupItems repositoryGroupItems);
 }

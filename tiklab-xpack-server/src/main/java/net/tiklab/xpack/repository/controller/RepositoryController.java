@@ -115,32 +115,20 @@ public class RepositoryController {
         return Result.ok(pagination);
     }
 
-    @RequestMapping(path = "/getURIFromString",method = RequestMethod.POST)
-    @ApiMethod(name = "getURIFromString",desc = "通过条件分页查询")
-    @ApiParam(name = "uriStr",desc = "uriStr",required = true)
-    public URI getURIFromString(String uriStr){
-        URI uri=null;
-        try {
-            if (uriStr.startsWith("/")) {
-                // only absolute paths are prepended with file scheme
-                uri = new URI("file://" + uriStr);
-            } else if (uriStr.contains(":\\")) {
-                //windows absolute path drive
-                uri = new URI("file:///" + uriStr.replaceAll("\\\\", "/"));
-            } else {
-                uri = new URI(uriStr);
-            }
-        }catch (Exception e){
-            String newCfg = "file://" + uriStr;
-            try {
-                uri = new URI(newCfg);
-            }catch (URISyntaxException e1){
-                 new Exception(e1);
-            }
+    @RequestMapping(path = "/findRepositoryByGroup",method = RequestMethod.POST)
+    @ApiMethod(name = "findRepositoryByGroup",desc = "组合库关联的制品库集合")
+    @ApiParam(name = "repositoryGroupId",desc = "组合库id",required = true)
+    public Result<List<Repository>> findRepositoryByGroup( @NotNull String repositoryGroupId){
+        List<Repository> repositoryList = repositoryService.findRepositoryByGroup(repositoryGroupId);
 
-        }
-
-        return uri;
+        return Result.ok(repositoryList);
     }
+    @RequestMapping(path = "/findUnRelevanceRepository",method = RequestMethod.POST)
+    @ApiMethod(name = "findUnRelevanceRepository",desc = "查询未关联组合库的本地和远程库list")
+    @ApiParam(name = "repositoryType",desc = "repositoryType",required = true)
+    public Result<List<Repository>> findUnRelevanceRepository( @NotNull String repositoryType,@NotNull String repositoryGroupId){
+        List<Repository> repositoryList = repositoryService.findUnRelevanceRepository(repositoryType,repositoryGroupId);
 
+        return Result.ok(repositoryList);
+    }
 }

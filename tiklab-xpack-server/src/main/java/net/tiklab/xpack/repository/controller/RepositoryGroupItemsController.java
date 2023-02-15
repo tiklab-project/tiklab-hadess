@@ -95,4 +95,12 @@ public class RepositoryGroupItemsController {
         return Result.ok(pagination);
     }
 
+    @RequestMapping(path="/compileRepositoryGroupItems",method = RequestMethod.POST)
+    @ApiMethod(name = "compileRepositoryGroupItems",desc = "根据条件编辑组合库关联")
+    @ApiParam(name = "repositoryGroupItems",desc = "repositoryGroupItems",required = true)
+    public Result<String> compileRepositoryGroupItems(@RequestBody @NotNull @Valid RepositoryGroupItems repositoryGroupItems){
+        String id = repositoryGroupItemsService.compileRepositoryGroupItems(repositoryGroupItems);
+
+        return Result.ok(id);
+    }
 }

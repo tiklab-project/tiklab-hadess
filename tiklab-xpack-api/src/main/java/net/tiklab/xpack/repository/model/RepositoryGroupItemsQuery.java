@@ -20,6 +20,9 @@ public class RepositoryGroupItemsQuery {
         @ApiProperty(name ="repositoryGroupId",desc = "组合库id")
         private String repositoryGroupId;
 
+        @ApiProperty(name ="repositoryId",desc = "repositoryId")
+        private String repositoryId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -42,6 +45,15 @@ public class RepositoryGroupItemsQuery {
 
         public RepositoryGroupItemsQuery setRepositoryGroupId(String repositoryGroupId) {
             this.repositoryGroupId = repositoryGroupId;
+            return this;
+        }
+
+        public String getRepositoryId() {
+            return repositoryId;
+        }
+
+        public RepositoryGroupItemsQuery setRepositoryId(String repositoryId) {
+            this.repositoryId = repositoryId;
             return this;
         }
 }

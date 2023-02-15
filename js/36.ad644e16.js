@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[36],{486:function(n,e,o){"use strict";o.r(e);o(462);var t=o(454),a=o(0),r=o.n(a);e.default=function(n){return r.a.createElement(t.a,{bgroup:"oms"})}}}]);

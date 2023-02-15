@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[33],{483:function(e,a,n){"use strict";n.r(a);n(459);var t=n(457),c=n(370),r=n.n(c),o=n(0),i=n.n(o),d=n(60);a.default=Object(d.b)("domainUserStore")(Object(d.c)((function(e){var a=e.match.params.id;return i.a.createElement("div",null,i.a.createElement(t.a,r()({},e,{domainId:a,bgroup:"xpack"})))})))}}]);

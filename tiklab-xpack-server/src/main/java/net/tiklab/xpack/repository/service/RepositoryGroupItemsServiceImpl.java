@@ -11,6 +11,7 @@ import net.tiklab.xpack.repository.entity.RepositoryGroupItemsEntity;
 import net.tiklab.xpack.repository.model.RepositoryGroupItems;
 import net.tiklab.xpack.repository.model.RepositoryGroupItemsQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -117,5 +118,16 @@ public class RepositoryGroupItemsServiceImpl implements RepositoryGroupItemsServ
         joinTemplate.joinQuery(repositoryGroupItemsList);
 
         return PaginationBuilder.build(pagination,repositoryGroupItemsList);
+    }
+
+    @Override
+    public String compileRepositoryGroupItems(RepositoryGroupItems repositoryGroupItems) {
+        List<RepositoryGroupItems> repositoryGroupItemsList = this.findRepositoryGroupItemsList(new RepositoryGroupItemsQuery().
+                setRepositoryGroupId(repositoryGroupItems.getRepositoryGroup().getId())
+                .setRepositoryId(repositoryGroupItems.getRepository().getId()));
+        if (CollectionUtils.isEmpty(repositoryGroupItemsList)){
+            return  this.createRepositoryGroupItems(repositoryGroupItems);
+        }
+        return null;
     }
 }
