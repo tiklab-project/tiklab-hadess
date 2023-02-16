@@ -51,13 +51,13 @@ public class LibraryMavenMutualController {
             if (code==220) {
                 response.setHeader("Content-type", "text/plain;charset=UTF-8");
                 String data = map.get("data").toString();
-                response.setStatus(200);
+                response.setStatus(200,map.get("msg").toString());
                 response.getWriter().write(data);
             }
             if(code==200){
                 response.setHeader("Content-type", "text/xml;charset=UTF-8");
                 String data = map.get("data").toString();
-                response.setStatus(200);
+                response.setStatus(200,map.get("msg").toString());
                 response.getWriter().write(data);
             }
             if (code!=220&&code!=200){
