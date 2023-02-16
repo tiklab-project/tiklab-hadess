@@ -52,7 +52,7 @@ public class LibraryMavenMutualController {
                 response.setHeader("Content-type", "text/plain");
                 String data = map.get("data").toString();
                 response.setStatus(200);
-                response.addHeader("ETag","{SHA1{178158a672bd13432bf3347a04ab3850ee6524f3}}");
+                //response.addHeader("ETag","{SHA1{178158a672bd13432bf3347a04ab3850ee6524f3}}");
                 response.getWriter().write(data);
 
             }
