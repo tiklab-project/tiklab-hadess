@@ -49,13 +49,15 @@ public class LibraryMavenMutualController {
             Map map = libraryMavenMutualService.mavenSubmit(contextPath, inputStream, userData,method);
             int code = (int)map.get("code");
             if (code==220) {
-                response.setHeader("Content-type", "text/plain;charset=UTF-8");
+                response.setHeader("Content-type", "text/plain");
                 String data = map.get("data").toString();
-                response.setStatus(200,map.get("msg").toString());
+                response.setStatus(200);
+                response.addHeader("ETag","{SHA1{178158a672bd13432bf3347a04ab3850ee6524f3}}");
                 response.getWriter().write(data);
+
             }
             if(code==200){
-                response.setHeader("Content-type", "text/xml;charset=UTF-8");
+                response.setHeader("Content-type", "application/xml");
                 String data = map.get("data").toString();
                 response.setStatus(200,map.get("msg").toString());
                 response.getWriter().write(data);

@@ -111,10 +111,7 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
                 }else {
                     return result(200,"OK",gainFileData(file));
                 }
-
-
             }
-
         }
         //用字节流写入文件
         FileOutputStream fos = new FileOutputStream(filePath);
