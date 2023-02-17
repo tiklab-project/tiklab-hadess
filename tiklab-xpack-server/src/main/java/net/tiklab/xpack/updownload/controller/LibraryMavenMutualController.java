@@ -18,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.Base64;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/repository")
@@ -41,6 +38,7 @@ public class LibraryMavenMutualController {
         String authorization = request.getHeader("Authorization");
         String basic = authorization.replace("Basic", "").trim();
         byte[] decode = Base64.getDecoder().decode(basic);
+        Collection<String> headerNames = response.getHeaderNames();
 
         try {
             //用户信息
@@ -52,7 +50,7 @@ public class LibraryMavenMutualController {
                 response.setHeader("Content-type", "text/plain");
                 String data = map.get("data").toString();
                 response.setStatus(200);
-                //response.addHeader("ETag","{SHA1{178158a672bd13432bf3347a04ab3850ee6524f3}}");
+
                 response.getWriter().write(data);
 
             }
@@ -60,6 +58,7 @@ public class LibraryMavenMutualController {
                 response.setHeader("Content-type", "application/xml");
                 String data = map.get("data").toString();
                 response.setStatus(200,map.get("msg").toString());
+                response.addHeader("ETag",map.get("ETag").toString());
                 response.getWriter().write(data);
             }
             if (code!=220&&code!=200){

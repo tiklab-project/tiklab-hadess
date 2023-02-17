@@ -109,7 +109,12 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
 
 
                 }else {
-                    return result(200,"OK",gainFileData(file));
+                   String shaPath = path+"sha1";
+                    Map<String, Object> result = result(200, "OK", gainFileData(file));
+                    File shaValue = new File(shaPath);
+                    String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
+                    result.put("ETag",ETag);
+                    return result;
                 }
             }
         }
