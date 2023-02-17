@@ -93,6 +93,7 @@ CREATE TABLE pack_library_file(
       file_size varchar (32) NOT NULL,
       file_name varchar (64) NOT NULL,
       file_url varchar (128) NOT NULL,
+      repository_id varchar (32) NOT NULL,
       create_time  timestamp
 );
 CREATE TABLE pack_library_pulls(

@@ -20,6 +20,9 @@ public class LibraryFileEntity extends BaseModel {
     @Column(name = "library_version_id",length = 32,notNull = true)
     private String libraryVersionId;
 
+    @Column(name = "repository_id",length = 32,notNull = true)
+    private String repositoryId;
+
     @Column(name = "file_size",length = 32,notNull = true)
     private String fileSize;
 
@@ -87,5 +90,13 @@ public class LibraryFileEntity extends BaseModel {
 
     public void setLibraryVersionId(String libraryVersionId) {
         this.libraryVersionId = libraryVersionId;
+    }
+
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
     }
 }

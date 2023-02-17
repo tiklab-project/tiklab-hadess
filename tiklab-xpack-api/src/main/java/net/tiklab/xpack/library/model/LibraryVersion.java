@@ -66,11 +66,11 @@ public class LibraryVersion extends BaseModel {
     private java.sql.Timestamp pushTime;
 
     @ApiProperty(name="createTime",desc="创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
 
     @ApiProperty(name="updateTime",desc="更新时间")
-    @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp updateTime;
 
 

@@ -1,5 +1,6 @@
 package net.tiklab.xpack.library.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import net.tiklab.beans.annotation.Mapper;
 import net.tiklab.beans.annotation.Mapping;
 import net.tiklab.beans.annotation.Mappings;
@@ -8,6 +9,7 @@ import net.tiklab.join.annotation.Join;
 import net.tiklab.join.annotation.JoinQuery;
 import net.tiklab.postin.annotation.ApiModel;
 import net.tiklab.postin.annotation.ApiProperty;
+import net.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +38,14 @@ public class LibraryFile extends BaseModel {
     private LibraryVersion libraryVersion;
 
     @NotNull
+    @ApiProperty(name="repository",desc="制品库",required = true)
+    @Mappings({
+            @Mapping(source = "repository.id",target = "repositoryId")
+    })
+    @JoinQuery(key = "id")
+    private Repository repository;
+
+    @NotNull
     @ApiProperty(name="fileSize",desc="文件大小",required = true)
     private java.lang.String fileSize;
 
@@ -48,7 +58,13 @@ public class LibraryFile extends BaseModel {
     private java.lang.String fileUrl;
 
     @ApiProperty(name="createTime",desc="createTime")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
+
+
+    /*---------其他字段-------*/
+    @ApiProperty(name="repositoryName",desc="制品库名字")
+    private java.lang.String repositoryName;
 
     public java.lang.String getId() {
         return id;
@@ -101,5 +117,21 @@ public class LibraryFile extends BaseModel {
 
     public void setLibraryVersion(LibraryVersion libraryVersion) {
         this.libraryVersion = libraryVersion;
+    }
+
+    public String getRepositoryName() {
+        return repositoryName;
+    }
+
+    public void setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
+    }
+
+    public Repository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(Repository repository) {
+        this.repository = repository;
     }
 }
