@@ -109,7 +109,7 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
 
 
                 }else {
-                   String shaPath = path+"sha1";
+                   String shaPath = path+".sha1";
                     Map<String, Object> result = result(200, "OK", gainFileData(file));
                     File shaValue = new File(shaPath);
                     String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
@@ -182,6 +182,7 @@ public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService 
             libraryFile.setFileName(fileName);
             libraryFile.setFileSize(round+"kb");
             libraryFile.setFileUrl(repositoryLibrary+fileUrl);
+            libraryFile.setRepository(repositoryList.get(0));
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
 
 

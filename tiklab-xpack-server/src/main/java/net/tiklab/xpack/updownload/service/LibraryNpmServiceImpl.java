@@ -251,6 +251,7 @@ public class LibraryNpmServiceImpl implements LibraryNpmService{
             libraryFile.setFileName(tgzName);
             libraryFile.setFileSize(round+"kb");
             libraryFile.setFileUrl(filePath);
+            libraryFile.setRepository(repositoryList.get(0));
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
             return 200;
         }else {
