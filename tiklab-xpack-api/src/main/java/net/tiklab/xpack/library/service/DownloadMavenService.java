@@ -1,10 +1,10 @@
-package net.tiklab.xpack.updownload.service;
+package net.tiklab.xpack.library.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-public interface LibraryMavenMutualService {
+public interface DownloadMavenService {
 
 
     /**

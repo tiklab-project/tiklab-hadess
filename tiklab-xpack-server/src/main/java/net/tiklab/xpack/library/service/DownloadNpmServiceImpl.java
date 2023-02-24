@@ -1,9 +1,7 @@
-package net.tiklab.xpack.updownload.service;
+package net.tiklab.xpack.library.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import net.tiklab.core.exception.ApplicationException;
 import net.tiklab.eam.common.EamTicket;
 import net.tiklab.eam.passport.user.model.UserPassport;
 import net.tiklab.eam.passport.user.service.UserPassportService;
@@ -11,10 +9,6 @@ import net.tiklab.user.user.model.User;
 import net.tiklab.user.user.model.UserQuery;
 import net.tiklab.user.user.service.UserService;
 import net.tiklab.xpack.library.model.*;
-import net.tiklab.xpack.library.service.LibraryFileService;
-import net.tiklab.xpack.library.service.LibraryFileServiceImpl;
-import net.tiklab.xpack.library.service.LibraryService;
-import net.tiklab.xpack.library.service.LibraryVersionService;
 import net.tiklab.xpack.repository.model.Repository;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
 import net.tiklab.xpack.repository.service.RepositoryService;
@@ -23,16 +17,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class LibraryNpmServiceImpl implements LibraryNpmService{
+public class DownloadNpmServiceImpl implements DownloadNpmService {
 
     @Value("${repository.library:null}")
     String repositoryLibrary;

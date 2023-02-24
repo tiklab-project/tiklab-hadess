@@ -1,4 +1,4 @@
-package net.tiklab.xpack.updownload.service;
+package net.tiklab.xpack.library.service;
 
 import net.tiklab.core.exception.ApplicationException;
 import net.tiklab.user.user.model.User;
@@ -8,10 +8,6 @@ import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryFile;
 import net.tiklab.xpack.library.model.LibraryFileQuery;
 import net.tiklab.xpack.library.model.LibraryVersion;
-import net.tiklab.xpack.library.service.LibraryFileService;
-import net.tiklab.xpack.library.service.LibraryMavenService;
-import net.tiklab.xpack.library.service.LibraryService;
-import net.tiklab.xpack.library.service.LibraryVersionService;
 import net.tiklab.xpack.repository.model.Repository;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
 import net.tiklab.xpack.repository.service.RepositoryService;
@@ -27,11 +23,10 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
-public class LibraryMavenMutualServiceImpl implements LibraryMavenMutualService {
-    private static Logger logger = LoggerFactory.getLogger(LibraryMavenMutualServiceImpl.class);
+public class DownloadMavenServiceImpl implements DownloadMavenService {
+    private static Logger logger = LoggerFactory.getLogger(DownloadMavenServiceImpl.class);
     @Value("${repository.library:null}")
     String repositoryLibrary;
 

@@ -1,10 +1,10 @@
-package net.tiklab.xpack.updownload.service;
+package net.tiklab.xpack.library.service;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.Map;
 
-public interface LibraryNpmService {
+public interface DownloadNpmService {
 
     /**
      * npm publish 提交

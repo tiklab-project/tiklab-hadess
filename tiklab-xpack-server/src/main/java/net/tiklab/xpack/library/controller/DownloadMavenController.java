@@ -1,13 +1,9 @@
-package net.tiklab.xpack.updownload.controller;
+package net.tiklab.xpack.library.controller;
 
-import com.alibaba.fastjson.JSON;
-import net.tiklab.core.Result;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.postin.annotation.ApiMethod;
 import net.tiklab.postin.annotation.ApiParam;
-import net.tiklab.xpack.repository.model.Repository;
-import net.tiklab.xpack.updownload.service.LibraryMavenMutualService;
-import org.apache.commons.lang.StringUtils;
+import net.tiklab.xpack.library.service.DownloadMavenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,17 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/repository")
 @Api(name = "LibraryMavenController",desc = "Maven提交拉取")
-public class LibraryMavenMutualController {
+public class DownloadMavenController {
 
     @Autowired
-    LibraryMavenMutualService libraryMavenMutualService;
+    DownloadMavenService downloadMavenService;
 
 
     @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
@@ -44,7 +42,7 @@ public class LibraryMavenMutualController {
             //用户信息
             String userData = new String(decode, "UTF-8");
             InputStream inputStream = request.getInputStream();
-            Map map = libraryMavenMutualService.mavenSubmit(contextPath, inputStream, userData,method);
+            Map map = downloadMavenService.mavenSubmit(contextPath, inputStream, userData,method);
             int code = (int)map.get("code");
             if (code==220) {
                 response.setHeader("Content-type", "text/plain");
@@ -77,7 +75,7 @@ public class LibraryMavenMutualController {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public void mavenInstall(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
-        Map map = libraryMavenMutualService.mavenInstall(contextPath);
+        Map map = downloadMavenService.mavenInstall(contextPath);
         response.setCharacterEncoding("UTF-8");
         try {
             if ((int)map.get("code")==200){

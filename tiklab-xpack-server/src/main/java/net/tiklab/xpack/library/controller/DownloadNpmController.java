@@ -1,15 +1,13 @@
-package net.tiklab.xpack.updownload.controller;
+package net.tiklab.xpack.library.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mysql.cj.xdevapi.JsonString;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.postin.annotation.ApiMethod;
 import net.tiklab.postin.annotation.ApiParam;
-import net.tiklab.xpack.updownload.service.LibraryNpmService;
+import net.tiklab.xpack.library.service.DownloadNpmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,18 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/repository")
 @Api(name = "LibraryNpmController",desc = "npm提交拉取")
-public class LibraryNpmController {
+public class DownloadNpmController {
 
-    private static Logger logger = LoggerFactory.getLogger(LibraryNpmController.class);
+    private static Logger logger = LoggerFactory.getLogger(DownloadNpmController.class);
 
     @Autowired
-    LibraryNpmService libraryNpmService;
+    DownloadNpmService downloadNpmService;
 
     @RequestMapping(path = "/npm/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "npm制品提交")
@@ -43,19 +40,19 @@ public class LibraryNpmController {
             //npm publish （提交）
             if (referer.contains("publish")){
                 InputStream inputStream = request.getInputStream();
-                Integer resultCode = libraryNpmService.npmSubmit(contextPath, inputStream);
+                Integer resultCode = downloadNpmService.npmSubmit(contextPath, inputStream);
                 response.setStatus(resultCode);
             }
             //npm install （拉取）
             if (referer.contains("install")){
                 if (contextPath.endsWith(".tgz")){
                     //第二次交互以.tgz结尾
-                    byte[] a=libraryNpmService.npmPullTgzData(contextPath);
+                    byte[] a=downloadNpmService.npmPullTgzData(contextPath);
                     ServletOutputStream outputStream = response.getOutputStream();
                     outputStream.write(a);
                 }else {
                     //第一次交互
-                    Object data = libraryNpmService.npmPull(contextPath);
+                    Object data = downloadNpmService.npmPull(contextPath);
                     response.setContentType("application/json;charset=utf-8");
                     Object o = JSON.toJSON(data);
                     response.getWriter().print(o);
@@ -64,7 +61,7 @@ public class LibraryNpmController {
             //登陆
             if (referer.contains("adduser")){
                 BufferedReader reader = request.getReader();
-                Map map = libraryNpmService.npmLogin(reader);
+                Map map = downloadNpmService.npmLogin(reader);
                 String jsonString = JSON.toJSONString(map);
                 Object success = map.get("success");
                 if (success.equals("0K")){

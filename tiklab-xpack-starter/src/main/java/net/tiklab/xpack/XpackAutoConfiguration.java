@@ -35,8 +35,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableDsm
 @EnableRpc
 
-
-
 //eam
 @EnableEam
 @EnableLog
