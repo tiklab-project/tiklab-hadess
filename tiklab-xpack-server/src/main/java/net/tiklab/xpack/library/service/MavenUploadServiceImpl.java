@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DownloadMavenServiceImpl implements DownloadMavenService {
-    private static Logger logger = LoggerFactory.getLogger(DownloadMavenServiceImpl.class);
+public class MavenUploadServiceImpl implements MavenUploadService {
+    private static Logger logger = LoggerFactory.getLogger(MavenUploadServiceImpl.class);
     @Value("${repository.library:null}")
     String repositoryLibrary;
 

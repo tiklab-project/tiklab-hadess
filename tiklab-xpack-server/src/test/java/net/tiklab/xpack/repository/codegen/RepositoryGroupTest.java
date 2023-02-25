@@ -4,7 +4,7 @@ import net.tiklab.codegen.CodeGeneratorTemplate;
 import net.tiklab.codegen.config.CodeGeneratorConfig;
 import net.tiklab.codegen.config.ProjectGeneratorConfig;
 import net.tiklab.xpack.repository.entity.RepositoryEntity;
-import net.tiklab.xpack.repository.entity.RepositoryGroupItemsEntity;
+import net.tiklab.xpack.repository.entity.RepositoryGroupEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ProjectGeneratorConfig.class)
-public class RepositoryGroupItemsTest extends CodeGeneratorTemplate {
+public class RepositoryGroupTest extends CodeGeneratorTemplate {
 
     @Autowired
     ProjectGeneratorConfig projectGeneratorConfig;
@@ -22,9 +22,9 @@ public class RepositoryGroupItemsTest extends CodeGeneratorTemplate {
     protected CodeGeneratorConfig getCodeGeneratorConfig() {
         CodeGeneratorConfig config = new CodeGeneratorConfig();
         config.setProjectGeneratorConfig(projectGeneratorConfig);
-        config.setEntity(RepositoryGroupItemsEntity.class);
+        config.setEntity(RepositoryGroupEntity.class);
         config.setPkg("net.tiklab.xpack.repository");
-        config.setModel("RepositoryGroupItems");
+        config.setModel("RepositoryGroup");
         return config;
     }
 

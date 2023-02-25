@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import net.tiklab.core.Result;
 import net.tiklab.postin.client.mock.JMockit;
 import net.tiklab.xpack.config.TestConfig;
-import net.tiklab.xpack.repository.model.RepositoryGroupItems;
+import net.tiklab.xpack.repository.model.RepositoryGroup;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @Rollback(false)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RepositoryGroupItemsControllerTest {
+public class RepositoryGroupControllerTest {
 
-    private static Logger logger = LoggerFactory.getLogger(RepositoryGroupItemsControllerTest.class);
+    private static Logger logger = LoggerFactory.getLogger(RepositoryGroupControllerTest.class);
 
     static String id;
 
@@ -56,15 +56,15 @@ public class RepositoryGroupItemsControllerTest {
     }
 
     @Test
-    public void test01ForSaveRepositoryGroupItems() {
-        RepositoryGroupItems repositoryGroupItems = JMockit.mock(RepositoryGroupItems.class);
+    public void test01ForSaveRepositoryGroup() {
+        RepositoryGroup repositoryGroup = JMockit.mock(RepositoryGroup.class);
 
-        Map paramMap  = JSONObject.parseObject(JSONObject.toJSONString(repositoryGroupItems));
+        Map paramMap  = JSONObject.parseObject(JSONObject.toJSONString(repositoryGroup));
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.setAll(paramMap);
         try {
             MvcResult mvcResult = mockMvc.perform(
-                                post("/repositoryGroupItems/createRepositoryGroupItems")
+                                post("/repositoryGroup/createRepositoryGroup")
                                 .params(multiValueMap)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -83,16 +83,16 @@ public class RepositoryGroupItemsControllerTest {
     }
 
     @Test
-    public void test02ForUpdateRepositoryGroupItems(){
-        RepositoryGroupItems repositoryGroupItems = JMockit.mock(RepositoryGroupItems.class);
-        repositoryGroupItems.setId(id);
+    public void test02ForUpdateRepositoryGroup(){
+        RepositoryGroup repositoryGroup = JMockit.mock(RepositoryGroup.class);
+        repositoryGroup.setId(id);
 
-        Map paramMap  = JSONObject.parseObject(JSONObject.toJSONString(repositoryGroupItems));
+        Map paramMap  = JSONObject.parseObject(JSONObject.toJSONString(repositoryGroup));
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.setAll(paramMap);
         try {
             MvcResult mvcResult = mockMvc.perform(
-                                post("/repositoryGroupItems/updateRepositoryGroupItems")
+                                post("/repositoryGroup/updateRepositoryGroup")
                                 .params(multiValueMap)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -110,10 +110,10 @@ public class RepositoryGroupItemsControllerTest {
     }
 
     @Test
-    public void test03ForFindRepositoryGroupItems() {
+    public void test03ForFindRepositoryGroup() {
         try {
             MvcResult mvcResult = mockMvc.perform(
-                    post("/repositoryGroupItems/findRepositoryGroupItems")
+                    post("/repositoryGroup/findRepositoryGroup")
                             .param("id",id)
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -131,10 +131,10 @@ public class RepositoryGroupItemsControllerTest {
     }
 
     @Test
-    public void test04ForFindAllRepositoryGroupItems() {
+    public void test04ForFindAllRepositoryGroup() {
         try {
             MvcResult mvcResult = mockMvc.perform(
-                    post("/repositoryGroupItems/findAllRepositoryGroupItems")
+                    post("/repositoryGroup/findAllRepositoryGroup")
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
             )
@@ -151,10 +151,10 @@ public class RepositoryGroupItemsControllerTest {
     }
 
     @Test
-    public void test05ForDeleteRepositoryGroupItems(){
+    public void test05ForDeleteRepositoryGroup(){
         try {
             MvcResult mvcResult = mockMvc.perform(
-                    post("/repositoryGroupItems/deleteRepositoryGroupItems")
+                    post("/repositoryGroup/deleteRepositoryGroup")
                             .param("id",id)
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)

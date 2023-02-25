@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @ApiModel
-@Mapper(targetAlias = "RepositoryGroupItemsEntity")
+@Mapper(targetAlias = "RepositoryGroupEntity")
 @Join
-public class RepositoryGroupItems extends BaseModel {
+public class RepositoryGroup extends BaseModel {
 
     @ApiProperty(name="id",desc="id")
     private java.lang.String id;

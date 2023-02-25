@@ -9,8 +9,8 @@ import net.tiklab.xpack.library.service.LibraryService;
 import net.tiklab.xpack.repository.dao.RepositoryDao;
 import net.tiklab.xpack.repository.entity.RepositoryEntity;
 import net.tiklab.xpack.repository.model.Repository;
-import net.tiklab.xpack.repository.model.RepositoryGroupItems;
-import net.tiklab.xpack.repository.model.RepositoryGroupItemsQuery;
+import net.tiklab.xpack.repository.model.RepositoryGroup;
+import net.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +40,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     JoinTemplate joinTemplate;
 
     @Autowired
-    RepositoryGroupItemsService groupItemsService;
+    RepositoryGroupService groupItemsService;
 
     @Autowired
     LibraryService libraryService;
@@ -67,7 +67,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     public void deleteRepository(@NotNull String id) {
         repositoryDao.deleteRepository(id);
 
-        groupItemsService.deleteRepositoryGroupItems(id);
+        groupItemsService.deleteRepositoryGroup(id);
     }
 
     @Override
@@ -145,8 +145,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public List<Repository> findRepositoryByGroup(String repositoryGroupId) {
-        List<RepositoryGroupItems> repositoryGroupItemsList = groupItemsService.findRepositoryGroupItemsList(new RepositoryGroupItemsQuery().setRepositoryGroupId(repositoryGroupId));
-        List<Repository> repositoryList = repositoryGroupItemsList.stream().map(RepositoryGroupItems::getRepository).collect(Collectors.toList());
+        List<RepositoryGroup> repositoryGroupList = groupItemsService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repositoryGroupId));
+        List<Repository> repositoryList = repositoryGroupList.stream().map(RepositoryGroup::getRepository).collect(Collectors.toList());
         return repositoryList;
     }
 

@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DownloadNpmServiceImpl implements DownloadNpmService {
+public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Value("${repository.library:null}")
     String repositoryLibrary;

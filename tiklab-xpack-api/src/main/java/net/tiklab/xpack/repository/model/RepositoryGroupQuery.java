@@ -9,7 +9,7 @@ import net.tiklab.postin.annotation.ApiProperty;
 import java.util.List;
 
 @ApiModel
-public class RepositoryGroupItemsQuery {
+public class RepositoryGroupQuery {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
         private List<Order> orderParams = OrderBuilders.instance().asc("id").get();
@@ -43,7 +43,7 @@ public class RepositoryGroupItemsQuery {
             return repositoryGroupId;
         }
 
-        public RepositoryGroupItemsQuery setRepositoryGroupId(String repositoryGroupId) {
+        public RepositoryGroupQuery setRepositoryGroupId(String repositoryGroupId) {
             this.repositoryGroupId = repositoryGroupId;
             return this;
         }
@@ -52,7 +52,7 @@ public class RepositoryGroupItemsQuery {
             return repositoryId;
         }
 
-        public RepositoryGroupItemsQuery setRepositoryId(String repositoryId) {
+        public RepositoryGroupQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
             return this;
         }

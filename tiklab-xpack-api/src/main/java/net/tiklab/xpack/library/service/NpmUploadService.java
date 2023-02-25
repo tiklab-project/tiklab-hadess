@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.Map;
 
-public interface DownloadNpmService {
+public interface NpmUploadService {
 
     /**
      * npm publish 提交

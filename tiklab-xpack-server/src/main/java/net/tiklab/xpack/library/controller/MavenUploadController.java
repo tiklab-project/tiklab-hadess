@@ -3,7 +3,7 @@ package net.tiklab.xpack.library.controller;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.postin.annotation.ApiMethod;
 import net.tiklab.postin.annotation.ApiParam;
-import net.tiklab.xpack.library.service.DownloadMavenService;
+import net.tiklab.xpack.library.service.MavenUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,10 +21,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/repository")
 @Api(name = "LibraryMavenController",desc = "Maven提交拉取")
-public class DownloadMavenController {
+public class MavenUploadController {
 
     @Autowired
-    DownloadMavenService downloadMavenService;
+    MavenUploadService downloadMavenService;
 
 
     @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})

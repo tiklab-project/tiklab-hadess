@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import net.tiklab.postin.annotation.Api;
 import net.tiklab.postin.annotation.ApiMethod;
 import net.tiklab.postin.annotation.ApiParam;
-import net.tiklab.xpack.library.service.DownloadNpmService;
+import net.tiklab.xpack.library.service.NpmUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/repository")
 @Api(name = "LibraryNpmController",desc = "npm提交拉取")
-public class DownloadNpmController {
+public class NpmUploadController {
 
-    private static Logger logger = LoggerFactory.getLogger(DownloadNpmController.class);
+    private static Logger logger = LoggerFactory.getLogger(NpmUploadController.class);
 
     @Autowired
-    DownloadNpmService downloadNpmService;
+    NpmUploadService downloadNpmService;
 
     @RequestMapping(path = "/npm/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "npm制品提交")

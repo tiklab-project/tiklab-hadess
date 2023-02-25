@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name="pack_repository_group_items")
-public class RepositoryGroupItemsEntity extends BaseModel {
+public class RepositoryGroupEntity extends BaseModel {
 
     @Id
     @GeneratorValue

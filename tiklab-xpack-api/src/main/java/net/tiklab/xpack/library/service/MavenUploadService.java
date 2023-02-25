@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-public interface DownloadMavenService {
+public interface MavenUploadService {
 
 
     /**

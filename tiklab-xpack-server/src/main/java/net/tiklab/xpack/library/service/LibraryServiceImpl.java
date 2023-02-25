@@ -14,10 +14,10 @@ import net.tiklab.xpack.library.entity.LibraryEntity;
 import net.tiklab.xpack.library.model.*;
 
 import net.tiklab.xpack.repository.model.Repository;
-import net.tiklab.xpack.repository.model.RepositoryGroupItems;
-import net.tiklab.xpack.repository.model.RepositoryGroupItemsQuery;
+import net.tiklab.xpack.repository.model.RepositoryGroup;
+import net.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
-import net.tiklab.xpack.repository.service.RepositoryGroupItemsService;
+import net.tiklab.xpack.repository.service.RepositoryGroupService;
 import net.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.catalina.authenticator.Constants;
 import org.apache.commons.collections.CollectionUtils;
@@ -78,7 +78,7 @@ public class LibraryServiceImpl implements LibraryService {
     LibraryMavenService libraryMavenService;
     
     @Autowired
-    RepositoryGroupItemsService repositoryGroupItemsService;
+    RepositoryGroupService repositoryGroupService;
 
     @Value("${repository.library:null}")
     String repositoryLibrary;
@@ -188,8 +188,8 @@ public class LibraryServiceImpl implements LibraryService {
     public void findRepositoryGroup(LibraryQuery libraryQuery){
         Repository repository = repositoryService.findRepository(libraryQuery.getRepositoryId());
         if (ObjectUtils.isNotEmpty(repository)&& "group".equals(repository.getRepositoryType())){
-            List<RepositoryGroupItems> groupItemsList = repositoryGroupItemsService.findRepositoryGroupItemsList(
-                    new RepositoryGroupItemsQuery().setRepositoryGroupId(libraryQuery.getRepositoryId()));
+            List<RepositoryGroup> groupItemsList = repositoryGroupService.findRepositoryGroupList(
+                    new RepositoryGroupQuery().setRepositoryGroupId(libraryQuery.getRepositoryId()));
             if (CollectionUtils.isNotEmpty(groupItemsList)){
                 List<String> repositoryIds = groupItemsList.stream().map(item -> item.getRepository().getId()).collect(Collectors.toList());
                 libraryQuery.setRepositoryIds(repositoryIds);
