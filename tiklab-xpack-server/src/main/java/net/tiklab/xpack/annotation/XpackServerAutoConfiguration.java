@@ -1,4 +1,4 @@
-package net.tiklab.xpack.config;
+package net.tiklab.xpack.annotation;
 
 import  net.tiklab.dsm.annotation.SQL;
 import org.springframework.context.annotation.ComponentScan;

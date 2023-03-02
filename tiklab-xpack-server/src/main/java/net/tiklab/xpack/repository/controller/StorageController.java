@@ -34,7 +34,7 @@ public class StorageController {
     private StorageService storageService;
 
     @RequestMapping(path="/createStorage",method = RequestMethod.POST)
-    @ApiMethod(name = "createStorage",desc = "createStorage")
+    @ApiMethod(name = "createStorage",desc = "创建存储库")
     @ApiParam(name = "storage",desc = "storage",required = true)
     public Result<String> createStorage(@RequestBody @NotNull @Valid Storage storage){
         String id = storageService.createStorage(storage);
@@ -43,7 +43,7 @@ public class StorageController {
     }
 
     @RequestMapping(path="/updateStorage",method = RequestMethod.POST)
-    @ApiMethod(name = "updateStorage",desc = "updateStorage")
+    @ApiMethod(name = "updateStorage",desc = "更新存储库")
     @ApiParam(name = "storage",desc = "storage",required = true)
     public Result<Void> updateStorage(@RequestBody @NotNull @Valid Storage storage){
         storageService.updateStorage(storage);
@@ -52,7 +52,7 @@ public class StorageController {
     }
 
     @RequestMapping(path="/deleteStorage",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteStorage",desc = "deleteStorage")
+    @ApiMethod(name = "deleteStorage",desc = "删除存储库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteStorage(@NotNull String id){
         storageService.deleteStorage(id);
@@ -61,7 +61,7 @@ public class StorageController {
     }
 
     @RequestMapping(path="/findStorage",method = RequestMethod.POST)
-    @ApiMethod(name = "findStorage",desc = "findStorage")
+    @ApiMethod(name = "findStorage",desc = "通过id查询存储库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Storage> findStorage(@NotNull String id){
         Storage storage = storageService.findStorage(id);
@@ -70,7 +70,7 @@ public class StorageController {
     }
 
     @RequestMapping(path="/findAllStorage",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllStorage",desc = "findAllStorage")
+    @ApiMethod(name = "findAllStorage",desc = "查询所有存储库")
     public Result<List<Storage>> findAllStorage(){
         List<Storage> storageList = storageService.findAllStorage();
 
@@ -78,7 +78,7 @@ public class StorageController {
     }
 
     @RequestMapping(path = "/findStorageList",method = RequestMethod.POST)
-    @ApiMethod(name = "findStorageList",desc = "findStorageList")
+    @ApiMethod(name = "findStorageList",desc = "条件查询存储库")
     @ApiParam(name = "storageQuery",desc = "storageQuery",required = true)
     public Result<List<Storage>> findStorageList(@RequestBody @Valid @NotNull StorageQuery storageQuery){
         List<Storage> storageList = storageService.findStorageList(storageQuery);
@@ -87,7 +87,7 @@ public class StorageController {
     }
 
     @RequestMapping(path = "/findStoragePage",method = RequestMethod.POST)
-    @ApiMethod(name = "findStoragePage",desc = "findStoragePage")
+    @ApiMethod(name = "findStoragePage",desc = "条件分页查询存储库")
     @ApiParam(name = "storageQuery",desc = "storageQuery",required = true)
     public Result<Pagination<Storage>> findStoragePage(@RequestBody @Valid @NotNull StorageQuery storageQuery){
         Pagination<Storage> pagination = storageService.findStoragePage(storageQuery);

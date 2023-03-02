@@ -19,7 +19,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 /**
-* RepositoryClusterCfgServiceImpl
+* RepositoryClusterCfgServiceImpl-制品库复制信息
 */
 @Service
 public class RepositoryClusterCfgServiceImpl implements RepositoryClusterCfgService {

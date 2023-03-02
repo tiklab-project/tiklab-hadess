@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* RepositoryGroupService
+* RepositoryGroupService-组合库关联接口
 */
 public interface RepositoryGroupService {
 

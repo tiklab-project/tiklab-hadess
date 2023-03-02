@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * RepositoryRemoteProxyDao
+ * RepositoryRemoteProxyDao-制品远程库代理数据访问
  */
 @Repository
 public class RepositoryRemoteProxyDao{
@@ -51,6 +51,10 @@ public class RepositoryRemoteProxyDao{
         jpaTemplate.delete(RepositoryRemoteProxyEntity.class,id);
     }
 
+    /**
+     * 条件删除远程库代理信息
+     * @param deleteCondition
+     */
     public void deleteRepositoryRemoteProxy(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -65,17 +69,27 @@ public class RepositoryRemoteProxyDao{
     }
 
     /**
-    * findAllRepositoryRemoteProxy
+    * 查询所有远程库代理信息
     * @return
     */
     public List<RepositoryRemoteProxyEntity> findAllRepositoryRemoteProxy() {
         return jpaTemplate.findAll(RepositoryRemoteProxyEntity.class);
     }
 
+    /**
+     * 通过ids查询远程库代理信息
+     * @param idList
+     * @return List <RepositoryRemoteProxyEntity>
+     */
     public List<RepositoryRemoteProxyEntity> findRepositoryRemoteProxyList(List<String> idList) {
         return jpaTemplate.findList(RepositoryRemoteProxyEntity.class,idList);
     }
 
+    /**
+     * 条件查询远程库代理信息
+     * @param repositoryRemoteProxyQuery
+     * @return List <RepositoryRemoteProxyEntity>
+     */
     public List<RepositoryRemoteProxyEntity> findRepositoryRemoteProxyList(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .eq("repositoryId",repositoryRemoteProxyQuery.getRepositoryId())
@@ -84,6 +98,11 @@ public class RepositoryRemoteProxyDao{
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
     }
 
+    /**
+     * 条件分页查询远程库代理信息
+     * @param repositoryRemoteProxyQuery
+     * @return Pagination <RepositoryRemoteProxyEntity>
+     */
     public Pagination<RepositoryRemoteProxyEntity> findRepositoryRemoteProxyPage(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .eq("repositoryId",repositoryRemoteProxyQuery.getRepositoryId())

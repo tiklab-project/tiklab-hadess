@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* LibraryFileService
+* LibraryFileService-制品文件接口
 */
 public interface LibraryFileService {
 

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * LibraryDao
+ * LibraryDao-制品数据访问
  */
 @Repository
 public class LibraryDao{
@@ -60,6 +60,11 @@ public class LibraryDao{
         jpaTemplate.delete(LibraryEntity.class,id);
     }
 
+    /**
+     * 条件删除
+     * @param deleteCondition
+     * @return
+     */
     public void deleteLibrary(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -74,17 +79,27 @@ public class LibraryDao{
     }
 
     /**
-    * findAllLibrary
+    * 查询所有制品
     * @return
     */
     public List<LibraryEntity> findAllLibrary() {
         return jpaTemplate.findAll(LibraryEntity.class);
     }
 
+    /**
+     * 通过ids查询制品
+     * @param idList
+     * @return List <LibraryEntity>
+     */
     public List<LibraryEntity> findLibraryList(List<String> idList) {
         return jpaTemplate.findList(LibraryEntity.class,idList);
     }
 
+    /**
+     * 条件查询制品
+     * @param libraryQuery
+     * @return List <LibraryEntity>
+     */
     public List<LibraryEntity> findLibraryList(LibraryQuery libraryQuery) {
         QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryEntity.class)
                 .eq("libraryType", libraryQuery.getLibraryType())
@@ -106,6 +121,11 @@ public class LibraryDao{
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
+    /**
+     * 条件分页查询制品
+     * @param libraryQuery
+     * @return Pagination <LibraryEntity>
+     */
     public Pagination<LibraryEntity> findLibraryPage(LibraryQuery libraryQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
                 .eq("repositoryId",libraryQuery.getRepositoryId())
@@ -118,12 +138,12 @@ public class LibraryDao{
         return jpaTemplate.findPage(queryCondition,LibraryEntity.class);
     }
 
-    public List<LibraryEntity> findGroupLibraryList(String[] repositoryIdArray) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .get();
-        return null;
-    }
 
+    /**
+     * 条件查询制品制品列表
+     * @param libraryQuery
+     * @return Pagination <LibraryEntity>
+     */
     public List<Library> findMavenLibraryList(LibraryQuery libraryQuery) {
         String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;

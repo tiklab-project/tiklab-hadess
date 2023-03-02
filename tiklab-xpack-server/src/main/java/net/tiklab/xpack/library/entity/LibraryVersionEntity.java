@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * LibraryVersionEntity-制品版本实体
+ */
 @Entity
 @Table(name="pack_library_version")
 public class LibraryVersionEntity extends BaseModel {
@@ -14,27 +17,35 @@ public class LibraryVersionEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品Id
     @Column(name = "library_id",length = 32,notNull = true)
     private String libraryId;
 
+    //制品库Id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 
+    //类型 maven、npm
     @Column(name = "library_type",length = 32,notNull = true)
     private String libraryType;
 
+    //版本
     @Column(name = "version",length = 32,notNull = true)
     private String version;
 
+    //hash
     @Column(name = "hash",length = 320)
     private String hash;
 
+    //推送人
     @Column(name = "pusher",length = 32)
     private String pusher;
 
+    //内容json  mpm用
     @Column(name = "Content_json")
     private String contentJson;
 
+    //推送时间
     @Column(name = "push_time")
     private Timestamp pushTime;
 

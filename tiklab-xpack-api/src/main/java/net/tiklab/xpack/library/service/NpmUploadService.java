@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.Map;
 
+/**
+ * NpmUploadService-npm上传下载接口
+ */
 public interface NpmUploadService {
 
     /**

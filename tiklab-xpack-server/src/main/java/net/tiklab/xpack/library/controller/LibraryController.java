@@ -45,7 +45,7 @@ public class LibraryController {
     private LibraryService libraryService;
 
     @RequestMapping(path="/createLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibrary",desc = "createLibrary")
+    @ApiMethod(name = "createLibrary",desc = "创建制品库")
     @ApiParam(name = "library",desc = "library",required = true)
     public Result<String> createLibrary(@RequestBody @NotNull @Valid Library library){
         String id = libraryService.createLibrary(library);
@@ -54,7 +54,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/updateLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibrary",desc = "updateLibrary")
+    @ApiMethod(name = "updateLibrary",desc = "更新制品库")
     @ApiParam(name = "library",desc = "library",required = true)
     public Result<Void> updateLibrary(@RequestBody @NotNull @Valid Library library){
         libraryService.updateLibrary(library);
@@ -63,7 +63,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/deleteLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibrary",desc = "deleteLibrary")
+    @ApiMethod(name = "deleteLibrary",desc = "删除制品库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibrary(@NotNull String id){
         libraryService.deleteLibrary(id);
@@ -72,7 +72,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/findLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibrary",desc = "findLibrary")
+    @ApiMethod(name = "findLibrary",desc = "通过id查询制品库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Library> findLibrary(@NotNull String id){
         Library library = libraryService.findLibrary(id);
@@ -81,7 +81,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/findAllLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllLibrary",desc = "findAllLibrary")
+    @ApiMethod(name = "findAllLibrary",desc = "查询所有制品库")
     public Result<List<Library>> findAllLibrary(){
         List<Library> libraryList = libraryService.findAllLibrary();
 
@@ -89,7 +89,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path = "/findLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryList",desc = "findLibraryList")
+    @ApiMethod(name = "findLibraryList",desc = "条件查询制品库")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<List<Library>> findLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         List<Library> libraryList = libraryService.findLibraryList(libraryQuery);
@@ -97,7 +97,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path = "/findLibraryPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryPage",desc = "findLibraryPage")
+    @ApiMethod(name = "findLibraryPage",desc = "条件分页查询制品库")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<Pagination<Library>> findLibraryPage(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         Pagination<Library> pagination = libraryService.findLibraryPage(libraryQuery);

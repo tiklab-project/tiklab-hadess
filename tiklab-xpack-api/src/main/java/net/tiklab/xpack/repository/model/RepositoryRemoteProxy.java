@@ -11,6 +11,9 @@ import net.tiklab.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * RepositoryRemoteProxy-远程库代理信息模型
+ */
 @ApiModel
 @Join
 @Mapper(targetAlias = "RepositoryRemoteProxyEntity")

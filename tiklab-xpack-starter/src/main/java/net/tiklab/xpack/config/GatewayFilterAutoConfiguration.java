@@ -1,10 +1,10 @@
 package net.tiklab.xpack.config;
 
 
-import net.tiklab.eam.author.Authenticator;
 import  net.tiklab.eam.client.author.AuthorHandler;
 import  net.tiklab.eam.client.author.config.IgnoreConfig;
 import  net.tiklab.eam.client.author.config.IgnoreConfigBuilder;
+import net.tiklab.eam.manager.Authenticator;
 import  net.tiklab.gateway.GatewayFilter;
 import  net.tiklab.gateway.router.RouterHandler;
 import  net.tiklab.gateway.router.config.RouterConfig;

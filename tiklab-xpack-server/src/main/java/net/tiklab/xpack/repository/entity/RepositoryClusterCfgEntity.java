@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * RepositoryClusterCfgEntity-制品库复制信息实体
+ */
 @Entity
 @Table(name="pack_repository_cluster_cfg")
 public class RepositoryClusterCfgEntity extends BaseModel {
@@ -14,24 +17,31 @@ public class RepositoryClusterCfgEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品库id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 
+    //地址
     @Column(name = "url",length = 32,notNull = true)
     private String url;
 
+    //来源
     @Column(name = "source",length = 32)
     private String source;
 
+    //账号
     @Column(name = "account",length = 32,notNull = true)
     private String account;
 
+    //密码
     @Column(name = "password",length = 32,notNull = true)
     private String password;
 
+    //超时
     @Column(name = "time_out",length = 18)
     private String timeOut;
 
+    //创建人
     @Column(name = "create_user",length = 32)
     private String createUser;
 

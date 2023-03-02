@@ -9,10 +9,13 @@ import net.tiklab.join.annotation.Join;
 import net.tiklab.join.annotation.JoinQuery;
 import net.tiklab.postin.annotation.ApiModel;
 import net.tiklab.postin.annotation.ApiProperty;
-import net.tiklab.user.user.model.User;
+import net.tiklab.user.system.user.model.User;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * RepositoryClusterCfg-制品库复制信息模型
+ */
 @ApiModel
 @Join
 @Mapper(targetAlias = "RepositoryClusterCfgEntity")

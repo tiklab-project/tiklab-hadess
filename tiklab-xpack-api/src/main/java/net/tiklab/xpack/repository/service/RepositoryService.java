@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
-* RepositoryService
+* RepositoryService-制品库接口
 */
 @JoinProvider(model = Repository.class)
 public interface RepositoryService {

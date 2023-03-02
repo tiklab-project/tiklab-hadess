@@ -8,6 +8,9 @@ import net.tiklab.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * RepositoryRemoteProxy-存储库模型
+ */
 @ApiModel
 @Mapper(targetAlias = "StorageEntity")
 public class Storage extends BaseModel {

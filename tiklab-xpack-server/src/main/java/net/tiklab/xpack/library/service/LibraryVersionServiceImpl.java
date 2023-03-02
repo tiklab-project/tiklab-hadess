@@ -4,7 +4,7 @@ import net.tiklab.beans.BeanMapper;
 import net.tiklab.core.page.Pagination;
 import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
-import net.tiklab.user.user.model.User;
+import net.tiklab.user.system.user.model.User;
 import net.tiklab.xpack.library.dao.LibraryVersionDao;
 import net.tiklab.xpack.library.entity.LibraryVersionEntity;
 import net.tiklab.xpack.library.model.*;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 
 /**
-* LibraryVersionServiceImpl
+* LibraryVersionServiceImpl-制品版本
 */
 @Service
 public class LibraryVersionServiceImpl implements LibraryVersionService {

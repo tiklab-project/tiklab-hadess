@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 
 /**
-* LibraryFileServiceImpl
+* LibraryFileServiceImpl-制品文件
 */
 @Service
 public class LibraryFileServiceImpl implements LibraryFileService {

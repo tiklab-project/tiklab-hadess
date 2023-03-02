@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * RepositoryEntity-制品库实体
+ */
 @Entity
 @Table(name="pack_repository")
 public class RepositoryEntity extends BaseModel {
@@ -14,24 +17,31 @@ public class RepositoryEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品库名字
     @Column(name = "name",length = 128,notNull = true)
     private String name;
 
+    //制品库路径
     @Column(name = "repository_url",length = 64)
     private String repositoryUrl;
 
+    //类型  本地库：local、远程库：remote、组合库：group
     @Column(name = "repository_type",length = 12,notNull = true)
     private String repositoryType;
 
+    //创建类型 maven、npm等
     @Column(name = "type",length = 12,notNull = true)
     private String type;
 
+    //存储库id
     @Column(name = "storage_id",length = 32,notNull = true)
     private String storageId;
 
+    //描述
     @Column(name = "description",length = 160)
     private String description;
 
+    //创建人
     @Column(name = "create_user",length = 32)
     private String createUser;
 

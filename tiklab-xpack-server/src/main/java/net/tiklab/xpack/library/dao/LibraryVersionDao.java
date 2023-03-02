@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * LibraryVersionDao
+ * LibraryVersionDao-制品版本数据访问
  */
 @Repository
 public class LibraryVersionDao{
@@ -51,6 +51,10 @@ public class LibraryVersionDao{
         jpaTemplate.delete(LibraryVersionEntity.class,id);
     }
 
+    /**
+     * 条件删除制品版本
+     * @param deleteCondition
+     */
     public void deleteLibraryVersion(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -65,17 +69,27 @@ public class LibraryVersionDao{
     }
 
     /**
-    * findAllLibraryVersion
+    * 查询所有制品版本
     * @return
     */
     public List<LibraryVersionEntity> findAllLibraryVersion() {
         return jpaTemplate.findAll(LibraryVersionEntity.class);
     }
 
+    /**
+     * 通过ids查询制品版本
+     * @param idList
+     * @return List <LibraryVersionEntity>
+     */
     public List<LibraryVersionEntity> findLibraryVersionList(List<String> idList) {
         return jpaTemplate.findList(LibraryVersionEntity.class,idList);
     }
 
+    /**
+     * 条件查询制品版本
+     * @param libraryVersionQuery
+     * @return List <LibraryVersionEntity>
+     */
     public List<LibraryVersionEntity> findLibraryVersionList(LibraryVersionQuery libraryVersionQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryVersionEntity.class)
                 .eq("repositoryId",libraryVersionQuery.getRepositoryId())
@@ -86,6 +100,11 @@ public class LibraryVersionDao{
         return jpaTemplate.findList(queryCondition,LibraryVersionEntity.class);
     }
 
+    /**
+     * 条件分页查询制品版本
+     * @param libraryVersionQuery
+     * @return Pagination <LibraryVersionEntity>
+     */
     public Pagination<LibraryVersionEntity> findLibraryVersionPage(LibraryVersionQuery libraryVersionQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryVersionEntity.class)
                 .eq("repositoryId",libraryVersionQuery.getRepositoryId())

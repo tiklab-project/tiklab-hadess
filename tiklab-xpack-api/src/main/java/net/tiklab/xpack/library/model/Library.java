@@ -1,6 +1,5 @@
 package net.tiklab.xpack.library.model;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import net.tiklab.beans.annotation.Mapper;
 import net.tiklab.beans.annotation.Mapping;
@@ -11,9 +10,11 @@ import net.tiklab.join.annotation.JoinQuery;
 import net.tiklab.postin.annotation.ApiModel;
 import net.tiklab.postin.annotation.ApiProperty;
 import net.tiklab.xpack.repository.model.Repository;
-
 import javax.validation.constraints.NotNull;
 
+/**
+ * Library 制品模型
+ */
 @ApiModel
 @Join
 @Mapper(targetAlias = "LibraryEntity")
@@ -50,10 +51,10 @@ public class Library extends BaseModel {
     private java.lang.String newVersion;
 
     /*---------其他字段----------*/
-    @ApiProperty(name="groupId",desc="groupId")
+    @ApiProperty(name="groupId",desc="maven制品-groupId")
     private java.lang.String groupId;
 
-    @ApiProperty(name="artifactId",desc="artifactId")
+    @ApiProperty(name="artifactId",desc="maven制品-artifactId")
     private java.lang.String artifactId;
 
 

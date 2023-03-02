@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * RepositoryClusterCfgDao
+ * RepositoryClusterCfgDao-制品库复制信息数据访问
  */
 @Repository
 public class RepositoryClusterCfgDao{
@@ -51,6 +51,11 @@ public class RepositoryClusterCfgDao{
         jpaTemplate.delete(RepositoryClusterCfgEntity.class,id);
     }
 
+    /**
+     * 条件删除制品库复制信息
+     * @param deleteCondition
+     * @return
+     */
     public void deleteRepositoryClusterCfg(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -72,10 +77,20 @@ public class RepositoryClusterCfgDao{
         return jpaTemplate.findAll(RepositoryClusterCfgEntity.class);
     }
 
+    /**
+     * 通过ids查询制品库复制信息
+     * @param idList
+     * @return List <RepositoryClusterCfgEntity>
+     */
     public List<RepositoryClusterCfgEntity> findRepositoryClusterCfgList(List<String> idList) {
         return jpaTemplate.findList(RepositoryClusterCfgEntity.class,idList);
     }
 
+    /**
+     * 条件查询制品库复制信息
+     * @param repositoryClusterCfgQuery
+     * @return List <RepositoryClusterCfgEntity>
+     */
     public List<RepositoryClusterCfgEntity> findRepositoryClusterCfgList(RepositoryClusterCfgQuery repositoryClusterCfgQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryClusterCfgEntity.class)
                 .eq("repositoryId",repositoryClusterCfgQuery.getRepositoryId())
@@ -84,6 +99,11 @@ public class RepositoryClusterCfgDao{
         return jpaTemplate.findList(queryCondition,RepositoryClusterCfgEntity.class);
     }
 
+    /**
+     * 条件分页查询制品库复制信息
+     * @param repositoryClusterCfgQuery
+     * @return Pagination <RepositoryClusterCfgEntity>
+     */
     public Pagination<RepositoryClusterCfgEntity> findRepositoryClusterCfgPage(RepositoryClusterCfgQuery repositoryClusterCfgQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryClusterCfgEntity.class)
                 .eq("repositoryId",repositoryClusterCfgQuery.getRepositoryId())

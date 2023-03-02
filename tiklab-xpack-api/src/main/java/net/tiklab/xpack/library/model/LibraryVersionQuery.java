@@ -7,10 +7,11 @@ import net.tiklab.core.page.Page;
 import net.tiklab.postin.annotation.ApiModel;
 import net.tiklab.postin.annotation.ApiProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 @ApiModel
-public class LibraryVersionQuery {
+public class LibraryVersionQuery implements Serializable {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
         private List<Order> orderParams = OrderBuilders.instance().asc("createTime").get();

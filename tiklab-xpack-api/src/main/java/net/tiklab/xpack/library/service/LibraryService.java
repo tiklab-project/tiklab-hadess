@@ -19,7 +19,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
-* LibraryService
+* LibraryService-制品接口
 */
 @JoinProvider(model = Library.class)
 public interface LibraryService {

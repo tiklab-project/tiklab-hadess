@@ -19,7 +19,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 /**
-* StorageServiceImpl
+* StorageServiceImpl-存储库
 */
 @Service
 public class StorageServiceImpl implements StorageService {

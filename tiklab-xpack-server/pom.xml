@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId> net.tiklab</groupId>
-            <artifactId>tiklab-tenant-api</artifactId>
+            <artifactId>tiklab-tenant-resource-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

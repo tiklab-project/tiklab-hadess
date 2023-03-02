@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* LibraryMavenService
+* LibraryMavenService-maven类型制品差异数据接口
 */
 public interface LibraryMavenService {
 

@@ -12,6 +12,9 @@ import net.tiklab.postin.annotation.ApiProperty;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
+/**
+ * RepositoryGroup-组合库关联模型
+ */
 @ApiModel
 @Mapper(targetAlias = "RepositoryGroupEntity")
 @Join

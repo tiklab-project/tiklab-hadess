@@ -2,12 +2,12 @@ package net.tiklab.xpack.library.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import net.tiklab.eam.common.EamTicket;
-import net.tiklab.eam.passport.user.model.UserPassport;
-import net.tiklab.eam.passport.user.service.UserPassportService;
-import net.tiklab.user.user.model.User;
-import net.tiklab.user.user.model.UserQuery;
-import net.tiklab.user.user.service.UserService;
+import net.tiklab.eam.manager.common.EamTicket;
+import net.tiklab.eam.manager.passport.user.model.UserPassport;
+import net.tiklab.eam.manager.passport.user.service.UserPassportService;
+import net.tiklab.user.system.user.model.User;
+import net.tiklab.user.system.user.model.UserQuery;
+import net.tiklab.user.system.user.service.UserService;
 import net.tiklab.xpack.library.model.*;
 import net.tiklab.xpack.repository.model.Repository;
 import net.tiklab.xpack.repository.model.RepositoryQuery;
@@ -23,6 +23,9 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * NpmUploadServiceImpl-npm上传下载
+ */
 @Service
 public class NpmUploadServiceImpl implements NpmUploadService {
 

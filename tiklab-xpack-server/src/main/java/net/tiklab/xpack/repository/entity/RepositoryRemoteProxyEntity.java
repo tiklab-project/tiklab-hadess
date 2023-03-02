@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * RepositoryRemoteProxyEntity-远程库代理信息实体
+ */
 @Entity
 @Table(name="pack_repository_remote_proxy")
 public class RepositoryRemoteProxyEntity extends BaseModel {
@@ -14,18 +17,23 @@ public class RepositoryRemoteProxyEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品库Id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 
+    //代理地址
     @Column(name = "agency_url",length = 32,notNull = true)
     private String agencyUrl;
 
+    //代理名称
     @Column(name = "agency_name",length = 32)
     private String agencyName;
 
+    //账号、用户
     @Column(name = "user_name",length = 16)
     private String userName;
 
+    //密码
     @Column(name = "password",length = 32)
     private String password;
 

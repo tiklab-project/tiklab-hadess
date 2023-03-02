@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * LibraryEntity 制品实体
+ */
 @Entity
 @Table(name="pack_library")
 public class LibraryEntity extends BaseModel {
@@ -14,15 +17,19 @@ public class LibraryEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品名称
     @Column(name = "name",length = 128,notNull = true)
     private String name;
 
+    //类型 maven、npm
     @Column(name = "library_type",length = 32,notNull = true)
     private String libraryType;
 
+    //最新版本
     @Column(name = "new_version",length = 32)
     private String newVersion;
 
+    //制品库id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 

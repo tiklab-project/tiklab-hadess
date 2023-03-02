@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * LibraryMavenDao
+ * LibraryMavenDao-maven制品数据访问
  */
 @Repository
 public class LibraryMavenDao{
@@ -50,6 +50,10 @@ public class LibraryMavenDao{
         jpaTemplate.delete(LibraryMavenEntity.class,id);
     }
 
+    /**
+     * 条件删maven制品
+     * @param deleteCondition
+     */
     public void deleteLibraryMaven(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -64,17 +68,27 @@ public class LibraryMavenDao{
     }
 
     /**
-    * findAllLibraryMaven
+    * 查询所有maven制品
     * @return
     */
     public List<LibraryMavenEntity> findAllLibraryMaven() {
         return jpaTemplate.findAll(LibraryMavenEntity.class);
     }
 
+    /**
+     * 通过ids查询maven制品
+     * @param idList
+     * @return List <LibraryMavenEntity>
+     */
     public List<LibraryMavenEntity> findLibraryMavenList(List<String> idList) {
         return jpaTemplate.findList(LibraryMavenEntity.class,idList);
     }
 
+    /**
+     * 条件查询maven制品
+     * @param libraryMavenQuery
+     * @return List <LibraryMavenEntity>
+     */
     public List<LibraryMavenEntity> findLibraryMavenList(LibraryMavenQuery libraryMavenQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryMavenEntity.class)
                 .eq("libraryId", libraryMavenQuery.getLibraryId())
@@ -85,6 +99,11 @@ public class LibraryMavenDao{
         return jpaTemplate.findList(queryCondition,LibraryMavenEntity.class);
     }
 
+    /**
+     * 条件分页查询maven制品
+     * @param libraryMavenQuery
+     * @return Pagination <LibraryMavenEntity>
+     */
     public Pagination<LibraryMavenEntity> findLibraryMavenPage(LibraryMavenQuery libraryMavenQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryMavenEntity.class)
                 .eq("libraryId", libraryMavenQuery.getLibraryId())

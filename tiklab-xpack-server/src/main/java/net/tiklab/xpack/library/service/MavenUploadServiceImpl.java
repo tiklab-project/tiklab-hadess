@@ -1,9 +1,9 @@
 package net.tiklab.xpack.library.service;
 
 import net.tiklab.core.exception.ApplicationException;
-import net.tiklab.user.user.model.User;
-import net.tiklab.user.user.model.UserQuery;
-import net.tiklab.user.user.service.UserService;
+import net.tiklab.user.system.user.model.User;
+import net.tiklab.user.system.user.model.UserQuery;
+import net.tiklab.user.system.user.service.UserService;
 import net.tiklab.xpack.library.model.Library;
 import net.tiklab.xpack.library.model.LibraryFile;
 import net.tiklab.xpack.library.model.LibraryFileQuery;
@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * MavenUploadServiceImpl-maven上传下载
+ */
 @Service
 public class MavenUploadServiceImpl implements MavenUploadService {
     private static Logger logger = LoggerFactory.getLogger(MavenUploadServiceImpl.class);
@@ -224,7 +227,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //查询是否存在制品文件
             List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setFileUrl(fileUrl));
             if (CollectionUtils.isNotEmpty(libraryFileList)){
-                return readFileContent(fileUrl,resultMap);
+                return readFileContent(fileUrl);
             }else {
                 //local库不存在、就根据远程代理路径拉取
             }
@@ -240,7 +243,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param filePath: 文件内容
      * @return
      */
-    public Map<String, Object> readFileContent(String filePath, Map<String, Object> resultMap)  throws IOException {
+    public Map<String, Object> readFileContent(String filePath)  throws IOException {
 
         File f = new File(filePath);
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());

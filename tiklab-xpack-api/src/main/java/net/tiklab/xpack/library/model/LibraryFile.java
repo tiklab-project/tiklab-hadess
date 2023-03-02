@@ -13,6 +13,9 @@ import net.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * LibraryFile-制品文件模型
+ */
 @ApiModel
 @Join
 @Mapper(targetAlias = "LibraryFileEntity")

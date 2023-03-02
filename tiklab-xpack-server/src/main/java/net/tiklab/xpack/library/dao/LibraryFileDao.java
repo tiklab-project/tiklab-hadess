@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * LibraryFileDao
+ * LibraryFileDao-制品文件数据访问
  */
 @Repository
 public class LibraryFileDao{
@@ -50,6 +50,11 @@ public class LibraryFileDao{
         jpaTemplate.delete(LibraryFileEntity.class,id);
     }
 
+    /**
+     * 条件删除制品文件
+     * @param deleteCondition
+     * @return
+     */
     public void deleteLibraryFile(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -71,10 +76,20 @@ public class LibraryFileDao{
         return jpaTemplate.findAll(LibraryFileEntity.class);
     }
 
+    /**
+     * 通过制品文件ids查询制品文件
+     * @param idList
+     * @return List <LibraryFileEntity>
+     */
     public List<LibraryFileEntity> findLibraryFileList(List<String> idList) {
         return jpaTemplate.findList(LibraryFileEntity.class,idList);
     }
 
+    /**
+     * 条件查询制品文件
+     * @param libraryFileQuery
+     * @return List <LibraryFileEntity>
+     */
     public List<LibraryFileEntity> findLibraryFileList(LibraryFileQuery libraryFileQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
                 .eq("libraryId",libraryFileQuery.getLibraryId())
@@ -85,6 +100,11 @@ public class LibraryFileDao{
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 
+    /**
+     * 条件分页查询制品文件
+     * @param libraryFileQuery
+     * @return Pagination <LibraryFileEntity>
+     */
     public Pagination<LibraryFileEntity> findLibraryFilePage(LibraryFileQuery libraryFileQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
                 .eq("libraryId",libraryFileQuery.getLibraryId())

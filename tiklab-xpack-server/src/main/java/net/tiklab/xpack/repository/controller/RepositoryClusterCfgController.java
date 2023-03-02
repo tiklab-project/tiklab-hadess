@@ -34,7 +34,7 @@ public class RepositoryClusterCfgController {
     private RepositoryClusterCfgService repositoryClusterCfgService;
 
     @RequestMapping(path="/createRepositoryClusterCfg",method = RequestMethod.POST)
-    @ApiMethod(name = "createRepositoryClusterCfg",desc = "createRepositoryClusterCfg")
+    @ApiMethod(name = "createRepositoryClusterCfg",desc = "创建制品库复制信息")
     @ApiParam(name = "repositoryClusterCfg",desc = "repositoryClusterCfg",required = true)
     public Result<String> createRepositoryClusterCfg(@RequestBody @NotNull @Valid RepositoryClusterCfg repositoryClusterCfg){
         String id = repositoryClusterCfgService.createRepositoryClusterCfg(repositoryClusterCfg);
@@ -43,7 +43,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path="/updateRepositoryClusterCfg",method = RequestMethod.POST)
-    @ApiMethod(name = "updateRepositoryClusterCfg",desc = "updateRepositoryClusterCfg")
+    @ApiMethod(name = "updateRepositoryClusterCfg",desc = "更新制品库复制信息")
     @ApiParam(name = "repositoryClusterCfg",desc = "repositoryClusterCfg",required = true)
     public Result<Void> updateRepositoryClusterCfg(@RequestBody @NotNull @Valid RepositoryClusterCfg repositoryClusterCfg){
         repositoryClusterCfgService.updateRepositoryClusterCfg(repositoryClusterCfg);
@@ -52,7 +52,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path="/deleteRepositoryClusterCfg",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteRepositoryClusterCfg",desc = "deleteRepositoryClusterCfg")
+    @ApiMethod(name = "deleteRepositoryClusterCfg",desc = "删除制品库复制信息")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteRepositoryClusterCfg(@NotNull String id){
         repositoryClusterCfgService.deleteRepositoryClusterCfg(id);
@@ -61,7 +61,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path="/findRepositoryClusterCfg",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryClusterCfg",desc = "findRepositoryClusterCfg")
+    @ApiMethod(name = "findRepositoryClusterCfg",desc = "通过id查询制品库复制信息")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<RepositoryClusterCfg> findRepositoryClusterCfg(@NotNull String id){
         RepositoryClusterCfg repositoryClusterCfg = repositoryClusterCfgService.findRepositoryClusterCfg(id);
@@ -70,7 +70,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path="/findAllRepositoryClusterCfg",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllRepositoryClusterCfg",desc = "findAllRepositoryClusterCfg")
+    @ApiMethod(name = "findAllRepositoryClusterCfg",desc = "查询所有制品库复制信息")
     public Result<List<RepositoryClusterCfg>> findAllRepositoryClusterCfg(){
         List<RepositoryClusterCfg> repositoryClusterCfgList = repositoryClusterCfgService.findAllRepositoryClusterCfg();
 
@@ -78,7 +78,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path = "/findRepositoryClusterCfgList",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryClusterCfgList",desc = "findRepositoryClusterCfgList")
+    @ApiMethod(name = "findRepositoryClusterCfgList",desc = "条件查询制品库复制信息")
     @ApiParam(name = "repositoryClusterCfgQuery",desc = "repositoryClusterCfgQuery",required = true)
     public Result<List<RepositoryClusterCfg>> findRepositoryClusterCfgList(@RequestBody @Valid @NotNull RepositoryClusterCfgQuery repositoryClusterCfgQuery){
         List<RepositoryClusterCfg> repositoryClusterCfgList = repositoryClusterCfgService.findRepositoryClusterCfgList(repositoryClusterCfgQuery);
@@ -87,7 +87,7 @@ public class RepositoryClusterCfgController {
     }
 
     @RequestMapping(path = "/findRepositoryClusterCfgPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryClusterCfgPage",desc = "findRepositoryClusterCfgPage")
+    @ApiMethod(name = "findRepositoryClusterCfgPage",desc = "条件分页查询制品库复制信息")
     @ApiParam(name = "repositoryClusterCfgQuery",desc = "repositoryClusterCfgQuery",required = true)
     public Result<Pagination<RepositoryClusterCfg>> findRepositoryClusterCfgPage(@RequestBody @Valid @NotNull RepositoryClusterCfgQuery repositoryClusterCfgQuery){
         Pagination<RepositoryClusterCfg> pagination = repositoryClusterCfgService.findRepositoryClusterCfgPage(repositoryClusterCfgQuery);

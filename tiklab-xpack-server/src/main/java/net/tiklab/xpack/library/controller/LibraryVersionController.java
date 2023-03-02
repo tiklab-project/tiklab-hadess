@@ -34,7 +34,7 @@ public class LibraryVersionController {
     private LibraryVersionService libraryVersionService;
 
     @RequestMapping(path="/createLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibraryVersion",desc = "createLibraryVersion")
+    @ApiMethod(name = "createLibraryVersion",desc = "创建制品版本")
     @ApiParam(name = "libraryVersion",desc = "libraryVersion",required = true)
     public Result<String> createLibraryVersion(@RequestBody @NotNull @Valid LibraryVersion libraryVersion){
         String id = libraryVersionService.createLibraryVersion(libraryVersion);
@@ -43,7 +43,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path="/updateLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibraryVersion",desc = "updateLibraryVersion")
+    @ApiMethod(name = "updateLibraryVersion",desc = "更新制品版本")
     @ApiParam(name = "libraryVersion",desc = "libraryVersion",required = true)
     public Result<Void> updateLibraryVersion(@RequestBody @NotNull @Valid LibraryVersion libraryVersion){
         libraryVersionService.updateLibraryVersion(libraryVersion);
@@ -52,7 +52,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path="/deleteLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibraryVersion",desc = "deleteLibraryVersion")
+    @ApiMethod(name = "deleteLibraryVersion",desc = "删除制品版本")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibraryVersion(@NotNull String id){
         libraryVersionService.deleteLibraryVersion(id);
@@ -61,7 +61,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path="/findLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryVersion",desc = "findLibraryVersion")
+    @ApiMethod(name = "findLibraryVersion",desc = "通过id查询制品版本")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<LibraryVersion> findLibraryVersion(@NotNull String id){
         LibraryVersion libraryVersion = libraryVersionService.findLibraryVersion(id);
@@ -70,7 +70,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path="/findAllLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllLibraryVersion",desc = "findAllLibraryVersion")
+    @ApiMethod(name = "findAllLibraryVersion",desc = "查询所有制品版本")
     public Result<List<LibraryVersion>> findAllLibraryVersion(){
         List<LibraryVersion> libraryVersionList = libraryVersionService.findAllLibraryVersion();
 
@@ -78,7 +78,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path = "/findLibraryVersionList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryVersionList",desc = "findLibraryVersionList")
+    @ApiMethod(name = "findLibraryVersionList",desc = "条件查询制品版本")
     @ApiParam(name = "libraryVersionQuery",desc = "libraryVersionQuery",required = true)
     public Result<List<LibraryVersion>> findLibraryVersionList(@RequestBody @Valid @NotNull LibraryVersionQuery libraryVersionQuery){
         List<LibraryVersion> libraryVersionList = libraryVersionService.findLibraryVersionList(libraryVersionQuery);
@@ -87,7 +87,7 @@ public class LibraryVersionController {
     }
 
     @RequestMapping(path = "/findLibraryVersionPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryVersionPage",desc = "findLibraryVersionPage")
+    @ApiMethod(name = "findLibraryVersionPage",desc = "条件分页查询制品版本")
     @ApiParam(name = "libraryVersionQuery",desc = "libraryVersionQuery",required = true)
     public Result<Pagination<LibraryVersion>> findLibraryVersionPage(@RequestBody @Valid @NotNull LibraryVersionQuery libraryVersionQuery){
         Pagination<LibraryVersion> pagination = libraryVersionService.findLibraryVersionPage(libraryVersionQuery);

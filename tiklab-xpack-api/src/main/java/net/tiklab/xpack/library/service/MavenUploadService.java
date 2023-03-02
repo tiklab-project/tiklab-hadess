@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+/**
+ * MavenUploadService-maven上传下载接口
+ */
 public interface MavenUploadService {
 
 

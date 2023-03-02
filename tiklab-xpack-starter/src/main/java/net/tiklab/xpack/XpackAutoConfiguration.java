@@ -6,7 +6,6 @@ import  net.tiklab.dcs.starter.EnableDcs;
 import  net.tiklab.dfs.starter.EnableDfs;
 import  net.tiklab.dsm.starter.annotation.EnableDsm;
 import  net.tiklab.dss.starter.EnableDss;
-import net.tiklab.eam.starter.EnableEam;
 import net.tiklab.integration.starter.EnableIntegration;
 import  net.tiklab.licence.starter.EnableLicenceServer;
 import net.tiklab.logging.stater.EnableLog;
@@ -19,7 +18,7 @@ import net.tiklab.tks.annotation.EnableTks;
 import net.tiklab.user.starter.EnableUser;
 import  net.tiklab.web.starter.annotation.EnableWeb;
 import org.springframework.context.annotation.Configuration;
-
+import net.tiklab.eam.starter.EnableEam;
 /**
  * XpackServerAutoConfiguration
  */

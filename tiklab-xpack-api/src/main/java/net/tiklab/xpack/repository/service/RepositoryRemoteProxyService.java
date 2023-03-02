@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* RepositoryRemoteProxyService
+* RepositoryRemoteProxyService-远程库代理信息
 */
 public interface RepositoryRemoteProxyService {
 

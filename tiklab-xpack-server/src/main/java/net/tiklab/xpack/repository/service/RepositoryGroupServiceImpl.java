@@ -23,7 +23,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 /**
-* RepositoryGroupServiceImpl
+* RepositoryGroupServiceImpl-组合库关联
 */
 @Service
 public class RepositoryGroupServiceImpl implements RepositoryGroupService {

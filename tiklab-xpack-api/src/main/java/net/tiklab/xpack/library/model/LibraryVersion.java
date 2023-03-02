@@ -9,11 +9,13 @@ import net.tiklab.join.annotation.Join;
 import net.tiklab.join.annotation.JoinQuery;
 import net.tiklab.postin.annotation.ApiModel;
 import net.tiklab.postin.annotation.ApiProperty;
-import net.tiklab.user.user.model.User;
 import net.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * LibraryVersion-制品版本模型
+ */
 @ApiModel
 @Join
 @Mapper(targetAlias = "LibraryVersionEntity")
@@ -55,7 +57,7 @@ public class LibraryVersion extends BaseModel {
             @Mapping(source = "User.id",target = "pusher")
     })
     @JoinQuery(key = "id")
-    private User User;
+    private net.tiklab.user.system.user.model.User User;
 
 
     @ApiProperty(name="contentJson",desc="内容json  mpm用")
@@ -124,11 +126,11 @@ public class LibraryVersion extends BaseModel {
         this.hash = hash;
     }
 
-    public net.tiklab.user.user.model.User getUser() {
+    public net.tiklab.user.system.user.model.User getUser() {
         return User;
     }
 
-    public void setUser(net.tiklab.user.user.model.User user) {
+    public void setUser(net.tiklab.user.system.user.model.User user) {
         User = user;
     }
 

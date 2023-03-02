@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * RepositoryGroupEntity-组合库关联实体
+ */
 @Entity
 @Table(name="pack_repository_group_items")
 public class RepositoryGroupEntity extends BaseModel {
@@ -14,12 +17,15 @@ public class RepositoryGroupEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //组合库id
     @Column(name = "repository_group_id",length = 32,notNull = true)
     private String  repositoryGroupId;
 
+    //关联库id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String  repositoryId;
 
+    //创建时间
     @Column(name = "create_time")
     private Timestamp createTime;
 

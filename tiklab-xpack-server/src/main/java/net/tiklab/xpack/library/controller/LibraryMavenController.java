@@ -34,7 +34,7 @@ public class LibraryMavenController {
     private LibraryMavenService libraryMavenService;
 
     @RequestMapping(path="/createLibraryMaven",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibraryMaven",desc = "createLibraryMaven")
+    @ApiMethod(name = "createLibraryMaven",desc = "创建maven制品")
     @ApiParam(name = "libraryMaven",desc = "libraryMaven",required = true)
     public Result<String> createLibraryMaven(@RequestBody @NotNull @Valid LibraryMaven libraryMaven){
         String id = libraryMavenService.createLibraryMaven(libraryMaven);
@@ -43,7 +43,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path="/updateLibraryMaven",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibraryMaven",desc = "updateLibraryMaven")
+    @ApiMethod(name = "updateLibraryMaven",desc = "更新maven制品")
     @ApiParam(name = "libraryMaven",desc = "libraryMaven",required = true)
     public Result<Void> updateLibraryMaven(@RequestBody @NotNull @Valid LibraryMaven libraryMaven){
         libraryMavenService.updateLibraryMaven(libraryMaven);
@@ -52,7 +52,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path="/deleteLibraryMaven",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibraryMaven",desc = "deleteLibraryMaven")
+    @ApiMethod(name = "deleteLibraryMaven",desc = "删除maven制品")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibraryMaven(@NotNull String id){
         libraryMavenService.deleteLibraryMaven(id);
@@ -61,7 +61,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path="/findLibraryMaven",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryMaven",desc = "findLibraryMaven")
+    @ApiMethod(name = "findLibraryMaven",desc = "通过id查询maven制品")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<LibraryMaven> findLibraryMaven(@NotNull String id){
         LibraryMaven libraryMaven = libraryMavenService.findLibraryMaven(id);
@@ -70,7 +70,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path="/findAllLibraryMaven",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllLibraryMaven",desc = "findAllLibraryMaven")
+    @ApiMethod(name = "findAllLibraryMaven",desc = "查询所有maven制品")
     public Result<List<LibraryMaven>> findAllLibraryMaven(){
         List<LibraryMaven> libraryMavenList = libraryMavenService.findAllLibraryMaven();
 
@@ -78,7 +78,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path = "/findLibraryMavenList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryMavenList",desc = "findLibraryMavenList")
+    @ApiMethod(name = "findLibraryMavenList",desc = "条件查询maven制品")
     @ApiParam(name = "libraryMavenQuery",desc = "libraryMavenQuery",required = true)
     public Result<List<LibraryMaven>> findLibraryMavenList(@RequestBody @Valid @NotNull LibraryMavenQuery libraryMavenQuery){
         List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(libraryMavenQuery);
@@ -87,7 +87,7 @@ public class LibraryMavenController {
     }
 
     @RequestMapping(path = "/findLibraryMavenPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryMavenPage",desc = "findLibraryMavenPage")
+    @ApiMethod(name = "findLibraryMavenPage",desc = "条件分页查询maven制品")
     @ApiParam(name = "libraryMavenQuery",desc = "libraryMavenQuery",required = true)
     public Result<Pagination<LibraryMaven>> findLibraryMavenPage(@RequestBody @Valid @NotNull LibraryMavenQuery libraryMavenQuery){
         Pagination<LibraryMaven> pagination = libraryMavenService.findLibraryMavenPage(libraryMavenQuery);

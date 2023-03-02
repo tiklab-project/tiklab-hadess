@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* LibraryVersionService
+* LibraryVersionService-制品版本接口
 */
 @JoinProvider(model = LibraryVersion.class)
 public interface LibraryVersionService {

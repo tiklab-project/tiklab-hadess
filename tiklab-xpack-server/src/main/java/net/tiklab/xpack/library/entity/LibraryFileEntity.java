@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * LibraryFileEntity-制品文件实体
+ */
 @Entity
 @Table(name="pack_library_file")
 public class LibraryFileEntity extends BaseModel {
@@ -14,21 +17,27 @@ public class LibraryFileEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品Id
     @Column(name = "library_id",length = 32,notNull = true)
     private String libraryId;
 
+    //制品版本id
     @Column(name = "library_version_id",length = 32,notNull = true)
     private String libraryVersionId;
 
+    //制品库Id
     @Column(name = "repository_id",length = 32,notNull = true)
     private String repositoryId;
 
+    //文件大小
     @Column(name = "file_size",length = 32,notNull = true)
     private String fileSize;
 
+    //文件名称
     @Column(name = "file_name",length = 256,notNull = true)
     private String fileName;
 
+    //文件地址
     @Column(name = "file_url",length = 128,notNull = true)
     private String fileUrl;
 

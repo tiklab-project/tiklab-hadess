@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * StorageDao
+ * StorageDao-存储库数据访问
  */
 @Repository
 public class StorageDao{
@@ -50,6 +50,10 @@ public class StorageDao{
         jpaTemplate.delete(StorageEntity.class,id);
     }
 
+    /**
+     * 条件删除存储库
+     * @param deleteCondition
+     */
     public void deleteStorage(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -64,17 +68,27 @@ public class StorageDao{
     }
 
     /**
-    * findAllStorage
+    * 查询所有存储库
     * @return
     */
     public List<StorageEntity> findAllStorage() {
         return jpaTemplate.findAll(StorageEntity.class);
     }
 
+    /**
+     * 通过ids查询存储库
+     * @param idList
+     * @return List <StorageEntity>
+     */
     public List<StorageEntity> findStorageList(List<String> idList) {
         return jpaTemplate.findList(StorageEntity.class,idList);
     }
 
+    /**
+     * 条件查询存储库
+     * @param storageQuery
+     * @return List <StorageEntity>
+     */
     public List<StorageEntity> findStorageList(StorageQuery storageQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(StorageEntity.class)
                 .orders(storageQuery.getOrderParams())
@@ -82,6 +96,11 @@ public class StorageDao{
         return jpaTemplate.findList(queryCondition,StorageEntity.class);
     }
 
+    /**
+     * 条件分页查询存储库
+     * @param storageQuery
+     * @return Pagination <StorageEntity>
+     */
     public Pagination<StorageEntity> findStoragePage(StorageQuery storageQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(StorageEntity.class)
                 .orders(storageQuery.getOrderParams())

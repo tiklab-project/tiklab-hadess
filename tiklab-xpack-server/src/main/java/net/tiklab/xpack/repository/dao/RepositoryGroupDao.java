@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * RepositoryGroupDao
+ * RepositoryGroupDao-组合库数据访问
  */
 @Repository
 public class RepositoryGroupDao{
@@ -50,6 +50,10 @@ public class RepositoryGroupDao{
         jpaTemplate.delete(RepositoryGroupEntity.class,id);
     }
 
+    /**
+     * 条件删除组合库
+     * @param deleteCondition
+     */
     public void deleteRepositoryGroup(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
@@ -64,17 +68,27 @@ public class RepositoryGroupDao{
     }
 
     /**
-    * findAllRepositoryGroup
+    * 查询所有组合库
     * @return
     */
     public List<RepositoryGroupEntity> findAllRepositoryGroup() {
         return jpaTemplate.findAll(RepositoryGroupEntity.class);
     }
 
+    /**
+     * 通过ids查询组合库
+     * @param idList
+     * @return  List <RepositoryGroupEntity>
+     */
     public List<RepositoryGroupEntity> findRepositoryGroupList(List<String> idList) {
         return jpaTemplate.findList(RepositoryGroupEntity.class,idList);
     }
 
+    /**
+     * 条件查询组合库
+     * @param repositoryGroupQuery
+     * @return  List <RepositoryGroupEntity>
+     */
     public List<RepositoryGroupEntity> findRepositoryGroupList(RepositoryGroupQuery repositoryGroupQuery) {
         QueryCondition QueryCondition = QueryBuilders.createQuery(RepositoryGroupEntity.class)
                 .eq("repositoryGroupId", repositoryGroupQuery.getRepositoryGroupId())
@@ -83,6 +97,11 @@ public class RepositoryGroupDao{
         return jpaTemplate.findList(QueryCondition,RepositoryGroupEntity.class);
     }
 
+    /**
+     * 条件分页查询组合库
+     * @param repositoryGroupQuery
+     * @return  Pagination <RepositoryGroupEntity>
+     */
     public Pagination<RepositoryGroupEntity> findRepositoryGroupPage(RepositoryGroupQuery repositoryGroupQuery) {
         QueryCondition QueryCondition = QueryBuilders.createQuery(RepositoryGroupEntity.class)
                 .eq("repositoryGroupId", repositoryGroupQuery.getRepositoryGroupId())

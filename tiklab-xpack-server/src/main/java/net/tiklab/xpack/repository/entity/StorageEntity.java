@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * StorageEntity-存储库实体
+ */
 @Entity
 @Table(name="pack_storage")
 public class StorageEntity extends BaseModel {
@@ -14,15 +17,19 @@ public class StorageEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //存储库名称
     @Column(name = "name",length = 128,notNull = true)
     private String name;
 
+    //总大小
     @Column(name = "all_size",length = 12)
     private String allSize;
 
+    //剩余大小
     @Column(name = "residue_size",length = 12)
     private String residueSize;
 
+    //创建时间
     @Column(name = "create_time")
     private Timestamp createTime;
 

@@ -7,7 +7,7 @@ import net.tiklab.core.exception.ApplicationException;
 import net.tiklab.core.page.Pagination;
 import net.tiklab.core.page.PaginationBuilder;
 import net.tiklab.join.JoinTemplate;
-import net.tiklab.user.user.model.User;
+import net.tiklab.user.system.user.model.User;
 import net.tiklab.xpack.library.controller.LibraryController;
 import net.tiklab.xpack.library.dao.LibraryDao;
 import net.tiklab.xpack.library.entity.LibraryEntity;
@@ -53,7 +53,7 @@ import org.springframework.beans.BeanUtils;
 import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 /**
-* LibraryServiceImpl
+* LibraryServiceImpl-制品
 */
 @Service
 public class LibraryServiceImpl implements LibraryService {

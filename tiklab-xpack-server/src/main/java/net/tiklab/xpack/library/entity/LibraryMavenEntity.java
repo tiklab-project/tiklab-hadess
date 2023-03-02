@@ -5,6 +5,9 @@ import net.tiklab.dal.jpa.annotation.*;
 
 import java.sql.Timestamp;
 
+/**
+ * LibraryMavenEntity-maven制品差异数据实体
+ */
 @Entity
 @Table(name="pack_library_maven")
 public class LibraryMavenEntity extends BaseModel {
@@ -14,12 +17,15 @@ public class LibraryMavenEntity extends BaseModel {
     @Column(name = "id",length = 32)
     private String id;
 
+    //制品Id
     @Column(name = "library_id",length = 32,notNull = true)
     private String libraryId;
 
+    //maven -groupId
     @Column(name = "group_id",length = 12,notNull = true)
     private String groupId;
 
+    //maven -artifactId
     @Column(name = "artifact_id",length = 32)
     private String artifactId;
 

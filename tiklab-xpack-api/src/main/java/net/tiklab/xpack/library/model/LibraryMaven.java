@@ -1,6 +1,5 @@
 package net.tiklab.xpack.library.model;
 
-
 import net.tiklab.beans.annotation.Mapper;
 import net.tiklab.beans.annotation.Mapping;
 import net.tiklab.beans.annotation.Mappings;
@@ -11,6 +10,9 @@ import net.tiklab.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * LibraryMaven-maven制品差异数据模型
+ */
 @ApiModel
 @Mapper(targetAlias = "LibraryMavenEntity")
 public class LibraryMaven extends BaseModel {

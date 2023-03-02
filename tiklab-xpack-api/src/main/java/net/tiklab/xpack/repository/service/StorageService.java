@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* StorageService
+* StorageService-存储库接口
 */
 @JoinProvider(model = Storage.class)
 public interface StorageService {

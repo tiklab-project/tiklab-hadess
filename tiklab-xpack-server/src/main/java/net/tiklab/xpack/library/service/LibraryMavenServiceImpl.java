@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 /**
-* LibraryMavenServiceImpl
+* LibraryMavenServiceImpl-maven制品差异数据
 */
 @Service
 public class LibraryMavenServiceImpl implements LibraryMavenService {

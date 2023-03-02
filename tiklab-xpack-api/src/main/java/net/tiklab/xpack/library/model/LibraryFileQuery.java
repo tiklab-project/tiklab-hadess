@@ -20,7 +20,6 @@ public class LibraryFileQuery {
         @ApiProperty(name ="libraryId",desc = "制品id")
         private String libraryId;
 
-
         @ApiProperty(name ="libraryVersionId",desc = "制品版本id")
         private String libraryVersionId;
 

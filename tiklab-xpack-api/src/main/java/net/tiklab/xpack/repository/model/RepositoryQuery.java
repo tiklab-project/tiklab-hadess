@@ -9,6 +9,7 @@ import net.tiklab.postin.annotation.ApiProperty;
 import java.io.Serializable;
 import java.util.List;
 
+
 @ApiModel
 public class RepositoryQuery implements Serializable {
 

@@ -20,7 +20,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 /**
-* RepositoryRemoteProxyServiceImpl
+* RepositoryRemoteProxyServiceImpl-远程库代理信息
 */
 @Service
 public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxyService {

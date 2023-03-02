@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* RepositoryClusterCfgService
+* RepositoryClusterCfgService-制品库复制接口
 */
 public interface RepositoryClusterCfgService {
 

@@ -34,7 +34,7 @@ public class RepositoryGroupController {
     private RepositoryGroupService repositoryGroupService;
 
     @RequestMapping(path="/createRepositoryGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "createRepositoryGroup",desc = "createRepositoryGroup")
+    @ApiMethod(name = "createRepositoryGroup",desc = "创建组合库关联")
     @ApiParam(name = "repositoryGroup",desc = "repositoryGroup",required = true)
     public Result<String> createRepositoryGroup(@RequestBody @NotNull @Valid RepositoryGroup repositoryGroup){
         String id = repositoryGroupService.createRepositoryGroup(repositoryGroup);
@@ -43,7 +43,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path="/updateRepositoryGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "updateRepositoryGroup",desc = "updateRepositoryGroup")
+    @ApiMethod(name = "updateRepositoryGroup",desc = "更新组合库关联")
     @ApiParam(name = "repositoryGroup",desc = "repositoryGroup",required = true)
     public Result<Void> updateRepositoryGroup(@RequestBody @NotNull @Valid RepositoryGroup repositoryGroup){
         repositoryGroupService.updateRepositoryGroup(repositoryGroup);
@@ -52,7 +52,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path="/deleteRepositoryGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteRepositoryGroup",desc = "deleteRepositoryGroup")
+    @ApiMethod(name = "deleteRepositoryGroup",desc = "删除组合库关联")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteRepositoryGroup(@NotNull String id){
         repositoryGroupService.deleteRepositoryGroup(id);
@@ -61,7 +61,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path="/findRepositoryGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryGroup",desc = "findRepositoryGroup")
+    @ApiMethod(name = "findRepositoryGroup",desc = "通过id查询组合库关联")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<RepositoryGroup> findRepositoryGroup(@NotNull String id){
         RepositoryGroup repositoryGroup = repositoryGroupService.findRepositoryGroup(id);
@@ -70,7 +70,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path="/findAllRepositoryGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllRepositoryGroup",desc = "findAllRepositoryGroup")
+    @ApiMethod(name = "findAllRepositoryGroup",desc = "查询所有组合库关联")
     public Result<List<RepositoryGroup>> findAllRepositoryGroup(){
         List<RepositoryGroup> repositoryGroupList = repositoryGroupService.findAllRepositoryGroup();
 
@@ -78,7 +78,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path = "/findRepositoryGroupList",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryGroupList",desc = "findRepositoryGroupList")
+    @ApiMethod(name = "findRepositoryGroupList",desc = "条件查询组合库关联")
     @ApiParam(name = "repositoryGroupQuery",desc = "repositoryGroupQuery",required = true)
     public Result<List<RepositoryGroup>> findRepositoryGroupList(@RequestBody @Valid @NotNull RepositoryGroupQuery repositoryGroupQuery){
         List<RepositoryGroup> repositoryGroupList = repositoryGroupService.findRepositoryGroupList(repositoryGroupQuery);
@@ -87,7 +87,7 @@ public class RepositoryGroupController {
     }
 
     @RequestMapping(path = "/findRepositoryGroupPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryGroupPage",desc = "findRepositoryGroupPage")
+    @ApiMethod(name = "findRepositoryGroupPage",desc = "条件分页查询组合库关联")
     @ApiParam(name = "repositoryGroupQuery",desc = "repositoryGroupQuery",required = true)
     public Result<Pagination<RepositoryGroup>> findRepositoryGroupPage(@RequestBody @Valid @NotNull RepositoryGroupQuery repositoryGroupQuery){
         Pagination<RepositoryGroup> pagination = repositoryGroupService.findRepositoryGroupPage(repositoryGroupQuery);
