@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId> net.tiklab</groupId>
+        <groupId>io.tiklab</groupId>
         <artifactId>tiklab-xpack</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -28,34 +28,39 @@
         </dependency>
         <!--platform-->
         <dependency>
-            <groupId> net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-gateway-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId> net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-licence-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-xpack-server</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId> net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-rpc-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-privilege-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>net.tiklab</groupId>
+            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-mysql-starter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-security-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
@@ -69,14 +74,14 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-mysql-linux</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-jdk-linux</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
@@ -103,14 +108,14 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-jdk-linux</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-mysql-linux</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
@@ -129,14 +134,14 @@
             <id>system-windows</id>
             <dependencies>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-mysql-windows</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-jdk-windows</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
@@ -163,14 +168,14 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-jdk-windows</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-mysql-windows</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
@@ -189,14 +194,14 @@
             <id>system-mac</id>
             <dependencies>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-jdk-mac</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
-                    <groupId>net.tiklab</groupId>
+                    <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-jdk-mac</artifactId>
                     <version>${project.version}</version>
                     <type>zip</type>
@@ -223,14 +228,14 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-jdk-mac</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
-                                            <groupId>net.tiklab</groupId>
+                                            <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-mysql-mac</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
@@ -311,7 +316,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--<includes>
-                        <include>test. net.tiklab.product.MathTest03</include>
+                        <include>test. io.tiklab.product.MathTest03</include>
                     </includes>-->
                     <skip>false</skip>
                 </configuration>
