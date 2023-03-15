@@ -51,18 +51,6 @@
             <artifactId>tiklab-user-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-privilege-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-       <!-- <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-message-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>-->
-
-
 
         <!--ocs依赖-->
         <dependency>

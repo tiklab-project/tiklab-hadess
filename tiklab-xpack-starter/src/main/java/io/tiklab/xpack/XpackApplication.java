@@ -1,6 +1,6 @@
 package io.tiklab.xpack;
 
-import  io.tiklab.utils.property.PropertyAndYamlSourceFactory;
+import io.tiklab.core.property.PropertyAndYamlSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
