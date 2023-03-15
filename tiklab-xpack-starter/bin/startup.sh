@@ -22,7 +22,7 @@ find ${DIRS}/ -name '*.sh' | xargs dos2unix;
 #       系统运行参数
 #-------------------------------------------------------------------------------------------------------------
 #application.main.class="com.doublekit.platform.AccountSaasApplication"
-APP_MAIN=" net.tiklab.xpack.XpackApplication"
+APP_MAIN="io.tiklab.xpack.XpackApplication"
 
 DIR=$(cd "$(dirname "$0")"; pwd)
 APP_HOME=${DIR}/..
