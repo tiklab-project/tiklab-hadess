@@ -15,7 +15,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: com.mysql.cj.jdbc.Driver
-  url: jdbc:mysql://172.27.46.219:3306/tiklab_xpack?characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+  url: jdbc:mysql://172.12.1.16:3306/tiklab_xpack?characterEncoding=utf8&useSSL=false&serverTimezone=UTC
   username: root
   password: darth2020
 
