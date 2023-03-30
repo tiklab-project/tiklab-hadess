@@ -78,7 +78,7 @@ CREATE TABLE pack_library_version(
      repository_id varchar(32) NOT NULL,
      library_type varchar (32) NOT NULL,
      version varchar(64) NOT NULL,
-     hash varchar (32),
+     hash varchar (64),
      pusher varchar(32),
      content_json longtext,
      push_time timestamp,
@@ -90,10 +90,10 @@ CREATE TABLE pack_library_file(
       id VARCHAR(32) PRIMARY KEY,
       library_id varchar(32) NOT NULL,
       library_version_id varchar(32) NOT NULL,
+      repository_id varchar (32) NOT NULL,
       file_size varchar (32) NOT NULL,
       file_name varchar (64) NOT NULL,
       file_url varchar (128) NOT NULL,
-      repository_id varchar (32) NOT NULL,
       create_time  timestamp
 );
 CREATE TABLE pack_library_pulls(

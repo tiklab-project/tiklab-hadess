@@ -72,11 +72,11 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
             libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
         }
-        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
-        if (!CollectionUtils.isEmpty(libraryFileList)){
-            int allKb = libraryFileList.stream().mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "kb"))).sum();
-            libraryVersion.setSize(allKb+"kb");
-        }
+
+        //制品的大小
+        String librarySize = librarySize(libraryVersion.getId());
+        libraryVersion.setSize(librarySize);
+
         return libraryVersion;
     }
 
@@ -127,6 +127,12 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
         joinTemplate.joinQuery(libraryVersionList);
 
+        for (LibraryVersion libraryVersion:libraryVersionList){
+            //制品的大小
+            String librarySize = librarySize(libraryVersion.getId());
+            libraryVersion.setSize(librarySize);
+        }
+
         return PaginationBuilder.build(pagination,libraryVersionList);
     }
 
@@ -168,5 +174,20 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             libraryService.updateLibrary(libraryVersion.getLibrary());
         }
         return libraryVersionId;
+    }
+
+
+    /**
+     *  制品版本大小
+     * @param libraryVersionId    制品版本id
+     * @return
+     */
+    public String librarySize( String libraryVersionId){
+        int allKb=0;
+        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
+        if (!CollectionUtils.isEmpty(libraryFileList)){
+             allKb = libraryFileList.stream().mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "kb"))).sum();
+        }
+        return   allKb+"kb";
     }
 }
