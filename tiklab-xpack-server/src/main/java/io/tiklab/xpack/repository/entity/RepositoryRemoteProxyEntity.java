@@ -22,7 +22,7 @@ public class RepositoryRemoteProxyEntity extends BaseModel {
     private String repositoryId;
 
     //代理地址
-    @Column(name = "agency_url",length = 32,notNull = true)
+    @Column(name = "agency_url",length = 324,notNull = true)
     private String agencyUrl;
 
     //代理名称

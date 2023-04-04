@@ -37,7 +37,6 @@ public class MavenUploadController {
         String basic = authorization.replace("Basic", "").trim();
         byte[] decode = Base64.getDecoder().decode(basic);
         Collection<String> headerNames = response.getHeaderNames();
-
         try {
             //用户信息
             String userData = new String(decode, "UTF-8");
@@ -61,9 +60,7 @@ public class MavenUploadController {
             }
             if (code!=220&&code!=200){
                 response.setStatus((int)map.get("code"),map.get("msg").toString());
-
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -82,9 +79,13 @@ public class MavenUploadController {
                 response.setStatus(200,map.get("msg").toString());
                 ServletOutputStream outputStream = response.getOutputStream();
                 outputStream.write((byte[])map.get("data"));
-            }else {
+            }
+            if ((int)map.get("code")==404){
                 response.setStatus((int)map.get("code"),map.get("msg").toString());
             }
+           if ((int)map.get("code")==300){
+               response.setStatus((int)map.get("code"),map.get("msg").toString());
+           }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

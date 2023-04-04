@@ -115,6 +115,16 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
+    public List<LibraryFile> findLibraryFileByLibraryId(String[] libraryIds) {
+        List<LibraryFileEntity> fileByLibraryId = libraryFileDao.findLibraryFileByLibraryId(libraryIds);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(fileByLibraryId,LibraryFile.class);
+
+        joinTemplate.joinQuery(libraryFileList);
+
+        return libraryFileList;
+    }
+
+    @Override
     public List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery) {
         List<LibraryVersion> libraryVersionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryFileQuery.getLibraryId()));
         List<LibraryFile> libraryFileList=null;

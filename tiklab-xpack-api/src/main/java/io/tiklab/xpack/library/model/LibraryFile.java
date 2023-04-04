@@ -60,6 +60,10 @@ public class LibraryFile extends BaseModel {
     @ApiProperty(name="fileUrl",desc="文件地址",required = true)
     private java.lang.String fileUrl;
 
+    @NotNull
+    @ApiProperty(name="relativePath",desc="文件相对路径",required = true)
+    private java.lang.String relativePath;
+
     @ApiProperty(name="createTime",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
@@ -136,5 +140,13 @@ public class LibraryFile extends BaseModel {
 
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 }

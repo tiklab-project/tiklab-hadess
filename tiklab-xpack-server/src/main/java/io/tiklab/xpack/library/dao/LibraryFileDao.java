@@ -95,6 +95,7 @@ public class LibraryFileDao{
                 .eq("libraryId",libraryFileQuery.getLibraryId())
                 .eq("libraryVersionId",libraryFileQuery.getLibraryVersionId())
                 .eq("fileName",libraryFileQuery.getFileName())
+                .eq("relativePath",libraryFileQuery.getRelativePath())
                 .orders(libraryFileQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
@@ -110,9 +111,17 @@ public class LibraryFileDao{
                 .eq("libraryId",libraryFileQuery.getLibraryId())
                 .eq("libraryVersionId",libraryFileQuery.getLibraryVersionId())
                 .eq("fileName",libraryFileQuery.getFileName())
+                .eq("relativePath",libraryFileQuery.getRelativePath())
                 .pagination(libraryFileQuery.getPageParam())
                 .orders(libraryFileQuery.getOrderParams())
                 .get();
         return jpaTemplate.findPage(queryCondition,LibraryFileEntity.class);
+    }
+
+    public List<LibraryFileEntity> findLibraryFileByLibraryId(String [] libraryId){
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
+                .in("repositoryId",libraryId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 }

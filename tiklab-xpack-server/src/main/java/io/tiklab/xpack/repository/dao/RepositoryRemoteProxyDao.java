@@ -110,4 +110,5 @@ public class RepositoryRemoteProxyDao{
                 .get();
         return jpaTemplate.findPage(queryCondition,RepositoryRemoteProxyEntity.class);
     }
+
 }

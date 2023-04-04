@@ -57,6 +57,8 @@ public interface RepositoryRemoteProxyService {
     */
     List<RepositoryRemoteProxy> findRepositoryRemoteProxyList(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery);
 
+
+
     /**
     * 按分页查询
     * @param repositoryRemoteProxyQuery

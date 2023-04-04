@@ -127,6 +127,11 @@
             <artifactId>tiklab-dss-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.com.louie</groupId>
+            <artifactId>spring-jdbc-mapper</artifactId>
+            <version>1.2.2</version>
+        </dependency>
         <!--FTP包-->
         <dependency>
             <groupId>commons-net</groupId>
@@ -152,12 +157,6 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.9</version>
-        </dependency>
-
 
 
     </dependencies>

@@ -35,7 +35,7 @@ CREATE TABLE pack_repository_maven(
 CREATE TABLE pack_repository_remote_proxy(
       id VARCHAR(32) PRIMARY KEY,
       repository_id varchar (32) NOT NULL,
-      agency_url varchar (32) NOT NULL,
+      agency_url varchar (324) NOT NULL,
       agency_name varchar (32),
       user_name varchar(16),
       password varchar (16),
@@ -93,7 +93,8 @@ CREATE TABLE pack_library_file(
       repository_id varchar (32) NOT NULL,
       file_size varchar (32) NOT NULL,
       file_name varchar (64) NOT NULL,
-      file_url varchar (128) NOT NULL,
+      file_url varchar (248) NOT NULL,
+      relative_path varchar (246) NOT NULL,
       create_time  timestamp
 );
 CREATE TABLE pack_library_pulls(

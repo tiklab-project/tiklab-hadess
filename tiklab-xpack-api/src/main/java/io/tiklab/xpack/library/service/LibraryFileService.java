@@ -63,6 +63,14 @@ public interface LibraryFileService {
     * @return
     */
     Pagination<LibraryFile> findLibraryFilePage(LibraryFileQuery libraryFileQuery);
+
+    /**
+     * 通过制品库id查询
+     * @param libraryIds
+     * @return
+     */
+    List<LibraryFile> findLibraryFileByLibraryId(String[] libraryIds);
+
     /**
      * 查询最新版本的文件列表
      * @param libraryFileQuery

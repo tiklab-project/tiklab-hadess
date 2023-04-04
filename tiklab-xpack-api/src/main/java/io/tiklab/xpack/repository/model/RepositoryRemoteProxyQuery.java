@@ -42,7 +42,8 @@ public class RepositoryRemoteProxyQuery implements Serializable {
             return repositoryId;
         }
 
-        public void setRepositoryId(String repositoryId) {
+        public RepositoryRemoteProxyQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
         }
 }

@@ -29,6 +29,9 @@ public class LibraryFileQuery {
         @ApiProperty(name ="fileUrl",desc = "制品文件地址")
         private String fileUrl;
 
+        @ApiProperty(name ="relativePath",desc = "制品文件相对路径")
+        private String relativePath;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -77,6 +80,15 @@ public class LibraryFileQuery {
 
         public LibraryFileQuery setFileUrl(String fileUrl) {
             this.fileUrl = fileUrl;
+            return this;
+        }
+
+        public String getRelativePath() {
+            return relativePath;
+        }
+
+        public LibraryFileQuery setRelativePath(String relativePath) {
+            this.relativePath = relativePath;
             return this;
         }
 }

@@ -38,8 +38,13 @@ public class LibraryFileEntity extends BaseModel {
     private String fileName;
 
     //文件地址
-    @Column(name = "file_url",length = 128,notNull = true)
+    @Column(name = "file_url",length = 256,notNull = true)
     private String fileUrl;
+
+
+    //文件相对路径
+    @Column(name = "relative_path",length = 256,notNull = true)
+    private String relativePath;
 
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -107,5 +112,13 @@ public class LibraryFileEntity extends BaseModel {
 
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 }

@@ -123,18 +123,13 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         String userName = allData.get("name").toString();
         String password = allData.get("password").toString();
 
-        UserQuery userQuery = new UserQuery();
-        userQuery.setName(userName);
-        userQuery.setPassword(password);
-        List<User> userList = userService.findUserList(userQuery);
-        if (CollectionUtils.isNotEmpty(userList)){
-            EamTicket eamTicket = accountLogin(userList.get(0));
+        try{
+            EamTicket eamTicket = accountLogin(userName,password,"1");
             Map<String, Object> result = new HashMap<>();
             result.put("success",true);
             result.put("ticket",eamTicket.getTicket());
             return result;
-
-        }else {
+        }catch (Exception e){
             Map<String, Object> result = new HashMap<>();
             result.put("success",false);
             result.put("error","Bad username or password");
@@ -143,15 +138,16 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     }
 
     /**
-     *  npm登陆-账号密码登陆
-     * @param user: 账号信息
+     *  npm登陆-账号密码登陆、校验
+     * @param userName: 用户名
+     * @param  password 密码
      * @return
      */
-    public EamTicket accountLogin(User user){
+    public EamTicket accountLogin(String userName,String password,String dirId){
         UserPassport userPassport = new UserPassport();
-        userPassport.setAccount(user.getName());
-        userPassport.setPassword(user.getPassword());
-        userPassport.setDirId(user.getDirId());
+        userPassport.setAccount(userName);
+        userPassport.setPassword(password);
+        userPassport.setDirId(dirId);
         EamTicket login = userPassportService.login(userPassport);
         return login;
     }
@@ -197,6 +193,15 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         if (ObjectUtils.isEmpty(UserData)){
             return 401;
         }
+        //判断登录信息 是否正确
+        JSONObject userData = (JSONObject) UserData;
+        String name = userData.get("name").toString();
+        UserQuery userQuery = new UserQuery();
+        userQuery.setName(name);
+        List<User> userList = userService.findUserList(userQuery);
+        if (CollectionUtils.isEmpty(userList)){
+            return 401;
+        }
         //版本
         JSONObject versionData =(JSONObject) allData.get("versions");
         Set<String> versionKey = versionData.keySet();
@@ -221,11 +226,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             //创建制品
             Library library = libraryService.createLibraryData(libraryName, "npm",repositoryList.get(0));
 
-            JSONObject jsonUserData =(JSONObject) UserData;
-            String name = jsonUserData.get("name").toString();
-            UserQuery userQuery = new UserQuery();
-            userQuery.setName(name);
-            List<User> userList = userService.findUserList(userQuery);
             //创建制品版本
             LibraryVersion libraryVersion = new LibraryVersion();
             libraryVersion.setContentJson(npmData);
@@ -234,9 +234,8 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryVersion.setHash(dist);
             libraryVersion.setVersion(version);
             libraryVersion.setLibraryType("npm");
-            if (!CollectionUtils.isEmpty(userList)){
-                libraryVersion.setUser(userList.get(0));
-            }
+            libraryVersion.setUser(userList.get(0));
+
             String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion);
 
 
