@@ -9,15 +9,18 @@ import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.model.UserQuery;
 import io.tiklab.user.user.service.UserService;
 import io.tiklab.xpack.library.model.*;
-import io.tiklab.xpack.repository.model.Repository;
-import io.tiklab.xpack.repository.model.RepositoryQuery;
+import io.tiklab.xpack.repository.model.*;
+import io.tiklab.xpack.repository.service.RepositoryGroupService;
+import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.util.*;
@@ -43,6 +46,12 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Autowired
     LibraryVersionService libraryVersionService;
+
+    @Autowired
+    RepositoryGroupService repositoryGroupService;
+
+    @Autowired
+    RepositoryRemoteProxyService remoteProxyService;
 
     @Autowired
     UserService userService;
@@ -78,16 +87,20 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 bos.write(buffer, 0, len);
             }
             String toString = bos.toString();
-            //String s = new String(bytes);
            return npmSubmitData(path,toString);
         }catch (IOException e){
             throw new RuntimeException(e);
         }
     }
     @Override
-    public byte[] npmPullTgzData(String contextPath) {
+    public Map<String,Object> npmPullTgzData(String contextPath) {
        String url = StringUtils.substringBeforeLast(contextPath, "/-/");
         String versionData = findLibraryVersion(url);
+
+        //本地制品库制品文件不存在 走代理
+        if (StringUtils.isEmpty(versionData)){
+            return callAgencyNpm(contextPath);
+        }
 
         JSONObject allData =(JSONObject) JSONObject.parse(versionData);
 
@@ -102,15 +115,27 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         String substring = jsonString.substring(1,jsonString.length()-1);
 
         byte[] decodedBytes = Base64.getDecoder().decode(substring);
-        return decodedBytes;
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code","200");
+        resultMap.put("data",decodedBytes);
+        return resultMap;
     }
 
 
 
     @Override
-    public Object npmPull(String contextPath) {
-        return findLibraryVersion(contextPath);
+    public Map<String,String> npmPull(String contextPath) {
+        String libraryVersion = findLibraryVersion(contextPath);
+        //本地制品库制品文件不存在 走代理
+        if (StringUtils.isEmpty(libraryVersion)){
+            return callAgencyNpm(contextPath);
+        }
 
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("code","200");
+        resultMap.put("data",libraryVersion);
+        return resultMap;
     }
 
     /**
@@ -293,6 +318,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
      * @return
      */
     public String findLibraryVersion(String contextPath){
+
         String libraryName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
         String contentJson =null;
         //通过制品名称查询制品
@@ -317,5 +343,39 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         return contentJson;
     }
 
+    /**
+     *  根据代理信息  转发远程库
+     * @param
+     * @return
+     */
+    public Map callAgencyNpm(String contextPath ){
+        Map resultMap = new HashMap<>();
+        RestTemplate restTemplate = new RestTemplate();
+
+        String RepositoryNameUrl = contextPath.substring(0, contextPath.lastIndexOf("/"));
+        //查询组合制品库
+        String repositoryName = RepositoryNameUrl.substring(contextPath.lastIndexOf("/") + 1);
+        String agencyUrl = remoteProxyService.findAgencyUrl(repositoryName);
+        if (StringUtils.isEmpty(agencyUrl)){
+            resultMap.put("code",404);
+        }else {
+            String url=agencyUrl+agencyUrl;
+            if (contextPath.contains("/-/")){
+                ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
+                byte[] entityBody = entity.getBody();
+                resultMap.put("200",entityBody);
+                return resultMap;
+            }else {
+                ResponseEntity<String> entity = restTemplate.getForEntity(url, String.class);
+                String entityBody = entity.getBody();
+                resultMap.put("code",200);
+                resultMap.put("data",entityBody);
+            }
+        }
+
+
+
+        return resultMap;
+    }
 
 }

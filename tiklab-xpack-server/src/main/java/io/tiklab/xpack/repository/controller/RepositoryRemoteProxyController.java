@@ -95,4 +95,10 @@ public class RepositoryRemoteProxyController {
         return Result.ok(pagination);
     }
 
+    @RequestMapping(path = "/test",method = RequestMethod.POST)
+    public Result<String> test(){
+        String agencyUrl = repositoryRemoteProxyService.findAgencyUrl("maven-group");
+
+        return Result.ok(agencyUrl);
+    }
 }

@@ -1,5 +1,6 @@
 package io.tiklab.xpack.repository.dao;
 
+import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.xpack.repository.entity.RepositoryRemoteProxyEntity;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.dal.jpa.JpaTemplate;
@@ -7,9 +8,11 @@ import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import io.tiklab.xpack.repository.model.RepositoryRemoteProxyQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -109,6 +112,19 @@ public class RepositoryRemoteProxyDao{
                 .pagination(repositoryRemoteProxyQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,RepositoryRemoteProxyEntity.class);
+    }
+
+    public String findAgencyUrl(String repositoryName){
+        String sql="SELECT pr.agency_url from pack_repository_remote_proxy pr " +
+                " LEFT JOIN pack_repository_group_items gr ON gr.repository_id=pr.repository_id  " +
+                "LEFT JOIN pack_repository re ON gr.repository_group_id=re.id" +
+                " WHERE re.`name`='"+repositoryName +"'";
+        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
+        List<String> agencyUrlList = jdbcTemplate.queryForList(sql,String.class);
+        if (CollectionUtils.isNotEmpty(agencyUrlList)){
+           return agencyUrlList.get(0);
+        }
+        return null;
     }
 
 }

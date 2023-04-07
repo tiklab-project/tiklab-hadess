@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import static org.apache.coyote.http11.Constants.a;
+
 @RestController
 @RequestMapping("/repository")
 @Api(name = "LibraryNpmController",desc = "npm提交拉取")
@@ -43,21 +45,38 @@ public class NpmUploadController {
                 Integer resultCode = downloadNpmService.npmSubmit(contextPath, inputStream);
                 response.setStatus(resultCode);
             }
+
             //npm install （拉取）
             if (referer.contains("install")){
                 if (contextPath.endsWith(".tgz")){
                     //第二次交互以.tgz结尾
-                    byte[] a=downloadNpmService.npmPullTgzData(contextPath);
-                    ServletOutputStream outputStream = response.getOutputStream();
-                    outputStream.write(a);
+                    Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(contextPath);
+                    if ("200".equals(resultMap.get("code"))){
+                        ServletOutputStream outputStream = response.getOutputStream();
+                        outputStream.write((byte[])resultMap.get("data"));
+                    }
+                    if ("404".equals(resultMap.get("code"))){
+                        response.setStatus(404);
+                    }
+
                 }else {
                     //第一次交互
-                    Object data = downloadNpmService.npmPull(contextPath);
-                    response.setContentType("application/json;charset=utf-8");
-                    Object o = JSON.toJSON(data);
-                    response.getWriter().print(o);
+                    Map<String,String> data = downloadNpmService.npmPull(contextPath);
+                    switch (data.get("code")){
+                        case "200":
+                            response.setContentType("application/json;charset=utf-8");
+                            Object o = JSON.toJSON(data);
+                            response.getWriter().print(o);
+                            break;
+                        case "404":
+                            response.setStatus(404);
+                            break;
+                    }
+
+
                 }
             }
+
             //登陆
             if (referer.contains("adduser")){
                 BufferedReader reader = request.getReader();

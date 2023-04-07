@@ -158,7 +158,11 @@
             <scope>compile</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-5</version>
+        </dependency>
     </dependencies>
 
 

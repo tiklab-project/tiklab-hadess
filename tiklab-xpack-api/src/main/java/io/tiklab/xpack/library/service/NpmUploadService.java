@@ -21,14 +21,14 @@ public interface NpmUploadService {
      * @param contextPath
      * @return
      */
-    Object npmPull(String contextPath);
+    Map<String,String> npmPull(String contextPath);
 
     /**
      * npm 拉取 （第二次交互）
      * @param contextPath
      * @return
      */
-    byte[] npmPullTgzData(String contextPath);
+   Map<String,Object>  npmPullTgzData(String contextPath);
 
     /**
      * npm 登陆

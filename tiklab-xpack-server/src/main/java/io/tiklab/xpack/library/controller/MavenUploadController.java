@@ -4,6 +4,7 @@ import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.library.service.MavenUploadService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,37 +35,39 @@ public class MavenUploadController {
         String contextPath = request.getRequestURI();
         String method = request.getMethod();
         String authorization = request.getHeader("Authorization");
-        String basic = authorization.replace("Basic", "").trim();
-        byte[] decode = Base64.getDecoder().decode(basic);
-        Collection<String> headerNames = response.getHeaderNames();
-        try {
-            //用户信息
-            String userData = new String(decode, "UTF-8");
-            InputStream inputStream = request.getInputStream();
-            Map map = downloadMavenService.mavenSubmit(contextPath, inputStream, userData,method);
-            int code = (int)map.get("code");
-            if (code==220) {
-                response.setHeader("Content-type", "text/plain");
-                String data = map.get("data").toString();
-                response.setStatus(200);
+        if (StringUtils.isEmpty(authorization)){
+            response.setStatus(401,"Unauthorized");
+        }else {
+            String basic = authorization.replace("Basic", "").trim();
+            byte[] decode = Base64.getDecoder().decode(basic);
+            try {
+                //用户信息
+                String userData = new String(decode, "UTF-8");
+                InputStream inputStream = request.getInputStream();
+                Map map = downloadMavenService.mavenSubmit(contextPath, inputStream, userData,method);
+                int code = (int)map.get("code");
+                if (code==220) {
+                    response.setHeader("Content-type", "text/plain");
+                    String data = map.get("data").toString();
+                    response.setStatus(200);
 
-                response.getWriter().write(data);
+                    response.getWriter().write(data);
 
+                }
+                if(code==200){
+                    response.setHeader("Content-type", "application/xml");
+                    String data = map.get("data").toString();
+                    response.setStatus(200,map.get("msg").toString());
+                    //response.addHeader("ETag",map.get("ETag").toString());
+                    response.getWriter().write(data);
+                }
+                if (code!=220&&code!=200){
+                    response.setStatus((int)map.get("code"),map.get("msg").toString());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            if(code==200){
-                response.setHeader("Content-type", "application/xml");
-                String data = map.get("data").toString();
-                response.setStatus(200,map.get("msg").toString());
-                response.addHeader("ETag",map.get("ETag").toString());
-                response.getWriter().write(data);
-            }
-            if (code!=220&&code!=200){
-                response.setStatus((int)map.get("code"),map.get("msg").toString());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
     }
 
     @RequestMapping(path = "/maven-install/**",method = {RequestMethod.PUT,RequestMethod.GET})
@@ -72,13 +75,18 @@ public class MavenUploadController {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public void mavenInstall(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
-        Map map = downloadMavenService.mavenInstall(contextPath);
+        String method = request.getMethod();
+        Map map = downloadMavenService.mavenInstall(contextPath,method);
         response.setCharacterEncoding("UTF-8");
         try {
             if ((int)map.get("code")==200){
                 response.setStatus(200,map.get("msg").toString());
-                ServletOutputStream outputStream = response.getOutputStream();
-                outputStream.write((byte[])map.get("data"));
+                if (!"HEAD".equals(method)){
+                    ServletOutputStream outputStream = response.getOutputStream();
+                   // outputStream.write((byte[])map.get("data"));
+
+                    outputStream.write((byte[])map.get("data"));
+                }
             }
             if ((int)map.get("code")==404){
                 response.setStatus((int)map.get("code"),map.get("msg").toString());

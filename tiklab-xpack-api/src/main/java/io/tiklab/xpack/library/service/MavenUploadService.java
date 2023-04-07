@@ -26,5 +26,7 @@ public interface MavenUploadService {
      * @param contextPath
      * @return
      */
-    Map mavenInstall(String contextPath);
+    Map mavenInstall(String contextPath,String method);
+
+
 }

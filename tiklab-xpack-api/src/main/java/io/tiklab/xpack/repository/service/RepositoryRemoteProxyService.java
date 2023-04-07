@@ -66,4 +66,11 @@ public interface RepositoryRemoteProxyService {
     */
     Pagination<RepositoryRemoteProxy> findRepositoryRemoteProxyPage(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery);
 
+    /**
+     * 通过制品库名字查询代理地址
+     * @param repositoryName 制品库名字
+     * @return
+     */
+    String findAgencyUrl(String repositoryName);
+
 }

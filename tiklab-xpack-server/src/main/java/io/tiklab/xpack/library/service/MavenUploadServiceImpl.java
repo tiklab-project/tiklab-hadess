@@ -1,6 +1,10 @@
 package io.tiklab.xpack.library.service;
 
+import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.exception.ApplicationException;
+import io.tiklab.eam.common.model.EamTicket;
+import io.tiklab.eam.passport.user.model.UserPassport;
+import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.model.UserQuery;
 import io.tiklab.user.user.service.UserService;
@@ -18,12 +22,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -59,32 +69,32 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    UserPassportService userPassportService;
+
 
     @Override
     public Map<String,Object> mavenSubmit(String contextPath, InputStream inputStream,String userData, String method) throws IOException {
 
-        List<User> userList = findUser(userData);
-        User user=null;
-        if (CollectionUtils.isEmpty(userList)){
+        //验证用户信息
+        EamTicket eamTicket = verifyUser(userData);
+        if (ObjectUtils.isEmpty(eamTicket)){
             return result(401,"",null);
-        }else {
-            user=  userList.get(0);
         }
         //操作流内容
-        return operateFileData(inputStream,user,contextPath,method);
+        return operateFileData(inputStream,eamTicket.getUserId(),contextPath,method);
 
     }
 
     @Override
-    public Map<String, Object> mavenInstall(String contextPath) {
+    public Map<String, Object> mavenInstall(String contextPath,String method) {
         String mavenInstall = contextPath.substring(contextPath.indexOf("maven-install")+14);
         try {
-            return findRepository(mavenInstall,contextPath);
+            return findRepository(mavenInstall);
         } catch (IOException e) {
             throw new ApplicationException(e);
         }
     }
-
     /**
      *  maven-提交   创建文件夹或者文件
      * @param contextPath     文件夹路径
@@ -92,7 +102,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      *  @param method     请求方式  GET PUT
      * @return
      */
-    public Map<String, Object> operateFileData(InputStream inputStream, User user,String contextPath, String method) throws IOException {
+    public Map<String, Object> operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
         String url = StringUtils.substringBeforeLast(contextPath, "/");
         String path=repositoryLibrary+url;
         String filePath=repositoryLibrary+contextPath;
@@ -112,12 +122,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             if (("GET").equals(method)){
                 if(document.contains(".sha1")||document.contains(".md5")){
                     Map<String, Object> result = result(220, "OK", gainFileData(file));
-                    librarySplice(contextPath,file,user);
+                    librarySplice(contextPath,file,userId);
                     return result;
                 }else {
                    /*String shaPath = path+".sha1";*/
                     Map<String, Object> result = result(200, "OK", gainFileData(file));
-                    librarySplice(contextPath,file,user);
+                    librarySplice(contextPath,file,userId);
                    /* File shaValue = new File(shaPath);
                     String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
                     result.put("ETag",ETag);*/
@@ -133,16 +143,17 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
         inputStream.close();
         fos.close();// 保存数据
-        return librarySplice(contextPath,file,user) ;
+        return librarySplice(contextPath,file,userId) ;
     }
 
     /**
      *  maven-提交   制品创建、修改
      * @param contextPath     全路径
      * @param file     文件
+     * @param userId     用户id
      * @return
      */
-    public Map<String,Object> librarySplice(String contextPath,File file,User user) throws IOException {
+    public Map<String,Object> librarySplice(String contextPath,File file,String userId) throws IOException {
         //文件大小
         long FileLength = file.length();
         double i =(double)FileLength / 1000;
@@ -174,6 +185,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 libraryVersion.setHash(gainFileData(file));
             }
 
+            User user = new User();
+            user.setId(userId);
             libraryVersion.setUser(user);
             String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion);
 
@@ -205,24 +218,25 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param userData  提交用户信息
      * @return
      */
-    public List<User> findUser(String userData){
+    public EamTicket verifyUser(String userData){
         String[]  userObject=userData.split(":");
         String userName = userObject[0];
         String password = userObject[1];
 
 
-        UserQuery userQuery = new UserQuery();
-        userQuery.setName(userName);
-        userQuery.setPassword(password);
-        List<User> userList = userService.findUserList(userQuery);
-        return userList;
+        UserPassport userPassport = new UserPassport();
+        userPassport.setAccount(userName);
+        userPassport.setPassword(password);
+        userPassport.setDirId("1");
+        EamTicket login = userPassportService.login(userPassport);
+        return login;
     }
     /**
      *  maven拉取-制品相关
      * @param mavenInstall     code
      * @return
      */
-    public Map<String, Object> findRepository( String mavenInstall,String contextPath) throws IOException {
+    public Map<String, Object> findRepository( String mavenInstall) throws IOException {
 
         Map<String, Object> resultMap = new HashMap<>();
         int index = mavenInstall.indexOf("/",1);
@@ -238,17 +252,21 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //组合库关联的制品库
             List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
             if (CollectionUtils.isNotEmpty(libraryList)){
-                List<String> libraryIdList = libraryList.stream().map(a->a.getRepository().getId()).collect(Collectors.toList());
-                String[] librarySize = new String[libraryIdList.size()];
+              //  List<String> libraryIdList = libraryList.stream().map(a->a.getRepository().getId()).collect(Collectors.toList());
+              /*  String[] librarySize = new String[libraryIdList.size()];
                 String[] libraryId = libraryIdList.toArray(librarySize);
 
-                //查询制品文件数据
+                //查询制品文件数据（）
                 List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileByLibraryId(libraryId);
                 List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> relativePath.equals(a.getRelativePath())).collect(Collectors.toList());
-                if (CollectionUtils.isNotEmpty(libraryFiles)){
-                    return readFileContent(libraryFiles.get(0).getFileUrl());
+               */
+                String filePath = repositoryLibrary+"/repository/maven/maven-local"+relativePath;
+                File file = new File(filePath);
+                int length = (int) file.length();
+                if (length==0){
+                    return proxyInstall(libraryList,relativePath);
                 }else {
-                   return proxyInstall(libraryList,contextPath);
+                    return readFileContent(file);
                 }
             }
         }else {
@@ -260,54 +278,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     }
 
     /**
-     *  maven拉取-远程代理拉取
-     * @param libraryList: 文件内容
-     * @param  contextPath
-     * @return
-     */
-    public Map<String, Object> proxyInstall( List<RepositoryGroup> libraryList,String contextPath){
-        String fileName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
-        if (fileName.endsWith(".jar")){
-            // 过滤代理库信息
-            List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(groupList)){
-                RepositoryGroup repositoryGroup = groupList.get(0);
-                //远程代理路径
-                List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getId()));
-                if (CollectionUtils.isNotEmpty(remoteProxyList)){
-
-                    //  contextPath.substring()
-                    String text="mvn install:install-file " +
-                            "-DgroupId=net.tiklab " +
-                            "-DartifactId=tiklab-xpack-starter  " +
-                            "-Dversion=1.0.0-RELEASE -Dpackaging=jar " +
-                            "-Dfile=/Users/limingliang/publicData/test/net/tiklab/tiklab-xpack-starter/1.0.0-SNAPSHOT/tiklab-xpack-starter-1.0.0-SNAPSHOT.jar " +
-                            "-DgeneratePom=true";
-                    try {
-                        Runtime.getRuntime().exec(text);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            return null;
-        }else {
-            return result(300,"OK","ok");
-        }
-    }
-
-
-
-    /**
      *  maven拉取-读取文件内容
-     * @param filePath: 文件内容
+     * @param file: 文件流
      * @return
      */
-    public Map<String, Object> readFileContent(String filePath)  throws IOException {
+    public Map<String, Object> readFileContent(File file)  throws IOException {
 
-        File f = new File(filePath);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(f));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         int buf_size = 1024;
         byte[] buffer = new byte[buf_size];
         int len = 0;
@@ -318,6 +296,37 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String s = new String(bytes, "UTF-8");
         return result(200,"OK",bytes);
     }
+
+    /**
+     *  maven拉取-远程代理拉取
+     * @param libraryList: 文件内容
+     * @param  relativePath
+     * @return
+     */
+    public Map<String, Object> proxyInstall( List<RepositoryGroup> libraryList,String relativePath) {
+        // 过滤代理库信息
+        List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(groupList)){
+            RepositoryGroup repositoryGroup = groupList.get(0);
+            //远程代理路径
+            List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
+            if (CollectionUtils.isNotEmpty(remoteProxyList)){
+                String proxyUrl = remoteProxyList.get(0).getAgencyUrl();
+             /*   List<String> proxyList = remoteProxyList.stream().map(RepositoryRemoteProxy::getAgencyUrl).collect(Collectors.toList());
+                String proxyUrl = StringUtils.join(proxyList, ",");*/
+                String path = relativePath.substring(1);
+                String url=proxyUrl+path;
+                return callAgencyMaven(url);
+
+            }
+        }
+        return result(300,"OK","bytes");
+    }
+
+
+
+
+
     /**
      *  获取sha1 或者metadata.xml数据
      *  @param file     文件
@@ -334,6 +343,24 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String toString = result.toString();
         String trim = toString.trim();
         return trim;
+    }
+
+    /**
+     *  根据代理信息  转发远程库
+     * @param url     地址
+     * @return
+     */
+    public Map<String, Object> callAgencyMaven( String url ){
+        RestTemplate restTemplate = new RestTemplate();
+        if(url.endsWith(".jar")){
+            ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
+            byte[] entityBody = entity.getBody();
+            return result(200,"OK",entityBody);
+        }
+        ResponseEntity<String> entity = restTemplate.getForEntity(url, String.class);
+        String entityBody = entity.getBody();
+        byte[] bytes = entityBody.getBytes(StandardCharsets.UTF_8);
+        return result(200,"OK",bytes);
     }
 
     /**

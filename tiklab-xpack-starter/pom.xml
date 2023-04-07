@@ -67,6 +67,7 @@
     </dependencies>
 
     <profiles>
+
         <!--linux-->
         <profile>
             <id>system-linux</id>
@@ -130,6 +131,7 @@
                 </plugins>
             </build>
         </profile>
+
         <!--windows-->
         <profile>
             <id>system-windows</id>
@@ -190,6 +192,7 @@
                 </plugins>
             </build>
         </profile>
+
         <!--mac-->
         <profile>
             <id>system-mac</id>
@@ -259,7 +262,7 @@
             </properties>
         </profile>
 
-        <!--test-->
+        <!--dasasdas-->
         <profile>
             <id>env-test</id>
             <properties>
@@ -278,6 +281,8 @@
 
     <build>
         <plugins>
+
+            <!--jar去掉配置文件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -292,6 +297,16 @@
                 </configuration>
             </plugin>
 
+            <!--跳过发包-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!--maven打包插件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -302,7 +317,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution-${assembly}.xml</descriptor>
                             </descriptors>
-                            <finalName>tiklab-xpack</finalName>
+                            <finalName>tiklab-xcode</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                         <phase>package</phase>
@@ -312,17 +327,27 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--docker打包插件-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.13</version>
                 <configuration>
-                    <!--<includes>
-                        <include>test. io.tiklab.product.MathTest03</include>
-                    </includes>-->
-                    <skip>false</skip>
+                    <imageName>matflow:1.0.0</imageName>
+                    <!--Dockerfile文件位置-->
+                    <dockerDirectory>./</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>./</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}-distribution.tar.gz</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
 
+            <!--清理之前的目录-->
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.5</version>
@@ -344,6 +369,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

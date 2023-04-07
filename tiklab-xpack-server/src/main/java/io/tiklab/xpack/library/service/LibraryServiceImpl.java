@@ -15,12 +15,12 @@ import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -164,7 +164,7 @@ public class LibraryServiceImpl implements LibraryService {
      */
     public void findRepositoryGroup(LibraryQuery libraryQuery){
         Repository repository = repositoryService.findRepository(libraryQuery.getRepositoryId());
-        if (ObjectUtils.isNotEmpty(repository)&& "group".equals(repository.getRepositoryType())){
+        if (!ObjectUtils.isEmpty(repository)&& "group".equals(repository.getRepositoryType())){
             List<RepositoryGroup> groupItemsList = repositoryGroupService.findRepositoryGroupList(
                     new RepositoryGroupQuery().setRepositoryGroupId(libraryQuery.getRepositoryId()));
             if (CollectionUtils.isNotEmpty(groupItemsList)){

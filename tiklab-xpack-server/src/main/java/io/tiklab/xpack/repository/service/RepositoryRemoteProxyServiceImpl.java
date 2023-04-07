@@ -106,4 +106,9 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
 
         return PaginationBuilder.build(pagination,repositoryRemoteProxyList);
     }
+
+    @Override
+    public String findAgencyUrl(String repositoryName) {
+      return repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+    }
 }

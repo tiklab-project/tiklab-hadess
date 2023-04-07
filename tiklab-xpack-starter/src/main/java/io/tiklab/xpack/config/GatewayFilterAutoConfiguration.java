@@ -92,6 +92,7 @@ public class GatewayFilterAutoConfiguration {
                         "/sockjs-node/info",
                         "/eam/auth/login",
                         "/libraryFile/tag",
+                        "/repositoryRemoteProxy/test",
 
                 })
                 .ignorePreUrls(new String[]{
