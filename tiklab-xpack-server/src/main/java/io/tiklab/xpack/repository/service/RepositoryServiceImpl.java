@@ -14,6 +14,7 @@ import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import io.tiklab.xpack.repository.model.RepositoryQuery;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -41,6 +42,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryService libraryService;
 
+    @Value("${repository.url:null}")
+    String repositoryUrl;
+
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
         RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
@@ -48,6 +52,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 
+        String absoluteAddress=repositoryUrl+repository.getName();
+        repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         return repositoryDao.createRepository(repositoryEntity);
     }
@@ -159,17 +165,15 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     public void findLibrary(List<Repository> repositoryList){
-        if (CollectionUtils.isNotEmpty(repositoryList)){
-            for ( Repository repository:repositoryList){
+        if (CollectionUtils.isNotEmpty(repositoryList)) {
+            for (Repository repository : repositoryList) {
                 List<Library> libraryList = libraryService.findLibraryList(new LibraryQuery().setRepositoryId(repository.getId()));
-                if (CollectionUtils.isNotEmpty(libraryList)){
+                if (CollectionUtils.isNotEmpty(libraryList)) {
                     repository.setLibraryNum(libraryList.size());
-                }else {
+                } else {
                     repository.setLibraryNum(0);
                 }
             }
         }
-
-
    }
 }

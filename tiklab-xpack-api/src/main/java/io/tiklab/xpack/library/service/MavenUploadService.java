@@ -18,15 +18,15 @@ public interface MavenUploadService {
      * @param method 方式
      * @return
      */
-    Map mavenSubmit(String contextPath,  InputStream inputStream,String userData, String method) throws IOException;
+    Map mavenSubmit(String contextPath,  InputStream inputStream,String userData, String method) ;
 
 
     /**
      * maven拉取
-     * @param contextPath
+     * @param contextPath 客户端拉取文件的地址
      * @return
      */
-    Map mavenInstall(String contextPath,String method);
+    Map mavenInstall(String contextPath);
 
 
 }

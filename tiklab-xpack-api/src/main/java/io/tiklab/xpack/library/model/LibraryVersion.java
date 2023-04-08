@@ -13,6 +13,7 @@ import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 
 /**
  * LibraryVersion-制品版本模型
@@ -86,6 +87,15 @@ public class LibraryVersion extends BaseModel {
 
     @ApiProperty(name="size",desc="size 大小")
     private java.lang.String size;
+
+    @ApiProperty(name="pullUser",desc="最近拉取人")
+    private java.lang.String pullUser;
+
+    @ApiProperty(name="pullTime",desc="最近拉取时间")
+    private java.sql.Timestamp pullTime;
+
+    @ApiProperty(name="pullNum",desc="拉取次数")
+    private java.lang.Integer pullNum;
 
     public java.lang.String getId() {
         return id;
@@ -195,5 +205,29 @@ public class LibraryVersion extends BaseModel {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public String getPullUser() {
+        return pullUser;
+    }
+
+    public void setPullUser(String pullUser) {
+        this.pullUser = pullUser;
+    }
+
+    public Timestamp getPullTime() {
+        return pullTime;
+    }
+
+    public void setPullTime(Timestamp pullTime) {
+        this.pullTime = pullTime;
+    }
+
+    public Integer getPullNum() {
+        return pullNum;
+    }
+
+    public void setPullNum(Integer pullNum) {
+        this.pullNum = pullNum;
     }
 }

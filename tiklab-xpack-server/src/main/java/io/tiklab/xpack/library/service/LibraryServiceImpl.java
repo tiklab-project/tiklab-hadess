@@ -176,7 +176,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     /**
      *  制品创建
-     * @param libraryName     制品文件
+     * @param libraryName     制品名称
      * @param libraryType  制品类型
      * @param repository  制品库信息
      * @return

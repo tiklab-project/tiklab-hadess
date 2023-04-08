@@ -52,7 +52,6 @@ public class MavenUploadController {
                     response.setStatus(200);
 
                     response.getWriter().write(data);
-
                 }
                 if(code==200){
                     response.setHeader("Content-type", "application/xml");
@@ -76,7 +75,7 @@ public class MavenUploadController {
     public void mavenInstall(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
         String method = request.getMethod();
-        Map map = downloadMavenService.mavenInstall(contextPath,method);
+        Map map = downloadMavenService.mavenInstall(contextPath);
         response.setCharacterEncoding("UTF-8");
         try {
             if ((int)map.get("code")==200){

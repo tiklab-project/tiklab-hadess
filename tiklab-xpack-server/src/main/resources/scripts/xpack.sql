@@ -111,3 +111,10 @@ CREATE TABLE pack_library_maven(
    artifact_id varchar (32) NOT NULL,
    create_time  timestamp
 );
+CREATE TABLE pack_pull_info(
+   id VARCHAR(32) PRIMARY KEY,
+   library_id varchar(32) NOT NULL,
+   library_version_id varchar (32) NOT NULL,
+   user_id varchar (32) NOT NULL,
+   pull_create timestamp
+);

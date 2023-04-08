@@ -121,7 +121,6 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
                 }else {
                     groupId =  groupId+s+".";
                 }
-
             }
         }
         List<LibraryMaven> libraryMavenList = this.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId())

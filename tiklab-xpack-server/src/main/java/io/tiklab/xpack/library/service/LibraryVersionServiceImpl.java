@@ -41,6 +41,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     @Autowired
     LibraryFileService libraryFileService;
 
+    @Autowired
+    PullInfoService pullInfoService;
+
     @Override
     public String createLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion) {
         LibraryVersionEntity libraryVersionEntity = BeanMapper.map(libraryVersion, LibraryVersionEntity.class);
@@ -71,11 +74,20 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         if (CollectionUtils.isNotEmpty(libraryMavenList)){
             libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
             libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+
+            List<PullInfo> pullInfoList = pullInfoService.findPullInfoList(new PullInfoQuery().setLibraryVersionId(libraryMavenList.get(0).getId()));
+            if (CollectionUtils.isNotEmpty(pullInfoList)){
+                PullInfo pullInfo = pullInfoList.get(0);
+                libraryVersion.setPullUser(pullInfo.getUser().getName());
+                libraryVersion.setPullTime(pullInfo.getPullCreate());
+                libraryVersion.setPullNum(pullInfoList.size());
+            }
         }
 
         //制品的大小
         String librarySize = librarySize(libraryVersion.getId());
         libraryVersion.setSize(librarySize);
+
 
         return libraryVersion;
     }
