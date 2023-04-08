@@ -91,7 +91,7 @@ public class PullInfoDao {
      * @return List <PullInfoEntity>
      */
     public List<PullInfoEntity> findPullInfoList(PullInfoQuery pullInfoQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(PullInfoEntity.class)
+        QueryCondition queryCondition =QueryBuilders.createQuery(PullInfoEntity.class)
                 .eq("libraryVersionId", pullInfoQuery.getLibraryVersionId())
                 .eq("libraryId", pullInfoQuery.getLibraryId())
                 .orders(pullInfoQuery.getOrderParams())

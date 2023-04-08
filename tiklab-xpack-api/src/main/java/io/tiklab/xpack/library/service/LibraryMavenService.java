@@ -68,11 +68,11 @@ public interface LibraryMavenService {
     /**
      *  制品maven创建、修改
      * @param artifactId     artifactId
-     * @param single  single
+     * @param groupId  groupId
      * @param library  library
      * @return
      */
-    void libraryMavenSplice(String artifactId, String[]  single, Library library );
+    void libraryMavenSplice(String artifactId, String  groupId, Library library );
 
 
 

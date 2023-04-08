@@ -104,10 +104,17 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @return
      */
     public Map<String, Object> operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
+        String repositoryUrl = contextPath.substring(contextPath.indexOf("repository/maven") + 17);
+        int index = repositoryUrl.indexOf("/",1);
+        //客服端请求路径制品库名称
+        String repositoryName = repositoryUrl.substring(0, index);
+        //文件相对路径
+        String relativePath = repositoryUrl.substring(index);
+        relativePath = relativePath.substring(1);
+
+
         String url = StringUtils.substringBeforeLast(contextPath, "/");
-        //客服端请求路径第三位 为制品库名称
-        String[]  single=contextPath.split("/");
-        String repositoryName = single[3];
+
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
         if (CollectionUtils.isNotEmpty(repositoryList)){
@@ -148,7 +155,15 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             }
             inputStream.close();
             fos.close();// 保存数据
-            return librarySplice(contextPath,file,userId,repositoryList.get(0)) ;
+
+
+            //文件大小
+            long FileLength = file.length();
+            double i =(double)FileLength / 1000;
+            long round = Math.round(i);
+             createLibrary(relativePath,repositoryList.get(0),userId,round,"");
+           // return librarySplice(contextPath,file,userId,repositoryList.get(0)) ;
+            return result(201,"Create",null);
         }else {
             return result(404,null,null);
         }
@@ -214,7 +229,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
 
         // 制品maven
-        libraryMavenService.libraryMavenSplice(libraryName,single,library);
+        //libraryMavenService.libraryMavenSplice(libraryName,single,library);
         return result(201,"Create",null);
 
     }
@@ -330,7 +345,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 Map<String, Object> resultMap = callAgencyMaven(relativeAbsoluteUrl);
                 if ((int)resultMap.get("code")==200){
                     //拉取成功创建制品信息
-                    createLibrary(relativePath,repositoryGroup.getRepository(),"111111" );
+                    createLibrary(relativePath,repositoryGroup.getRepository(),"111111" ,10l,"");
+                    //创建拉取信息
+                    createPullInfo();
                 }
                 return resultMap;
             }
@@ -384,7 +401,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     public void createPullInfo(){
         PullInfo pullInfo = new PullInfo();
-     //   pullInfo.setLibrary();
+
+       // pullInfo.setLibrary();
     }
 
     /**
@@ -392,9 +410,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param  relativePath 客户端请求的相对路径 （不包含制品库）
      * @param  repository 制品库
      * @param  userId     用户id
+     * @param  fileSize   文件大小
+     * @param  hash      hash
      * @return
      */
-        public void createLibrary(String relativePath,Repository repository,String userId){
+        public void createLibrary(String relativePath,Repository repository,
+                                  String userId,Long fileSize,String hash){
             //制品文件名称
             String fileName = relativePath.substring(relativePath.lastIndexOf("/") + 1);
 
@@ -408,7 +429,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
             String groupIdPath = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
             String groupId = groupIdPath.replace("/", ".");
-            System.out.println("");
 
             //创建制品
              Library library = libraryService.createLibraryData(libraryName, "maven",repository);
@@ -423,7 +443,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                libraryVersion.setVersion(version);
                libraryVersion.setLibraryType("maven");
                if (relativePath.endsWith(".jar.sha1")){
-                   // libraryVersion.setHash(gainFileData(file));
+                    //libraryVersion.setHash(gainFileData(file));
+                   libraryVersion.setHash(hash);
                }
                User user = new User();
                user.setId(userId);
@@ -435,14 +456,16 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                LibraryFile libraryFile = new LibraryFile();
                libraryFile.setLibrary(library);
                libraryFile.setFileName(fileName);
-              // libraryFile.setFileSize(round+"kb");
+               libraryFile.setFileSize(fileSize+"kb");
                libraryFile.setRepository(repository);
                libraryFile.setRelativePath(relativePath);
                libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+
+               // 制品maven  创建、更新
+               libraryMavenService.libraryMavenSplice(libraryName,groupId,library);
            }
 
-            // 制品maven  创建、更新
-         //   libraryMavenService.libraryMavenSplice(libraryName,single,library);
+
         }
 
     /**

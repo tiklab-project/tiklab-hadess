@@ -108,21 +108,7 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
         return PaginationBuilder.build(pagination,libraryMavenList);
     }
 
-    public void libraryMavenSplice(String artifactId, String[]  single, Library library ){
-        int length = single.length;
-        String groupId=null;
-        for (int a= 1; a<length-3-3;a++){
-            String s = single[3 + a];
-            if (groupId==null){
-                groupId=s+".";
-            }else {
-                if(a==length-7){
-                    groupId =  groupId+s;
-                }else {
-                    groupId =  groupId+s+".";
-                }
-            }
-        }
+    public void libraryMavenSplice(String artifactId, String  groupId, Library library ){
         List<LibraryMaven> libraryMavenList = this.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId())
                 .setArtifactId(artifactId).setGroupId(groupId));
         if (CollectionUtils.isEmpty(libraryMavenList)){
