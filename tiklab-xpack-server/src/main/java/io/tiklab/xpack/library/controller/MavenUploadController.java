@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
@@ -35,6 +36,7 @@ public class MavenUploadController {
         String contextPath = request.getRequestURI();
         String method = request.getMethod();
         String authorization = request.getHeader("Authorization");
+
         if (StringUtils.isEmpty(authorization)){
             response.setStatus(401,"Unauthorized");
         }else {
@@ -50,13 +52,16 @@ public class MavenUploadController {
                     response.setHeader("Content-type", "text/plain");
                     String data = map.get("data").toString();
                     response.setStatus(200);
-
                     response.getWriter().write(data);
                 }
                 if(code==200){
                     response.setHeader("Content-type", "application/xml");
                     String data = map.get("data").toString();
                     response.setStatus(200,map.get("msg").toString());
+                    if (contextPath.contains("maven-metadata.xml")){
+                        response.setHeader("ETag", "{SHA1{e91bd90e56677fc41443e8f9bbf5d30164925b78}}");
+                    }
+
                     //response.addHeader("ETag",map.get("ETag").toString());
                     response.getWriter().write(data);
                 }
@@ -97,4 +102,5 @@ public class MavenUploadController {
             throw new RuntimeException(e);
         }
     }
+
 }

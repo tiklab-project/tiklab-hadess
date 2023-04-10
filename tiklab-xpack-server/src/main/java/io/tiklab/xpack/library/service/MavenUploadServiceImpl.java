@@ -77,14 +77,19 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     @Override
     public Map<String,Object> mavenSubmit(String contextPath, InputStream inputStream,String userData, String method)  {
+        EamTicket eamTicket;
         try {
-            //验证用户信息
-            EamTicket eamTicket = verifyUser(userData);
-            //操作流内容
-            return operateFileData(inputStream,eamTicket.getUserId(),contextPath,method);
+            //账号校验
+             eamTicket=verifyUser(userData);
         }catch (Exception e){
             return result(401,e.getMessage(),null);
         }
+        try {
+            return operateFileData(inputStream, eamTicket.getUserId(), contextPath, method);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
@@ -97,10 +102,11 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
     }
     /**
-     *  maven-提交   创建文件夹或者文件
-     * @param contextPath     文件夹路径
+     *  maven-提交   写入文件、创建数据
+     * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
+     * @param userId          用户id
      * @param inputStream     inputStream
-     *  @param method     请求方式  GET PUT
+     * @param method          请求方式  GET PUT
      * @return
      */
     public Map<String, Object> operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
@@ -108,131 +114,93 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         int index = repositoryUrl.indexOf("/",1);
         //客服端请求路径制品库名称
         String repositoryName = repositoryUrl.substring(0, index);
+
         //文件相对路径
         String relativePath = repositoryUrl.substring(index);
         relativePath = relativePath.substring(1);
 
-
-        String url = StringUtils.substringBeforeLast(contextPath, "/");
-
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
         if (CollectionUtils.isNotEmpty(repositoryList)){
-            String path=repositoryLibrary+url;
-            String filePath=repositoryLibrary+contextPath;
-            logger.warn("传入路径repositoryLibrary:{}",path);
+            //写入文件
+            Map<String, Object> resultMap = writeFile(inputStream, contextPath, method);
+            if ((int)resultMap.get("code")==2000){
+                //文件大小
+                Long fileSize = (Long) resultMap.get("data");
 
-            File folder = new File(path);
-            if (!folder.exists() && !folder.isDirectory()) {
-                folder.mkdirs();
-            }
-            File file = new File(filePath);
-            if (!file.exists()){
-                file.createNewFile();
-            }
-            String document = contextPath.substring(contextPath.lastIndexOf("/") + 1);
-            int indexOf = document.indexOf("maven-metadata");
-            if (indexOf!=-1){
-                if (("GET").equals(method)){
-                    if(document.contains(".sha1")||document.contains(".md5")){
-                        Map<String, Object> result = result(220, "OK", gainFileData(file));
-                        return result;
-                    }else {
-                        /*String shaPath = path+".sha1";*/
-                        Map<String, Object> result = result(200, "OK", gainFileData(file));
-                   /* File shaValue = new File(shaPath);
-                    String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
-                    result.put("ETag",ETag);*/
-                        return result;
-                    }
+                //解析相对路径 获取文件名称、版本、groupId
+                Map<String, String> dataMap = resolverRelativePath(relativePath);
+                dataMap.put("relativePath",relativePath);
+                dataMap.put("userId",userId);
+                dataMap.put("contextPath",contextPath);
+
+                int indexOf = contextPath.indexOf("maven-metadata");
+                if (indexOf==-1){
+                    createLibrary(dataMap,repositoryList.get(0),fileSize);
                 }
+                return result(201,"Create",null);
             }
-            //用字节流写入文件
-            FileOutputStream fos = new FileOutputStream(filePath);
-            byte[] b = new byte[1024];
-            while ((inputStream.read(b)) != -1) {
-                fos.write(b);// 写入数据
-            }
-            inputStream.close();
-            fos.close();// 保存数据
-
-
-            //文件大小
-            long FileLength = file.length();
-            double i =(double)FileLength / 1000;
-            long round = Math.round(i);
-             createLibrary(relativePath,repositoryList.get(0),userId,round,"");
-           // return librarySplice(contextPath,file,userId,repositoryList.get(0)) ;
-            return result(201,"Create",null);
+            return resultMap;
         }else {
             return result(404,null,null);
         }
-
     }
 
     /**
-     *  maven-提交   制品创建、修改
-     * @param contextPath     相对路径
-     * @param file     文件
-     * @param userId     用户id
+     *  maven-提交 文件file写入
+     * @param inputStream     输入流
+     * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
+     * @param method     maven客户端提交方法
      * @return
      */
-    public Map<String,Object> librarySplice(String contextPath,File file,String userId, Repository Repository) throws IOException {
+    public Map<String, Object> writeFile(InputStream inputStream,String contextPath,String method) throws IOException {
+        String url = StringUtils.substringBeforeLast(contextPath, "/");
+        String path=repositoryLibrary+url;
+        String filePath=repositoryLibrary+contextPath;
+        File folder = new File(path);
+        if (!folder.exists() && !folder.isDirectory()) {
+            folder.mkdirs();
+        }
+        File file = new File(filePath);
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        String document = contextPath.substring(contextPath.lastIndexOf("/") + 1);
+        int indexOf = document.indexOf("maven-metadata");
+        if (indexOf!=-1){
+            if (("GET").equals(method)){
+
+                if(document.contains(".sha1")||document.contains(".md5")){
+
+                    Map<String, Object> result = result(220, "OK", gainFileData(file));
+                    return result;
+                }else {
+                    //String shaPath = path+".sha1";
+                    Map<String, Object> result = result(200, "OK", gainFileData(file));
+                   /* File shaValue = new File(shaPath);
+                    String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
+                    result.put("ETag",ETag);*/
+                    return result;
+                }
+            }
+        }
+        //用字节流写入文件
+        FileOutputStream fos = new FileOutputStream(filePath);
+        byte[] b = new byte[1024];
+        while ((inputStream.read(b)) != -1) {
+            fos.write(b);// 写入数据
+        }
+        inputStream.close();
+        fos.close();// 保存数据
+
         //文件大小
         long FileLength = file.length();
         double i =(double)FileLength / 1000;
         long round = Math.round(i);
-
-        String[]  single=contextPath.split("/");
-        int length = single.length;
-        String repositoryName = single[3];
-        String libraryName = single[length - 3];
-        String version = single[length - 2];
-
-        //制品库在路径中的索引
-        int repositoryNameIndex = contextPath.indexOf(repositoryName) + repositoryName.length();
-        //文件相对路径
-        String relativePath = contextPath.substring(repositoryNameIndex+1);
-
-        //创建制品
-        Library library = libraryService.createLibraryData(libraryName, "maven",Repository);
-
-        //路径中不包含maven-metadata 创建或更新版本
-        if (contextPath.indexOf("maven-metadata")==-1){
-            //制品版本创建、修改
-            LibraryVersion libraryVersion = new LibraryVersion();
-            libraryVersion.setLibrary(library);
-            libraryVersion.setRepository(Repository);
-            libraryVersion.setVersion(version);
-            libraryVersion.setLibraryType("maven");
-            if (contextPath.endsWith(".jar.sha1")){
-                libraryVersion.setHash(gainFileData(file));
-            }
-            User user = new User();
-            user.setId(userId);
-            libraryVersion.setUser(user);
-            libraryVersionService.libraryVersionSplice(libraryVersion);
-        }
-
-        //截取文件名称
-        String fileName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
-        //截取文件路径
-        String fileUrl = StringUtils.substringBeforeLast(contextPath, "/");
-        LibraryFile libraryFile = new LibraryFile();
-        libraryFile.setLibrary(library);
-        libraryFile.setFileName(fileName);
-        libraryFile.setFileSize(round+"kb");
-        libraryFile.setFileUrl(repositoryLibrary+fileUrl);
-        libraryFile.setRepository(Repository);
-        libraryFile.setRelativePath(relativePath);
-        libraryFileService.libraryFileSplice(libraryFile,"libraryVersionId");
-
-
-        // 制品maven
-        //libraryMavenService.libraryMavenSplice(libraryName,single,library);
-        return result(201,"Create",null);
+        return result(2000, "OK", round);
 
     }
+
     /**
      *  maven提交-获取用户
      * @param userData  提交用户信息
@@ -242,7 +210,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String[]  userObject=userData.split(":");
         String userName = userObject[0];
         String password = userObject[1];
-
 
         UserPassport userPassport = new UserPassport();
         userPassport.setAccount(userName);
@@ -287,6 +254,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     //走代理拉取
                     return proxyInstall(libraryList,relativePath);
                 }else {
+                    //私服库拉取
                     return readFileContent(file);
                 }
             }
@@ -344,8 +312,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 String relativeAbsoluteUrl=proxyUrl+relativePath;
                 Map<String, Object> resultMap = callAgencyMaven(relativeAbsoluteUrl);
                 if ((int)resultMap.get("code")==200){
+
+                    //解析相对路径 获取文件名称、版本、groupId
+                    Map<String, String> relativeMap = resolverRelativePath(relativePath);
+                    relativeMap.put("userId","111111");
+                    relativeMap.put("relativePath",relativePath);
+                    relativeMap.put("contextPath","contextPath");
                     //拉取成功创建制品信息
-                    createLibrary(relativePath,repositoryGroup.getRepository(),"111111" ,10l,"");
+                    //createLibrary(relativeMap,repositoryGroup.getRepository(), 10l);
                     //创建拉取信息
                     createPullInfo();
                 }
@@ -407,67 +381,74 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     /**
      *  拉取远程后创建制品信息
-     * @param  relativePath 客户端请求的相对路径 （不包含制品库）
+     * @param  dataMap 数据整合的map
      * @param  repository 制品库
-     * @param  userId     用户id
      * @param  fileSize   文件大小
-     * @param  hash      hash
      * @return
      */
-        public void createLibrary(String relativePath,Repository repository,
-                                  String userId,Long fileSize,String hash){
-            //制品文件名称
-            String fileName = relativePath.substring(relativePath.lastIndexOf("/") + 1);
-
-            //版本
-            String versionPath = relativePath.substring(0,relativePath.lastIndexOf("/"));
-            String version = versionPath.substring(versionPath.lastIndexOf("/")+1);
-
-            //制品名称
-            String libraryPath=versionPath.substring(0,versionPath.lastIndexOf("/"));
-            String libraryName = libraryPath.substring(libraryPath.lastIndexOf("/")+1);
-
-            String groupIdPath = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
-            String groupId = groupIdPath.replace("/", ".");
+        public void createLibrary( Map<String, String> dataMap,Repository repository,Long fileSize){
 
             //创建制品
-             Library library = libraryService.createLibraryData(libraryName, "maven",repository);
+            Library library = libraryService.createLibraryData(dataMap.get("libraryName"), "maven",repository);
 
-
-           //路径中不包含maven-metadata 创建或更新版本
-           if (relativePath.indexOf("maven-metadata")==-1){
-               //制品版本创建、修改
-               LibraryVersion libraryVersion = new LibraryVersion();
-               libraryVersion.setLibrary(library);
-               libraryVersion.setRepository(repository);
-               libraryVersion.setVersion(version);
-               libraryVersion.setLibraryType("maven");
-               if (relativePath.endsWith(".jar.sha1")){
-                    //libraryVersion.setHash(gainFileData(file));
-                   libraryVersion.setHash(hash);
-               }
-               User user = new User();
-               user.setId(userId);
-               libraryVersion.setUser(user);
-               String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
-
-
-               //制品文件 创建、更新
-               LibraryFile libraryFile = new LibraryFile();
-               libraryFile.setLibrary(library);
-               libraryFile.setFileName(fileName);
-               libraryFile.setFileSize(fileSize+"kb");
-               libraryFile.setRepository(repository);
-               libraryFile.setRelativePath(relativePath);
-               libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
-
-               // 制品maven  创建、更新
-               libraryMavenService.libraryMavenSplice(libraryName,groupId,library);
+           //制品版本创建、修改
+           LibraryVersion libraryVersion = new LibraryVersion();
+           libraryVersion.setLibrary(library);
+           libraryVersion.setRepository(repository);
+           libraryVersion.setVersion(dataMap.get("version"));
+           libraryVersion.setLibraryType("maven");
+           if (dataMap.get("relativePath").endsWith(".jar.sha1")){
+                //libraryVersion.setHash(gainFileData(file));
+               libraryVersion.setHash("hash");
            }
+           User user = new User();
+           user.setId(dataMap.get("userId"));
+           libraryVersion.setUser(user);
+           String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
 
+
+           //制品文件 创建、更新
+           LibraryFile libraryFile = new LibraryFile();
+           libraryFile.setLibrary(library);
+           libraryFile.setFileName(dataMap.get("fileName"));
+           libraryFile.setFileSize(fileSize+"kb");
+           libraryFile.setRepository(repository);
+           libraryFile.setFileUrl(dataMap.get("contextPath"));
+           libraryFile.setRelativePath(dataMap.get("relativePath"));
+           libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+
+           // 制品maven  创建、更新
+           libraryMavenService.libraryMavenSplice(dataMap.get("libraryName"),dataMap.get("groupId"),library);
 
         }
 
+    /**
+     *  解析相对路径
+     * @param relativePath     客户端请求的相对路径 （不包含制品库）
+     * @return
+     */
+    public Map<String,String> resolverRelativePath(String relativePath){
+        //制品文件名称
+        String fileName = relativePath.substring(relativePath.lastIndexOf("/") + 1);
+
+        //版本
+        String versionPath = relativePath.substring(0,relativePath.lastIndexOf("/"));
+        String version = versionPath.substring(versionPath.lastIndexOf("/")+1);
+
+        //制品名称
+        String libraryPath=versionPath.substring(0,versionPath.lastIndexOf("/"));
+        String libraryName = libraryPath.substring(libraryPath.lastIndexOf("/")+1);
+
+        String groupIdPath = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
+        String groupId = groupIdPath.replace("/", ".");
+
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("libraryName",libraryName);
+        resultMap.put("version",version);
+        resultMap.put("groupId",groupId);
+        resultMap.put("fileName",fileName);
+        return resultMap;
+    }
     /**
      *  结果封装
      * @param code     code

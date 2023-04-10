@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Map;
 
 import static org.apache.coyote.http11.Constants.a;
@@ -38,6 +39,8 @@ public class NpmUploadController {
     public Object npmSubmit(HttpServletRequest request, HttpServletResponse response){
         String contextPath = request.getRequestURI();
         String referer = request.getHeader("referer");
+
+
         try {
             //npm publish （提交）
             if (referer.contains("publish")){
@@ -72,8 +75,6 @@ public class NpmUploadController {
                             response.setStatus(404);
                             break;
                     }
-
-
                 }
             }
 
