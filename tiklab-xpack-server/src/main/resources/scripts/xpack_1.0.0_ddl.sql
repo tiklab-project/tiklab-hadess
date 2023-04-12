@@ -1,3 +1,7 @@
+-- ---------------------------
+-- 存储库表
+-- @dsm.cmd.id="1001"
+-- ----------------------------
 CREATE TABLE pack_storage(
     id VARCHAR(32) PRIMARY KEY,
     name varchar (32) NOT NULL,
@@ -6,6 +10,10 @@ CREATE TABLE pack_storage(
     create_time timestamp,
     update_time timestamp
 );
+-- ---------------------------
+-- 制品库
+-- @dsm.cmd.id="1002"
+-- ----------------------------
 CREATE TABLE pack_repository(
      id VARCHAR(32) PRIMARY KEY,
      name varchar (128) NOT NULL,
@@ -18,20 +26,21 @@ CREATE TABLE pack_repository(
      create_time timestamp,
      update_time timestamp
 );
-CREATE TABLE pack_repository_docker(
-    id VARCHAR(32) PRIMARY KEY,
-    repository_id varchar (32) NOT NULL,
-    api_version varchar(8),
-    anonymity_pull varchar (8),
-    create_time timestamp
-);
+
+-- ---------------------------
+-- 制品库maven 表
+-- @dsm.cmd.id="1003"
+-- ----------------------------
 CREATE TABLE pack_repository_maven(
        id VARCHAR(32) PRIMARY KEY,
        repository_id varchar (32) NOT NULL,
        verify varchar(12),
        create_time timestamp
 );
-
+-- ---------------------------
+-- 远程库代理表
+-- @dsm.cmd.id="1004"
+-- ----------------------------
 CREATE TABLE pack_repository_remote_proxy(
       id VARCHAR(32) PRIMARY KEY,
       repository_id varchar (32) NOT NULL,
@@ -42,6 +51,10 @@ CREATE TABLE pack_repository_remote_proxy(
       create_time timestamp,
       update_time timestamp
 );
+-- ---------------------------
+-- 组合库 关联制品库表
+-- @dsm.cmd.id="1005"
+-- ----------------------------
 CREATE TABLE pack_repository_group_items(
      id VARCHAR(32) PRIMARY KEY,
      repository_group_id varchar (32) NOT NULL,
@@ -49,6 +62,10 @@ CREATE TABLE pack_repository_group_items(
      create_time timestamp,
      update_time timestamp
 );
+-- ---------------------------
+-- 复制信息表
+-- @dsm.cmd.id="1006"
+-- ----------------------------
 CREATE TABLE pack_repository_cluster_cfg(
     id VARCHAR(32) PRIMARY KEY,
     repository_id varchar (32) NOT NULL,
@@ -62,7 +79,10 @@ CREATE TABLE pack_repository_cluster_cfg(
     update_time timestamp
 );
 
-
+-- ---------------------------
+-- 制品表
+-- @dsm.cmd.id="1007"
+-- ----------------------------
 CREATE TABLE pack_library(
     id VARCHAR(32) PRIMARY KEY,
     name varchar (32) NOT NULL,
@@ -72,6 +92,10 @@ CREATE TABLE pack_library(
     create_time timestamp,
     update_time timestamp
 );
+-- ---------------------------
+-- 制品版本表
+-- @dsm.cmd.id="1008"
+-- ----------------------------
 CREATE TABLE pack_library_version(
      id VARCHAR(32) PRIMARY KEY,
      library_id varchar (32) NOT NULL,
@@ -84,8 +108,11 @@ CREATE TABLE pack_library_version(
      push_time timestamp,
      create_time timestamp,
      update_time timestamp
-
 );
+-- ---------------------------
+-- 制品文件表
+-- @dsm.cmd.id="1009"
+-- ----------------------------
 CREATE TABLE pack_library_file(
       id VARCHAR(32) PRIMARY KEY,
       library_id varchar(32) NOT NULL,
@@ -97,13 +124,10 @@ CREATE TABLE pack_library_file(
       relative_path varchar (246) NOT NULL,
       create_time  timestamp
 );
-CREATE TABLE pack_library_pulls(
-     id VARCHAR(32) PRIMARY KEY,
-     library_id varchar(32) NOT NULL,
-     user_id varchar (32) NOT NULL,
-     pull_num int,
-     pull_time  timestamp
-);
+-- ---------------------------
+-- 制品maven 信息表
+-- @dsm.cmd.id="1010"
+-- ----------------------------
 CREATE TABLE pack_library_maven(
    id VARCHAR(32) PRIMARY KEY,
    library_id varchar(32) NOT NULL,
@@ -111,6 +135,10 @@ CREATE TABLE pack_library_maven(
    artifact_id varchar (32) NOT NULL,
    create_time  timestamp
 );
+-- ---------------------------
+-- 制品maven 信息表
+-- @dsm.cmd.id="1011"
+-- ----------------------------
 CREATE TABLE pack_pull_info(
    id VARCHAR(32) PRIMARY KEY,
    library_id varchar(32) NOT NULL,

@@ -1,5 +1,7 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.core.Result;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -18,7 +20,7 @@ public interface MavenUploadService {
      * @param method 方式
      * @return
      */
-    Map mavenSubmit(String contextPath,  InputStream inputStream,String userData, String method) ;
+    Result mavenSubmit(String contextPath,  InputStream inputStream,String userData, String method) ;
 
 
     /**
@@ -26,7 +28,7 @@ public interface MavenUploadService {
      * @param contextPath 客户端拉取文件的地址
      * @return
      */
-    Map mavenInstall(String contextPath);
+    Result mavenInstall(String contextPath);
 
 
 }

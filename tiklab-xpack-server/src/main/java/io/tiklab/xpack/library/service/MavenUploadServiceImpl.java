@@ -1,6 +1,7 @@
 package io.tiklab.xpack.library.service;
 
 import com.alibaba.fastjson.JSONObject;
+import io.tiklab.core.Result;
 import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
@@ -76,13 +77,13 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
 
     @Override
-    public Map<String,Object> mavenSubmit(String contextPath, InputStream inputStream,String userData, String method)  {
+    public Result mavenSubmit(String contextPath, InputStream inputStream,String userData, String method)  {
         EamTicket eamTicket;
         try {
             //账号校验
              eamTicket=verifyUser(userData);
         }catch (Exception e){
-            return result(401,e.getMessage(),null);
+            return Result.error(401,e.getMessage());
         }
         try {
             return operateFileData(inputStream, eamTicket.getUserId(), contextPath, method);
@@ -93,7 +94,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     }
 
     @Override
-    public Map<String, Object> mavenInstall(String contextPath) {
+    public Result mavenInstall(String contextPath) {
         String mavenInstall = contextPath.substring(contextPath.indexOf("maven-install")+14);
         try {
             return findRepository(mavenInstall);
@@ -109,7 +110,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param method          请求方式  GET PUT
      * @return
      */
-    public Map<String, Object> operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
+    public Result operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
         String repositoryUrl = contextPath.substring(contextPath.indexOf("repository/maven") + 17);
         int index = repositoryUrl.indexOf("/",1);
         //客服端请求路径制品库名称
@@ -122,11 +123,13 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
         if (CollectionUtils.isNotEmpty(repositoryList)){
+            Result result = new Result<>();
+
             //写入文件
-            Map<String, Object> resultMap = writeFile(inputStream, contextPath, method);
-            if ((int)resultMap.get("code")==2000){
+            Result writeFile = writeFile(inputStream, contextPath, method);
+            if (writeFile.getCode()==2000){
                 //文件大小
-                Long fileSize = (Long) resultMap.get("data");
+                Long fileSize = (Long) writeFile.getData();
 
                 //解析相对路径 获取文件名称、版本、groupId
                 Map<String, String> dataMap = resolverRelativePath(relativePath);
@@ -138,11 +141,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 if (indexOf==-1){
                     createLibrary(dataMap,repositoryList.get(0),fileSize);
                 }
-                return result(201,"Create",null);
+
+                result.setCode(201);
+                result.setMsg("Create");
+                return result;
             }
-            return resultMap;
+            return writeFile;
         }else {
-            return result(404,null,null);
+            return Result.error(404,null);
         }
     }
 
@@ -153,7 +159,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param method     maven客户端提交方法
      * @return
      */
-    public Map<String, Object> writeFile(InputStream inputStream,String contextPath,String method) throws IOException {
+    public Result writeFile(InputStream inputStream,String contextPath,String method) throws IOException {
+
         String url = StringUtils.substringBeforeLast(contextPath, "/");
         String path=repositoryLibrary+url;
         String filePath=repositoryLibrary+contextPath;
@@ -169,35 +176,30 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         int indexOf = document.indexOf("maven-metadata");
         if (indexOf!=-1){
             if (("GET").equals(method)){
-
-                if(document.contains(".sha1")||document.contains(".md5")){
-
-                    Map<String, Object> result = result(220, "OK", gainFileData(file));
-                    return result;
-                }else {
-                    //String shaPath = path+".sha1";
-                    Map<String, Object> result = result(200, "OK", gainFileData(file));
-                   /* File shaValue = new File(shaPath);
-                    String ETag="{SHA1{"+gainFileData(shaValue)+"}}";
-                    result.put("ETag",ETag);*/
-                    return result;
+                String fileData = gainFileData(file);
+                if (StringUtils.isEmpty(fileData)){
+                    return Result.error(404,"no find");
                 }
+                return readFileContent(file);
             }
         }
         //用字节流写入文件
-        FileOutputStream fos = new FileOutputStream(filePath);
-        byte[] b = new byte[1024];
-        while ((inputStream.read(b)) != -1) {
-            fos.write(b);// 写入数据
+        FileOutputStream outputStream = new FileOutputStream(filePath);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
         }
-        inputStream.close();
-        fos.close();// 保存数据
+        outputStream.flush();
 
         //文件大小
         long FileLength = file.length();
         double i =(double)FileLength / 1000;
         long round = Math.round(i);
-        return result(2000, "OK", round);
+        Result result = new Result<>();
+        result.setCode(2000);
+        result.setData(round);
+        return result;
 
     }
 
@@ -223,7 +225,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param mavenInstall     code
      * @return
      */
-    public Map<String, Object> findRepository( String mavenInstall) throws IOException {
+    public Result findRepository( String mavenInstall) throws IOException {
 
         Map<String, Object> resultMap = new HashMap<>();
         int index = mavenInstall.indexOf("/",1);
@@ -261,17 +263,20 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }else {
             resultMap.put("code",404);
             resultMap.put("msg","repository not found");
-            return resultMap;
+            Result result = new Result<>();
+            result.setCode(404);
+            result.setMsg("repository not found");
+            return result;
         }
         return null;
     }
 
     /**
-     *  maven拉取-读取文件内容
+     *  maven install  读取文件内容
      * @param file: 文件流
      * @return
      */
-    public Map<String, Object> readFileContent(File file)  throws IOException {
+    public Result readFileContent(File file)  throws IOException {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -283,7 +288,10 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
         byte[] bytes = bos.toByteArray();
         String s = new String(bytes, "UTF-8");
-        return result(200,"OK",bytes);
+        Result result = new Result<>();
+        result.setCode(200);
+        result.setData(bytes);
+        return result;
     }
 
     /**
@@ -292,7 +300,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param  relativePath : 文件相对路径
      * @return
      */
-    public Map<String, Object> proxyInstall( List<RepositoryGroup> libraryList,String relativePath) {
+    public Result proxyInstall( List<RepositoryGroup> libraryList,String relativePath) {
         // 过滤代理库信息
         List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(groupList)){
@@ -310,8 +318,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                      relativePath = relativePath.substring(1);
                 }
                 String relativeAbsoluteUrl=proxyUrl+relativePath;
-                Map<String, Object> resultMap = callAgencyMaven(relativeAbsoluteUrl);
-                if ((int)resultMap.get("code")==200){
+                Result result = callAgencyMaven(relativeAbsoluteUrl);
+                if (result.getCode()==200){
 
                     //解析相对路径 获取文件名称、版本、groupId
                     Map<String, String> relativeMap = resolverRelativePath(relativePath);
@@ -323,10 +331,11 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     //创建拉取信息
                     createPullInfo();
                 }
-                return resultMap;
+                return result;
             }
         }
-        return result(300,"OK","bytes");
+        //return result(300,"OK","bytes");
+        return null;
     }
 
 
@@ -346,6 +355,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         while ((lineTxt = bfr.readLine()) != null) {
             result.append(lineTxt);
         }
+
         String toString = result.toString();
         String trim = toString.trim();
         return trim;
@@ -356,20 +366,26 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativeAbsoluteUrl  代理绝对路径
      * @return
      */
-    public Map<String, Object> callAgencyMaven( String relativeAbsoluteUrl ){
+    public Result callAgencyMaven( String relativeAbsoluteUrl ){
+        Result result = new Result<>();
         RestTemplate restTemplate = new RestTemplate();
         //访问jar文件 返回byte[]类型
         if(relativeAbsoluteUrl.endsWith(".jar")){
             ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
             HttpStatus statusCode = entity.getStatusCode();
             byte[] entityBody = entity.getBody();
-            return result(200,"OK",entityBody);
+           // return result(200,"OK",entityBody);
+            result.setCode(200);
+            result.setData(entityBody);
+            return result;
         }
         ResponseEntity<String> entity = restTemplate.getForEntity(relativeAbsoluteUrl, String.class);
         HttpStatus statusCode = entity.getStatusCode();
         String entityBody = entity.getBody();
         byte[] bytes = entityBody.getBytes(StandardCharsets.UTF_8);
-        return result(200,"OK",bytes);
+        result.setCode(200);
+        result.setData(bytes);
+        return result;
     }
 
 

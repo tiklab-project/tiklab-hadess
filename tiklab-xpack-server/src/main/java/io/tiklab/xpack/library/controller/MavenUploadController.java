@@ -1,5 +1,6 @@
 package io.tiklab.xpack.library.controller;
 
+import io.tiklab.core.Result;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -46,27 +48,18 @@ public class MavenUploadController {
                 //用户信息
                 String userData = new String(decode, "UTF-8");
                 InputStream inputStream = request.getInputStream();
-                Map map = downloadMavenService.mavenSubmit(contextPath, inputStream, userData,method);
-                int code = (int)map.get("code");
-                if (code==220) {
-                    response.setHeader("Content-type", "text/plain");
-                    String data = map.get("data").toString();
-                    response.setStatus(200);
-                    response.getWriter().write(data);
-                }
-                if(code==200){
-                    response.setHeader("Content-type", "application/xml");
-                    String data = map.get("data").toString();
-                    response.setStatus(200,map.get("msg").toString());
-                    if (contextPath.contains("maven-metadata.xml")){
-                        response.setHeader("ETag", "{SHA1{e91bd90e56677fc41443e8f9bbf5d30164925b78}}");
-                    }
 
-                    //response.addHeader("ETag",map.get("ETag").toString());
-                    response.getWriter().write(data);
-                }
-                if (code!=220&&code!=200){
-                    response.setStatus((int)map.get("code"),map.get("msg").toString());
+                Result<byte[]> result = downloadMavenService.mavenSubmit(contextPath, inputStream, userData, method);
+                if(result.getCode()==200){
+                    response.setStatus(200,result.getMsg());
+                    ServletOutputStream outputStream = response.getOutputStream();
+                    if (contextPath.contains("maven-metadata.xml.sha1")){
+                        outputStream.write(result.getData());
+                    }else {
+                        outputStream.write(result.getData());
+                    }
+                }else {
+                    response.setStatus(result.getCode(),result.getMsg());
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -80,16 +73,44 @@ public class MavenUploadController {
     public void mavenInstall(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
         String method = request.getMethod();
-        Map map = downloadMavenService.mavenInstall(contextPath);
+        Result<byte[]> result = downloadMavenService.mavenInstall(contextPath);
         response.setCharacterEncoding("UTF-8");
         try {
-            if ((int)map.get("code")==200){
+            if (result.getCode()==200){
+                response.setStatus(200,result.getMsg());
+                if (!"HEAD".equals(method)){
+                    //byte[] data = (byte[]) map.get("data");
+                    byte[] data = result.getData();
+                    if (contextPath.endsWith(".jar")){
+
+                        ServletOutputStream outputStream = response.getOutputStream();
+                        outputStream.write(data);
+                    }else {
+                        String str = new String(data, "UTF-8");
+                        PrintWriter writer = response.getWriter();
+                        writer.write(str);
+                    }
+                }
+            }else {
+                response.setStatus(result.getCode(),result.getMsg());
+            }
+            }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+
+           /* if ((int)map.get("code")==200){
                 response.setStatus(200,map.get("msg").toString());
                 if (!"HEAD".equals(method)){
-                    ServletOutputStream outputStream = response.getOutputStream();
-                   // outputStream.write((byte[])map.get("data"));
-
-                    outputStream.write((byte[])map.get("data"));
+                    byte[] data = (byte[]) map.get("data");
+                    if (contextPath.endsWith(".jar")){
+                        ServletOutputStream outputStream = response.getOutputStream();
+                        outputStream.write(data);
+                    }else {
+                        String str = new String(data, "UTF-8");
+                        PrintWriter writer = response.getWriter();
+                        writer.write(str);
+                    }
                 }
             }
             if ((int)map.get("code")==404){
@@ -97,10 +118,10 @@ public class MavenUploadController {
             }
            if ((int)map.get("code")==300){
                response.setStatus((int)map.get("code"),map.get("msg").toString());
-           }
-        } catch (IOException e) {
+           }*/
+       /* } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
 }

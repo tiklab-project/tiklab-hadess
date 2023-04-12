@@ -12,11 +12,5 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan({"io.tiklab.xpack"})
 public class XpackServerAutoConfiguration {
 
-    @Bean
-    SQL xpackSQL(){
-        return new SQL(new String[]{
-                "xpack"
-        },101);
-    }
 }
 

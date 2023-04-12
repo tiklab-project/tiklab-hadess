@@ -2,46 +2,38 @@ package io.tiklab.xpack.config;
 
 
 import io.tiklab.eam.author.Authenticator;
-import  io.tiklab.eam.client.author.AuthorHandler;
-import  io.tiklab.eam.client.author.config.IgnoreConfig;
-import  io.tiklab.eam.client.author.config.IgnoreConfigBuilder;
-import  io.tiklab.gateway.GatewayFilter;
-import  io.tiklab.gateway.router.RouterHandler;
+import io.tiklab.eam.client.author.config.AuthorConfig;
+import io.tiklab.eam.client.author.config.AuthorConfigBuilder;
+import io.tiklab.eam.client.author.filter.AuthorFilter;
+import io.tiklab.gateway.router.Router;
+import io.tiklab.gateway.router.RouterBuilder;
 import  io.tiklab.gateway.router.config.RouterConfig;
 import  io.tiklab.gateway.router.config.RouterConfigBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
 public class GatewayFilterAutoConfiguration {
 
 
     @Bean
-    GatewayFilter gatewayFilter(RouterHandler routerHandler, AuthorHandler authorHandler){
-        return new GatewayFilter()
-                .setRouterHandler(routerHandler)
-                .addHandler(authorHandler);
+    Router router(RouterConfig routerConfig){
+        return RouterBuilder.newRouter(routerConfig);
     }
 
-    //认证handler
+    //认证filter
     @Bean
-    AuthorHandler authorHandler(Authenticator authenticator, IgnoreConfig ignoreConfig){
-        return new AuthorHandler()
+    AuthorFilter authorFilter(Authenticator authenticator, AuthorConfig ignoreConfig){
+        return new AuthorFilter()
                 .setAuthenticator(authenticator)
-                .setIgnoreConfig(ignoreConfig);
-
+                .setAuthorConfig(ignoreConfig);
     }
 
     @Bean
-    RouterHandler routerHandler(RouterConfig routerConfig){
-        return new RouterHandler()
-                .setRouterConfig(routerConfig);
-    }
-
-    @Bean
-    public IgnoreConfig ignoreConfig(){
-        return IgnoreConfigBuilder.instance()
+    public AuthorConfig authorConfig(){
+        return AuthorConfigBuilder.instance()
                 .ignoreTypes(new String[]{
                         ".ico",
                         ".jpg",
@@ -93,6 +85,7 @@ public class GatewayFilterAutoConfiguration {
                         "/eam/auth/login",
                         "/libraryFile/tag",
                         "/repositoryRemoteProxy/test",
+                        "/repository/findAllRepository",
 
                 })
                 .ignorePreUrls(new String[]{
@@ -106,8 +99,6 @@ public class GatewayFilterAutoConfiguration {
                         "/services",
                         "/repository",
                         "/library",
-
-
                 })
                 .get();
     }
@@ -126,10 +117,20 @@ public class GatewayFilterAutoConfiguration {
     @Bean
     RouterConfig routerConfig(){
         String[] s = {
-               /* "/user",
-                "/message",
-                "/oplog",*/
-                "/todo"
+                "/user",
+                "/eam",
+                "/appLink",
+                "/todo/deletetodo",
+                "/todo/updatetodo",
+                "/todo/detailtodo",
+                "/todo/findtodopage",
+                "/message/message",
+                "/message/messageItem",
+                "/message/messageReceiver",
+                "/oplog/deletelog",
+                "/oplog/updatelog",
+                "/oplog/detaillog",
+                "/oplog/findlogpage",
         };
 
         if (!enableEam){
@@ -141,4 +142,5 @@ public class GatewayFilterAutoConfiguration {
                 .preRoute(s, authUrl)
                 .get();
     }
+
 }

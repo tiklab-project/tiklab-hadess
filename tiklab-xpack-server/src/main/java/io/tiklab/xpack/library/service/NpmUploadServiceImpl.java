@@ -372,9 +372,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 resultMap.put("data",entityBody);
             }
         }
-
-
-
         return resultMap;
     }
 
