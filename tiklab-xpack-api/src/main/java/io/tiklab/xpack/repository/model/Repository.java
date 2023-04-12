@@ -37,7 +37,7 @@ public class Repository extends BaseModel {
     private java.lang.String repositoryType;
 
     @NotNull
-    @ApiProperty(name="storage",desc="存储库id",required = true)
+    @ApiProperty(name="storage",desc="存储库id")
     @Mappings({
             @Mapping(source = "storage.id",target = "storageId")
     })

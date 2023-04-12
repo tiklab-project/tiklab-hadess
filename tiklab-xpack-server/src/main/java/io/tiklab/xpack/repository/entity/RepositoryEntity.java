@@ -34,7 +34,7 @@ public class RepositoryEntity extends BaseModel {
     private String type;
 
     //存储库id
-    @Column(name = "storage_id",length = 32,notNull = true)
+    @Column(name = "storage_id",length = 32)
     private String storageId;
 
     //描述

@@ -20,7 +20,7 @@ CREATE TABLE pack_repository(
      repository_type varchar(12) NOT NULL,
      repository_url varchar (64),
      type varchar (12) NOT NULL,
-     storage_id varchar (32) NOT NULL,
+     storage_id varchar (32),
      description varchar(160),
      create_user varchar (32) NOT NULL,
      create_time timestamp,
