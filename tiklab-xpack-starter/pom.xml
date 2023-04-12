@@ -323,7 +323,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution-${assembly}.xml</descriptor>
                             </descriptors>
-                            <finalName>tiklab-xcode</finalName>
+                            <finalName>tiklab-xpack</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                         <phase>package</phase>
