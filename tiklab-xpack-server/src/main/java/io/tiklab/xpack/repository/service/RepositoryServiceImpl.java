@@ -52,7 +52,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 
-        String absoluteAddress=repositoryUrl+repository.getName();
+        String absoluteAddress=repositoryUrl+"/repository/maven/"+repository.getName();
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         return repositoryDao.createRepository(repositoryEntity);

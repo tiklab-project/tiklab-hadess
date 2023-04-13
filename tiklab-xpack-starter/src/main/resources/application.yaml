@@ -79,3 +79,5 @@ licences:
 
 repository:
   library: ${user.home}
+  url: http://172.12.1.24:8080
+  
