@@ -111,7 +111,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @return
      */
     public Result operateFileData(InputStream inputStream, String userId,String contextPath, String method) throws IOException {
-        String repositoryUrl = contextPath.substring(contextPath.indexOf("repository/maven") + 17);
+        String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
         int index = repositoryUrl.indexOf("/",1);
         //客服端请求路径制品库名称
         String repositoryName = repositoryUrl.substring(0, index);
@@ -129,7 +129,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             Result writeFile = writeFile(inputStream, contextPath, method);
             if (writeFile.getCode()==2000){
                 //文件大小
-                Long fileSize = (Long) writeFile.getData();
+                String fileSize = writeFile.getData().toString();
 
                 //解析相对路径 获取文件名称、版本、groupId
                 Map<String, String> dataMap = resolverRelativePath(relativePath);
@@ -197,10 +197,13 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         double i =(double)FileLength / 1000;
         long round = Math.round(i);
         Result result = new Result<>();
+       if (round>0){
+           result.setData(round+"KB");
+       }else {
+           result.setData(FileLength+"B");
+       }
         result.setCode(2000);
-        result.setData(round);
         return result;
-
     }
 
     /**
@@ -249,7 +252,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileByLibraryId(libraryId);
                 List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> relativePath.equals(a.getRelativePath())).collect(Collectors.toList());
 
-                String filePath = repositoryLibrary+"/repository/maven/maven-local"+relativePath;
+                String filePath = repositoryLibrary+"/xpack/maven/maven-local"+relativePath;
                 File file = new File(filePath);
                 int length = (int) file.length();
                 if (length==0){
@@ -402,7 +405,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param  fileSize   文件大小
      * @return
      */
-        public void createLibrary( Map<String, String> dataMap,Repository repository,Long fileSize){
+        public void createLibrary( Map<String, String> dataMap,Repository repository,String fileSize){
 
             //创建制品
             Library library = libraryService.createLibraryData(dataMap.get("libraryName"), "maven",repository);
@@ -427,7 +430,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
            LibraryFile libraryFile = new LibraryFile();
            libraryFile.setLibrary(library);
            libraryFile.setFileName(dataMap.get("fileName"));
-           libraryFile.setFileSize(fileSize+"kb");
+           libraryFile.setFileSize(fileSize);
            libraryFile.setRepository(repository);
            libraryFile.setFileUrl(dataMap.get("contextPath"));
            libraryFile.setRelativePath(dataMap.get("relativePath"));

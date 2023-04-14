@@ -98,6 +98,7 @@ public class GatewayFilterAutoConfiguration {
                         "/authConfig",
                         "/services",
                         "/repository",
+                        "/xpack",
                         "/library",
                 })
                 .get();

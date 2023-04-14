@@ -24,7 +24,7 @@ import java.util.Map;
 import static org.apache.coyote.http11.Constants.a;
 
 @RestController
-@RequestMapping("/repository")
+@RequestMapping("/xpack")
 @Api(name = "LibraryNpmController",desc = "npm提交拉取")
 public class NpmUploadController {
 

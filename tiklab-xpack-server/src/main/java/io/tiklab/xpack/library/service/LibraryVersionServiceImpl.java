@@ -195,11 +195,17 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
      * @return
      */
     public String librarySize( String libraryVersionId){
-        int allKb=0;
+        Double versionSum=0.0;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
         if (!CollectionUtils.isEmpty(libraryFileList)){
-             allKb = libraryFileList.stream().mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "kb"))).sum();
+            int sumKb = libraryFileList.stream().filter(a -> a.getFileSize().endsWith("KB")).mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "KB"))).sum();
+
+            int sumB = libraryFileList.stream().filter(a -> !a.getFileSize().endsWith("KB")).mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "B"))).sum();
+
+            double i =((double) sumB/1000)*100;
+            double kbNum = i / 100D;
+             versionSum = sumKb + kbNum;
         }
-        return   allKb+"kb";
+        return   versionSum+"kb";
     }
 }

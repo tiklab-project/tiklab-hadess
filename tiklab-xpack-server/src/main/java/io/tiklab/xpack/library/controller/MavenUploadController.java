@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/repository")
+@RequestMapping("/xpack")
 @Api(name = "LibraryMavenController",desc = "Maven提交拉取")
 public class MavenUploadController {
 
