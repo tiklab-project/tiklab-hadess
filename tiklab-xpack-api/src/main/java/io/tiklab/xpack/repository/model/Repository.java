@@ -36,7 +36,6 @@ public class Repository extends BaseModel {
     @ApiProperty(name="repositoryType",desc="类型  本地库：local、远程库：remote、组合库：group",required = true)
     private java.lang.String repositoryType;
 
-    @NotNull
     @ApiProperty(name="storage",desc="存储库id")
     @Mappings({
             @Mapping(source = "storage.id",target = "storageId")
