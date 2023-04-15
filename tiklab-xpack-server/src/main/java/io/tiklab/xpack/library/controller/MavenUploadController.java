@@ -81,15 +81,17 @@ public class MavenUploadController {
                 if (!"HEAD".equals(method)){
                     //byte[] data = (byte[]) map.get("data");
                     byte[] data = result.getData();
-                    if (contextPath.endsWith(".jar")){
-
+                    String s = new String(data, "UTF-8");
+                    ServletOutputStream outputStream = response.getOutputStream();
+                    outputStream.write(data);
+                    /*if (contextPath.endsWith(".jar")){
                         ServletOutputStream outputStream = response.getOutputStream();
                         outputStream.write(data);
                     }else {
                         String str = new String(data, "UTF-8");
                         PrintWriter writer = response.getWriter();
                         writer.write(str);
-                    }
+                    }*/
                 }
             }else {
                 response.setStatus(result.getCode(),result.getMsg());

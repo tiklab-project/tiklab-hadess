@@ -291,7 +291,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             bos.write(buffer, 0, len);
         }
         byte[] bytes = bos.toByteArray();
-        String s = new String(bytes, "UTF-8");
         Result result = new Result<>();
         result.setCode(200);
         result.setData(bytes);
@@ -373,7 +372,15 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     public Result callAgencyMaven( String relativeAbsoluteUrl ){
         Result result = new Result<>();
         RestTemplate restTemplate = new RestTemplate();
-        //访问jar文件 返回byte[]类型
+        ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
+        HttpStatus statusCode = entity.getStatusCode();
+        byte[] entityBody = entity.getBody();
+        // return result(200,"OK",entityBody);
+        result.setCode(200);
+        result.setData(entityBody);
+        return result;
+
+      /*  //访问jar文件 返回byte[]类型
         if(relativeAbsoluteUrl.endsWith(".jar")){
             ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
             HttpStatus statusCode = entity.getStatusCode();
@@ -384,12 +391,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             return result;
         }
         ResponseEntity<String> entity = restTemplate.getForEntity(relativeAbsoluteUrl, String.class);
-        HttpStatus statusCode = entity.getStatusCode();
+        //HttpStatus statusCode = entity.getStatusCode();
         String entityBody = entity.getBody();
         byte[] bytes = entityBody.getBytes(StandardCharsets.UTF_8);
         result.setCode(200);
         result.setData(bytes);
-        return result;
+        return result;*/
     }
 
 
