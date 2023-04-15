@@ -268,7 +268,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             LibraryFile libraryFile = new LibraryFile();
             libraryFile.setLibrary(library);
             libraryFile.setFileName(tgzName);
-            libraryFile.setFileSize(round+"kb");
+            libraryFile.setFileSize(round+"KB");
             libraryFile.setFileUrl(filePath);
             libraryFile.setRepository(repositoryList.get(0));
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);

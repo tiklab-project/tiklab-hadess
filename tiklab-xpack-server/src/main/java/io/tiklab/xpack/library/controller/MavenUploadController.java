@@ -97,31 +97,6 @@ public class MavenUploadController {
             }catch (Exception e){
             throw new RuntimeException(e);
         }
-
-
-           /* if ((int)map.get("code")==200){
-                response.setStatus(200,map.get("msg").toString());
-                if (!"HEAD".equals(method)){
-                    byte[] data = (byte[]) map.get("data");
-                    if (contextPath.endsWith(".jar")){
-                        ServletOutputStream outputStream = response.getOutputStream();
-                        outputStream.write(data);
-                    }else {
-                        String str = new String(data, "UTF-8");
-                        PrintWriter writer = response.getWriter();
-                        writer.write(str);
-                    }
-                }
-            }
-            if ((int)map.get("code")==404){
-                response.setStatus((int)map.get("code"),map.get("msg").toString());
-            }
-           if ((int)map.get("code")==300){
-               response.setStatus((int)map.get("code"),map.get("msg").toString());
-           }*/
-       /* } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
 }

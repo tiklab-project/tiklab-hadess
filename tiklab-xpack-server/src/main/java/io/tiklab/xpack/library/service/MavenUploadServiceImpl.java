@@ -252,15 +252,16 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileByLibraryId(libraryId);
                 List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> relativePath.equals(a.getRelativePath())).collect(Collectors.toList());
 
-                String filePath = repositoryLibrary+"/xpack/maven/maven-local"+relativePath;
-                File file = new File(filePath);
-                int length = (int) file.length();
-                if (length==0){
-                    //走代理拉取
-                    return proxyInstall(libraryList,relativePath);
-                }else {
+                //String filePath = repositoryLibrary+"/xpack/maven/maven-local"+relativePath;
+                if (CollectionUtils.isNotEmpty(libraryFiles)){
+                    String filePath = repositoryLibrary+libraryFiles.get(0).getFileUrl();
+                    File file = new File(filePath);
+                    int length = (int) file.length();
                     //私服库拉取
                     return readFileContent(file);
+                }else {
+                    //走代理拉取
+                    return proxyInstall(libraryList,relativePath);
                 }
             }
         }else {
@@ -468,22 +469,5 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         resultMap.put("fileName",fileName);
         return resultMap;
     }
-    /**
-     *  结果封装
-     * @param code     code
-     * @param msg     msg
-     * @param data     data
-     * @return
-     */
-    public Map<String, Object> result(int code,String msg,Object data){
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code",code);
-        resultMap.put("msg",msg);
-        resultMap.put("data",data);
-        return resultMap;
-    }
-
-
-
 
 }

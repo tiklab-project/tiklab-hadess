@@ -60,7 +60,6 @@ public class LibraryFile extends BaseModel {
     @ApiProperty(name="fileUrl",desc="文件地址",required = true)
     private java.lang.String fileUrl;
 
-    @NotNull
     @ApiProperty(name="relativePath",desc="文件相对路径",required = true)
     private java.lang.String relativePath;
 

@@ -43,7 +43,7 @@ public class LibraryFileEntity extends BaseModel {
 
 
     //文件相对路径
-    @Column(name = "relative_path",length = 256,notNull = true)
+    @Column(name = "relative_path",length = 256)
     private String relativePath;
 
     @Column(name = "create_time")

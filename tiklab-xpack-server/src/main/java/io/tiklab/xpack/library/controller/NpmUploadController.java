@@ -83,8 +83,8 @@ public class NpmUploadController {
                 BufferedReader reader = request.getReader();
                 Map map = downloadNpmService.npmLogin(reader);
                 String jsonString = JSON.toJSONString(map);
-                Object success = map.get("success");
-                if (success.equals("0K")){
+                boolean success = (boolean) map.get("success");
+                if (success){
                     response.setStatus(201);
                 }else {
                     response.setStatus(401);
