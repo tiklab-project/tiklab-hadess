@@ -157,7 +157,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param inputStream     输入流
      * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
      * @param method     maven客户端提交方法
-     * @return
+     * @return   Result  写入数据的大小
      */
     public Result writeFile(InputStream inputStream,String contextPath,String method) throws IOException {
 
@@ -322,17 +322,18 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 }
                 String relativeAbsoluteUrl=proxyUrl+relativePath;
                 Result result = callAgencyMaven(relativeAbsoluteUrl);
-                if (result.getCode()==200){
 
+
+                if (result.getCode()==200){
                     //解析相对路径 获取文件名称、版本、groupId
                     Map<String, String> relativeMap = resolverRelativePath(relativePath);
                     relativeMap.put("userId","111111");
                     relativeMap.put("relativePath",relativePath);
                     relativeMap.put("contextPath","contextPath");
                     //拉取成功创建制品信息
-                    //createLibrary(relativeMap,repositoryGroup.getRepository(), 10l);
-                    //创建拉取信息
-                    createPullInfo();
+                   // createLibrary(relativeMap,repositoryGroup.getRepository(), 10l);
+                   /* //创建拉取信息
+                    createPullInfo();*/
                 }
                 return result;
             }
@@ -375,6 +376,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
         HttpStatus statusCode = entity.getStatusCode();
         byte[] entityBody = entity.getBody();
+        int length = entityBody.length;
         // return result(200,"OK",entityBody);
         result.setCode(200);
         result.setData(entityBody);

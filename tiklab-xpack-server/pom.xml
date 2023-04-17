@@ -14,7 +14,6 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -55,32 +54,6 @@
         <!--ocs依赖-->
         <dependency>
             <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-member-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-product-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-tenant-resource-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-subscribe-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-doc-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-dss-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -89,28 +62,8 @@
             <artifactId>tiklab-eam-spring-boot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-sns-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-statistics-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-ssm-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-promotion-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!--其他引入-->
 
+        <!--其他引入-->
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-dfs-spring-boot-starter</artifactId>
