@@ -156,7 +156,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath
      * @return
      */
-    public Result proxyPull(List<RepositoryGroup> libraryList,String relativePath,String contextPath){
+    public Result proxyPull(List<RepositoryGroup> libraryList,String relativePath,String contextPath) throws IOException {
         // 过滤代理库信息
         List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(groupList)){
@@ -190,7 +190,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                         fileSize = fileLength + "B";
                     }
                     //拉取成功创建制品信息
-                    // createLibrary(relativeMap,repositoryGroup.getRepository(), fileSize);
+                     createLibrary(relativeMap,repositoryGroup.getRepository(), fileSize);
                 }
                 return result;
             }

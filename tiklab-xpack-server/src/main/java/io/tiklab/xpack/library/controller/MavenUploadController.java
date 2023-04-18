@@ -35,11 +35,15 @@ public class MavenUploadController {
 
         String contextPath = request.getRequestURI();
         String method = request.getMethod();
+
+        //用户信息
+        String authorization = request.getHeader("Authorization");
+
         try {
             InputStream inputStream = request.getInputStream();
             if ("POST".equals(method)||"PUT".equals(method)){
                 //用户信息
-                String authorization = request.getHeader("Authorization");
+               // String authorization = request.getHeader("Authorization");
                 if (StringUtils.isEmpty(authorization)){
                     response.setStatus(401,"Unauthorized");
                 }else {
