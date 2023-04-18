@@ -12,6 +12,7 @@ import io.tiklab.join.starter.EnableJoin;
 import  io.tiklab.licence.starter.EnableLicenceServer;
 import io.tiklab.messsage.starter.EnableMessage;
 import io.tiklab.mysql.starter.EnableMysql;
+import io.tiklab.privilege.EnablePrivilegeServer;
 import io.tiklab.security.stater.EnableSecurity;
 import io.tiklab.todotask.stater.EnableTodoTask;
 import io.tiklab.xpack.annotation.EnableXpackServer;
@@ -44,6 +45,7 @@ import io.tiklab.eam.starter.EnableEam;
 @EnableUser
 @EnableMessage
 @EnableTodoTask
+@EnablePrivilegeServer
 //ocs
 @EnableXpackServer
 public class XpackAutoConfiguration {
