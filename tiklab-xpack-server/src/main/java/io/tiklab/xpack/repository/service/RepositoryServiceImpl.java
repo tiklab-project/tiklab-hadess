@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,8 +44,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryService libraryService;
 
-    @Value("${repository.url:null}")
-    String repositoryUrl;
+    @Value("${server.port:8080}")
+    private String port;
 
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
@@ -52,7 +54,14 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         String type = repository.getType().toLowerCase();
-        String absoluteAddress=repositoryUrl+"/xpack/"+type+"/"+repository.getRepositoryUrl();
+
+        String ip;
+        try {
+             ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            ip = "172.0.0.1";
+        }
+        String absoluteAddress="http://" + ip + ":" + port + "/xpack/"+type+"/"+repository.getRepositoryUrl();
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         return repositoryDao.createRepository(repositoryEntity);

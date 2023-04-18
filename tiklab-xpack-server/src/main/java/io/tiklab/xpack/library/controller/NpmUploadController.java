@@ -39,8 +39,6 @@ public class NpmUploadController {
     public Object npmSubmit(HttpServletRequest request, HttpServletResponse response){
         String contextPath = request.getRequestURI();
         String referer = request.getHeader("referer");
-
-
         try {
             //npm publish （提交）
             if (referer.contains("publish")){
@@ -48,21 +46,9 @@ public class NpmUploadController {
                 Integer resultCode = downloadNpmService.npmSubmit(contextPath, inputStream);
                 response.setStatus(resultCode);
             }
-
             //npm install （拉取）
             if (referer.contains("install")){
-                if (contextPath.endsWith(".tgz")){
-                    //第二次交互以.tgz结尾
-                    Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(contextPath);
-                    if ("200".equals(resultMap.get("code"))){
-                        ServletOutputStream outputStream = response.getOutputStream();
-                        outputStream.write((byte[])resultMap.get("data"));
-                    }
-                    if ("404".equals(resultMap.get("code"))){
-                        response.setStatus(404);
-                    }
-
-                }else {
+                if (!contextPath.endsWith(".tgz")){
                     //第一次交互
                     Map<String,String> data = downloadNpmService.npmPull(contextPath);
                     switch (data.get("code")){
@@ -74,6 +60,16 @@ public class NpmUploadController {
                         case "404":
                             response.setStatus(404);
                             break;
+                    }
+                }else {
+                    //第二次交互以.tgz结尾
+                    Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(contextPath);
+                    if ("200".equals(resultMap.get("code"))){
+                        ServletOutputStream outputStream = response.getOutputStream();
+                        outputStream.write((byte[])resultMap.get("data"));
+                    }
+                    if ("404".equals(resultMap.get("code"))){
+                        response.setStatus(404);
                     }
                 }
             }

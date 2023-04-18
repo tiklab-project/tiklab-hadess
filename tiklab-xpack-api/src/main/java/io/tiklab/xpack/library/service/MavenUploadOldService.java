@@ -4,21 +4,29 @@ import io.tiklab.core.Result;
 
 import java.io.InputStream;
 
-public interface MavenUploadService {
+/**
+ * MavenUploadService-maven上传下载接口
+ */
+public interface MavenUploadOldService {
+
 
     /**
      * maven提交
      * @param contextPath 路径
      * @param inputStream 文件liu
      * @param userData 用户信息
+     * @param method 方式
      * @return
      */
-    Result<byte[]> mavenSubmit(String contextPath, InputStream inputStream, String userData);
+    Result mavenSubmit(String contextPath,  InputStream inputStream,String userData, String method) ;
+
 
     /**
      * maven拉取
      * @param contextPath 客户端拉取文件的地址
      * @return
      */
-    Result<byte[]> mavenPull(String contextPath);
+    Result mavenInstall(String contextPath);
+
+
 }
