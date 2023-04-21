@@ -4,6 +4,7 @@ import io.tiklab.core.Result;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
+import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.service.UserService;
 import io.tiklab.xpack.library.model.Library;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Exporter
 public class MavenUploadServiceImpl implements MavenUploadService {
 
     @Value("${repository.library:null}")
@@ -66,23 +68,23 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     @Override
     public Result<byte[]> mavenSubmit(String contextPath, InputStream inputStream, String userData) {
-        EamTicket eamTicket;
+        String userName;
         try {
             //账号校验
-            eamTicket=verifyUser(userData);
+            userName=verifyUser(userData);
         }catch (Exception e){
             return Result.error(401,e.getMessage());
         }
         try {
-            return fileWriteData(inputStream, eamTicket.getUserId(), contextPath);
+            String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
+            return fileWriteData(inputStream, userName, contextPath,repositoryUrl);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Result<byte[]> mavenPull(String contextPath) {
-        String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
+    public Result<byte[]> mavenPull(String contextPath,String repositoryUrl) {
         int index = repositoryUrl.indexOf("/",1);
         //客服端请求路径制品库名称
         String repositoryName = repositoryUrl.substring(0, index);
@@ -215,12 +217,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     /**
      *  maven-提交   写入文件、创建数据
      * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
-     * @param userId          用户id
-     * @param inputStream     inputStream
+     * @param userName          用户
+     * @param inputStream     输入数据流文件
+     * @param repositoryUrl   repositoryUrl
      * @return
      */
-    public Result fileWriteData(InputStream inputStream, String userId,String contextPath) throws IOException {
-        String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
+    public Result fileWriteData(InputStream inputStream, String userName,
+                                String contextPath,String repositoryUrl) throws IOException {
+
         int index = repositoryUrl.indexOf("/",1);
         //客服端请求路径制品库名称
         String repositoryName = repositoryUrl.substring(0, index);
@@ -243,7 +247,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //解析相对路径 获取文件名称、版本、groupId
             Map<String, String> dataMap = resolverRelativePath(relativePath);
             dataMap.put("relativePath",relativePath);
-            dataMap.put("userId",userId);
+            dataMap.put("userName",userName);
             dataMap.put("contextPath",contextPath);
 
             int indexOf = contextPath.indexOf("maven-metadata");
@@ -348,9 +352,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             String filePath=repositoryLibrary+dataMap.get("contextPath");
             libraryVersion.setHash(gainFileData(new File(filePath)));
         }
-        User user = new User();
-        user.setId(dataMap.get("userId"));
-        libraryVersion.setUser(user);
+        libraryVersion.setPusher(dataMap.get("userName"));
         String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
 
 
@@ -428,7 +430,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param userData  提交用户信息
      * @return
      */
-    public EamTicket verifyUser(String userData){
+    public String verifyUser(String userData){
         String[]  userObject=userData.split(":");
         String userName = userObject[0];
         String password = userObject[1];
@@ -437,8 +439,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         userPassport.setAccount(userName);
         userPassport.setPassword(password);
         userPassport.setDirId("1");
-        EamTicket login = userPassportService.login(userPassport);
-        return login;
+         userPassportService.login(userPassport);
+        return userName;
     }
 
     /**

@@ -26,6 +26,8 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 /**
  * NpmUploadServiceImpl-npm上传下载
  */
@@ -71,23 +73,33 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             throw new RuntimeException(e);
         }
        return verifyUser(result.toString());
-
     }
 
     @Override
     public Integer npmSubmit(String contextPath, InputStream inputStream) {
         String path=repositoryLibrary+contextPath;
         try{
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(inputStream.available());
-            BufferedInputStream in = new BufferedInputStream(inputStream);
-            int buf_size = 1024;
-            byte[] buffer = new byte[buf_size];
-            int len = 0;
-            while (-1 != (len = in.read(buffer, 0, buf_size))) {
-                bos.write(buffer, 0, len);
+            //读出流中的数据
+            JSONObject jsonObjectData = readData(inputStream);
+
+            //npm登陆用户信息
+            Object maintainers = jsonObjectData.get("maintainers");
+            JSONArray jsonArray = (JSONArray) maintainers;
+            Object UserData = jsonArray.get(0);
+            if (ObjectUtils.isEmpty(UserData)){
+                return 401;
             }
-            String toString = bos.toString();
-           return npmSubmitData(path,toString);
+
+            //判断登录信息 是否正确
+            JSONObject userData = (JSONObject) UserData;
+            String name = userData.get("name").toString();
+
+            User user = userService.findUserByUsername(name);
+            if (ObjectUtils.isEmpty(user)){
+                return 401;
+            }
+
+            return npmSubmitData(path,jsonObjectData);
         }catch (IOException e){
             throw new RuntimeException(e);
         }
@@ -180,11 +192,10 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     /**
      *  npm上传-文件的处理
      * @param path: 上传后存储文件的路径
-     * @param npmData:   上传的文件
+     * @param allData:   上传的文件
      * @return
      */
-    public Integer npmSubmitData(String path,String npmData) throws IOException {
-        JSONObject allData =(JSONObject) JSONObject.parse(npmData);
+    public Integer npmSubmitData(String path,JSONObject allData) throws IOException {
 
         //tga的内容
         JSONObject tgaData =(JSONObject) allData.get("_attachments");
@@ -211,22 +222,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         String jsonString = JSONObject.toJSONString(data);
         String substring = jsonString.substring(1,jsonString.length()-1);
 
-        //npm登陆用户信息
-        Object maintainers = allData.get("maintainers");
-        JSONArray jsonArray = (JSONArray) maintainers;
-        Object UserData = jsonArray.get(0);
-        if (ObjectUtils.isEmpty(UserData)){
-            return 401;
-        }
-        //判断登录信息 是否正确
-        JSONObject userData = (JSONObject) UserData;
-        String name = userData.get("name").toString();
-        UserQuery userQuery = new UserQuery();
-        userQuery.setName(name);
-        List<User> userList = userService.findUserList(userQuery);
-        if (CollectionUtils.isEmpty(userList)){
-            return 401;
-        }
         //版本
         JSONObject versionData =(JSONObject) allData.get("versions");
         Set<String> versionKey = versionData.keySet();
@@ -253,13 +248,13 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
             //创建制品版本
             LibraryVersion libraryVersion = new LibraryVersion();
-            libraryVersion.setContentJson(npmData);
+            libraryVersion.setContentJson(allData.toJSONString());
             libraryVersion.setLibrary(library);
             libraryVersion.setRepository(repositoryList.get(0));
             libraryVersion.setHash(dist);
             libraryVersion.setVersion(version);
             libraryVersion.setLibraryType("npm");
-            libraryVersion.setUser(userList.get(0));
+            libraryVersion.setPullUser("");
 
             String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion);
 
@@ -373,6 +368,25 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             }
         }
         return resultMap;
+    }
+
+    /**
+     *  读取输入流中的数据
+     * @param  inputStream 数据流
+     * @return  data 读取的数据
+     */
+    public  JSONObject readData(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(inputStream.available());
+        BufferedInputStream in = new BufferedInputStream(inputStream);
+        int buf_size = 1024;
+        byte[] buffer = new byte[buf_size];
+        int len = 0;
+        while (-1 != (len = in.read(buffer, 0, buf_size))) {
+            bos.write(buffer, 0, len);
+        }
+        String data = bos.toString();
+        JSONObject objectData =(JSONObject) JSONObject.parse(data);
+        return  objectData;
     }
 
 }

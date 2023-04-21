@@ -1,5 +1,7 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.xpack.library.dao.LibraryFileDao;
 import io.tiklab.xpack.library.entity.LibraryFileEntity;
 import io.tiklab.beans.BeanMapper;
@@ -54,6 +56,14 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     @Override
     public void deleteLibraryFile(@NotNull String id) {
         libraryFileDao.deleteLibraryFile(id);
+    }
+
+    @Override
+    public void deleteLibraryFileByVersionId(String versionId) {
+        DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
+                .eq("libraryVersionId",versionId)
+                .get();
+        libraryFileDao.deleteLibraryFile(libraryFile);
     }
 
     @Override

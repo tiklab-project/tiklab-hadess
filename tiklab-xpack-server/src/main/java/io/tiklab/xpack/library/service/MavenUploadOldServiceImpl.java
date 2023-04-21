@@ -416,7 +416,7 @@ public class MavenUploadOldServiceImpl implements MavenUploadOldService {
            }
            User user = new User();
            user.setId(dataMap.get("userId"));
-           libraryVersion.setUser(user);
+           libraryVersion.setPullUser("user");
            String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
 
 

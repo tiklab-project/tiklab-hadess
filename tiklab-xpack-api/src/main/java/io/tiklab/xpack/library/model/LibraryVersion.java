@@ -53,13 +53,9 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="hash",desc="hash")
     private java.lang.String hash;
 
-    @NotNull
+
     @ApiProperty(name="User",desc="推送人",required = true)
-    @Mappings({
-            @Mapping(source = "user.id",target = "pusher")
-    })
-    @JoinQuery(key = "id")
-    private User user;
+    private String pusher;
 
 
     @ApiProperty(name="contentJson",desc="内容json  mpm用")
@@ -137,12 +133,12 @@ public class LibraryVersion extends BaseModel {
         this.hash = hash;
     }
 
-    public User getUser() {
-        return user;
+    public String getPusher() {
+        return pusher;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPusher(String pusher) {
+        this.pusher = pusher;
     }
 
     public java.sql.Timestamp getPushTime() {

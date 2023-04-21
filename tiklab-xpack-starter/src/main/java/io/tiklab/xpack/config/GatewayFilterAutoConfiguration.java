@@ -86,6 +86,7 @@ public class GatewayFilterAutoConfiguration {
                         "/libraryFile/tag",
                         "/repositoryRemoteProxy/test",
                         "/repository/findAllRepository",
+                        "/version/getVersion"
 
                 })
                 .ignorePreUrls(new String[]{
@@ -97,7 +98,6 @@ public class GatewayFilterAutoConfiguration {
                         "/plugin",
                         "/authConfig",
                         "/services",
-                        "/repository",
                         "/xpack",
                         "/library",
                 })
@@ -134,7 +134,7 @@ public class GatewayFilterAutoConfiguration {
                 "/oplog/findlogpage",
         };
 
-        if (!enableEam){
+        if (enableEam){
 
             s = new String[]{};
         }

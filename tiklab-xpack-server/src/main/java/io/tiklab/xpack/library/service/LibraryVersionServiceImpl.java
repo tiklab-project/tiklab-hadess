@@ -64,6 +64,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryVersionDao.deleteLibraryVersion(id);
     }
 
+
+
     @Override
     public LibraryVersion findOne(String id) {
         LibraryVersionEntity libraryVersionEntity = libraryVersionDao.findLibraryVersion(id);
@@ -186,6 +188,21 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             libraryService.updateLibrary(libraryVersion.getLibrary());
         }
         return libraryVersionId;
+    }
+
+    @Override
+    public void deleteVersionAndLibrary(String id) {
+        LibraryVersion libraryVersion = this.findLibraryVersion(id);
+
+        //删除该版本下面的制品文件
+        libraryFileService.deleteLibraryFileByVersionId(id);
+
+        libraryService.deleteLibrary(libraryVersion.getLibrary().getId());
+
+        if ("maven".equals(libraryVersion.getLibrary().getLibraryType())){
+            libraryMavenService.deleteLibraryMavenByLibraryId(libraryVersion.getLibrary().getId());
+        }
+        this.deleteLibraryVersion(id);
     }
 
 

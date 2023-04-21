@@ -103,7 +103,7 @@ CREATE TABLE pack_library_version(
      library_type varchar (32) NOT NULL,
      version varchar(64) NOT NULL,
      hash varchar (64),
-     pusher varchar(32),
+     pusher varchar(128),
      content_json longtext,
      push_time timestamp,
      create_time timestamp,

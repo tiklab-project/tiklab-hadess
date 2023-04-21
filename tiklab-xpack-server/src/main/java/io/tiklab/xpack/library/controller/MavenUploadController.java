@@ -56,7 +56,8 @@ public class MavenUploadController {
                     response.setStatus(result.getCode(),result.getMsg());
                 }
             }else {
-                Result<byte[]> result = downloadMavenService.mavenPull(contextPath);
+                String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
+                Result<byte[]> result = downloadMavenService.mavenPull(contextPath,repositoryUrl);
                 if (result.getCode()==200){
                     response.setStatus(200,result.getMsg());
                     byte[] data = result.getData();

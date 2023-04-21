@@ -83,4 +83,11 @@ public interface LibraryVersionService {
      * @return
      */
      String libraryVersionSplice( LibraryVersion libraryVersion);
+
+    /**
+     *  删除唯一版本 并删除相关联的制品
+     * @param id    版本id
+     * @return
+     */
+    void deleteVersionAndLibrary(String id);
 }

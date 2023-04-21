@@ -60,6 +60,15 @@ public class LibraryVersionController {
         return Result.ok();
     }
 
+    @RequestMapping(path="/deleteVersionAndLibrary",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteVersionAndLibrary",desc = "唯一版本删除相关联的制品")
+    @ApiParam(name = "id",desc = "id",required = true)
+    public Result<Void> deleteVersionAndLibrary(@NotNull String id){
+        libraryVersionService.deleteVersionAndLibrary(id);
+
+        return Result.ok();
+    }
+
     @RequestMapping(path="/findLibraryVersion",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryVersion",desc = "通过id查询制品版本")
     @ApiParam(name = "id",desc = "id",required = true)

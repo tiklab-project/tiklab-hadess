@@ -34,6 +34,12 @@ public interface LibraryMavenService {
     */
     void deleteLibraryMaven(@NotNull String id);
 
+    /**
+     * 通过制品id删除maven
+     * @param libraryId
+     */
+    void deleteLibraryMavenByLibraryId(@NotNull String libraryId);
+
     LibraryMaven findOne(@NotNull String id);
 
     List<LibraryMaven> findList(List<String> idList);

@@ -3,6 +3,8 @@ package io.tiklab.xpack.library.service;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.library.dao.LibraryMavenDao;
 import io.tiklab.xpack.library.entity.LibraryMavenEntity;
@@ -48,6 +50,14 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
     @Override
     public void deleteLibraryMaven(@NotNull String id) {
         libraryMavenDao.deleteLibraryMaven(id);
+    }
+
+    @Override
+    public void deleteLibraryMavenByLibraryId(String libraryId) {
+        DeleteCondition libraryMaven = DeleteBuilders.createDelete(LibraryMavenEntity.class)
+                .eq("libraryId",libraryId)
+                .get();
+        libraryMavenDao.deleteLibraryMaven(libraryMaven);
     }
 
     @Override

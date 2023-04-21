@@ -13,6 +13,7 @@ import io.tiklab.xpack.repository.model.RepositoryGroup;
 import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import io.tiklab.xpack.repository.model.RepositoryQuery;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Value("${server.port:8080}")
     private String port;
 
+    @Value("${repository.code:null}")
+    private String repositoryCode;
+
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
         RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
@@ -54,14 +58,13 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         String type = repository.getType().toLowerCase();
-
         String ip;
         try {
-             ip = InetAddress.getLocalHost().getHostAddress();
+            ip = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
             ip = "172.0.0.1";
         }
-        String absoluteAddress="http://" + ip + ":" + port + "/xpack/"+type+"/"+repository.getRepositoryUrl();
+        String absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         return repositoryDao.createRepository(repositoryEntity);

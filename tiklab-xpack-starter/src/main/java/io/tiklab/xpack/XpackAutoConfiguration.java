@@ -7,6 +7,7 @@ import  io.tiklab.dcs.starter.EnableDcs;
 import  io.tiklab.dfs.starter.EnableDfs;
 import  io.tiklab.dsm.starter.annotation.EnableDsm;
 import  io.tiklab.dss.starter.EnableDss;
+import io.tiklab.gateway.starter.EnableGateway;
 import io.tiklab.integration.starter.EnableIntegration;
 import io.tiklab.join.starter.EnableJoin;
 import  io.tiklab.licence.starter.EnableLicenceServer;
@@ -44,6 +45,7 @@ import io.tiklab.eam.starter.EnableEam;
 @EnableLicenceServer
 @EnableUser
 @EnableMessage
+@EnableGateway
 @EnableTodoTask
 @EnablePrivilegeServer
 //ocs

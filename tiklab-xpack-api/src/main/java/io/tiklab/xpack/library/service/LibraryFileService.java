@@ -33,6 +33,12 @@ public interface LibraryFileService {
     */
     void deleteLibraryFile(@NotNull String id);
 
+    /**
+     * 通过版本id删除   versionId
+     * @param versionId
+     */
+    void deleteLibraryFileByVersionId(@NotNull String versionId);
+
     LibraryFile findOne(@NotNull String id);
 
     List<LibraryFile> findList(List<String> idList);
