@@ -102,15 +102,22 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public void deleteRepository(@NotNull String id) {
+        Repository repository = this.findRepository(id);
+        if (("group").equals(repository.getRepositoryType())){
+            groupItemsService.deleteGroupItemByCondition("repositoryGroupId",id);
+        }else {
+            groupItemsService.deleteGroupItemByCondition("repositoryId",id);
+        }
+        
         repositoryDao.deleteRepository(id);
-
-        groupItemsService.deleteRepositoryGroup(id);
 
         libraryService.deleteLibraryByRepository(id);
 
         libraryVersionService.deleteVersionByCondition("repositoryId",id);
 
         libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
+
+
     }
 
     @Override

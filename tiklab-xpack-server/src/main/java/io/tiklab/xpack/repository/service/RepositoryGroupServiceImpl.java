@@ -55,12 +55,13 @@ public class RepositoryGroupServiceImpl implements RepositoryGroupService {
     }
 
     @Override
-    public void deleteGroupItemsByRepositoryId(String repositoryId) {
+    public void deleteGroupItemByCondition(String field, String value) {
         DeleteCondition deleteCondition = DeleteBuilders.createDelete(RepositoryGroupEntity.class)
-                .eq("repositoryId", repositoryId)
+                .eq(field, value)
                 .get();
         repositoryGroupDao.deleteRepositoryGroup(deleteCondition);
     }
+
 
     @Override
     public RepositoryGroup findOne(String id) {

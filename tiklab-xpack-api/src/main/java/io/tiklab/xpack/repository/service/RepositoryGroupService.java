@@ -33,11 +33,13 @@ public interface RepositoryGroupService {
     */
     void deleteRepositoryGroup(@NotNull String id);
 
+
     /**
-     * 通过制品库id删除
-     * @param repositoryId
+     * 通过条件删除版本
+     * @param field  删除条件字段
+     * @param value 删除字段值
      */
-    void deleteGroupItemsByRepositoryId(@NotNull String repositoryId);
+    void deleteGroupItemByCondition(String field,String value);
 
     RepositoryGroup findOne(@NotNull String id);
 
