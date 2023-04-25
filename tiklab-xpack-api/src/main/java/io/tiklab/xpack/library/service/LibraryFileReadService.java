@@ -10,4 +10,9 @@ public interface LibraryFileReadService {
      * @param requestURI  访问路径
      */
     byte[] fileRead(String requestURI);
+
+    /**
+     * 获取服务器ip
+     */
+    String findServerIp();
 }
