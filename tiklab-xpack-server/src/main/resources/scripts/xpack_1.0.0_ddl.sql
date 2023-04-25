@@ -18,7 +18,7 @@ CREATE TABLE pack_repository(
      id VARCHAR(32) PRIMARY KEY,
      name varchar (128) NOT NULL,
      repository_type varchar(12) NOT NULL,
-     repository_url varchar (64),
+     repository_url varchar (328),
      type varchar (12) NOT NULL,
      storage_id varchar (32),
      description varchar(160),

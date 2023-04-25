@@ -22,7 +22,7 @@ public class RepositoryEntity extends BaseModel {
     private String name;
 
     //制品库路径
-    @Column(name = "repository_url",length = 64)
+    @Column(name = "repository_url",length = 328)
     private String repositoryUrl;
 
     //类型  本地库：local、远程库：remote、组合库：group

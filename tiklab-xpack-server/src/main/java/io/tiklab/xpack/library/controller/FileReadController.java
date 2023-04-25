@@ -69,7 +69,7 @@ public class FileReadController  {
         }
     }
 
-    @RequestMapping(path = "/findServerIp",method = RequestMethod.GET)
+    @RequestMapping(path = "/findServerIp",method = RequestMethod.POST)
     @ApiMethod(name = "findServerIp",desc = "获取当前服务器ip")
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Result<String> findServerIp() {
