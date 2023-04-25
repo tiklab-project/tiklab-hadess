@@ -94,8 +94,10 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             JSONObject userData = (JSONObject) UserData;
             String name = userData.get("name").toString();
 
-            User user = userService.findUserByUsername(name);
-            if (ObjectUtils.isEmpty(user)){
+            UserQuery userQuery = new UserQuery();
+            userQuery.setName(name);
+            List<User> userList = userService.findUserList(userQuery);
+            if (CollectionUtils.isEmpty(userList)){
                 return 401;
             }
 

@@ -143,7 +143,7 @@ public class LibraryDao{
      * @param libraryQuery
      * @return Pagination <LibraryEntity>
      */
-    public List<Library> findMavenLibraryList(LibraryQuery libraryQuery) {
+    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
         String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
 

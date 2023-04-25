@@ -79,6 +79,8 @@ licences:
 repository:
   library: /Users/limingliang/publicData
   code: xpack
+  address: "http://192.168.10.19:8083"
+
 
 
 

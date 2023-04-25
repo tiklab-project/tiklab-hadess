@@ -39,6 +39,13 @@ public interface LibraryService {
     */
     void deleteLibrary(@NotNull String id);
 
+    /**
+     * 通过制品库删除
+     * @param repositoryId 制品库id
+     */
+    void deleteLibraryByRepository(@NotNull String repositoryId);
+
+
     @FindOne
     Library findOne(@NotNull String id);
 
@@ -68,11 +75,11 @@ public interface LibraryService {
 
 
     /**
-     * 查询maven制品
+     * 条件查询制品
      * @param libraryQuery
      * @return
      */
-    List<Library> findMavenLibraryList(LibraryQuery libraryQuery);
+    List<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
 
     /**
     * 按分页查询

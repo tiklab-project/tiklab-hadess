@@ -34,10 +34,11 @@ public interface LibraryFileService {
     void deleteLibraryFile(@NotNull String id);
 
     /**
-     * 通过版本id删除   versionId
-     * @param versionId
+     * 通过条件删除
+     * @param field  删除条件字段
+     * @param value 删除字段值
      */
-    void deleteLibraryFileByVersionId(@NotNull String versionId);
+    void deleteLibraryFileByCondition(@NotNull String field ,@NotNull String value);
 
     LibraryFile findOne(@NotNull String id);
 

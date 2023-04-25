@@ -26,7 +26,7 @@ public class LibraryMavenEntity extends BaseModel {
     private String groupId;
 
     //maven -artifactId
-    @Column(name = "artifact_id",length = 32)
+    @Column(name = "artifact_id",length = 128)
     private String artifactId;
 
     @Column(name = "create_time")

@@ -72,8 +72,8 @@ public interface RepositoryGroupService {
 
     /**
      * 根据条件编辑组合库关联
-     * @param repositoryGroup
+     * @param repositoryGroupQuery
      * @return
      */
-    String compileRepositoryGroup(RepositoryGroup repositoryGroup);
+    void compileRepositoryGroup(RepositoryGroupQuery repositoryGroupQuery);
 }

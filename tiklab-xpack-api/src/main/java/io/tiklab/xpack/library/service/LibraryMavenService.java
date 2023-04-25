@@ -40,6 +40,7 @@ public interface LibraryMavenService {
      */
     void deleteLibraryMavenByLibraryId(@NotNull String libraryId);
 
+
     LibraryMaven findOne(@NotNull String id);
 
     List<LibraryMaven> findList(List<String> idList);

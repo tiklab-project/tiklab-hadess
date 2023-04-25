@@ -1,7 +1,11 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.xpack.library.dao.LibraryDao;
 import io.tiklab.xpack.library.model.Library;
+import io.tiklab.xpack.library.model.LibraryFile;
+import io.tiklab.xpack.library.model.LibraryFileQuery;
 import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
@@ -82,7 +86,23 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public void deleteLibrary(@NotNull String id) {
+        Library library = this.findLibrary(id);
+        if ("maven".equals(library.getLibraryType())){
+            libraryMavenService.deleteLibraryMavenByLibraryId(id);
+        }
+        libraryVersionService.deleteVersionByCondition("libraryId",id);
+
+        libraryFileService.deleteLibraryFileByCondition("libraryId",id);
+
         libraryDao.deleteLibrary(id);
+    }
+
+    @Override
+    public void deleteLibraryByRepository(String repositoryId) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(LibraryEntity.class)
+                .eq("repositoryId",repositoryId)
+                .get();
+        libraryDao.deleteLibrary(deleteCondition);
     }
 
     @Override
@@ -136,9 +156,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 
     @Override
-    public List<Library> findMavenLibraryList(LibraryQuery libraryQuery) {
+    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
-        List<Library> mavenLibraryList = libraryDao.findMavenLibraryList(libraryQuery);
+        List<Library> mavenLibraryList = libraryDao.findLibraryListByCondition(libraryQuery);
 
         return mavenLibraryList;
     }
@@ -200,56 +220,5 @@ public class LibraryServiceImpl implements LibraryService {
 
         return library;
     }
-
-
-
-
-
-
-    public  byte[]  readFileContent02(String filePath)  throws IOException {
-       /* StringBuilder result = new StringBuilder();
-        BufferedReader bfr = new BufferedReader(new InputStreamReader(inputStream));
-        String lineTxt = null;
-        while ((lineTxt = bfr.readLine()) != null) {
-            result.append(lineTxt).append("\n");
-        }*/
-
-        String path="/Users/limingliang/publicData/download";
-        String filePaths=path+"/"+"tiklab-user-ui-1.0.0.tgz";
-        File file = new File(filePaths);
-        if (!file.exists()){
-            file.createNewFile();
-        }
-
-        FileOutputStream fos = new FileOutputStream(filePaths);
-        byte[] b = new byte[1024];
-        File file1 = new File(filePath);
-        FileInputStream fileInputStream = new FileInputStream(file1);
-        //ByteArrayInputStream inputStream = new ByteArrayInputStream(filePath.getBytes(StandardCharsets.UTF_8));
-        while ((fileInputStream.read(b)) != -1) {
-            fos.write(b);// 写入数据
-        }
-        fileInputStream.close();
-
-
-
-       /* File f = new File(filePath);
-        long length = f.length();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(f));
-        int buf_size = 1024;
-        byte[] buffer = new byte[buf_size];
-        int len = 0;
-        while (-1 != (len = in.read(buffer, 0, buf_size))) {
-            bos.write(buffer, 0, len);
-        }
-        byte[] bytes = bos.toByteArray();
-        String s = new String(bytes, "UTF-8");*/
-        return null;
-    }
-
-
-
-
 }
 

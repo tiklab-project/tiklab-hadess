@@ -1,6 +1,7 @@
 package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.Result;
+import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
@@ -27,6 +28,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,13 +95,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         //文件相对路径
         String relativePath = repositoryUrl.substring(index);
         relativePath = relativePath.substring(1);
-
         try {
             //查询组合的制品库
             List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
             if (CollectionUtils.isNotEmpty(repositoryList)){
                 Repository repository = repositoryList.get(0);
-                //maven上传 需要对maven-metadata 进行拉取校验
+                // maven上传 需要对maven-metadata 进行拉取校验
                 if ("local".equals(repository.getRepositoryType())){
                     String filePath=repositoryLibrary+contextPath;
                     File file = new File(filePath);
@@ -139,8 +141,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> relativePath.equals(a.getRelativePath())).collect(Collectors.toList());
 
             if (CollectionUtils.isNotEmpty(libraryFiles)){
-                String filePath = repositoryLibrary+libraryFiles.get(0).getFileUrl();
-                File file = new File(filePath);
+                LibraryFile libraryFile = libraryFiles.get(0);
+                File file = new File(libraryFile.getFileUrl());
                // int length = (int) file.length();
                 //私服库拉取
                 return readFileData(file);
@@ -167,18 +169,18 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //远程代理路径
             List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
             if (CollectionUtils.isNotEmpty(remoteProxyList)){
-                String proxyUrl = remoteProxyList.get(0).getAgencyUrl();
-                //设置的代理地址 以/结尾  就去掉相对路径第一个/
-                if (proxyUrl.endsWith("/")&&relativePath.startsWith("/")){
-                    relativePath = relativePath.substring(1);
-                }
-                String relativeAbsoluteUrl=proxyUrl+relativePath;
+
                 //转发到远程
-                Result<byte[]> result = restTemplateMethod(relativeAbsoluteUrl);
+                Result<byte[]> result = restTemplateMethod(remoteProxyList,remoteProxyList.get(0), relativePath);
                 if (result.getCode()==200){
+
+                    //写入本地服务器中
+                    InputStream inputStream = new ByteArrayInputStream(result.getData());
+                    writeFile(inputStream,contextPath);
+
                     //解析相对路径 获取文件名称、版本、groupId
                     Map<String, String> relativeMap = resolverRelativePath(relativePath);
-                    relativeMap.put("userId","111111");
+                    relativeMap.put("userName","maven");
                     relativeMap.put("relativePath",relativePath);
                     relativeMap.put("contextPath",contextPath);
 
@@ -191,8 +193,15 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     }else {
                         fileSize = fileLength + "B";
                     }
-                    //拉取成功创建制品信息
-                     createLibrary(relativeMap,repositoryGroup.getRepository(), fileSize);
+
+                    ExecutorService executorService = Executors.newCachedThreadPool();
+                    executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            //拉取成功创建制品信息
+                            createLibrary(relativeMap,repositoryGroup.getRepository(), fileSize);
+                        }
+                    });
                 }
                 return result;
             }
@@ -202,17 +211,34 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     /**
      *  根据代理信息  转发远程库
-     * @param relativeAbsoluteUrl  代理绝对路径
+     * @param remoteProxyList  d代理地址
+     * @param relativePath  maven客户端相对路径
      * @return
      */
-    public Result restTemplateMethod(String relativeAbsoluteUrl){
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
-        HttpStatus statusCode = entity.getStatusCode();
-        byte[] entityBody = entity.getBody();
-
-        return result(200,entityBody,"OK");
+    public Result restTemplateMethod(List<RepositoryRemoteProxy> remoteProxyList,RepositoryRemoteProxy remoteProxy,String relativePath){
+        int defaultNum=0;
+        String proxyUrl = remoteProxy.getAgencyUrl();
+        //设置的代理地址 以/结尾  就去掉相对路径第一个/
+        if (proxyUrl.endsWith("/")&&relativePath.startsWith("/")){
+            relativePath = relativePath.substring(1);
+        }
+        String relativeAbsoluteUrl=proxyUrl+relativePath;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
+            byte[] entityBody = entity.getBody();
+            return result(200,entityBody,"OK");
+        }catch (Exception e){
+            if (defaultNum+1<remoteProxyList.size()){
+                RepositoryRemoteProxy proxy = remoteProxyList.get(defaultNum + 1);
+                restTemplateMethod(remoteProxyList,proxy,relativePath);
+            }else {
+                return result(404,null,"null");
+            }
+        }
+        return null;
     }
+
 
     /**
      *  maven-提交   写入文件、创建数据
@@ -252,7 +278,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
             int indexOf = contextPath.indexOf("maven-metadata");
             if (indexOf==-1){
-
                 createLibrary(dataMap,repositoryList.get(0),fileSize);
             }
 
@@ -337,7 +362,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param
      * @return
      */
-    public void createLibrary( Map<String, String> dataMap,Repository repository,String fileSize) throws IOException {
+    public void createLibrary( Map<String, String> dataMap,Repository repository,String fileSize)  {
 
         //创建制品
         Library library = libraryService.createLibraryData(dataMap.get("libraryName"), "maven",repository);
@@ -362,7 +387,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryFile.setFileName(dataMap.get("fileName"));
         libraryFile.setFileSize(fileSize);
         libraryFile.setRepository(repository);
-        libraryFile.setFileUrl(dataMap.get("contextPath"));
+        libraryFile.setFileUrl(repositoryLibrary+dataMap.get("contextPath"));
         libraryFile.setRelativePath(dataMap.get("relativePath"));
         libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
 
@@ -405,23 +430,26 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      *  @param file     文件
      * @return
      */
-    public String gainFileData(File file) throws IOException {
-        if (file.exists()){
-            FileInputStream inputStream = new FileInputStream(file);
-            StringBuilder result = new StringBuilder();
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(inputStream));
-            String lineTxt = null;
-            while ((lineTxt = bfr.readLine()) != null) {
-                result.append(lineTxt);
+    public String gainFileData(File file){
+        try {
+            if (file.exists()){
+                FileInputStream inputStream = new FileInputStream(file);
+                StringBuilder result = new StringBuilder();
+                BufferedReader bfr = new BufferedReader(new InputStreamReader(inputStream));
+                String lineTxt = null;
+                while ((lineTxt = bfr.readLine()) != null) {
+                    result.append(lineTxt);
+                }
+
+                String toString = result.toString();
+                String trim = toString.trim();
+                return trim;
+            }else {
+                return null;
             }
-
-            String toString = result.toString();
-            String trim = toString.trim();
-            return trim;
-        }else {
-            return null;
+        }catch (IOException e){
+            throw new ApplicationException(e.getMessage());
         }
-
     }
 
 

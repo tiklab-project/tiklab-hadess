@@ -1,5 +1,8 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.tiklab.xpack.library.dao.LibraryMavenDao;
 import io.tiklab.xpack.library.dao.LibraryVersionDao;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.beans.BeanMapper;
@@ -195,7 +198,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         LibraryVersion libraryVersion = this.findLibraryVersion(id);
 
         //删除该版本下面的制品文件
-        libraryFileService.deleteLibraryFileByVersionId(id);
+        libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
 
         libraryService.deleteLibrary(libraryVersion.getLibrary().getId());
 
@@ -203,6 +206,14 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             libraryMavenService.deleteLibraryMavenByLibraryId(libraryVersion.getLibrary().getId());
         }
         this.deleteLibraryVersion(id);
+    }
+
+    @Override
+    public void deleteVersionByCondition(String field, String value) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(LibraryVersionEntity.class)
+                .eq(field, value)
+                .get();
+        libraryVersionDao.deleteLibraryVersion(deleteCondition);
     }
 
 

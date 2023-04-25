@@ -17,6 +17,9 @@ public class LibraryFileQuery {
         @ApiProperty(name ="pageParam",desc = "分页参数")
         private Page pageParam = new Page();
 
+        @ApiProperty(name ="repositoryId",desc = "制品库id")
+        private String repositoryId;
+
         @ApiProperty(name ="libraryId",desc = "制品id")
         private String libraryId;
 
@@ -52,8 +55,9 @@ public class LibraryFileQuery {
             return libraryId;
         }
 
-        public void setLibraryId(String libraryId) {
+        public LibraryFileQuery setLibraryId(String libraryId) {
             this.libraryId = libraryId;
+            return this;
         }
 
         public String getLibraryVersionId() {
@@ -89,6 +93,15 @@ public class LibraryFileQuery {
 
         public LibraryFileQuery setRelativePath(String relativePath) {
             this.relativePath = relativePath;
+            return this;
+        }
+
+        public String getRepositoryId() {
+            return repositoryId;
+        }
+
+        public LibraryFileQuery setRepositoryId(String repositoryId) {
+            this.repositoryId = repositoryId;
             return this;
         }
 }

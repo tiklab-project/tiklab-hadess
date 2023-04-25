@@ -90,4 +90,12 @@ public interface LibraryVersionService {
      * @return
      */
     void deleteVersionAndLibrary(String id);
+
+    /**
+     * 通过条件删除版本
+     * @param field  删除条件字段
+     * @param value 删除字段值
+     */
+    void deleteVersionByCondition(String field,String value);
+
 }

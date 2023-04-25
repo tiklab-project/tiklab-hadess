@@ -85,7 +85,7 @@ CREATE TABLE pack_repository_cluster_cfg(
 -- ----------------------------
 CREATE TABLE pack_library(
     id VARCHAR(32) PRIMARY KEY,
-    name varchar (32) NOT NULL,
+    name varchar (128) NOT NULL,
     library_type varchar (32) NOT NULL,
     repository_id varchar (32) NOT NULL,
     new_version varchar (64),
@@ -131,8 +131,8 @@ CREATE TABLE pack_library_file(
 CREATE TABLE pack_library_maven(
    id VARCHAR(32) PRIMARY KEY,
    library_id varchar(32) NOT NULL,
-   group_id varchar (32) NOT NULL,
-   artifact_id varchar (32) NOT NULL,
+   group_id varchar (128) NOT NULL,
+   artifact_id varchar (128) NOT NULL,
    create_time  timestamp
 );
 -- ---------------------------

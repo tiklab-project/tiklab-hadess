@@ -23,6 +23,16 @@ public class RepositoryGroupQuery {
         @ApiProperty(name ="repositoryId",desc = "repositoryId")
         private String repositoryId;
 
+        private List<Repository> repositoryList;
+
+        public List<Repository> getRepositoryList() {
+            return repositoryList;
+        }
+
+        public void setRepositoryList(List<Repository> repositoryList) {
+            this.repositoryList = repositoryList;
+        }
+
         public List<Order> getOrderParams() {
             return orderParams;
         }

@@ -1,11 +1,14 @@
 package io.tiklab.xpack.repository.service;
 import io.tiklab.beans.BeanMapper;
+import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
+import io.tiklab.xpack.library.service.LibraryFileService;
 import io.tiklab.xpack.library.service.LibraryService;
+import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.dao.RepositoryDao;
 import io.tiklab.xpack.repository.entity.RepositoryEntity;
 import io.tiklab.xpack.repository.model.Repository;
@@ -45,11 +48,20 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryService libraryService;
 
+    @Autowired
+    LibraryVersionService libraryVersionService;
+
+    @Autowired
+    LibraryFileService libraryFileService;
+
     @Value("${server.port:8080}")
     private String port;
 
     @Value("${repository.code:null}")
     private String repositoryCode;
+
+    @Value("${repository.address:null}")
+    private String repositoryAddress;
 
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
@@ -58,13 +70,21 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         String type = repository.getType().toLowerCase();
-        String ip;
-        try {
-            ip = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            ip = "172.0.0.1";
+        String absoluteAddress=null;
+
+        //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
+        if (StringUtils.isEmpty(repositoryAddress)){
+            String ip;
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                ip = "172.0.0.1";
+            }
+             absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+        }else {
+            absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
         }
-        String absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+        repositoryEntity.setType(type);
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         return repositoryDao.createRepository(repositoryEntity);
@@ -73,7 +93,10 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Override
     public void updateRepository(@NotNull @Valid Repository repository) {
         RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
-
+        if (StringUtils.isNotEmpty(repository.getType())){
+            String type = repository.getType().toLowerCase();
+            repositoryEntity.setType(type);
+        }
         repositoryDao.updateRepository(repositoryEntity);
     }
 
@@ -82,6 +105,12 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryDao.deleteRepository(id);
 
         groupItemsService.deleteRepositoryGroup(id);
+
+        libraryService.deleteLibraryByRepository(id);
+
+        libraryVersionService.deleteVersionByCondition("repositoryId",id);
+
+        libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
     }
 
     @Override

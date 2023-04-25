@@ -11,6 +11,7 @@ import io.tiklab.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * RepositoryGroup-组合库关联模型
@@ -44,6 +45,9 @@ public class RepositoryGroup extends BaseModel {
 
     @ApiProperty(name="updateTime",desc="updateTime")
     private java.sql.Timestamp updateTime;
+
+
+
 
     public String getId() {
         return id;
@@ -84,4 +88,6 @@ public class RepositoryGroup extends BaseModel {
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
+
+
 }

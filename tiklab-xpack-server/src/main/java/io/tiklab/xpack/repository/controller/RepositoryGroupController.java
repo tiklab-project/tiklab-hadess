@@ -98,9 +98,12 @@ public class RepositoryGroupController {
     @RequestMapping(path="/compileRepositoryGroup",method = RequestMethod.POST)
     @ApiMethod(name = "compileRepositoryGroup",desc = "根据条件编辑组合库关联")
     @ApiParam(name = "repositoryGroup",desc = "repositoryGroup",required = true)
-    public Result<String> compileRepositoryGroup(@RequestBody @NotNull @Valid RepositoryGroup repositoryGroup){
-        String id = repositoryGroupService.compileRepositoryGroup(repositoryGroup);
+    public Result<String> compileRepositoryGroup(@RequestBody @NotNull RepositoryGroupQuery repositoryGroupQuery){
 
-        return Result.ok(id);
+         repositoryGroupService.compileRepositoryGroup(repositoryGroupQuery);
+
+        return Result.ok();
     }
+
+
 }

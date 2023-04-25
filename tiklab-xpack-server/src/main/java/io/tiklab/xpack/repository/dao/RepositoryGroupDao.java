@@ -92,6 +92,7 @@ public class RepositoryGroupDao{
     public List<RepositoryGroupEntity> findRepositoryGroupList(RepositoryGroupQuery repositoryGroupQuery) {
         QueryCondition QueryCondition = QueryBuilders.createQuery(RepositoryGroupEntity.class)
                 .eq("repositoryGroupId", repositoryGroupQuery.getRepositoryGroupId())
+                .eq("repositoryId", repositoryGroupQuery.getRepositoryId())
                 .orders(repositoryGroupQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(QueryCondition,RepositoryGroupEntity.class);
@@ -105,6 +106,7 @@ public class RepositoryGroupDao{
     public Pagination<RepositoryGroupEntity> findRepositoryGroupPage(RepositoryGroupQuery repositoryGroupQuery) {
         QueryCondition QueryCondition = QueryBuilders.createQuery(RepositoryGroupEntity.class)
                 .eq("repositoryGroupId", repositoryGroupQuery.getRepositoryGroupId())
+                .eq("repositoryId", repositoryGroupQuery.getRepositoryId())
                 .orders(repositoryGroupQuery.getOrderParams())
                 .pagination(repositoryGroupQuery.getPageParam())
                 .get();

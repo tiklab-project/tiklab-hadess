@@ -94,11 +94,11 @@ public class LibraryController {
         return Result.ok(pagination);
     }
 
-    @RequestMapping(path = "/findMavenLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findMavenLibraryList",desc = "查询maven制品列表")
+    @RequestMapping(path = "/findLibraryListByCondition",method = RequestMethod.POST)
+    @ApiMethod(name = "findLibraryListByCondition",desc = "查询制品列表")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
-    public Result<List<Library>> findMavenLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
-        List<Library> libraryList = libraryService.findMavenLibraryList(libraryQuery);
+    public Result<List<Library>> findLibraryListByCondition(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
+        List<Library> libraryList = libraryService.findLibraryListByCondition(libraryQuery);
         return Result.ok(libraryList);
     }
 

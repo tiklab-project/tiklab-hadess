@@ -80,3 +80,4 @@ licences:
 repository:
   library: ${user.home}
   code: xpack
+  address: ""

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -59,11 +60,29 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
-    public void deleteLibraryFileByVersionId(String versionId) {
-        DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
-                .eq("libraryVersionId",versionId)
-                .get();
-        libraryFileDao.deleteLibraryFile(libraryFile);
+    public void deleteLibraryFileByCondition(String field,String value) {
+        List<LibraryFile> libraryFileList=null;
+        switch (field){
+            case "libraryVersionId":
+                 libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(value));
+                 break;
+            case "libraryId":
+                libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryId(value));
+                break;
+            case "repositoryId":
+                libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setRepositoryId(value));
+        }
+        if (CollectionUtils.isNotEmpty(libraryFileList)){
+            //删除文件
+            for (LibraryFile libraryFile:libraryFileList){
+                File file = new File(libraryFile.getFileUrl());
+                file.delete();
+            }
+            DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
+                    .eq(field,value)
+                    .get();
+            libraryFileDao.deleteLibraryFile(libraryFile);
+        }
     }
 
     @Override

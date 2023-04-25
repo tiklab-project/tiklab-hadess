@@ -8,6 +8,7 @@ import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.repository.entity.RepositoryGroupEntity;
+import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.model.RepositoryGroup;
 import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
 
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * RepositoryGroupServiceImpl-组合库关联
@@ -119,13 +121,24 @@ public class RepositoryGroupServiceImpl implements RepositoryGroupService {
     }
 
     @Override
-    public String compileRepositoryGroup(RepositoryGroup repositoryGroup) {
+    public void compileRepositoryGroup(RepositoryGroupQuery repositoryGroupQuery) {
         List<RepositoryGroup> repositoryGroupList = this.findRepositoryGroupList(new RepositoryGroupQuery().
-                setRepositoryGroupId(repositoryGroup.getRepositoryGroup().getId())
-                .setRepositoryId(repositoryGroup.getRepository().getId()));
-        if (CollectionUtils.isEmpty(repositoryGroupList)){
-            return  this.createRepositoryGroup(repositoryGroup);
+                setRepositoryGroupId(repositoryGroupQuery.getRepositoryGroupId()));
+
+        if (CollectionUtils.isNotEmpty(repositoryGroupList)){
+            DeleteCondition deleteCondition = DeleteBuilders.createDelete(RepositoryGroupEntity.class)
+                    .eq("repositoryGroupId", repositoryGroupQuery.getRepositoryGroupId())
+                    .get();
+            repositoryGroupDao.deleteRepositoryGroup(deleteCondition);
         }
-        return null;
+        List<Repository> repositoryList = repositoryGroupQuery.getRepositoryList();
+        for (Repository repository:repositoryList){
+            RepositoryGroup repositoryGroup = new RepositoryGroup();
+            Repository groupRepository = new Repository();
+            groupRepository.setId(repositoryGroupQuery.getRepositoryGroupId());
+            repositoryGroup.setRepositoryGroup(groupRepository);
+            repositoryGroup.setRepository(repository);
+            this.createRepositoryGroup(repositoryGroup);
+        }
     }
 }
