@@ -6,12 +6,14 @@ import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-@Component
+@Configuration
 public class InitializeData {
 
     @Autowired
