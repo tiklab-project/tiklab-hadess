@@ -47,14 +47,13 @@ dss:
 mysql:
   embbed:
     enable: false
-  server:
-    port: 3306
   database: tiklab_xpack
 
 #eas config
 eas:
   embbed:
     enable: true
+  address: http://bac.eas.tiklab.net
 
 
 

@@ -80,9 +80,9 @@ public class RepositoryServiceImpl implements RepositoryService {
             } catch (UnknownHostException e) {
                 ip = "172.0.0.1";
             }
-             absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+             absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/";
         }else {
-            absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+            absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/";
         }
         repositoryEntity.setType(type);
         repositoryEntity.setRepositoryUrl(absoluteAddress);

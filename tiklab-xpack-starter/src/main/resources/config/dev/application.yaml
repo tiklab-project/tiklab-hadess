@@ -33,7 +33,7 @@ mysql:
 eas:
   embbed:
     enable: true
-
+  address:
 
 
 #dfs config
