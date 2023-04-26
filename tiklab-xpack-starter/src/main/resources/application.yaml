@@ -52,7 +52,7 @@ mysql:
 #eas config
 eas:
   embbed:
-    enable: true
+    enable: false
   address: http://bac.eas.tiklab.net
 
 
