@@ -86,7 +86,8 @@ public class GatewayFilterAutoConfiguration {
                         "/libraryFile/tag",
                         "/repositoryRemoteProxy/test",
                         "/repository/findAllRepository",
-                        "/version/getVersion"
+                        "/version/getVersion",
+                        "/licence/import",
 
                 })
                 .ignorePreUrls(new String[]{
@@ -100,6 +101,8 @@ public class GatewayFilterAutoConfiguration {
                         "/services",
                         "/xpack",
                         "/library",
+                        "/repository"
+
                 })
                 .get();
     }

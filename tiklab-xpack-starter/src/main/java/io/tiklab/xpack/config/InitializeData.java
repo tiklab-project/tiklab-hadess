@@ -15,7 +15,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 @Component
-@DependsOn({"repositoryService","proxyService","repositoryGroupService"})
 public class InitializeData {
 
     @Autowired

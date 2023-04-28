@@ -37,5 +37,12 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>admin</id>
+            <name>xpack</name>
+            <url>http://172.12.1.24:8080/xpack/maven/maven-local</url>
+        </repository>
+    </distributionManagement>
 </project>
 
