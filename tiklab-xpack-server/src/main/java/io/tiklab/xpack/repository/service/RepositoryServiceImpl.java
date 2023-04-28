@@ -94,12 +94,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         String repositoryId = repositoryDao.createRepository(repositoryEntity);
-       /* List<PatchUser> userList=new ArrayList<>();
-        PatchUser patchUser = new PatchUser();
-        patchUser.setId(LoginContext.getLoginId());
-        patchUser.setAdminRole(true);
-        userList.add(patchUser);
-        dmRoleService.initPatchDmRole(repositoryId,userList, "xpack");*/
+
         dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "xpack");
         return repositoryId;
     }
