@@ -48,6 +48,7 @@ import io.tiklab.eam.starter.EnableEam;
 @EnableGateway
 @EnableTodoTask
 @EnablePrivilegeServer
+
 //ocs
 @EnableXpackServer
 public class XpackAutoConfiguration {

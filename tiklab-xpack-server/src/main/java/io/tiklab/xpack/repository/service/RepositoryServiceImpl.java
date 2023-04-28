@@ -3,7 +3,10 @@ import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.join.JoinTemplate;
+import io.tiklab.privilege.dmRole.service.DmRoleService;
+import io.tiklab.privilege.role.model.PatchUser;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
@@ -54,6 +57,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryFileService libraryFileService;
 
+    @Autowired
+    private DmRoleService dmRoleService;
+
     @Value("${server.port:8080}")
     private String port;
 
@@ -87,7 +93,15 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setType(type);
         repositoryEntity.setRepositoryUrl(absoluteAddress);
 
-        return repositoryDao.createRepository(repositoryEntity);
+        String repositoryId = repositoryDao.createRepository(repositoryEntity);
+       /* List<PatchUser> userList=new ArrayList<>();
+        PatchUser patchUser = new PatchUser();
+        patchUser.setId(LoginContext.getLoginId());
+        patchUser.setAdminRole(true);
+        userList.add(patchUser);
+        dmRoleService.initPatchDmRole(repositoryId,userList, "xpack");*/
+        dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "xpack");
+        return repositoryId;
     }
 
     @Override

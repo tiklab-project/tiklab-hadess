@@ -37,6 +37,7 @@ public class XpackSqlLoad {
                 "todotask_1.0.0_dml",
                 //xpack
                 "xpack_1.0.0_ddl",
+                "xprivilege_1.0.0_dml",
 
         });
         return dsmConfig;
