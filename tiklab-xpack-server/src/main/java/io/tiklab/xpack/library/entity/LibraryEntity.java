@@ -39,6 +39,9 @@ public class LibraryEntity extends BaseModel {
     @Column(name = "update_time")
     private Timestamp updateTime;
 
+    /*----其他字段------*/
+    private String groupId;
+
     public String getId() {
         return id;
     }
@@ -93,5 +96,13 @@ public class LibraryEntity extends BaseModel {
 
     public void setNewVersion(String newVersion) {
         this.newVersion = newVersion;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }

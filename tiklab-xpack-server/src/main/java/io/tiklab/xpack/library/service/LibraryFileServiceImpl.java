@@ -14,6 +14,7 @@ import io.tiklab.xpack.library.model.LibraryFileQuery;
 import io.tiklab.xpack.library.model.LibraryVersion;
 import io.tiklab.xpack.library.model.LibraryVersionQuery;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -155,13 +157,21 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
     @Override
     public List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery) {
-        List<LibraryVersion> libraryVersionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryFileQuery.getLibraryId()));
-        List<LibraryFile> libraryFileList=null;
-        if(CollectionUtils.isNotEmpty(libraryVersionList)){
-            List<LibraryVersion> libraryVersion = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime)).collect(Collectors.toList());
-            libraryFileQuery.setLibraryVersionId(libraryVersion.get(0).getId());
-             libraryFileList = this.findLibraryFileList(libraryFileQuery);
+        LibraryVersion libraryVersion=null;
+        if (StringUtils.isEmpty(libraryFileQuery.getLibraryVersionId())){
+            List<LibraryVersion> libraryVersionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryFileQuery.getLibraryId()));
 
+            libraryVersion = libraryVersionList.get(0);
+        }else {
+            libraryVersion = libraryVersionService.findLibraryVersion(libraryFileQuery.getLibraryVersionId());
+        }
+
+        List<LibraryFile> libraryFileList = findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
+       //快照版本
+        if (libraryVersion.getVersion().endsWith("SNAPSHOT")){
+            List<LibraryFile> libraryFiles = libraryFileList.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+            String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
+             libraryFileList = libraryFileList.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
         }
         return libraryFileList;
     }

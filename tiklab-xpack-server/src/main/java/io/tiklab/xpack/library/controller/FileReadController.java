@@ -46,6 +46,8 @@ public class FileReadController  {
 
         try {
             byte[] bytes = libraryFileReadService.fileRead(requestURI);
+            String s = new String(bytes, "UTF-8");
+
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(bytes);
         } catch (IOException e) {

@@ -75,11 +75,11 @@ public interface LibraryService {
 
 
     /**
-     * 条件查询制品
+     * 查询制品库下面的制品
      * @param libraryQuery
      * @return
      */
-    List<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
+    List<Library> findLibraryListByRepository(LibraryQuery libraryQuery);
 
     /**
     * 按分页查询
@@ -98,6 +98,10 @@ public interface LibraryService {
      */
      Library createLibraryData(String libraryName, String libraryType, Repository repository);
 
-
-
+    /**
+     * 条件查询制品文件
+     * @param libraryQuery
+     * @return
+     */
+    List<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
 }

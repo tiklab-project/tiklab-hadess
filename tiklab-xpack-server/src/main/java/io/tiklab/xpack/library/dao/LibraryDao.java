@@ -139,11 +139,11 @@ public class LibraryDao{
 
 
     /**
-     * 条件查询制品制品列表
+     * 制品库下面条件查询制品制品列表
      * @param libraryQuery
      * @return Pagination <LibraryEntity>
      */
-    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
+    public List<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
         String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
 
@@ -174,8 +174,55 @@ public class LibraryDao{
 
     }
 
+
+    /**
+     * 条件查询制品
+     * @param libraryQuery
+     * @return Pagination <LibraryEntity>
+     */
+    public List<LibraryEntity> findLibraryListByCondition(LibraryQuery libraryQuery) {
+        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
+
+        if (!ObjectUtils.isEmpty(libraryQuery.getRepositoryIds())){
+            sql = sql + "and li.repository_id in (:repositoryIds)";
+        }else {
+            if (StringUtils.isNotEmpty(libraryQuery.getRepositoryId())){
+                sql = sql + "and li.repository_id='" + libraryQuery.getRepositoryId() + "'";
+            }
+        }
+        if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
+            sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getName())){
+            sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
+        }
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("repositoryIds", libraryQuery.getRepositoryIds());
+
+        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
+        List<LibraryEntity> query = jdbc.query(sql, paramMap, new BeanPropertyRowMapper(LibraryEntity.class));
+        return query;
+    }
+
+    /**
+     * 精确条件查询制品
+     * @param libraryQuery
+     * @return List <LibraryEntity>
+     */
+    public List<LibraryEntity> findEqLibraryList(LibraryQuery libraryQuery) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("repositoryId",libraryQuery.getRepositoryId())
+                .eq("name", libraryQuery.getName())
+                .orders(libraryQuery.getOrderParams())
+                .get();
+
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
+
     public JdbcTemplate getJdbcTemplate() {
 
         return jpaTemplate.getJdbcTemplate();
     }
+
 }

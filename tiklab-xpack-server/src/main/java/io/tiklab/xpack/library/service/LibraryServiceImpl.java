@@ -156,11 +156,21 @@ public class LibraryServiceImpl implements LibraryService {
 
 
     @Override
-    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
+    public List<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
-        List<Library> mavenLibraryList = libraryDao.findLibraryListByCondition(libraryQuery);
+        List<Library> mavenLibraryList = libraryDao.findLibraryListByRepository(libraryQuery);
 
         return mavenLibraryList;
+    }
+
+    @Override
+    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
+        findRepositoryGroup(libraryQuery);
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryListByCondition(libraryQuery);
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        joinTemplate.joinQuery(libraryList);
+        return libraryList;
     }
 
     @Override
@@ -205,7 +215,8 @@ public class LibraryServiceImpl implements LibraryService {
         Library library = new Library();
         library.setLibraryType(libraryType);
         //查询制品包是否有创建
-        List<Library> libraryList = this.findLibraryList(new LibraryQuery().setName(libraryName).setRepositoryId(repository.getId()));
+        List<LibraryEntity> libraryList =libraryDao.findEqLibraryList(new LibraryQuery().setName(libraryName).setRepositoryId(repository.getId()));
+
         String libraryId=null;
         if (CollectionUtils.isEmpty(libraryList)){
             library.setName(libraryName);
@@ -220,5 +231,7 @@ public class LibraryServiceImpl implements LibraryService {
 
         return library;
     }
+
+
 }
 

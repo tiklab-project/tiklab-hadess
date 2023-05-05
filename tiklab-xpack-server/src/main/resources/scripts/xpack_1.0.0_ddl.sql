@@ -122,6 +122,7 @@ CREATE TABLE pack_library_file(
       file_name varchar (64) NOT NULL,
       file_url varchar (248) NOT NULL,
       relative_path varchar (246),
+      snapshot_version (255),
       create_time  timestamp
 );
 -- ---------------------------

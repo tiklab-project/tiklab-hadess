@@ -46,6 +46,11 @@ public class LibraryFileEntity extends BaseModel {
     @Column(name = "relative_path",length = 256)
     private String relativePath;
 
+
+    //快照版本
+    @Column(name = "snapshot_version",length = 255)
+    private String snapshotVersion;
+
     @Column(name = "create_time")
     private Timestamp createTime;
 
@@ -120,5 +125,13 @@ public class LibraryFileEntity extends BaseModel {
 
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
+    }
+
+    public String getSnapshotVersion() {
+        return snapshotVersion;
+    }
+
+    public void setSnapshotVersion(String snapshotVersion) {
+        this.snapshotVersion = snapshotVersion;
     }
 }

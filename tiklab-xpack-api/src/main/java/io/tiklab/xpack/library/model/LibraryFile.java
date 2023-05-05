@@ -63,6 +63,9 @@ public class LibraryFile extends BaseModel {
     @ApiProperty(name="relativePath",desc="文件相对路径",required = true)
     private java.lang.String relativePath;
 
+    @ApiProperty(name="snapshotVersion",desc="快照版本")
+    private java.lang.String snapshotVersion;
+
     @ApiProperty(name="createTime",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
@@ -147,5 +150,13 @@ public class LibraryFile extends BaseModel {
 
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
+    }
+
+    public String getSnapshotVersion() {
+        return snapshotVersion;
+    }
+
+    public void setSnapshotVersion(String snapshotVersion) {
+        this.snapshotVersion = snapshotVersion;
     }
 }

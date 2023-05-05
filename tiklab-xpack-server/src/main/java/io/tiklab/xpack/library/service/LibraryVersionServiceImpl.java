@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -65,6 +67,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     @Override
     public void deleteLibraryVersion(@NotNull String id) {
         libraryVersionDao.deleteLibraryVersion(id);
+
+        libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
     }
 
 
@@ -200,6 +204,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         //删除该版本下面的制品文件
         libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
 
+        //删除该版本对应的制品
         libraryService.deleteLibrary(libraryVersion.getLibrary().getId());
 
         if ("maven".equals(libraryVersion.getLibrary().getLibraryType())){
@@ -223,7 +228,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
      * @return
      */
     public String librarySize( String libraryVersionId){
-        Double versionSum=0.0;
+        String librarySize=null;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
         if (!CollectionUtils.isEmpty(libraryFileList)){
             int sumKb = libraryFileList.stream().filter(a -> a.getFileSize().endsWith("KB")).mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "KB"))).sum();
@@ -232,8 +237,16 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
             double i =((double) sumB/1000)*100;
             double kbNum = i / 100D;
-             versionSum = sumKb + kbNum;
+            Double versionSum = sumKb + kbNum;
+             if (versionSum>1024){
+                 double mB = versionSum / 1024;
+                 BigDecimal bd = new BigDecimal(mB).setScale(2, RoundingMode.UP);
+                 double lastMb = bd.doubleValue();
+                  librarySize = lastMb+"MB";
+             }else {
+                 librarySize = versionSum+"KB";
+             }
         }
-        return   versionSum+"kb";
+        return librarySize;
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
@@ -174,15 +175,15 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 Result<byte[]> result = restTemplateMethod(remoteProxyList,remoteProxyList.get(0), relativePath);
                 if (result.getCode()==200){
 
-                    //写入本地服务器中
-                    InputStream inputStream = new ByteArrayInputStream(result.getData());
-                    writeFile(inputStream,contextPath);
-
                     //解析相对路径 获取文件名称、版本、groupId
                     Map<String, String> relativeMap = resolverRelativePath(relativePath);
                     relativeMap.put("userName","maven");
                     relativeMap.put("relativePath",relativePath);
                     relativeMap.put("contextPath",contextPath);
+
+                    //写入本地服务器中
+                    InputStream inputStream = new ByteArrayInputStream(result.getData());
+                    writeFile(inputStream,contextPath,null);
 
                     int fileLength = result.getData().length;
                     double i =(double)fileLength / 1000;
@@ -263,18 +264,19 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
 
         if (CollectionUtils.isNotEmpty(repositoryList)){
-            Result result = new Result<>();
-            //写入文件
-            Result writeFile = writeFile(inputStream, contextPath);
-
-            //文件大小
-            String fileSize = writeFile.getData().toString();
 
             //解析相对路径 获取文件名称、版本、groupId
             Map<String, String> dataMap = resolverRelativePath(relativePath);
             dataMap.put("relativePath",relativePath);
             dataMap.put("userName",userName);
             dataMap.put("contextPath",contextPath);
+
+            Result result = new Result<>();
+            //写入文件
+            Result writeFile = writeFile(inputStream, contextPath,dataMap);
+
+            //文件大小
+            String fileSize = writeFile.getData().toString();
 
             int indexOf = contextPath.indexOf("maven-metadata");
             if (indexOf==-1){
@@ -294,15 +296,28 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
      * @return   Result  写入数据的大小
      */
-    public Result writeFile(InputStream inputStream,String contextPath) throws IOException {
+    public Result writeFile(InputStream inputStream,String contextPath,Map<String, String> dataMap) throws IOException {
 
         String url = StringUtils.substringBeforeLast(contextPath, "/");
+        //上传快照存储
+        if (!ObjectUtils.isEmpty(dataMap)){
+            //快照
+            if (dataMap.get("version").endsWith("-SNAPSHOT")&&!dataMap.get("fileName").startsWith("maven-metadata.xml")){
+                String snapshotTime = findSnapshotTime(dataMap);
+                url = url + "/" + snapshotTime;
+
+                contextPath=url +"/"+dataMap.get("fileName");
+                dataMap.put("contextPath",contextPath);
+            }
+        }
         String path=repositoryLibrary+url;
+
         String filePath=repositoryLibrary+contextPath;
         File folder = new File(path);
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
+
         File file = new File(filePath);
         if (!file.exists()){
             file.createNewFile();
@@ -380,7 +395,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryVersion.setPusher(dataMap.get("userName"));
         String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
 
-
         //制品文件 创建、更新
         LibraryFile libraryFile = new LibraryFile();
         libraryFile.setLibrary(library);
@@ -389,6 +403,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryFile.setRepository(repository);
         libraryFile.setFileUrl(repositoryLibrary+dataMap.get("contextPath"));
         libraryFile.setRelativePath(dataMap.get("relativePath"));
+        if (dataMap.get("version").endsWith("-SNAPSHOT")){
+
+            String timeRub = findSnapshotTime(dataMap);
+
+            libraryFile.setSnapshotVersion(timeRub);
+        }
         libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
 
         // 制品maven  创建、更新
@@ -469,6 +489,25 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         userPassport.setDirId("1");
          userPassportService.login(userPassport);
         return userName;
+    }
+
+    /**
+     *  获取快照时间戳
+     * @param
+     * @return
+     */
+    public String findSnapshotTime(Map<String, String> dataMap){
+        //除去快照-SNAPSHOT 的版本
+        String version = dataMap.get("version").substring(0, dataMap.get("version").indexOf("-SNAPSHOT"));
+
+        //快照时间戳加类型
+        String timeName = dataMap.get("fileName").substring(dataMap.get("fileName").lastIndexOf(version) + version.length() + 1);
+        String timeRub = timeName.substring(0, timeName.lastIndexOf("."));
+
+        if (dataMap.get("fileName").endsWith("sha1")||dataMap.get("fileName").endsWith("md5")){
+            timeRub=timeRub.substring(0, timeRub.lastIndexOf("."));
+        }
+        return timeRub;
     }
 
     /**
