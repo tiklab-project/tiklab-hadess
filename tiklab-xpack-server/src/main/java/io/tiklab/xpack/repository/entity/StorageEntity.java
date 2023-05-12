@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 public class StorageEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //存储库名称

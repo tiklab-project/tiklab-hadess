@@ -13,12 +13,12 @@ import java.sql.Timestamp;
 public class RepositoryClusterCfgEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品库id
-    @Column(name = "repository_id",length = 32,notNull = true)
+    @Column(name = "repository_id",length = 12,notNull = true)
     private String repositoryId;
 
     //地址
@@ -42,7 +42,7 @@ public class RepositoryClusterCfgEntity extends BaseModel {
     private String timeOut;
 
     //创建人
-    @Column(name = "create_user",length = 32)
+    @Column(name = "create_user",length = 12)
     private String createUser;
 
     @Column(name = "create_time")

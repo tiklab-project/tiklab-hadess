@@ -88,6 +88,7 @@ public class GatewayFilterAutoConfiguration {
                         "/repository/findAllRepository",
                         "/version/getVersion",
                         "/licence/import",
+                        "/alterSql/updateId",
 
                 })
                 .ignorePreUrls(new String[]{

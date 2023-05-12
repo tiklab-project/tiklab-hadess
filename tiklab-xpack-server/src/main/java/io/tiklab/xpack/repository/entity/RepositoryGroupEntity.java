@@ -13,16 +13,16 @@ import java.sql.Timestamp;
 public class RepositoryGroupEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //组合库id
-    @Column(name = "repository_group_id",length = 32,notNull = true)
+    @Column(name = "repository_group_id",length = 12,notNull = true)
     private String  repositoryGroupId;
 
     //关联库id
-    @Column(name = "repository_id",length = 32,notNull = true)
+    @Column(name = "repository_id",length = 12,notNull = true)
     private String  repositoryId;
 
     //创建时间

@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 public class LibraryMavenEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品Id
@@ -22,7 +22,7 @@ public class LibraryMavenEntity extends BaseModel {
     private String libraryId;
 
     //maven -groupId
-    @Column(name = "group_id",length = 12,notNull = true)
+    @Column(name = "group_id",length = 32,notNull = true)
     private String groupId;
 
     //maven -artifactId

@@ -13,20 +13,20 @@ import java.sql.Timestamp;
 public class PullInfoEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品id
-    @Column(name = "library_id",length = 32,notNull = true)
+    @Column(name = "library_id",length = 12,notNull = true)
     private String libraryId;
 
     //制品版本id
-    @Column(name = "library_version_id",length = 32,notNull = true)
+    @Column(name = "library_version_id",length = 12,notNull = true)
     private String libraryVersionId;
 
     //拉取人id
-    @Column(name = "user_id",length = 32)
+    @Column(name = "user_id",length = 12)
     private String userId;
 
     @Column(name = "pull_create")

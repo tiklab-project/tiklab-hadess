@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 public class LibraryEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品名称
@@ -30,7 +30,7 @@ public class LibraryEntity extends BaseModel {
     private String newVersion;
 
     //制品库id
-    @Column(name = "repository_id",length = 32,notNull = true)
+    @Column(name = "repository_id",length = 12,notNull = true)
     private String repositoryId;
 
     @Column(name = "create_time")

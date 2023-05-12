@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 public class RepositoryEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品库名字
@@ -34,7 +34,7 @@ public class RepositoryEntity extends BaseModel {
     private String type;
 
     //存储库id
-    @Column(name = "storage_id",length = 32)
+    @Column(name = "storage_id",length = 12)
     private String storageId;
 
     //描述
@@ -42,7 +42,7 @@ public class RepositoryEntity extends BaseModel {
     private String description;
 
     //创建人
-    @Column(name = "create_user",length = 32)
+    @Column(name = "create_user",length = 12)
     private String createUser;
 
     @Column(name = "create_time")

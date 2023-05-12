@@ -13,16 +13,16 @@ import java.sql.Timestamp;
 public class LibraryVersionEntity extends BaseModel {
 
     @Id
-    @GeneratorValue
-    @Column(name = "id",length = 32)
+    @GeneratorValue(length = 12)
+    @Column(name = "id",length = 12)
     private String id;
 
     //制品Id
-    @Column(name = "library_id",length = 32,notNull = true)
+    @Column(name = "library_id",length = 12,notNull = true)
     private String libraryId;
 
     //制品库Id
-    @Column(name = "repository_id",length = 32,notNull = true)
+    @Column(name = "repository_id",length = 12,notNull = true)
     private String repositoryId;
 
     //类型 maven、npm
