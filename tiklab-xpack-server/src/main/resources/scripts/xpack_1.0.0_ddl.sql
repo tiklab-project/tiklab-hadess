@@ -104,7 +104,7 @@ CREATE TABLE pack_library_version(
      version varchar(64) NOT NULL,
      hash varchar (64),
      pusher varchar(128),
-     content_json longtext,
+     content_json TEXT,
      push_time timestamp,
      create_time timestamp,
      update_time timestamp
@@ -122,7 +122,7 @@ CREATE TABLE pack_library_file(
       file_name varchar (64) NOT NULL,
       file_url varchar (248) NOT NULL,
       relative_path varchar (246),
-      snapshot_version (255),
+      snapshot_version varchar(255),
       create_time  timestamp
 );
 -- ---------------------------
