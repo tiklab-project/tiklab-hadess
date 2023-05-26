@@ -96,4 +96,4 @@ template:
 repository:
   library: ${user.home}
   code: xpack
-  address: "http://xpack-ce.test.tiklab.net"
+  address: "http://bac.xpack.test.tiklab.net"

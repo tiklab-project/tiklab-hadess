@@ -7,6 +7,7 @@ import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
 import io.tiklab.privilege.role.model.PatchUser;
+import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
@@ -23,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 * RepositoryServiceImpl-制品库
 */
 @Service
+@Exporter
 public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
@@ -76,22 +79,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         String type = repository.getType().toLowerCase();
-        String absoluteAddress=null;
 
-        //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
-        if (StringUtils.isEmpty(repositoryAddress)){
-            String ip;
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                ip = "172.0.0.1";
-            }
-             absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/";
-        }else {
-            absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/";
-        }
         repositoryEntity.setType(type);
-        repositoryEntity.setRepositoryUrl(absoluteAddress);
 
         String repositoryId = repositoryDao.createRepository(repositoryEntity);
 
@@ -134,6 +123,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         RepositoryEntity repositoryEntity = repositoryDao.findRepository(id);
 
         Repository repository = BeanMapper.map(repositoryEntity, Repository.class);
+
+        repository.setRepositoryUrl(findRepositoryUrl(repository));
         return repository;
     }
 
@@ -233,4 +224,29 @@ public class RepositoryServiceImpl implements RepositoryService {
             }
         }
    }
+
+    /**
+     * 查询制品库地址
+     * @param repository
+     * @return
+     */
+    public String findRepositoryUrl(Repository repository){
+        String absoluteAddress=null;
+       if (!ObjectUtils.isEmpty(repository)){
+           String type = repository.getType().toLowerCase();
+           //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
+           if (StringUtils.isEmpty(repositoryAddress)){
+               String ip;
+               try {
+                   ip = InetAddress.getLocalHost().getHostAddress();
+               } catch (UnknownHostException e) {
+                   ip = "172.0.0.1";
+               }
+               absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+           }else {
+               absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+           }
+       }
+        return absoluteAddress;
+    }
 }

@@ -19,6 +19,7 @@ import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +145,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public List<Library> findLibraryList(LibraryQuery libraryQuery) {
+
         findRepositoryGroup(libraryQuery);
         List<LibraryEntity> libraryEntityList = libraryDao.findLibraryList(libraryQuery);
 
@@ -193,13 +195,15 @@ public class LibraryServiceImpl implements LibraryService {
      * @return
      */
     public void findRepositoryGroup(LibraryQuery libraryQuery){
-        Repository repository = repositoryService.findRepository(libraryQuery.getRepositoryId());
-        if (!ObjectUtils.isEmpty(repository)&& "group".equals(repository.getRepositoryType())){
-            List<RepositoryGroup> groupItemsList = repositoryGroupService.findRepositoryGroupList(
-                    new RepositoryGroupQuery().setRepositoryGroupId(libraryQuery.getRepositoryId()));
-            if (CollectionUtils.isNotEmpty(groupItemsList)){
-                List<String> repositoryIds = groupItemsList.stream().map(item -> item.getRepository().getId()).collect(Collectors.toList());
-                libraryQuery.setRepositoryIds(repositoryIds);
+        if (StringUtils.isNotEmpty(libraryQuery.getRepositoryId())){
+            Repository repository = repositoryService.findRepository(libraryQuery.getRepositoryId());
+            if (!ObjectUtils.isEmpty(repository)&& "group".equals(repository.getRepositoryType())){
+                List<RepositoryGroup> groupItemsList = repositoryGroupService.findRepositoryGroupList(
+                        new RepositoryGroupQuery().setRepositoryGroupId(libraryQuery.getRepositoryId()));
+                if (CollectionUtils.isNotEmpty(groupItemsList)){
+                    List<String> repositoryIds = groupItemsList.stream().map(item -> item.getRepository().getId()).collect(Collectors.toList());
+                    libraryQuery.setRepositoryIds(repositoryIds);
+                }
             }
         }
     }
