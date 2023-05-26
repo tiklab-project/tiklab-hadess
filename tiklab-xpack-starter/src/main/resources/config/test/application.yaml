@@ -93,6 +93,10 @@ template:
   shell:
     path: ${APP_HOME}/script/create_db_local_02.sh
 
+#file
+file:
+  path: http://file.dev.tiklab.net
+
 repository:
   library: ${user.home}
   code: xpack

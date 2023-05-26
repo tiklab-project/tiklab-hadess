@@ -75,6 +75,9 @@ homes:
 licences:
   path: ${DATA_HOME}/data/dfs/default
 
+#file
+file:
+  path: http://file.tiklab.net
 
 repository:
   library: ${user.home}

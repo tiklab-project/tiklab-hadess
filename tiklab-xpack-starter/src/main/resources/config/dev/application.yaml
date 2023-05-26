@@ -63,11 +63,11 @@ plugin.path: ${APP_HOME}/plugin
 
 #rpc
 ocs:
-  address: http://192.168.10.19:8080
+  address: http://192.168.10.14:8080
 
 
 homes:
-  address: http://192.168.10.19:8080
+  address: http://192.168.10.14:8080
   return:
     path: ''
 
@@ -75,11 +75,13 @@ homes:
 licences:
   path: ${DATA_HOME}/data/dfs/default
 
-
+#file
+file:
+  path: http://file.dev.tiklab.net
 repository:
   library: /Users/limingliang/publicData
   code: xpack
-  address: "http://192.168.10.19:8083"
+  address: "http://192.168.10.14:8083"
 
 
 
