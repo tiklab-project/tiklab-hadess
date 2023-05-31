@@ -162,6 +162,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
 
+
         findLibrary(repositoryList);
 
         joinTemplate.joinQuery(repositoryList);
@@ -215,6 +216,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     public void findLibrary(List<Repository> repositoryList){
         if (CollectionUtils.isNotEmpty(repositoryList)) {
             for (Repository repository : repositoryList) {
+                String repositoryUrl = findRepositoryUrl(repository);
+                repository.setRepositoryUrl(repositoryUrl);
+
                 List<Library> libraryList = libraryService.findLibraryList(new LibraryQuery().setRepositoryId(repository.getId()));
                 if (CollectionUtils.isNotEmpty(libraryList)) {
                     repository.setLibraryNum(libraryList.size());
