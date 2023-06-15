@@ -15,7 +15,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://172.12.1.16:5432/tiklab_xpack?stringtype=unspecified
+  url: jdbc:postgresql://172.13.1.13:5432/tiklab_xpack?stringtype=unspecified
   username: postgres
   password: darth2020
 
