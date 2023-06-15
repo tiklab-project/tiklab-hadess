@@ -21,12 +21,7 @@ jdbc:
 
 DATA_HOME: ${user.home}/tiklab/${app.name}
 
-#enable mysql
-mysql:
-  embbed:
-    enable: false
-  server:
-    port: 3306
+
 
 
 #eas config

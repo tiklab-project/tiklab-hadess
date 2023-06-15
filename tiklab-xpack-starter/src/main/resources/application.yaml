@@ -43,11 +43,6 @@ dss:
     url: 101.132.162.74:6000
     bucket: ${app.name}
 
-#enable mysql
-mysql:
-  embbed:
-    enable: false
-  database: tiklab_xpack
 
 #eas config
 eas:
