@@ -23,7 +23,8 @@ DATA_HOME: ${user.home}/tiklab/${app.name}
 
 eas:
   embbed:
-    enable: true
+    enable: false
+  address: http://bac.eas.demo.tiklab.net
 
 base:
   url: http://bac.eas.demo.tiklab.net
