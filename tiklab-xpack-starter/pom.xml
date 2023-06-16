@@ -282,6 +282,14 @@
             </properties>
         </profile>
 
+        <!--demo-->
+        <profile>
+            <id>env-demo</id>
+            <properties>
+                <yaml-type>/config/demo</yaml-type>
+            </properties>
+        </profile>
+
         <!--release-->
         <profile>
             <id>env-release</id>

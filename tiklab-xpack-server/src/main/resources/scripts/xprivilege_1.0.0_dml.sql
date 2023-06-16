@@ -31,24 +31,24 @@ INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('74217ab2e9
 
 
 
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('2fc38e2bd9ae', '1', 'hfg5371be8ec');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('35c69d9541ec', '1', '43e7d41decf7');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('9bdda9a0b509', '1', 'hf43e412151e');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6f86c10ba475', '1', 'wqre9998fc00');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6914e65f7c92', '1', '4235d2624bdf');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('d218d73a980e', '1', 'oug5371be8ec');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('15235be0755d', '1', '585d26bcbdf3');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('7a49af3c70ef', '1', '890e7d41decf');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('f3977c84615f', '1', '043e412151db');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('1ef93b2837c7', '1', '925371be8ec6');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('c1003fe47c16', '1', '447d9998fc00');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6967ae37cbdb', '1', 'dd81bdbb52bc');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('cfeb2cb31110', '1', '57a3bcd1e5fe');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('72f160dcafa3', '1', '9633d9475886');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('4e8417f988c0', '1', '5fb7863b09a8');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('50cf5be6b67f', '1', '428be660dea3');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('594ba104d686', '1', '6b61fbe5091a');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('89ea961766fd', '1', '9c99b8a096c8');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('3078797e7cb5', '1', 'cb954a7c0be3');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('2f947cfb5ba8', '1', 'e8bf9843bc9d');
-INSERT INTO "public"."pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('74887911132b', '1', '325c2503007f');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('2fc38e2bd9ae', '1', 'hfg5371be8ec');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('35c69d9541ec', '1', '43e7d41decf7');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('9bdda9a0b509', '1', 'hf43e412151e');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6f86c10ba475', '1', 'wqre9998fc00');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6914e65f7c92', '1', '4235d2624bdf');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('d218d73a980e', '1', 'oug5371be8ec');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('15235be0755d', '1', '585d26bcbdf3');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('7a49af3c70ef', '1', '890e7d41decf');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('f3977c84615f', '1', '043e412151db');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('1ef93b2837c7', '1', '925371be8ec6');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('c1003fe47c16', '1', '447d9998fc00');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('6967ae37cbdb', '1', 'dd81bdbb52bc');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('cfeb2cb31110', '1', '57a3bcd1e5fe');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('72f160dcafa3', '1', '9633d9475886');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('4e8417f988c0', '1', '5fb7863b09a8');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('50cf5be6b67f', '1', '428be660dea3');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('594ba104d686', '1', '6b61fbe5091a');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('89ea961766fd', '1', '9c99b8a096c8');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('3078797e7cb5', '1', 'cb954a7c0be3');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('2f947cfb5ba8', '1', 'e8bf9843bc9d');
+INSERT INTO "pcs_prc_role_function" ("id", "role_id", "function_id") VALUES ('74887911132b', '1', '325c2503007f');
