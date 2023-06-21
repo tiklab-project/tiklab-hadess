@@ -19,9 +19,13 @@ jdbc:
   username: postgres
   password: darth2020
 
+
+postgresql:
+  embbed:
+    enable: false
+  database: tiklab_xpack
+
 DATA_HOME: ${user.home}/tiklab/${app.name}
-
-
 
 
 #eas config
