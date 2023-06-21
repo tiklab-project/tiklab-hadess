@@ -76,6 +76,11 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postgresql-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -191,7 +196,7 @@
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
-                                            <artifactId>tiklab-mysql-windows</artifactId>
+                                            <artifactId>tiklab-postgresql-linux</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
@@ -252,7 +257,7 @@
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
-                                            <artifactId>tiklab-mysql-mac</artifactId>
+                                            <artifactId>tiklab-postgresql-linux</artifactId>
                                             <version>${project.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
