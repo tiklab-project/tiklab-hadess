@@ -62,14 +62,9 @@ dss:
 plugin.path: ${APP_HOME}/plugin
 
 #rpc
-ocs:
-  address: http://192.168.10.7:8080
-
-
 homes:
   address: http://192.168.10.7:8080
-  return:
-    path: ''
+
 
 #licences config
 licences:

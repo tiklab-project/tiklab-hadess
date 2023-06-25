@@ -40,6 +40,8 @@ eas:
   embbed:
     enable: true
 
+base:
+  url: http://eas-ce.test.tiklab.net
 #dfs config
 #dfs.server.enabled=false
 dfs:
@@ -66,14 +68,8 @@ dss:
 plugin.path: ${APP_HOME}/plugin
 
 #rpc
-ocs:
-  address: http://172.11.1.11:8080
-
-
 homes:
   address: http://172.11.1.11:8080
-  return:
-    path: ''
 
 #licences config
 licences:
@@ -96,4 +92,4 @@ file:
 repository:
   library: ${user.home}
   code: xpack
-  address: "http://bac.xpack.test.tiklab.net"
+  address: "http://xpack-ce.test.tiklab.net"

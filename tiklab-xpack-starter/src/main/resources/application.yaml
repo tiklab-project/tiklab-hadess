@@ -64,14 +64,8 @@ eas:
 plugin.path: ${APP_HOME}/plugin
 
 #rpc
-ocs:
-  address: http://139.196.76.221:8080
-
-
 homes:
   address: http://139.196.76.221:8080
-  return:
-    path: ''
 
 #licences config
 licences:
