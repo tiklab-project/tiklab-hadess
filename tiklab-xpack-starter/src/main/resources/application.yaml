@@ -1,7 +1,7 @@
 #application config
 app:
   path: ${APP_HOME}
-
+  name: xpack
 spring:
   config:
     import: optional:classpath:/config/${env:dev}/application.yaml
