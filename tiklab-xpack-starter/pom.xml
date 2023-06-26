@@ -390,7 +390,7 @@
                 </executions>
             </plugin>
 
-          <!--  &lt;!&ndash;copy插件&ndash;&gt;
+            <!--copy插件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -414,7 +414,7 @@
                     <includeTypes>jar</includeTypes>
                     <outputDirectory>${project.basedir}/plugin</outputDirectory>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
