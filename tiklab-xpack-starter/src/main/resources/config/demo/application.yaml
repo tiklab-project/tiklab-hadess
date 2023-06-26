@@ -1,6 +1,6 @@
 #application config
 app:
-  name: tiklab-xpack
+  name: xpack
   path: ${APP_HOME}
 spring:
   profiles:

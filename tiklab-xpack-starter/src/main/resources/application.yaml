@@ -1,6 +1,5 @@
 #application config
 app:
-  name: tiklab-xpack
   path: ${APP_HOME}
 
 spring:
@@ -22,7 +21,7 @@ jdbc:
 
 postgresql:
   embbed:
-    enable: true
+    enable: false
   database: tiklab_xpack
 
 
@@ -55,7 +54,7 @@ dss:
 eas:
   embbed:
     enable: false
-  address: http://bac.eas.tiklab.net
+  address: http://e.eas.tiklab.net
 
 
 
