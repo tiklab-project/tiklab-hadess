@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
@@ -77,6 +78,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Override
     public Integer npmSubmit(String contextPath, InputStream inputStream) {
+        String appHome = AppHomeContext.getAppHome();
         String path=repositoryLibrary+contextPath;
         try{
             //读出流中的数据
