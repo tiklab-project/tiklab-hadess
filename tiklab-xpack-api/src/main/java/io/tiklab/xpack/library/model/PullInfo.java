@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  */
 @ApiModel
 @Join
-@Mapper(targetAlias = "PullInfoEntity")
+@Mapper
 public class PullInfo extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

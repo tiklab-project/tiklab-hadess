@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @ApiModel
 @Join
-@Mapper(targetAlias = "RepositoryRemoteProxyEntity")
+@Mapper
 public class RepositoryRemoteProxy extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

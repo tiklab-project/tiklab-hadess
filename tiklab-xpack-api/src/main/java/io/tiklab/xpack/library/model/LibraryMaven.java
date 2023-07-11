@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * LibraryMaven-maven制品差异数据模型
  */
 @ApiModel
-@Mapper(targetAlias = "LibraryMavenEntity")
+@Mapper
 public class LibraryMaven extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

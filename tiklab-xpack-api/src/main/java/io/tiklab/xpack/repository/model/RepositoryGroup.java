@@ -17,7 +17,7 @@ import java.util.List;
  * RepositoryGroup-组合库关联模型
  */
 @ApiModel
-@Mapper(targetAlias = "RepositoryGroupEntity")
+@Mapper
 @Join
 public class RepositoryGroup extends BaseModel {
 

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * RepositoryRemoteProxy-存储库模型
  */
 @ApiModel
-@Mapper(targetAlias = "StorageEntity")
+@Mapper
 public class Storage extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

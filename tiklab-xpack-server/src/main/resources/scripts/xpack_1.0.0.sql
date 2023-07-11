@@ -1,6 +1,5 @@
 -- ---------------------------
 -- 存储库表
--- @dsm.cmd.id="1001"
 -- ----------------------------
 CREATE TABLE pack_storage(
     id VARCHAR(12) PRIMARY KEY,
@@ -12,7 +11,6 @@ CREATE TABLE pack_storage(
 );
 -- ---------------------------
 -- 制品库
--- @dsm.cmd.id="1002"
 -- ----------------------------
 CREATE TABLE pack_repository(
      id VARCHAR(12) PRIMARY KEY,
@@ -29,7 +27,6 @@ CREATE TABLE pack_repository(
 
 -- ---------------------------
 -- 制品库maven 表
--- @dsm.cmd.id="1003"
 -- ----------------------------
 CREATE TABLE pack_repository_maven(
        id VARCHAR(12) PRIMARY KEY,
@@ -39,7 +36,6 @@ CREATE TABLE pack_repository_maven(
 );
 -- ---------------------------
 -- 远程库代理表
--- @dsm.cmd.id="1004"
 -- ----------------------------
 CREATE TABLE pack_repository_remote_proxy(
       id VARCHAR(12) PRIMARY KEY,
@@ -53,7 +49,6 @@ CREATE TABLE pack_repository_remote_proxy(
 );
 -- ---------------------------
 -- 组合库 关联制品库表
--- @dsm.cmd.id="1005"
 -- ----------------------------
 CREATE TABLE pack_repository_group_items(
      id VARCHAR(12) PRIMARY KEY,
@@ -64,7 +59,6 @@ CREATE TABLE pack_repository_group_items(
 );
 -- ---------------------------
 -- 复制信息表
--- @dsm.cmd.id="1006"
 -- ----------------------------
 CREATE TABLE pack_repository_cluster_cfg(
     id VARCHAR(12) PRIMARY KEY,
@@ -81,7 +75,6 @@ CREATE TABLE pack_repository_cluster_cfg(
 
 -- ---------------------------
 -- 制品表
--- @dsm.cmd.id="1007"
 -- ----------------------------
 CREATE TABLE pack_library(
     id VARCHAR(12) PRIMARY KEY,
@@ -94,7 +87,6 @@ CREATE TABLE pack_library(
 );
 -- ---------------------------
 -- 制品版本表
--- @dsm.cmd.id="1008"
 -- ----------------------------
 CREATE TABLE pack_library_version(
      id VARCHAR(12) PRIMARY KEY,
@@ -111,7 +103,6 @@ CREATE TABLE pack_library_version(
 );
 -- ---------------------------
 -- 制品文件表
--- @dsm.cmd.id="1009"
 -- ----------------------------
 CREATE TABLE pack_library_file(
       id VARCHAR(12) PRIMARY KEY,
@@ -127,7 +118,6 @@ CREATE TABLE pack_library_file(
 );
 -- ---------------------------
 -- 制品maven 信息表
--- @dsm.cmd.id="1010"
 -- ----------------------------
 CREATE TABLE pack_library_maven(
    id VARCHAR(12) PRIMARY KEY,
@@ -138,7 +128,6 @@ CREATE TABLE pack_library_maven(
 );
 -- ---------------------------
 -- 制品maven 信息表
--- @dsm.cmd.id="1011"
 -- ----------------------------
 CREATE TABLE pack_pull_info(
    id VARCHAR(12) PRIMARY KEY,

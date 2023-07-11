@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * Repository-制品库模型
  */
 @ApiModel
-@Mapper(targetAlias = "RepositoryEntity")
+@Mapper
 public class Repository extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

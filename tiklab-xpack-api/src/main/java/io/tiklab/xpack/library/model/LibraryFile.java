@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
  */
 @ApiModel
 @Join
-@Mapper(targetAlias = "LibraryFileEntity")
+@Mapper
 public class LibraryFile extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

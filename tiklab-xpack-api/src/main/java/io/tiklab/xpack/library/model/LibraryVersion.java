@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  */
 @ApiModel
 @Join
-@Mapper(targetAlias = "LibraryVersionEntity")
+@Mapper
 public class LibraryVersion extends BaseModel {
 
     @ApiProperty(name="id",desc="id")
