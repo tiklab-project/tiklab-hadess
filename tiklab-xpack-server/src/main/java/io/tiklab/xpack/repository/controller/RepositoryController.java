@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/repository")
-@Api(name = "RepositoryController",desc = "制品库管理 ")
+@Api(name = "RepositoryController",desc = "制品库管理")
 public class RepositoryController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryController.class);
