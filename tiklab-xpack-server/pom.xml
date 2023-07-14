@@ -126,6 +126,7 @@
             <artifactId>tiklab-upgrade-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
 
