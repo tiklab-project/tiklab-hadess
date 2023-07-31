@@ -22,8 +22,6 @@ find ${DIRS}/ -name '*.sh' | xargs dos2unix;
 #       系统运行参数
 #-------------------------------------------------------------------------------------------------------------
 #application.main.class="com.doublekit.platform.AccountSaasApplication"
-APP_MAIN="io.tiklab.xpack.XpackApplication"
-
 DIR=$(cd "$(dirname "$0")"; pwd)
 APP_HOME=${DIR}/..
 APP_CONFIG=${APP_HOME}/conf/application-${env}.properties
