@@ -9,6 +9,7 @@ import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.model.UserQuery;
 import io.tiklab.user.user.service.UserService;
+import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
@@ -59,8 +60,9 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     @Autowired
     UserPassportService userPassportService;
 
-    @Value("${repository.address}")
-    String memoryAddress;
+    @Autowired
+    XpakYamlDataMaService yamlDataMaService;
+
 
     @Override
     public Map npmLogin(BufferedReader reader) {
@@ -78,7 +80,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Override
     public Integer npmSubmit(String contextPath, InputStream inputStream) {
-        String path=memoryAddress+contextPath;
         try{
             //读出流中的数据
             JSONObject jsonObjectData = readData(inputStream);
@@ -102,7 +103,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 return 401;
             }
 
-            return npmSubmitData(path,jsonObjectData);
+            return npmSubmitData(contextPath,jsonObjectData);
         }catch (IOException e){
             throw new RuntimeException(e);
         }
@@ -194,11 +195,11 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     /**
      *  npm上传-文件的处理
-     * @param path: 上传后存储文件的路径
+     * @param contextPath: 客户端请求路径
      * @param allData:   上传的文件
      * @return
      */
-    public Integer npmSubmitData(String path,JSONObject allData) throws IOException {
+    public Integer npmSubmitData(String contextPath,JSONObject allData) throws IOException {
 
         //tga的内容
         JSONObject tgaData =(JSONObject) allData.get("_attachments");
@@ -215,9 +216,12 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
 
         //制品名称
-        String frontUrl = path.substring(0, path.lastIndexOf("/"));
-        String repositoryName = frontUrl.substring(frontUrl.lastIndexOf("/") + 1);
-        String libraryName = path.substring(path.lastIndexOf("/") + 1);
+        int index = contextPath.indexOf("/",1);
+        int repositoryIndex = contextPath.indexOf("/", index + 1);
+        //仓库名称
+        String repositoryName=contextPath.substring(index+1,repositoryIndex);
+
+        String libraryName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
 
         //tgz内容
         JSONObject tgaSecondData =(JSONObject) tgaData.get(tgzName);
@@ -229,7 +233,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         JSONObject versionData =(JSONObject) allData.get("versions");
         Set<String> versionKey = versionData.keySet();
         String version = versionKey.stream().findFirst().orElse("null");
-
+        String path=yamlDataMaService.repositoryAddress()+"/"+contextPath;
         //tag 文件存储的绝对路径
         String filePath=path+"/"+tgzName;
 

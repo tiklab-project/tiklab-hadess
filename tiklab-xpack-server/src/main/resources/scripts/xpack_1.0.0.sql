@@ -111,7 +111,7 @@ CREATE TABLE pack_library_file(
       repository_id varchar (12) NOT NULL,
       file_size varchar (32) NOT NULL,
       file_name varchar (64) NOT NULL,
-      file_url varchar (248) NOT NULL,
+      file_url varchar (424) NOT NULL,
       relative_path varchar (246),
       snapshot_version varchar(255),
       create_time  timestamp

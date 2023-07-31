@@ -2,7 +2,7 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.xpack.library.model.*;
-import io.tiklab.xpack.util.RepositoryUtil;
+import io.tiklab.xpack.common.RepositoryUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;

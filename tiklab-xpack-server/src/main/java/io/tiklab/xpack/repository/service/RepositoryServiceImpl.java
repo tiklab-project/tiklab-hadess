@@ -1,12 +1,10 @@
 package io.tiklab.xpack.repository.service;
 import io.tiklab.beans.BeanMapper;
-import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
-import io.tiklab.privilege.role.model.PatchUser;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
@@ -16,7 +14,6 @@ import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.dao.RepositoryDao;
 import io.tiklab.xpack.repository.entity.RepositoryEntity;
 import io.tiklab.xpack.repository.model.*;
-import io.tiklab.xpack.util.RepositoryUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,7 @@ import org.springframework.util.ObjectUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -243,10 +240,27 @@ public class RepositoryServiceImpl implements RepositoryService {
        if (!ObjectUtils.isEmpty(repository)){
            String type = repository.getType().toLowerCase();
            //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
-           String ip;
+           String ip=null;
            try {
-               ip = InetAddress.getLocalHost().getHostAddress();
-           } catch (UnknownHostException e) {
+               Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+               while (interfaces.hasMoreElements()) {
+                   NetworkInterface networkInterface = interfaces.nextElement();
+                   if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                       continue;  // 跳过回环和虚拟网络接口
+                   }
+                   Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                   while (addresses.hasMoreElements()) {
+                       InetAddress address = addresses.nextElement();
+                       if (address.isLoopbackAddress()) {
+                           continue;  // 跳过回环地址
+                       }
+                       if (address.getHostAddress().contains(":")) {
+                           continue;  // 跳过IPv6地址
+                       }
+                       ip = address.getHostAddress();
+                   }
+               }
+           } catch (Exception e) {
                ip = "172.0.0.1";
            }
            absoluteAddress="http://" + ip + ":" + port + "/xpack/"+type+"/"+repository.getRepositoryUrl();

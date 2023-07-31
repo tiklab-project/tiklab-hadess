@@ -38,19 +38,21 @@ public class NpmUploadController {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Object npmSubmit(HttpServletRequest request, HttpServletResponse response){
         String contextPath = request.getRequestURI();
+        String address = contextPath.substring(7);
+
         String referer = request.getHeader("referer");
         try {
             //npm publish （提交）
             if (referer.contains("publish")){
                 InputStream inputStream = request.getInputStream();
-                Integer resultCode = downloadNpmService.npmSubmit(contextPath, inputStream);
+                Integer resultCode = downloadNpmService.npmSubmit(address, inputStream);
                 response.setStatus(resultCode);
             }
             //npm install （拉取）
             if (referer.contains("install")){
-                if (!contextPath.endsWith(".tgz")){
+                if (!address.endsWith(".tgz")){
                     //第一次交互
-                    Map<String,String> data = downloadNpmService.npmPull(contextPath);
+                    Map<String,String> data = downloadNpmService.npmPull(address);
                     switch (data.get("code")){
                         case "200":
                             response.setContentType("application/json;charset=utf-8");
@@ -63,7 +65,7 @@ public class NpmUploadController {
                     }
                 }else {
                     //第二次交互以.tgz结尾
-                    Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(contextPath);
+                    Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(address);
                     if ("200".equals(resultMap.get("code"))){
                         ServletOutputStream outputStream = response.getOutputStream();
                         outputStream.write((byte[])resultMap.get("data"));

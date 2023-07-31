@@ -1,4 +1,4 @@
-package io.tiklab.xpack.util;
+package io.tiklab.xpack.common;
 
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.context.AppHomeContext;
