@@ -1,4 +1,4 @@
-package io.tiklab.xpack.config;
+package io.tiklab.xpack.starter.config;
 
 
 import io.tiklab.eam.author.Authenticator;
@@ -102,7 +102,8 @@ public class GatewayFilterAutoConfiguration {
                         "/services",
                         "/xpack",
                         "/library",
-                        "/repository"
+                        "/repository",
+                        "/pushCenWarehouse"
 
                 })
                 .get();

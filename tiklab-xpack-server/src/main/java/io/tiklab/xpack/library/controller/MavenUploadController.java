@@ -34,6 +34,8 @@ public class MavenUploadController {
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response){
 
         String contextPath = request.getRequestURI();
+        String address = contextPath.substring(7);
+
         String method = request.getMethod();
 
         //用户信息
@@ -52,12 +54,11 @@ public class MavenUploadController {
                     byte[] decode = Base64.getDecoder().decode(basic);
                     //用户信息
                     String userData = new String(decode, "UTF-8");
-                    Result<byte[]> result = downloadMavenService.mavenSubmit(contextPath, inputStream, userData);
+                    Result<byte[]> result = downloadMavenService.mavenSubmit(address, inputStream, userData);
                     response.setStatus(result.getCode(),result.getMsg());
                 }
             }else {
-                String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
-                Result<byte[]> result = downloadMavenService.mavenPull(contextPath,repositoryUrl);
+                Result<byte[]> result = downloadMavenService.mavenPull(address);
                 if (result.getCode()==200){
                     response.setStatus(200,result.getMsg());
                     byte[] data = result.getData();

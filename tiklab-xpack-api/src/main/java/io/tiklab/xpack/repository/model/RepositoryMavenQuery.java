@@ -1,34 +1,26 @@
 package io.tiklab.xpack.repository.model;
 
+
 import io.tiklab.core.order.Order;
 import io.tiklab.core.order.OrderBuilders;
 import io.tiklab.core.page.Page;
 import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 
-import java.io.Serializable;
 import java.util.List;
 
-
 @ApiModel
-public class RepositoryQuery implements Serializable {
+public class RepositoryMavenQuery {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
         private List<Order> orderParams = OrderBuilders.instance().asc("id").get();
 
-
         @ApiProperty(name ="pageParam",desc = "分页参数")
         private Page pageParam = new Page();
 
-        @ApiProperty(name ="name",desc = "制品库名字")
-        private String name;
 
-        @ApiProperty(name ="repositoryType",desc = "制品库类型")
-        private String repositoryType;
-
-        @ApiProperty(name ="type",desc = "类型")
-        private String type;
-
+        @ApiProperty(name ="repositoryId",desc = "制品库id")
+        private String repositoryId;
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -45,29 +37,12 @@ public class RepositoryQuery implements Serializable {
             this.pageParam = pageParam;
         }
 
-        public String getRepositoryType() {
-            return repositoryType;
+        public String getRepositoryId() {
+            return repositoryId;
         }
 
-        public RepositoryQuery setRepositoryType(String repositoryType) {
-            this.repositoryType = repositoryType;
-            return this;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public RepositoryQuery setName(String name) {
-            this.name = name;
+        public RepositoryMavenQuery setRepositoryId(String repositoryId) {
+            this.repositoryId = repositoryId;
             return this;
         }
 }

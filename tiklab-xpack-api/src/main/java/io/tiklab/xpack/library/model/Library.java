@@ -11,6 +11,7 @@ import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.xpack.repository.model.Repository;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Library 制品模型
@@ -56,6 +57,9 @@ public class Library extends BaseModel {
 
     @ApiProperty(name="artifactId",desc="maven制品-artifactId")
     private java.lang.String artifactId;
+
+    @ApiProperty(name="children",desc="版本list")
+    private List<LibraryVersion> children;
 
 
     public java.lang.String getId() {
@@ -125,5 +129,13 @@ public class Library extends BaseModel {
 
     public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
+    }
+
+    public List<LibraryVersion> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<LibraryVersion> children) {
+        this.children = children;
     }
 }

@@ -1,6 +1,7 @@
-package io.tiklab.xpack;
+package io.tiklab.xpack.starter;
 
 import io.tiklab.core.property.PropertyAndYamlSourceFactory;
+import io.tiklab.xpack.starter.annotation.EnableXpack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

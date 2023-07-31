@@ -225,4 +225,18 @@ public class LibraryDao{
         return jpaTemplate.getJdbcTemplate();
     }
 
+    /**
+     * 查询未添加到推送中央仓库的记录的制品列表
+     * @param libraryIds
+     * @return List <LibraryEntity>
+     */
+    public List<LibraryEntity> findNotPushLibraryList(String[] libraryIds,String repositoryId,String name) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .notIn("id",libraryIds)
+                .like("name",name)
+                .eq("repositoryId", repositoryId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+
+    }
 }

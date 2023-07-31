@@ -44,7 +44,6 @@ public class LibraryQuery implements Serializable {
         private String artifactId;
 
 
-
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -119,4 +118,6 @@ public class LibraryQuery implements Serializable {
         public void setArtifactId(String artifactId) {
             this.artifactId = artifactId;
         }
+
+
 }

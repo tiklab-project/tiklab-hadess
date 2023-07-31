@@ -13,6 +13,7 @@ import io.tiklab.xpack.library.model.LibraryFile;
 import io.tiklab.xpack.library.model.LibraryVersion;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
+import io.tiklab.xpack.repository.service.RepositoryMavenService;
 import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
@@ -37,14 +38,14 @@ import java.util.stream.Collectors;
 @Exporter
 public class MavenUploadServiceImpl implements MavenUploadService {
 
-    @Value("${repository.library:null}")
-    String repositoryLibrary;
-
     @Autowired
     LibraryService libraryService;
 
     @Autowired
     RepositoryService repositoryService;
+
+    @Autowired
+    RepositoryMavenService mavenService;
 
     @Autowired
     RepositoryGroupService repositoryGroupService;
@@ -70,6 +71,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     @Autowired
     PullInfoService pullInfoService;
 
+    @Value("${repository.address}")
+    String memoryAddress;
+
     @Override
     public Result<byte[]> mavenSubmit(String contextPath, InputStream inputStream, String userData) {
         String userName;
@@ -80,22 +84,21 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             return Result.error(401,e.getMessage());
         }
         try {
-            String repositoryUrl = contextPath.substring(contextPath.indexOf("xpack/maven") + 12);
-            return fileWriteData(inputStream, userName, contextPath,repositoryUrl);
+            return fileWriteData(inputStream, userName, contextPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Result<byte[]> mavenPull(String contextPath,String repositoryUrl) {
-        int index = repositoryUrl.indexOf("/",1);
-        //客服端请求路径制品库名称
-        String repositoryName = repositoryUrl.substring(0, index);
+    public Result<byte[]> mavenPull(String contextPath) {
+        int index = contextPath.indexOf("/", 1);
+        //仓库名称
+        String repositoryName=contextPath.substring(index+1,contextPath.indexOf("/",index+1));
 
         //文件相对路径
-        String relativePath = repositoryUrl.substring(index);
-        relativePath = relativePath.substring(1);
+        String relativePath = contextPath.substring(contextPath.indexOf("/", index + 2) + 1);
+
         try {
             //查询组合的制品库
             List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
@@ -103,7 +106,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 Repository repository = repositoryList.get(0);
                 // maven上传 需要对maven-metadata 进行拉取校验
                 if ("local".equals(repository.getRepositoryType())){
-                    String filePath=repositoryLibrary+contextPath;
+                    String filePath=memoryAddress+"/"+contextPath;
                     File file = new File(filePath);
 
                     String fileData = gainFileData(file);
@@ -246,32 +249,40 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param contextPath     maven客户端提交路径 （制品文件夹路径+文件路径）
      * @param userName          用户
      * @param inputStream     输入数据流文件
-     * @param repositoryUrl   repositoryUrl
-     * @return
      */
-    public Result fileWriteData(InputStream inputStream, String userName,
-                                String contextPath,String repositoryUrl) throws IOException {
+    public Result fileWriteData(InputStream inputStream, String userName, String contextPath) throws IOException {
 
-        int index = repositoryUrl.indexOf("/",1);
-        //客服端请求路径制品库名称
-        String repositoryName = repositoryUrl.substring(0, index);
+        int index = contextPath.indexOf("/",1);
+
+        //仓库名称
+        String repositoryName=contextPath.substring(index+1,contextPath.indexOf("/",index+1));
 
         //文件相对路径
-        String relativePath = repositoryUrl.substring(index);
-        relativePath = relativePath.substring(1);
+        String relativePath = contextPath.substring(contextPath.indexOf("/", index + 2) + 1);
 
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
 
         if (CollectionUtils.isNotEmpty(repositoryList)){
+            Result result = new Result<>();
 
             //解析相对路径 获取文件名称、版本、groupId
             Map<String, String> dataMap = resolverRelativePath(relativePath);
+
+            List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repositoryList.get(0).getId()));
+            String version = dataMap.get("version").toLowerCase();
+
+            if (("Release").equals(mavenList.get(0).getVersion())){
+                if (version.endsWith("snapshot")){
+                    result.setCode(400);
+                    result.setMsg("Repository version policy");
+                    return result;
+                }
+            }
             dataMap.put("relativePath",relativePath);
             dataMap.put("userName",userName);
             dataMap.put("contextPath",contextPath);
 
-            Result result = new Result<>();
             //写入文件
             Result writeFile = writeFile(inputStream, contextPath,dataMap);
 
@@ -310,9 +321,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 dataMap.put("contextPath",contextPath);
             }
         }
-        String path=repositoryLibrary+url;
+        String path=memoryAddress+"/"+url;
 
-        String filePath=repositoryLibrary+contextPath;
+        String filePath=memoryAddress+"/"+contextPath;
         File folder = new File(path);
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
@@ -389,7 +400,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryVersion.setVersion(dataMap.get("version"));
         libraryVersion.setLibraryType("maven");
         if (dataMap.get("relativePath").endsWith(".jar.sha1")){
-            String filePath=repositoryLibrary+dataMap.get("contextPath");
+            String filePath=memoryAddress+"/"+dataMap.get("contextPath");
             libraryVersion.setHash(gainFileData(new File(filePath)));
         }
         libraryVersion.setPusher(dataMap.get("userName"));
@@ -401,7 +412,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryFile.setFileName(dataMap.get("fileName"));
         libraryFile.setFileSize(fileSize);
         libraryFile.setRepository(repository);
-        libraryFile.setFileUrl(repositoryLibrary+dataMap.get("contextPath"));
+        libraryFile.setFileUrl(memoryAddress+"/"+dataMap.get("contextPath"));
         libraryFile.setRelativePath(dataMap.get("relativePath"));
         if (dataMap.get("version").endsWith("-SNAPSHOT")){
 
@@ -502,11 +513,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         //快照时间戳加类型
         String timeName = dataMap.get("fileName").substring(dataMap.get("fileName").lastIndexOf(version) + version.length() + 1);
-        String timeRub = timeName.substring(0, timeName.lastIndexOf("."));
+        String timeRub = timeName.substring(0, timeName.indexOf(".",timeName.indexOf(".")+1));
 
-        if (dataMap.get("fileName").endsWith("sha1")||dataMap.get("fileName").endsWith("md5")){
-            timeRub=timeRub.substring(0, timeRub.lastIndexOf("."));
+        if (timeRub.endsWith("-sources")){
+            timeRub= timeRub.substring(0,timeRub.indexOf("-sources"));
         }
+
         return timeRub;
     }
 

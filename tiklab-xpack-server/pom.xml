@@ -101,12 +101,6 @@
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-integration-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
             <artifactId>tiklab-xpack-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
@@ -126,7 +120,6 @@
             <artifactId>tiklab-upgrade-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-
     </dependencies>
 
 

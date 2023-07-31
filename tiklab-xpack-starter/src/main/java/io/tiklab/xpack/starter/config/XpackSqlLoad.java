@@ -1,7 +1,7 @@
-package io.tiklab.xpack;
+package io.tiklab.xpack.starter.config;
 
-import io.tiklab.dsm.config.model.DsmConfig;
-import io.tiklab.dsm.support.DsmConfigBuilder;
+import io.tiklab.dal.dsm.config.model.DsmConfig;
+import io.tiklab.dal.dsm.support.DsmConfigBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,15 @@ public class XpackSqlLoad {
                 "oplog_1.0.0",
                 //TodoTaskDsm
                 "todotask_1.0.0",
+                //xpack
+                "xpack_1.0.0",
+                "xprivilege_1.0.0",
 
+
+        });
+        dsmConfig.newVersion("1.0.1", new String[]{
+                //xpack
+                "xpack_1.0.1",
 
         });
         return dsmConfig;

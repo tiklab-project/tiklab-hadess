@@ -1,6 +1,6 @@
 #application config
 app:
-  name: xpack
+  name: tiklab-xpack
   path: ${APP_HOME}
 spring:
   profiles:
@@ -25,38 +25,51 @@ postgresql:
     enable: false
   database: tiklab_xpack
 
-DATA_HOME: ${user.home}/tiklab/${app.name}
-
-
 #eas config
 eas:
   embbed:
     enable: true
+
+DATA_HOME: ${user.home}/tiklab/${app.name}
+
 base:
   url: http://192.168.10.23:3000
 
 
 #dfs config
-#dfs.server.enabled=false
 dfs:
+  server:
+    enabled: false
+    mode: server
+    port: 4000
+    datapath: ${DATA_HOME}/files
   client:
-    url: 172.10.1.11:4000
+    url: 127.0.0.1:4000
     bucket: ${app.name}
 
-#dcs server config
-
+#dcs config
 dcs:
+  server:
+    enabled: true
+    port: 5001
+    datapath: ${DATA_HOME}/data
   client:
-    url: 172.10.1.11:5000
-    bucket: ${app.name}
+    url: 127.0.0.1:5001
+    group: g1
+    database: dcs1
+    expire: 600
 
-#dss config
-#dss.server.enabled=false
-
+#dcs config
 dss:
+  server:
+    enabled: false
+    mode: server
+    port: 6000
+    datapath: ${DATA_HOME}/index
   client:
-    url: 172.10.1.11:6000
+    url: 127.0.0.1:6000
     bucket: ${app.name}
+
 
 #plugin config
 plugin.path: ${APP_HOME}/plugin
@@ -73,10 +86,13 @@ licences:
 #file
 file:
   path: http://file.dev.tiklab.net
+
+
+
 repository:
-  library: /Users/limingliang/publicData
-  code: xpack
-  address: "http://192.168.10.7:8083"
+  address: ${DATA_HOME}/repository
+
+
 
 
 

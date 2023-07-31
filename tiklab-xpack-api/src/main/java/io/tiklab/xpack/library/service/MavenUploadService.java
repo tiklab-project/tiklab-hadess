@@ -22,18 +22,16 @@ public interface MavenUploadService {
      * @param inputStream    流文件
      * @param userName       推送人
      * @param contextPath    客户端请求路径
-     * @param repositoryUrl  去掉前缀 xpack/maven 路径
      * @return
      */
-     Result fileWriteData(InputStream inputStream, String userName,String contextPath,String repositoryUrl) throws IOException;
+     Result fileWriteData(InputStream inputStream, String userName,String contextPath ) throws IOException;
 
     /**
      * maven拉取
      * @param contextPath 客户端拉取文件的地址
-     * @param repositoryUrl  去掉前缀 xpack/maven 路径
      * @return
      */
-    Result<byte[]> mavenPull(String contextPath,String repositoryUrl);
+    Result<byte[]> mavenPull(String contextPath);
 
 
 }

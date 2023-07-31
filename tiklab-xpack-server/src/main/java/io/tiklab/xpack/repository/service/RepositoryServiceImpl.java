@@ -15,10 +15,8 @@ import io.tiklab.xpack.library.service.LibraryService;
 import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.dao.RepositoryDao;
 import io.tiklab.xpack.repository.entity.RepositoryEntity;
-import io.tiklab.xpack.repository.model.Repository;
-import io.tiklab.xpack.repository.model.RepositoryGroup;
-import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
-import io.tiklab.xpack.repository.model.RepositoryQuery;
+import io.tiklab.xpack.repository.model.*;
+import io.tiklab.xpack.util.RepositoryUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,14 +61,11 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     private DmRoleService dmRoleService;
 
+    @Autowired
+    private RepositoryMavenService mavenService;
+
     @Value("${server.port:8080}")
     private String port;
-
-    @Value("${repository.code:null}")
-    private String repositoryCode;
-
-    @Value("${repository.address:null}")
-    private String repositoryAddress;
 
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
@@ -133,6 +128,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<RepositoryEntity> repositoryEntityList =  repositoryDao.findRepositoryList(idList);
 
         List<Repository> repositoryList =  BeanMapper.mapList(repositoryEntityList,Repository.class);
+
         return repositoryList;
     }
 
@@ -142,6 +138,12 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         joinTemplate.joinQuery(repository);
 
+        if (("maven").equals(repository.getType())&&("local").equals(repository.getRepositoryType())) {
+            List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
+            if (CollectionUtils.isNotEmpty(mavenList)) {
+                repository.setVersionType(mavenList.get(0).getVersion());
+            }
+        }
         return repository;
     }
 
@@ -161,13 +163,15 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(repositoryQuery);
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+        List<Repository> list = repositoryList.stream().sorted(Comparator.comparing(Repository::getType)).collect(Collectors.toList());
 
 
-        findLibrary(repositoryList);
+        findLibrary(list);
+
 
         joinTemplate.joinQuery(repositoryList);
 
-        return repositoryList;
+        return list;
     }
 
     @Override
@@ -239,17 +243,13 @@ public class RepositoryServiceImpl implements RepositoryService {
        if (!ObjectUtils.isEmpty(repository)){
            String type = repository.getType().toLowerCase();
            //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
-           if (StringUtils.isEmpty(repositoryAddress)){
-               String ip;
-               try {
-                   ip = InetAddress.getLocalHost().getHostAddress();
-               } catch (UnknownHostException e) {
-                   ip = "172.0.0.1";
-               }
-               absoluteAddress="http://" + ip + ":" + port + "/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
-           }else {
-               absoluteAddress=repositoryAddress+"/"+repositoryCode+"/"+type+"/"+repository.getRepositoryUrl();
+           String ip;
+           try {
+               ip = InetAddress.getLocalHost().getHostAddress();
+           } catch (UnknownHostException e) {
+               ip = "172.0.0.1";
            }
+           absoluteAddress="http://" + ip + ":" + port + "/xpack/"+type+"/"+repository.getRepositoryUrl();
        }
         return absoluteAddress;
     }

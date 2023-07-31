@@ -35,9 +35,6 @@ import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 @Service
 public class NpmUploadServiceImpl implements NpmUploadService {
 
-    @Value("${repository.library:null}")
-    String repositoryLibrary;
-
     @Autowired
     RepositoryService repositoryService;
 
@@ -62,6 +59,9 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     @Autowired
     UserPassportService userPassportService;
 
+    @Value("${repository.address}")
+    String memoryAddress;
+
     @Override
     public Map npmLogin(BufferedReader reader) {
         StringBuilder result = new StringBuilder();
@@ -78,8 +78,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Override
     public Integer npmSubmit(String contextPath, InputStream inputStream) {
-        String appHome = AppHomeContext.getAppHome();
-        String path=repositoryLibrary+contextPath;
+        String path=memoryAddress+contextPath;
         try{
             //读出流中的数据
             JSONObject jsonObjectData = readData(inputStream);
@@ -270,6 +269,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryFile.setFileSize(round+"KB");
             libraryFile.setFileUrl(filePath);
             libraryFile.setRepository(repositoryList.get(0));
+            libraryFile.setRelativePath(tgzName);
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
             return 200;
         }else {

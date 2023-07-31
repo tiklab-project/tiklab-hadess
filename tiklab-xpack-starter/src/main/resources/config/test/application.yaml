@@ -15,7 +15,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/tiklab_xpack?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -23,48 +23,55 @@ jdbc:
 postgresql:
   embbed:
     enable: true
-  database: tiklab_xpack
-  server:
-    port: 5010
-
-DATA_HOME: ${user.home}/tiklab/${app.name}
-
-
-#eas config
-#eas:
- # address: http://172.11.1.12:8080
-  #web:
-  #  address: http://172.11.1.12:8080
- # embbed:
-  #  enable: false
+  database: xpack
+  db:
+    port: 5432
+    username: postgres
+    password: darth2020
+    address: ${DATA_HOME}/postgresql
 
 eas:
   embbed:
     enable: true
 
+DATA_HOME: /opt/tiklab/xpack
+
 base:
   url: http://eas-ce.test.tiklab.net
 #dfs config
-#dfs.server.enabled=false
 dfs:
+  server:
+    enabled: false
+    mode: server
+    port: 4000
+    datapath: ${DATA_HOME}/files
   client:
-    url: 172.11.1.17:4000
+    url: 127.0.0.1:4000
     bucket: ${app.name}
 
-#dcs server config
-
+#dcs config
 dcs:
+  server:
+    enabled: true
+    port: 5001
+    datapath: ${DATA_HOME}/data
   client:
-    url: 172.11.1.17:5000
-    bucket: ${app.name}
+    url: 127.0.0.1:5001
+    group: g1
+    database: dcs1
+    expire: 600
 
-#dss config
-#dss.server.enabled=false
-
+#dcs config
 dss:
+  server:
+    enabled: false
+    mode: server
+    port: 6000
+    datapath: ${DATA_HOME}/index
   client:
-    url: 172.11.1.17:6000
+    url: 127.0.0.1:6000
     bucket: ${app.name}
+
 
 #plugin config
 plugin.path: ${APP_HOME}/plugin
@@ -77,21 +84,10 @@ homes:
 licences:
   path: ${DATA_HOME}/data/dfs/default
 
-db:
-  path: 127.0.0.1:3306
-  shell:
-    path: ${APP_HOME}/script/create_db_local_02.sh
-
-
-template:
-  shell:
-    path: ${APP_HOME}/script/create_db_local_02.sh
 
 #file
 file:
   path: http://file.dev.tiklab.net
 
 repository:
-  library: ${user.home}
-  code: xpack
-  address: "http://xpack-ce.test.tiklab.net"
+  address: ${DATA_HOME}/repository

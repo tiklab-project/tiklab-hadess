@@ -141,6 +141,15 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     }
 
     @Override
+    public List<LibraryVersion> findLibraryVersionList(String repositoryId) {
+        List<LibraryVersionEntity> libraryVersionEntityList = libraryVersionDao.findLibraryVersionList(new LibraryVersionQuery().setRepositoryId(repositoryId));
+
+        List<LibraryVersion> libraryVersionList = BeanMapper.mapList(libraryVersionEntityList,LibraryVersion.class);
+
+        return libraryVersionList;
+    }
+
+    @Override
     public Pagination<LibraryVersion> findLibraryVersionPage(LibraryVersionQuery libraryVersionQuery) {
         Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
 

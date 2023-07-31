@@ -110,6 +110,13 @@ public class LibraryController {
         return Result.ok(libraryList);
     }
 
+    @RequestMapping(path = "/findNotPushLibraryList",method = RequestMethod.POST)
+    @ApiMethod(name = "findNotPushLibraryList",desc = "查询未添加到推送中央仓库的记录的制品列表")
+    @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
+    public Result<List<Library>> findNotPushLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
+        List<Library> libraryList = libraryService.findNotPushLibraryList(libraryQuery);
+        return Result.ok(libraryList);
+    }
 }
 
 

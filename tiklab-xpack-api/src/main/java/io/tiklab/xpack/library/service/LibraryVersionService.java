@@ -64,6 +64,13 @@ public interface LibraryVersionService {
     List<LibraryVersion> findLibraryVersionList(LibraryVersionQuery libraryVersionQuery);
 
     /**
+     * 查询列表
+     * @param repositoryId
+     * @return
+     */
+    List<LibraryVersion> findLibraryVersionList(String repositoryId);
+
+    /**
     * 按分页查询
     * @param libraryVersionQuery
     * @return

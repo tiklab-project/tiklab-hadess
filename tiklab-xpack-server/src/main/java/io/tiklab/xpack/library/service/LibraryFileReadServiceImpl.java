@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 @Service
 public class LibraryFileReadServiceImpl implements LibraryFileReadService{
 
-    @Value("${repository.address:null}")
+    @Value("${visit.address:null}")
     private String repositoryAddress;
 
     @Value("${server.port:8080}")

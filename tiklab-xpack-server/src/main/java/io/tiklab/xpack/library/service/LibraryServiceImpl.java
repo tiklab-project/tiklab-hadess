@@ -3,10 +3,7 @@ package io.tiklab.xpack.library.service;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.xpack.library.dao.LibraryDao;
-import io.tiklab.xpack.library.model.Library;
-import io.tiklab.xpack.library.model.LibraryFile;
-import io.tiklab.xpack.library.model.LibraryFileQuery;
-import io.tiklab.xpack.library.model.LibraryQuery;
+import io.tiklab.xpack.library.model.*;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
@@ -51,6 +48,9 @@ public class LibraryServiceImpl implements LibraryService {
     RepositoryService repositoryService;
 
     @Autowired
+    PushLibraryService pushLibraryService;
+
+    @Autowired
     LibraryVersionService libraryVersionService;
 
     @Autowired
@@ -61,9 +61,6 @@ public class LibraryServiceImpl implements LibraryService {
     
     @Autowired
     RepositoryGroupService repositoryGroupService;
-
-    @Value("${repository.library:null}")
-    String repositoryLibrary;
 
     @Value("${repository.test:null}")
     String testLibrary;
@@ -174,6 +171,23 @@ public class LibraryServiceImpl implements LibraryService {
         joinTemplate.joinQuery(libraryList);
         return libraryList;
     }
+
+    @Override
+    public List<Library> findNotPushLibraryList(LibraryQuery libraryQuery) {
+        List<PushLibrary> pushLibraryList = pushLibraryService.findPushLibraryList(new PushLibraryQuery().setRepositoryId(libraryQuery.getRepositoryId()));
+        String[] libraryIds=null;
+        if (CollectionUtils.isNotEmpty(pushLibraryList)){
+            List<String> libraryId = pushLibraryList.stream().map(a -> a.getLibrary().getId()).collect(Collectors.toList());
+            String[] strings = new String[libraryId.size()];
+             libraryIds = libraryId.toArray(strings);
+        }
+        List<LibraryEntity> libraryEntityList = libraryDao.findNotPushLibraryList(libraryIds, libraryQuery.getRepositoryId(),libraryQuery.getName());
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        joinTemplate.joinQuery(libraryList);
+        return libraryList;
+    }
+
 
     @Override
     public Pagination<Library> findLibraryPage(LibraryQuery libraryQuery) {

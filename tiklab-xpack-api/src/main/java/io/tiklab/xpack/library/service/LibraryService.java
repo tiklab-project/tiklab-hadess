@@ -104,4 +104,13 @@ public interface LibraryService {
      * @return
      */
     List<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
+
+    /**
+     * 查询未添加到推送中央仓库的记录的制品列表
+     * @param libraryQuery
+     * @return
+     */
+    List<Library> findNotPushLibraryList(LibraryQuery libraryQuery);
+
+
 }

@@ -62,6 +62,9 @@ public class Repository extends BaseModel {
     @ApiProperty(name="libraryNum",desc="制品数量")
     private Integer  libraryNum;
 
+    @ApiProperty(name="versionType",desc="版本控制")
+    private String  versionType;
+
     public java.lang.String getId() {
         return id;
     }
@@ -144,5 +147,13 @@ public class Repository extends BaseModel {
 
     public void setLibraryNum(Integer libraryNum) {
         this.libraryNum = libraryNum;
+    }
+
+    public String getVersionType() {
+        return versionType;
+    }
+
+    public void setVersionType(String versionType) {
+        this.versionType = versionType;
     }
 }

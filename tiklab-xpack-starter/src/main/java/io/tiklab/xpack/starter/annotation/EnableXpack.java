@@ -1,5 +1,6 @@
-package io.tiklab.xpack;
+package io.tiklab.xpack.starter.annotation;
 
+import io.tiklab.xpack.starter.config.XpackAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
