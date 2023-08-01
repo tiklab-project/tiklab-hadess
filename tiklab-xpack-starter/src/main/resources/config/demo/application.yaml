@@ -15,14 +15,19 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://172.12.1.10:5432/tiklab_xpack?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
   username: postgres
   password: darth2020
 
 postgresql:
   embbed:
-    enable: false
-  database: tiklab_xpack
+    enable: true
+  database: xpack
+  db:
+    port: 5432
+    username: postgres
+    password: darth2020
+    address: ${DATA_HOME}/postgresql
 
 eas:
   embbed:
