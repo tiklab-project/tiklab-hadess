@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.controller;
 
 
 import io.tiklab.core.Result;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.library.model.Library;
@@ -10,10 +11,7 @@ import io.tiklab.xpack.library.service.LibraryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +49,7 @@ public class FileReadController  {
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(bytes);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
 
@@ -67,7 +65,7 @@ public class FileReadController  {
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(bytes);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
 
@@ -79,4 +77,6 @@ public class FileReadController  {
         String address=libraryFileReadService.findServerIp();
         return Result.ok(address);
     }
+
+
 }

@@ -97,17 +97,17 @@ public class LibraryController {
     @RequestMapping(path = "/findLibraryListByRepository",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryListByRepository",desc = "查询制品库下面的制品文件")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
-    public Result<List<Library>> findLibraryListByRepository(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
-        List<Library> libraryList = libraryService.findLibraryListByRepository(libraryQuery);
+    public Result<Pagination<Library>> findLibraryListByRepository(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
+        Pagination<Library> libraryList = libraryService.findLibraryListByRepository(libraryQuery);
         return Result.ok(libraryList);
     }
 
     @RequestMapping(path = "/findLibraryListByCondition",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryListByCondition",desc = "条件查询制品")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
-    public Result<List<Library>> findLibraryListByCondition(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
-        List<Library> libraryList = libraryService.findLibraryListByCondition(libraryQuery);
-        return Result.ok(libraryList);
+    public Result<Pagination<Library>> findLibraryListByCondition(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
+        Pagination<Library> listByCondition = libraryService.findLibraryListByCondition(libraryQuery);
+        return Result.ok(listByCondition);
     }
 
     @RequestMapping(path = "/findNotPushLibraryList",method = RequestMethod.POST)

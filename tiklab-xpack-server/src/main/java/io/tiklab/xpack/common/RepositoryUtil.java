@@ -10,6 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -59,4 +62,97 @@ public class RepositoryUtil {
         }
     }
 
+    /**
+     * 解压zip文件夹
+     * @param outputFolderPath 解压路径
+     * @param inputFilePath 压缩包文件路径
+     */
+
+    public static void decompressionZip(String inputFilePath,String outputFolderPath) throws IOException {
+
+        File targetFolder = new File(outputFolderPath);
+
+        // 创建目标文件夹（如果不存在）
+        if (!targetFolder.exists()) {
+            targetFolder.mkdirs();
+        }
+
+        byte[] buffer = new byte[1024];
+
+        // 创建zip文件输入流
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(inputFilePath));
+
+        // 获取zip文件中的每个entry
+        ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+        while (zipEntry != null) {
+            String entryName = zipEntry.getName();
+
+            // 构建目标文件路径
+            File extractedFile = new File(targetFolder, entryName);
+
+            // 如果entry是一个文件，则解压缩
+            if (!zipEntry.isDirectory()) {
+                // 创建目标文件的父目录（如果不存在）
+                if (!extractedFile.getParentFile().exists()) {
+                    extractedFile.getParentFile().mkdirs();
+                }
+
+                // 创建输出流，将entry解压到目标文件
+                FileOutputStream outputStream = new FileOutputStream(extractedFile);
+                int length;
+                while ((length = zipInputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+                outputStream.close();
+            }
+
+            // 关闭当前entry，继续获取下一个entry
+            zipInputStream.closeEntry();
+            zipEntry = zipInputStream.getNextEntry();
+        }
+
+        // 关闭zip文件输入流
+        zipInputStream.close();
+    }
+
+    /**
+     * 原生http  get调用
+     * @param address 解压路径
+     */
+    public static String httpGet(String address) throws Exception {
+
+        URL url = new URL(address);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("Response Code: " + responseCode);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        StringBuilder response = new StringBuilder();
+
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+        return response.toString();
+    }
+
+    /**
+     * 拷贝文件并重命名
+     * @param oldFile
+     */
+    public static void copyFile(String oldFile, String newFile) throws Exception {
+        InputStream inputStream = new FileInputStream(oldFile);
+        OutputStream outputStream = new FileOutputStream(newFile);
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, length);
+        }
+        inputStream.close();
+        outputStream.close();
+    }
 }

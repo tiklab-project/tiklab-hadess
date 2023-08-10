@@ -1,12 +1,15 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.core.exception.SystemException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 @Service
 public class LibraryFileReadServiceImpl implements LibraryFileReadService{
@@ -38,22 +41,36 @@ public class LibraryFileReadServiceImpl implements LibraryFileReadService{
 
             return bytes;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
 
     @Override
     public String findServerIp() {
-        if (StringUtils.isEmpty(repositoryAddress)){
-            try {
-               String ip = InetAddress.getLocalHost().getHostAddress();
-                String  absoluteAddress="http://" + ip + ":" + port;
-                return  absoluteAddress;
-            } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
+        String ip=null;
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                    continue;  // 跳过回环和虚拟网络接口
+                }
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (address.isLoopbackAddress()) {
+                        continue;  // 跳过回环地址
+                    }
+                    if (address.getHostAddress().contains(":")) {
+                        continue;  // 跳过IPv6地址
+                    }
+                    ip = address.getHostAddress();
+                }
             }
-        }else {
-            return  repositoryAddress;
+        } catch (Exception e) {
+            ip = "172.0.0.1";
         }
+        String absoluteAddressl="http://" + ip + ":" + port;
+        return absoluteAddressl;
     }
 }

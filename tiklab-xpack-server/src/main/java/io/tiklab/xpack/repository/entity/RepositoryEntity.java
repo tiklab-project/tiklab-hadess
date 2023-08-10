@@ -33,6 +33,9 @@ public class RepositoryEntity extends BaseModel {
     @Column(name = "type",length = 12,notNull = true)
     private String type;
 
+    @Column(name = "rules",length = 12)
+    private String rules;
+
     //存储库id
     @Column(name = "storage_id",length = 12)
     private String storageId;
@@ -129,5 +132,13 @@ public class RepositoryEntity extends BaseModel {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
     }
 }

@@ -3,6 +3,7 @@ package io.tiklab.xpack.library.service;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.xpack.library.dao.LibraryDao;
+import io.tiklab.xpack.library.entity.PushLibraryEntity;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
@@ -13,7 +14,9 @@ import io.tiklab.xpack.library.entity.LibraryEntity;
 import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.model.RepositoryGroup;
 import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
+import io.tiklab.xpack.repository.model.RepositoryMaven;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
+import io.tiklab.xpack.repository.service.RepositoryMavenService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,6 +65,9 @@ public class LibraryServiceImpl implements LibraryService {
     @Autowired
     RepositoryGroupService repositoryGroupService;
 
+    @Autowired
+    RepositoryMavenService repositoryMavenService;
+
     @Value("${repository.test:null}")
     String testLibrary;
 
@@ -92,7 +98,11 @@ public class LibraryServiceImpl implements LibraryService {
 
         libraryFileService.deleteLibraryFileByCondition("libraryId",id);
 
+        pushLibraryService.deleteVersionByCondition("libraryId",id);
+
         libraryDao.deleteLibrary(id);
+
+
     }
 
     @Override
@@ -153,23 +163,53 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryList;
     }
 
+    @Override
+    public Integer findLibraryNum(String repositoryId) {
+        return libraryDao.findLibraryNum(repositoryId);
+    }
 
     @Override
-    public List<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
+    public Library findLibraryByName(String name,String type,String version) {
+        Library library=null;
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByName(name,type);
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+        joinTemplate.joinQuery(libraryList);
+
+        if (CollectionUtils.isNotEmpty(libraryList)){
+            if (("maven").equals(type)){
+                List<String> repositoryIds = libraryList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
+                String[] repositoryId = new String[repositoryIds.size()];
+                String[] rpyIds = repositoryIds.toArray(repositoryId);
+                RepositoryMaven repositoryMaven = repositoryMavenService.findRepositoryMavenByRpyIds(rpyIds, version);
+                if (!ObjectUtils.isEmpty(repositoryMaven)){
+                    libraryList = libraryList.stream().filter(b -> b.getRepository().getId().equals(repositoryMaven.getRepository().getId())).collect(Collectors.toList());
+                }
+            }
+             library = libraryList.get(0);
+        }
+        return library;
+    }
+
+
+    @Override
+    public Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
-        List<Library> mavenLibraryList = libraryDao.findLibraryListByRepository(libraryQuery);
+        Pagination<Library> mavenLibraryList = libraryDao.findLibraryListByRepository(libraryQuery);
 
         return mavenLibraryList;
     }
 
     @Override
-    public List<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
+    public Pagination<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
-        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryListByCondition(libraryQuery);
-        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        Pagination<LibraryEntity> pagination = libraryDao.findLibraryListByCondition(libraryQuery);
+
+        List<Library> libraryList = BeanMapper.mapList(pagination.getDataList(),Library.class);
 
         joinTemplate.joinQuery(libraryList);
-        return libraryList;
+
+        return PaginationBuilder.build(pagination,libraryList);
     }
 
     @Override
@@ -184,8 +224,9 @@ public class LibraryServiceImpl implements LibraryService {
         List<LibraryEntity> libraryEntityList = libraryDao.findNotPushLibraryList(libraryIds, libraryQuery.getRepositoryId(),libraryQuery.getName());
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
 
-        joinTemplate.joinQuery(libraryList);
-        return libraryList;
+        List<Library> libraries = libraryList.stream().sorted(Comparator.comparing(Library::getName)).collect(Collectors.toList());
+        joinTemplate.joinQuery(libraries);
+        return libraries;
     }
 
 

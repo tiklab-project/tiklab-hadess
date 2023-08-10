@@ -73,10 +73,11 @@ public interface LibraryFileService {
 
     /**
      * 通过制品库id查询
-     * @param libraryIds
+     * @param repositoryIds 制品库ids
+     * @param  fileName 文件名称
      * @return
      */
-    List<LibraryFile> findLibraryFileByLibraryId(String[] libraryIds);
+    List<LibraryFile> findLibraryFileByLibraryId(String[] repositoryIds ,String fileName);
 
     /**
      * 查询最新版本的文件列表
@@ -92,5 +93,7 @@ public interface LibraryFileService {
      * @return
      */
      void libraryFileSplice(LibraryFile libraryFile,String versionId);
+
+    public void test();
 
 }

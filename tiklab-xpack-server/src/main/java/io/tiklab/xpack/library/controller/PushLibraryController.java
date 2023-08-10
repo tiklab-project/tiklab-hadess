@@ -94,6 +94,24 @@ public class PushLibraryController {
         return Result.ok(pagination);
     }
 
+
+    @RequestMapping(path="/pushCentralWare",method = RequestMethod.POST)
+    @ApiMethod(name = "pushCentralWare",desc = "推送中央仓库")
+    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
+    public Result<String> pushCentralWare(@RequestBody @NotNull @Valid PushLibrary pushLibrary){
+       // String result = pushLibraryService.pushCentralWare(pushLibrary);
+
+        return Result.ok();
+    }
+
+/*    @RequestMapping(path="/pushResult",method = RequestMethod.POST)
+    @ApiMethod(name = "pushResult",desc = "推送结果")
+    @ApiParam(name = "versionId",desc = "制品id ",required = true)
+    public Result<String> pushResult(@NotNull String libraryId){
+        String result= pushLibraryService.pushResult(libraryId);
+
+        return Result.ok(result);
+    }*/
 }
 
 

@@ -110,4 +110,17 @@ public class RepositoryMavenDao {
                 .get();
         return jpaTemplate.findPage(queryCondition,RepositoryMavenEntity.class);
     }
+
+    /**
+     * 通过制品库ids  查询
+     * @param ids
+     * @return Pagination <RepositoryMavenEntity>
+     */
+    public List<RepositoryMavenEntity> findRepositoryMavenByRpyIds(String []ids,String version) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryMavenEntity.class)
+                .in("repositoryId",ids)
+                .eq("version",version)
+                .get();
+        return jpaTemplate.findList(queryCondition,RepositoryMavenEntity.class);
+    }
 }

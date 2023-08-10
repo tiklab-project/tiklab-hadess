@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.dao.LibraryFileDao;
 import io.tiklab.xpack.library.entity.LibraryFileEntity;
 import io.tiklab.beans.BeanMapper;
@@ -42,6 +43,9 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     @Autowired
     LibraryVersionService libraryVersionService;
 
+    @Autowired
+    XpakYamlDataMaService xpakYamlDataMaService;
+
     @Override
     public String createLibraryFile(@NotNull @Valid LibraryFile libraryFile) {
         LibraryFileEntity libraryFileEntity = BeanMapper.map(libraryFile, LibraryFileEntity.class);
@@ -77,7 +81,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         if (CollectionUtils.isNotEmpty(libraryFileList)){
             //删除文件
             for (LibraryFile libraryFile:libraryFileList){
-                File file = new File(libraryFile.getFileUrl());
+                File file = new File(xpakYamlDataMaService.repositoryAddress()+"/"+libraryFile.getFileUrl());
                 file.delete();
             }
             DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
@@ -146,12 +150,12 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
-    public List<LibraryFile> findLibraryFileByLibraryId(String[] libraryIds) {
-        List<LibraryFileEntity> fileByLibraryId = libraryFileDao.findLibraryFileByLibraryId(libraryIds);
+    public List<LibraryFile> findLibraryFileByLibraryId(String[] repositoryIds,String fileName) {
+        List<LibraryFileEntity> fileByLibraryId = libraryFileDao.findLibraryFileByLibraryId(repositoryIds,fileName);
         List<LibraryFile> libraryFileList = BeanMapper.mapList(fileByLibraryId,LibraryFile.class);
 
-        joinTemplate.joinQuery(libraryFileList);
 
+        joinTemplate.joinQuery(libraryFileList);
         return libraryFileList;
     }
 
@@ -169,9 +173,10 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         List<LibraryFile> libraryFileList = findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
        //快照版本
         if (libraryVersion.getVersion().endsWith("SNAPSHOT")){
-            List<LibraryFile> libraryFiles = libraryFileList.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+            List<LibraryFile> collected = libraryFileList.stream().filter(b -> !b.getFileUrl().contains("maven-metadata.xml")).collect(Collectors.toList());
+            List<LibraryFile> libraryFiles = collected.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
             String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
-             libraryFileList = libraryFileList.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+             libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
         }
         return libraryFileList;
     }
@@ -197,4 +202,29 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         }
     }
 
+  /*  @Override
+    public void test(){
+        List<LibraryFile> allLibraryFile = this.findAllLibraryFile();
+        List<LibraryFile> collect = allLibraryFile.stream().filter(a -> StringUtils.isNotEmpty(a.getSnapshotVersion())).collect(Collectors.toList());
+        List<LibraryFile> collected = collect.stream().filter(b -> b.getRelativePath().contains(b.getSnapshotVersion())).collect(Collectors.toList());
+        for (LibraryFile libraryFile: collected){
+            String snapshotVersion = libraryFile.getSnapshotVersion();
+            String relativePath = libraryFile.getRelativePath();
+            String replace = relativePath.replace( snapshotVersion, "SNAPSHOT");
+            libraryFile.setRelativePath(replace);
+            this.updateLibraryFile(libraryFile);
+        }
+    }*/
+
+    @Override
+    public void test() {
+        List<LibraryFile> allLibraryFile = this.findAllLibraryFile();
+        List<LibraryFile> collected = allLibraryFile.stream().filter(b -> b.getFileUrl().contains("///17fcac6b5f0d")).collect(Collectors.toList());
+        for (LibraryFile libraryFile : collected) {
+            String fileUrl = libraryFile.getFileUrl();
+            String replace = fileUrl.replace("///17fcac6b5f0d", "17fcac6b5f0d");
+            libraryFile.setFileUrl(replace);
+            this.updateLibraryFile(libraryFile);
+        }
+    }
 }

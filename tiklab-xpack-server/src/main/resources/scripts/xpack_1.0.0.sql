@@ -18,9 +18,10 @@ CREATE TABLE pack_repository(
      repository_type varchar(12) NOT NULL,
      repository_url varchar (328),
      type varchar (12) NOT NULL,
+     rules varchar(12),
      storage_id varchar (12),
      description varchar(160),
-     create_user varchar (12) NOT NULL,
+     create_user varchar (12),
      create_time timestamp,
      update_time timestamp
 );
@@ -31,7 +32,7 @@ CREATE TABLE pack_repository(
 CREATE TABLE pack_repository_maven(
        id VARCHAR(12) PRIMARY KEY,
        repository_id varchar (12) NOT NULL,
-       verify varchar(12),
+       version varchar(12),
        create_time timestamp
 );
 -- ---------------------------
@@ -110,9 +111,9 @@ CREATE TABLE pack_library_file(
       library_version_id varchar(12) NOT NULL,
       repository_id varchar (12) NOT NULL,
       file_size varchar (32) NOT NULL,
-      file_name varchar (64) NOT NULL,
-      file_url varchar (424) NOT NULL,
-      relative_path varchar (246),
+      file_name varchar (128) NOT NULL,
+      file_url varchar (688) NOT NULL,
+      relative_path varchar (688),
       snapshot_version varchar(255),
       create_time  timestamp
 );
@@ -135,4 +136,15 @@ CREATE TABLE pack_pull_info(
    library_version_id varchar (12) NOT NULL,
    user_id varchar (12) NOT NULL,
    pull_create timestamp
+);
+-- ---------------------------
+-- 推送制品列表
+-- ----------------------------
+CREATE TABLE pack_push_library(
+  id VARCHAR(12) PRIMARY KEY,
+  repository_id varchar(12) NOT NULL,
+  library_id varchar (12) NOT NULL,
+  last_push_time timestamp,
+  last_push_result varchar(12),
+  user_id varchar (12)
 );

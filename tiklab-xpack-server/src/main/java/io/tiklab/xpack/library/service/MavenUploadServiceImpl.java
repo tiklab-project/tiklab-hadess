@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.ApplicationException;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
@@ -11,6 +12,7 @@ import io.tiklab.user.user.service.UserService;
 import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryFile;
+import io.tiklab.xpack.library.model.LibraryFileQuery;
 import io.tiklab.xpack.library.model.LibraryVersion;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
@@ -19,6 +21,8 @@ import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,6 +32,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +44,7 @@ import java.util.stream.Collectors;
 @Service
 @Exporter
 public class MavenUploadServiceImpl implements MavenUploadService {
-
+    private static Logger logger = LoggerFactory.getLogger(MavenUploadServiceImpl.class);
     @Autowired
     LibraryService libraryService;
 
@@ -87,21 +93,24 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         try {
             return fileWriteData(inputStream, userName, contextPath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return Result.error(500,e.getMessage());
         }
     }
 
     @Override
     public Result<byte[]> mavenPull(String contextPath) {
+        logger.info("执行拉取1:"+new Timestamp(System.currentTimeMillis()));
         //仓库名称
         String repositoryName=cutRepositoryName(contextPath);
         //文件相对路径
         String relativePath =cutRelativePath(contextPath);
         try {
             //查询组合的制品库
-            List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
-            if (CollectionUtils.isNotEmpty(repositoryList)){
-                Repository repository = repositoryList.get(0);
+            Repository repository = repositoryService.findRepositoryByName(repositoryName);
+            if (!ObjectUtils.isEmpty(repository)){
+
+                //存储地址 用仓库id作为存储的制品
+                String storePath = repository.getId() + "/" + relativePath;
                 // maven上传 需要对maven-metadata 进行拉取校验
                 if ("local".equals(repository.getRepositoryType())){
                     String filePath=yamlDataMaService.repositoryAddress()+"/"+contextPath;
@@ -113,13 +122,16 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     }
                    return readFileData(file);
                 }
+                logger.info("进入拉取:"+new Timestamp(System.currentTimeMillis()));
                 //拉取 走组合库
                 if ("group".equals(repository.getRepositoryType())){
+                    logger.info("执行拉取2:"+new Timestamp(System.currentTimeMillis()));
                   return  groupRepositoryPull(repository,relativePath,contextPath);
                 }
             }
         }catch (Exception e){
-            throw new RuntimeException(e);
+            logger.info("推送失败:"+e.getMessage());
+            result(500,null,e.getMessage());
         }
         return result(404,null,"制品库不存在");
     }
@@ -130,39 +142,76 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath
      * @return
      */
-    public Result groupRepositoryPull(Repository repository,String relativePath,String contextPath) throws IOException {
-        //组合库关联的制品库
-        List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
-        if (CollectionUtils.isNotEmpty(libraryList)){
-            List<String> libraryIdList = libraryList.stream().map(a->a.getRepository().getId()).collect(Collectors.toList());
-            String[] librarySize = new String[libraryIdList.size()];
-            String[] libraryId = libraryIdList.toArray(librarySize);
+    public Result groupRepositoryPull(Repository repository,String relativePath,String storePath) throws IOException {
+        logger.info("执行拉取3:"+relativePath+":"+new Timestamp(System.currentTimeMillis()));
+        int lastIndexOf = relativePath.lastIndexOf("/");
+        //文件名称
+        String fileName = relativePath.substring(lastIndexOf+1);
+        int lastButOneIndex = relativePath.lastIndexOf("/",lastIndexOf-1);
+        String libraryPath = relativePath.substring(0, lastButOneIndex);
+        //制品名称
+        String libraryName = libraryPath.substring(libraryPath.lastIndexOf("/") + 1);
 
-            //查询制品文件数据（）
-            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileByLibraryId(libraryId);
-            List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> relativePath.equals(a.getRelativePath())).collect(Collectors.toList());
-
-            if (CollectionUtils.isNotEmpty(libraryFiles)){
-                LibraryFile libraryFile = libraryFiles.get(0);
-                File file = new File(libraryFile.getFileUrl());
-               // int length = (int) file.length();
-                //私服库拉取
-                return readFileData(file);
-            }else {
-                //走代理拉取
-                return proxyPull(libraryList,relativePath,contextPath);
-            }
+        //这是拿到请求文件的版本，区分快照版本和正式版本
+        int lastIndex = relativePath.lastIndexOf("/");
+        String version = relativePath.substring(relativePath.lastIndexOf("/",lastIndex - 1)+1, lastIndex);
+        String upperCase = version.toUpperCase();
+        String type;
+        if (upperCase.contains("SNAPSHOT")){
+            type="Snapshot";
+        }else {
+            type="Release";
         }
-        return null;
+        Library library= libraryService.findLibraryByName(libraryName,"maven",type);
+        if (!ObjectUtils.isEmpty(library)){
+            logger.info("进入:library");
+            String repositoryPath = yamlDataMaService.repositoryAddress();
+            String fileAbsolutePath;
+
+            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()).setFileName(fileName));
+            //制品库类型
+            String repositoryType = library.getRepository().getRepositoryType();
+           if (CollectionUtils.isEmpty(libraryFileList)){
+               logger.info("进入:repositoryType");
+               if (("remote").equals(repositoryType)){
+                   logger.info("进入:代理");
+                   //走代理拉取
+                   return proxyPull(repository,relativePath,storePath);
+               }
+
+               if (("local").equals(repositoryType)&&fileName.contains("maven-metadata")){
+                   List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+
+                   List<RepositoryGroup> collect = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+
+                   List<RepositoryGroup> collect1 = collect.stream().filter(b -> ("maven-snapshots").equals(b.getRepository().getName())).collect(Collectors.toList());
+                   fileAbsolutePath = repositoryPath + "/" +collect1.get(0).getRepository().getId()+"/"+ relativePath;
+               }else {
+                   logger.info(fileName+":文件为空");
+                   return result(404,null,fileName+"文件不存在");
+               }
+           }else {
+               fileAbsolutePath = repositoryPath + "/" + libraryFileList.get(0).getFileUrl();
+           }
+
+            File file = new File(fileAbsolutePath);
+            logger.info("私服拉取");
+            //私服库拉取
+            return readFileData(file);
+        }
+        //走代理拉取
+        return proxyPull(repository,relativePath,storePath);
     }
 
     /**
      *  maven拉取-代理拉取
-     * @param libraryList     组合库关联库信息
+     * @param repository     组合库
      * @param relativePath
      * @return
      */
-    public Result proxyPull(List<RepositoryGroup> libraryList,String relativePath,String contextPath) throws IOException {
+    public Result proxyPull(Repository repository,String relativePath,String storePath) throws IOException {
+        List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+
         // 过滤代理库信息
         List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(groupList)){
@@ -171,21 +220,22 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //远程代理路径
             List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
             if (CollectionUtils.isNotEmpty(remoteProxyList)){
-
+                System.out.println("执行拉取4:"+new Timestamp(System.currentTimeMillis()));
                 //转发到远程
                 Result<byte[]> result = restTemplateMethod(remoteProxyList,remoteProxyList.get(0), relativePath);
+                System.out.println("执行拉取5:"+new Timestamp(System.currentTimeMillis()));
                 if (result.getCode()==200){
-
+                    String remoteFileUrl  = repositoryGroup.getRepository().getId() + "/"+relativePath;
                     //解析相对路径 获取文件名称、版本、groupId
                     Map<String, String> relativeMap = resolverRelativePath(relativePath);
                     relativeMap.put("userName","maven");
                     relativeMap.put("relativePath",relativePath);
-                    relativeMap.put("contextPath",contextPath);
+                    relativeMap.put("contextPath",remoteFileUrl);
 
                     //写入本地服务器中
+                    //String substring = storePath.substring(storePath.indexOf("/"));
                     InputStream inputStream = new ByteArrayInputStream(result.getData());
-                    writeFile(inputStream,contextPath,null);
-
+                    writeFile(inputStream,remoteFileUrl,null);
                     int fileLength = result.getData().length;
                     double i =(double)fileLength / 1000;
                     long round = Math.round(i);
@@ -224,7 +274,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         if (proxyUrl.endsWith("/")&&relativePath.startsWith("/")){
             relativePath = relativePath.substring(1);
         }
-        String relativeAbsoluteUrl=proxyUrl+relativePath;
+        String relativeAbsoluteUrl=proxyUrl+"/"+relativePath;
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
@@ -252,7 +302,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         //仓库名称
         String repositoryName = cutRepositoryName(contextPath);
-
+        
         //文件相对路径
         String relativePath = cutRelativePath(contextPath);
 
@@ -262,10 +312,15 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         if (CollectionUtils.isNotEmpty(repositoryList)){
             Result result = new Result<>();
 
+            String repositoryId = repositoryList.get(0).getId();
+
+            //存储地址 用仓库id作为存储的制品
+            String storePath = repositoryId + "/" + relativePath;
+
             //解析相对路径 获取文件名称、版本、groupId
             Map<String, String> dataMap = resolverRelativePath(relativePath);
 
-            List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repositoryList.get(0).getId()));
+            List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repositoryId));
             String version = dataMap.get("version").toLowerCase();
 
             if (("Release").equals(mavenList.get(0).getVersion())){
@@ -277,16 +332,17 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             }
             dataMap.put("relativePath",relativePath);
             dataMap.put("userName",userName);
-            dataMap.put("contextPath",contextPath);
+            dataMap.put("contextPath",storePath);
 
             //写入文件
-            Result writeFile = writeFile(inputStream, contextPath,dataMap);
+            Result writeFile = writeFile(inputStream, storePath,dataMap);
 
             //文件大小
             String fileSize = writeFile.getData().toString();
 
-            int indexOf = contextPath.indexOf("maven-metadata");
-            if (indexOf==-1){
+            int indexOf = storePath.indexOf("maven-metadata");
+            boolean contains = contextPath.contains("-SNAPSHOT");
+            if (indexOf==-1||contains){
                 createLibrary(dataMap,repositoryList.get(0),fileSize);
             }
 
@@ -402,24 +458,34 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryVersion.setPusher(dataMap.get("userName"));
         String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
 
+        // 制品maven  创建、更新
+        libraryMavenService.libraryMavenSplice(dataMap.get("libraryName"),dataMap.get("groupId"),library);
+
+        //创建制品文件
+        String relativePath = dataMap.get("relativePath");
+        //快照版本存储maven-metadata 数据库中已经存在就不需要再保存
+        if (relativePath.contains("maven-metadata")){
+            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setFileUrl(dataMap.get("relativePath")));
+            if (CollectionUtils.isNotEmpty(libraryFileList)){
+                return;
+            }
+        }
         //制品文件 创建、更新
         LibraryFile libraryFile = new LibraryFile();
         libraryFile.setLibrary(library);
         libraryFile.setFileName(dataMap.get("fileName"));
         libraryFile.setFileSize(fileSize);
         libraryFile.setRepository(repository);
-        libraryFile.setFileUrl(yamlDataMaService.repositoryAddress()+"/"+dataMap.get("contextPath"));
-        libraryFile.setRelativePath(dataMap.get("relativePath"));
-        if (dataMap.get("version").endsWith("-SNAPSHOT")){
-
+        libraryFile.setFileUrl(dataMap.get("contextPath"));
+        if (dataMap.get("version").endsWith("-SNAPSHOT")&&!relativePath.contains("maven-metadata")){
             String timeRub = findSnapshotTime(dataMap);
-
             libraryFile.setSnapshotVersion(timeRub);
+            //将相对路径的maven文件的快照时间戳改为 快照版本
+            relativePath= dataMap.get("relativePath").replace(timeRub,"SNAPSHOT");
         }
-        libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+        libraryFile.setRelativePath(relativePath);
 
-        // 制品maven  创建、更新
-        libraryMavenService.libraryMavenSplice(dataMap.get("libraryName"),dataMap.get("groupId"),library);
+        libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
 
     }
 
@@ -538,9 +604,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @return
      */
     public String cutRepositoryName(String contextPath){
-        int index = contextPath.indexOf("/",1);
-        //仓库名称
-        String repositoryName=contextPath.substring(index+1,contextPath.indexOf("/",index+1));
+        String repositoryName=contextPath.substring(0,contextPath.indexOf("/",1));
         return repositoryName;
     }
     /**
@@ -549,10 +613,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @return
      */
     public String cutRelativePath(String contextPath){
-        int index = contextPath.indexOf("/",1);
-
         //文件相对路径
-        String relativePath = contextPath.substring(contextPath.indexOf("/", index + 2) + 1);
+        String relativePath = contextPath.substring(contextPath.indexOf("/",1)+1);
         return relativePath;
     }
 }

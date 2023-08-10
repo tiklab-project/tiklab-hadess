@@ -1,6 +1,7 @@
 package io.tiklab.xpack.library.controller;
 
 import com.alibaba.fastjson.JSON;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
@@ -38,7 +39,7 @@ public class NpmUploadController {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Object npmSubmit(HttpServletRequest request, HttpServletResponse response){
         String contextPath = request.getRequestURI();
-        String address = contextPath.substring(7);
+        String address = contextPath.substring(11);
 
         String referer = request.getHeader("referer");
         try {
@@ -91,7 +92,7 @@ public class NpmUploadController {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
         return null;
     }

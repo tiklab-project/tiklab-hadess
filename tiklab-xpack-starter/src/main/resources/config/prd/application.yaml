@@ -1,11 +1,10 @@
 #application config
 app:
-  name: tiklab-xpack
   path: ${APP_HOME}
+  name: tiklab-xpack
 spring:
-  profiles:
-    active: dev
-
+  config:
+    import: optional:classpath:/config/${env:dev}/application.yaml
 #web config
 server:
   port: 8080
@@ -15,27 +14,28 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
-  #url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
   username: postgres
   password: darth2020
 
 
 postgresql:
   embbed:
-    enable: false
-  database: tiklab_xpack
+    enable: true
+  database: xpack
+  db:
+    port: 5432
+    username: postgres
+    password: darth2020
+    address: ${DATA_HOME}/postgresql
 
 #eas config
 eas:
   embbed:
-    enable: true
+    enable: false
+  address: http://e.eas.tiklab.net
 
-DATA_HOME: ${user.home}/tiklab/${app.name}
-
-base:
-  url: http://192.168.10.23:3000
-
+DATA_HOME: /opt/tiklab/xpack
 
 #dfs config
 dfs:
@@ -51,14 +51,13 @@ dfs:
 #dcs config
 dcs:
   server:
-    enabled: true
-    port: 5001
-    datapath: ${DATA_HOME}/data
+    enabled: false
+    mode: server
+    port: 5000
+    datapath: ${DATA_HOME}/caches
   client:
-    url: 127.0.0.1:5001
-    group: g1
-    database: dcs1
-    expire: 600
+    url: 127.0.0.1:5000
+    bucket: ${app.name}
 
 #dcs config
 dss:
@@ -71,14 +70,15 @@ dss:
     url: 127.0.0.1:6000
     bucket: ${app.name}
 
+datapath: ${DATA_HOME}/caches
+
 
 #plugin config
 plugin.path: ${APP_HOME}/plugin
 
 #rpc
 homes:
-  address: http://192.168.10.7:8080
-
+  address: http://139.196.76.221:8080
 
 #licences config
 licences:
@@ -86,14 +86,8 @@ licences:
 
 #file
 file:
-  path: http://file.dev.tiklab.net
-
-
+  path: http://file.tiklab.net
 
 repository:
   address: ${DATA_HOME}/repository
-
-
-
-
 

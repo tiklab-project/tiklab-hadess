@@ -54,6 +54,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         LibraryVersionEntity libraryVersionEntity = BeanMapper.map(libraryVersion, LibraryVersionEntity.class);
         libraryVersionEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         libraryVersionEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        libraryVersionEntity.setPushTime(new Timestamp(System.currentTimeMillis()));
         return libraryVersionDao.createLibraryVersion(libraryVersionEntity);
     }
 

@@ -33,6 +33,11 @@ public class PushLibraryEntity extends BaseModel {
     @Column(name = "last_push_result",length = 12)
     private String lastPushResult;
 
+
+    //执行状态
+
+    private String execState;
+
     //推送人
     @Column(name = "user_id",length = 12)
     private String useId;
@@ -83,5 +88,13 @@ public class PushLibraryEntity extends BaseModel {
 
     public void setUseId(String useId) {
         this.useId = useId;
+    }
+
+    public String getExecState() {
+        return execState;
+    }
+
+    public void setExecState(String execState) {
+        this.execState = execState;
     }
 }

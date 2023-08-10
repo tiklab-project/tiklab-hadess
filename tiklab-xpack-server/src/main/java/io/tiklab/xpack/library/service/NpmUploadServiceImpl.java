@@ -3,13 +3,16 @@ package io.tiklab.xpack.library.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.context.AppHomeContext;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.common.model.EamTicket;
 import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.model.UserQuery;
 import io.tiklab.user.user.service.UserService;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpakYamlDataMaService;
+import io.tiklab.xpack.library.controller.LibraryVersionController;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
@@ -17,14 +20,18 @@ import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +43,7 @@ import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 @Service
 public class NpmUploadServiceImpl implements NpmUploadService {
 
+    private static Logger logger = LoggerFactory.getLogger(NpmUploadServiceImpl.class);
     @Autowired
     RepositoryService repositoryService;
 
@@ -73,7 +81,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 result.append(lineTxt).append("\n");
             }
         }catch (Exception e){
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
        return verifyUser(result.toString());
     }
@@ -105,7 +113,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
             return npmSubmitData(contextPath,jsonObjectData);
         }catch (IOException e){
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
     @Override
@@ -214,14 +222,13 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         JSONObject distObject =(JSONObject)versionObject.get("dist");
         String dist = distObject.get("shasum").toString();
 
-
-        //制品名称
-        int index = contextPath.indexOf("/",1);
-        int repositoryIndex = contextPath.indexOf("/", index + 1);
+        int repositoryIndex = contextPath.indexOf("/",1);
         //仓库名称
-        String repositoryName=contextPath.substring(index+1,repositoryIndex);
-
+        String repositoryName=contextPath.substring(0,repositoryIndex);
+        //制品名称
         String libraryName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
+        String jsonData = allData.toJSONString().replaceAll("repository/" + libraryName, "repository/" + repositoryName + "/" + libraryName);
+
 
         //tgz内容
         JSONObject tgaSecondData =(JSONObject) tgaData.get(tgzName);
@@ -233,13 +240,14 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         JSONObject versionData =(JSONObject) allData.get("versions");
         Set<String> versionKey = versionData.keySet();
         String version = versionKey.stream().findFirst().orElse("null");
-        String path=yamlDataMaService.repositoryAddress()+"/"+contextPath;
-        //tag 文件存储的绝对路径
-        String filePath=path+"/"+tgzName;
 
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
         if (CollectionUtils.isNotEmpty(repositoryList)){
+            String replace = contextPath.replace(repositoryName, repositoryList.get(0).getId());
+            String path=yamlDataMaService.repositoryAddress()+"/"+replace;
+            //tag 文件存储的绝对路径
+            String filePath=path+"/"+tgzName;
 
             //base64解密
             byte[] decodedBytes = Base64.getDecoder().decode(substring);
@@ -255,7 +263,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
             //创建制品版本
             LibraryVersion libraryVersion = new LibraryVersion();
-            libraryVersion.setContentJson(allData.toJSONString());
+            libraryVersion.setContentJson(jsonData);
             libraryVersion.setLibrary(library);
             libraryVersion.setRepository(repositoryList.get(0));
             libraryVersion.setHash(dist);
@@ -328,11 +336,11 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         LibraryQuery libraryQuery = new LibraryQuery();
         libraryQuery.setLibraryType("npm");
         libraryQuery.setName(libraryName);
-        List<Library> libraryList = libraryService.findLibraryList(libraryQuery);
-        if (CollectionUtils.isNotEmpty(libraryList)){
+        Library library = libraryService.findLibraryByName(libraryName,"npm",null);
+        if (!ObjectUtils.isEmpty(library)){
             //查询版本
             LibraryVersionQuery libraryVersionQuery = new LibraryVersionQuery();
-            libraryVersionQuery.setLibraryId(libraryList.get(0).getId());
+            libraryVersionQuery.setLibraryId(library.getId());
             /*//没带版本号就取最新的版本
             if (!StringUtils.isEmpty(version)){
                 libraryVersionQuery.setVersion(version);
@@ -355,24 +363,32 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         Map resultMap = new HashMap<>();
         RestTemplate restTemplate = new RestTemplate();
 
-        String RepositoryNameUrl = contextPath.substring(0, contextPath.lastIndexOf("/"));
-        //查询组合制品库
-        String repositoryName = RepositoryNameUrl.substring(contextPath.lastIndexOf("/") + 1);
+        String repositoryName = contextPath.substring(0, contextPath.indexOf("/",1));
+
+        String substring = contextPath.substring(contextPath.indexOf("/", 1) );
         String agencyUrl = remoteProxyService.findAgencyUrl(repositoryName);
         if (StringUtils.isEmpty(agencyUrl)){
-            resultMap.put("code",404);
+            resultMap.put("code","404");
         }else {
-            String url=agencyUrl+agencyUrl;
+            String url=agencyUrl+substring;
+             url = url.trim();
+            logger.info("开始执行代理拉取："+url);
             if (contextPath.contains("/-/")){
                 ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
                 byte[] entityBody = entity.getBody();
                 resultMap.put("200",entityBody);
+                logger.info("执行代理拉取成功");
                 return resultMap;
             }else {
-                ResponseEntity<String> entity = restTemplate.getForEntity(url, String.class);
-                String entityBody = entity.getBody();
-                resultMap.put("code",200);
-                resultMap.put("data",entityBody);
+                try {
+                    String entityBody = RepositoryUtil.httpGet(url);
+                    resultMap.put("code","200");
+                    resultMap.put("data",entityBody);
+                    logger.info("执行代理拉取成功");
+                } catch (Exception e) {
+                    resultMap.put("code","500");
+                    throw new SystemException(e.getMessage());
+                }
             }
         }
         return resultMap;

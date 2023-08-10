@@ -25,9 +25,9 @@ public class PushCenWarehouseController {
     @ApiMethod(name = "pushCentralWare",desc = "推送中央仓库")
     @ApiParam(name = "libraryId",desc = "制品id",required = true)
     public Result<String> pushCentralWare(@NotNull String libraryId,@NotNull String type){
-         pushCenWarehouse.pushCentralWare(libraryId,type);
+        String pushed = pushCenWarehouse.pushCentralWare(libraryId, type);
 
-        return Result.ok();
+        return Result.ok(pushed);
     }
 
     @RequestMapping(path="/pushResult",method = RequestMethod.POST)

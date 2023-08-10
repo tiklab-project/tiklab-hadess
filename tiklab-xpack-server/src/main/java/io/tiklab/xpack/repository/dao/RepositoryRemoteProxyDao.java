@@ -118,7 +118,7 @@ public class RepositoryRemoteProxyDao{
         String sql="SELECT pr.agency_url from pack_repository_remote_proxy pr " +
                 " LEFT JOIN pack_repository_group_items gr ON gr.repository_id=pr.repository_id  " +
                 "LEFT JOIN pack_repository re ON gr.repository_group_id=re.id" +
-                " WHERE re.`name`='"+repositoryName +"'";
+                " WHERE re.name='"+repositoryName +"'";
         JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
         List<String> agencyUrlList = jdbcTemplate.queryForList(sql,String.class);
         if (CollectionUtils.isNotEmpty(agencyUrlList)){

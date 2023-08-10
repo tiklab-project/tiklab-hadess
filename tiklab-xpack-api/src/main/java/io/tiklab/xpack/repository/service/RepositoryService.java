@@ -67,6 +67,20 @@ public interface RepositoryService {
 
 
     /**
+     * 根据仓库名字查询
+     * @param repositoryName 仓库名字
+     * @return
+     */
+    Repository findRepositoryByName(String repositoryName);
+
+    /**
+     * 通过仓库名字查询仓库
+     * @param name 仓库名字
+     * @return
+     */
+    Repository findRepositoryListByName(String name);
+
+    /**
      * 查询本地和远程库
      * @param
      * @return

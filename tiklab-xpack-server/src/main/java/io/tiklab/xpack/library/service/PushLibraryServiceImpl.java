@@ -3,19 +3,25 @@ package io.tiklab.xpack.library.service;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.library.dao.PushLibraryDao;
 import io.tiklab.xpack.library.entity.PushLibraryEntity;
 import io.tiklab.xpack.library.model.PushLibrary;
 import io.tiklab.xpack.library.model.PushLibraryQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * PushLibraryServiceImpl-制品
@@ -29,6 +35,9 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
     @Autowired
     JoinTemplate joinTemplate;
+
+    @Autowired
+    PushCenWarehouseImpl pushCenWarehouse;
 
 
     @Override
@@ -48,6 +57,14 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
 
         pushLibraryDao.deletePushLibrary(id);
+    }
+
+    @Override
+    public void deleteVersionByCondition(String field, String value) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(PushLibraryEntity.class)
+                .eq(field, value)
+                .get();
+        pushLibraryDao.deletePushLibrary(deleteCondition);
     }
 
 
@@ -97,6 +114,10 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
         joinTemplate.joinQuery(pushLibraryList);
 
+        if (pushLibraryList.stream() != null) {
+            pushLibraryList = pushLibraryList.stream().sorted(Comparator.comparing(a ->a.getLibrary().getName())).collect(Collectors.toList());
+        }
+
         return pushLibraryList;
     }
 
@@ -112,6 +133,14 @@ public class PushLibraryServiceImpl implements PushLibraryService {
         joinTemplate.joinQuery(pushLibraryList);
 
         return PaginationBuilder.build(pagination,pushLibraryList);
+    }
+
+
+    @Override
+    public String pushCentralWare(PushLibrary pushLibrary) {
+        this.updatePushLibrary(pushLibrary);
+      //  pushCenWarehouse.pushCentralWare(pushLibrary);
+        return null;
     }
 
 }

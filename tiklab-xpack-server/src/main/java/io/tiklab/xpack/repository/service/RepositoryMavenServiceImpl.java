@@ -3,11 +3,16 @@ package io.tiklab.xpack.repository.service;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
+import io.tiklab.xpack.library.entity.LibraryFileEntity;
+import io.tiklab.xpack.library.model.LibraryFileQuery;
 import io.tiklab.xpack.repository.dao.RepositoryMavenDao;
 import io.tiklab.xpack.repository.entity.RepositoryMavenEntity;
 import io.tiklab.xpack.repository.model.RepositoryMaven;
 import io.tiklab.xpack.repository.model.RepositoryMavenQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +49,14 @@ public class RepositoryMavenServiceImpl implements RepositoryMavenService {
     @Override
     public void deleteRepositoryMaven(@NotNull String id) {
         repositoryMavenDao.deleteRepositoryMaven(id);
+    }
+
+    @Override
+    public void deleteRepositoryMavenByCondition(String field, String value) {
+        DeleteCondition libraryFile = DeleteBuilders.createDelete(RepositoryMavenEntity.class)
+                .eq(field,value)
+                .get();
+        repositoryMavenDao.deleteRepositoryMaven(libraryFile);
     }
 
     @Override
@@ -102,5 +115,18 @@ public class RepositoryMavenServiceImpl implements RepositoryMavenService {
         joinTemplate.joinQuery(repositoryMavenList);
 
         return PaginationBuilder.build(pagination,repositoryMavenList);
+    }
+
+    @Override
+    public RepositoryMaven findRepositoryMavenByRpyIds(String[] ids, String version) {
+        RepositoryMaven repositoryMaven=null;
+
+        List<RepositoryMavenEntity> repositoryMavenEntityList = repositoryMavenDao.findRepositoryMavenByRpyIds(ids,version);
+
+        List<RepositoryMaven> repositoryMavenList = BeanMapper.mapList(repositoryMavenEntityList,RepositoryMaven.class);
+        if (CollectionUtils.isNotEmpty(repositoryMavenList)){
+             repositoryMaven = repositoryMavenList.get(0);
+        }
+        return repositoryMaven;
     }
 }

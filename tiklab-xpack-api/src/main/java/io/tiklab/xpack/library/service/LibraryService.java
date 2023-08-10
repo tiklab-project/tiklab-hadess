@@ -73,13 +73,29 @@ public interface LibraryService {
     */
     List<Library> findLibraryList(LibraryQuery libraryQuery);
 
+    /**
+     * 通过制品库查询制品数量
+     * @param repositoryId 制品库id
+     * @return
+     */
+    Integer findLibraryNum(String  repositoryId);
+
+    /**
+     * 通过制品名字查询制品
+     * @param name 制品名字
+     * @param type 制品类型  maven、npm
+     * @param version  版本, Release 、Snapshot
+     * @return
+     */
+    Library findLibraryByName(String name,String type,String version);
+
 
     /**
      * 查询制品库下面的制品
      * @param libraryQuery
      * @return
      */
-    List<Library> findLibraryListByRepository(LibraryQuery libraryQuery);
+    Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery);
 
     /**
     * 按分页查询
@@ -103,7 +119,7 @@ public interface LibraryService {
      * @param libraryQuery
      * @return
      */
-    List<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
+    Pagination<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
 
     /**
      * 查询未添加到推送中央仓库的记录的制品列表

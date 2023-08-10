@@ -44,6 +44,9 @@ public class Repository extends BaseModel {
     private Storage storage;
 
 
+    @ApiProperty(name="rules",desc="权限 public、private")
+    private java.lang.String rules= "public";
+
     @ApiProperty(name="description",desc="描述")
     private java.lang.String description;
 
@@ -155,5 +158,13 @@ public class Repository extends BaseModel {
 
     public void setVersionType(String versionType) {
         this.versionType = versionType;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
     }
 }

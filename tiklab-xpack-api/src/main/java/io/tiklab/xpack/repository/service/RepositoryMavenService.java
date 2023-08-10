@@ -38,6 +38,13 @@ public interface RepositoryMavenService {
     */
     void deleteRepositoryMaven(@NotNull String id);
 
+    /**
+     * 通过条件删除
+     * @param field  删除条件字段
+     * @param value 删除字段值
+     */
+    void deleteRepositoryMavenByCondition(@NotNull String field ,@NotNull String value);
+
     @FindOne
     RepositoryMaven findOne(@NotNull String id);
 
@@ -71,5 +78,12 @@ public interface RepositoryMavenService {
     * @return
     */
     Pagination<RepositoryMaven> findRepositoryMavenPage(RepositoryMavenQuery repositoryMavenQuery);
+
+    /**
+     * 通过仓库ids 和版本查询
+     * @param ids
+     * @return
+     */
+    RepositoryMaven findRepositoryMavenByRpyIds(String[] ids,String version);
 
 }

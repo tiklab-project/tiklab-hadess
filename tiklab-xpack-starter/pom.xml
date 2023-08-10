@@ -7,13 +7,14 @@
     <parent>
         <groupId>io.tiklab</groupId>
         <artifactId>tiklab-xpack</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0.3</version>
     </parent>
     <artifactId>tiklab-xpack-starter</artifactId>
     <name>${project.artifactId}</name>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.3</version>
 
     <dependencies>
+        <!--common-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -27,92 +28,79 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-        <!--platform-->
+
+        <!--tiklab-->
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-gateway-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-gateway.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-licence-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-licence.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-xpack-server</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-rpc-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-rpc.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-security-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>ai.active</groupId>
-            <artifactId>webhook-sdk</artifactId>
-            <version>1.0.7</version>
+            <version>${tiklab-security.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-todotask-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-todotask.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-plugin-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-plugin.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-postgresql-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-user-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-user.version}</version>
         </dependency>
+
+
+        <!--other-->
+        <dependency>
+            <groupId>ai.active</groupId>
+            <artifactId>webhook-sdk</artifactId>
+            <version>${webhook-sdk.version}</version>
+        </dependency>
+
     </dependencies>
 
     <profiles>
-
         <!--linux-->
         <profile>
             <id>system-linux</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-mysql-linux</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-jdk-linux</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
             <properties>
                 <assembly>linux</assembly>
                 <systemType>linux</systemType>
             </properties>
-            <build>
+          <!--  <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -147,33 +135,17 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>
+            </build>-->
         </profile>
 
         <!--windows-->
         <profile>
             <id>system-windows</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-mysql-windows</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-jdk-windows</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
             <properties>
                 <assembly>windows</assembly>
                 <systemType>windows</systemType>
             </properties>
-            <build>
+            <!--<build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -208,33 +180,17 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>
+            </build>-->
         </profile>
 
         <!--mac-->
         <profile>
             <id>system-mac</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-jdk-mac</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>io.tiklab</groupId>
-                    <artifactId>tiklab-jdk-mac</artifactId>
-                    <version>${project.version}</version>
-                    <type>zip</type>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
             <properties>
                 <assembly>mac</assembly>
                 <systemType>mac</systemType>
             </properties>
-            <build>
+      <!--      <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +225,7 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>
+            </build>-->
         </profile>
 
         <!--dev-->
@@ -285,6 +241,12 @@
             <id>env-test</id>
             <properties>
                 <yaml-type>/config/test</yaml-type>
+            </properties>
+        </profile>
+        <profile>
+            <id>env-prd</id>
+            <properties>
+                <yaml-type>/config/prd</yaml-type>
             </properties>
         </profile>
 
@@ -343,7 +305,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution-${assembly}.xml</descriptor>
                             </descriptors>
-                            <finalName>tiklab-xpack</finalName>
+                            <finalName>tiklab-xpack-${version}-${timestamp}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                         <phase>package</phase>
@@ -372,55 +334,6 @@
                     </resources>
                 </configuration>
             </plugin>
-
-            <!--清理之前的目录-->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>auto-clean</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <skip>false</skip>
-                            <filesets>
-                                <fileset>
-                                    <directory>${basedir}/embbed</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!--copy插件-->
-          <!--  <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>io.tiklab</groupId>
-                            <artifactId>tiklab-user-plugin-all</artifactId>
-                            <version>${project.version}</version>
-                        </artifactItem>
-                    </artifactItems>
-                    <includeTypes>jar</includeTypes>
-                    <outputDirectory>${project.basedir}/plugin</outputDirectory>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 

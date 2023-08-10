@@ -1,6 +1,7 @@
 package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.common.RepositoryUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,6 +18,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,18 +39,22 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
     @Autowired
     PushLibraryService pushLibraryService;
 
+    @Autowired
+    XpakYamlDataMaService xpakYamlDataMaService;
     //推送结果
     public static Map<String , String> pushResultMap = new HashMap<>();
 
     @Override
-    public void pushCentralWare(String libraryId, String type) {
+    public String pushCentralWare(String libraryId, String type) {
+        String result=null;
         pushResultMap.remove(libraryId);
         if (("maven".equals(type))){
-            mavenPush(libraryId);
+             result = mavenPush(libraryId);
         }
         if (("npm").equals(type)){
             npmPush(libraryId);
         }
+        return result;
     }
 
     @Override
@@ -57,73 +66,145 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
      * maven  中央仓库提交
      * @param libraryId  制品id
      */
-    public void mavenPush(String libraryId){
-        try {
+    public String mavenPush(String libraryId){
+
             //查询gpg 是否安装
-            ProcessBuilder builder = new ProcessBuilder("which", "gpg");
+           /* ProcessBuilder builder = new ProcessBuilder("which", "gpg");
             Integer code = exec(builder, "gpgIsInstall",libraryId);
             if (code==1){
-              /*  //安装gpg
+              *//*  //安装gpg
                 ProcessBuilder builder01 = new ProcessBuilder("brew", "install", "gpg");
-                exec(builder01,"gpgInstall",libraryId);*/
+                exec(builder01,"gpgInstall",libraryId);*//*
 
-              /*  //生成gpg 密钥
+              *//*  //生成gpg 密钥
                 ProcessBuilder builder02 = new ProcessBuilder("gpg", "--gen-key");
-                exec(builder02,"gpgSecretKey",versionId);*/
+                exec(builder02,"gpgSecretKey",versionId);*//*
             }
-           /* //生成gpg 密钥
+           *//* //生成gpg 密钥
             ProcessBuilder builder02 = new ProcessBuilder("gpg", "--gen-key");
-            exec(builder02,"gpgSecretKey");*/
+            exec(builder02,"gpgSecretKey");*//*
 
             //查询gpg 密钥
             ProcessBuilder builder03 = new ProcessBuilder("gpg", "--list-keys");
-            exec(builder03,"gpgKey",libraryId);
-
+            exec(builder03,"gpgKey",libraryId);*/
             List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryId));
             if (CollectionUtils.isNotEmpty(libraryFileList)){
-                List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(".jar"))
-                        .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
-                LibraryFile libraryFile = libraryFiles.get(0);
+                ExecutorService executorService = Executors.newCachedThreadPool();
+                executorService.submit(new Runnable(){
+                    @Override
+                    public void run() {
+                        try {
+                            //查询pom
+                            List<LibraryFile> libraryPomFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(".pom"))
+                                    .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                            LibraryFile libraryFile = libraryPomFiles.get(0);
+                            List<LibraryMaven> mavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryFile.getLibrary().getId()));
+                            LibraryMaven libraryMaven = mavenList.get(0);
 
-                List<LibraryMaven> mavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryFile.getLibrary().getId()));
-                LibraryMaven libraryMaven = mavenList.get(0);
+                            String version = libraryFile.getLibraryVersion().getVersion();
 
-                String durl;
-                if (StringUtils.isNotEmpty(libraryFile.getSnapshotVersion())){
-                     durl="https://s01.oss.sonatype.org/content/repositories/snapshots";
-                }else {
-                    durl="https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
-                }
-                for (LibraryFile libraryFile1:libraryFiles){
+                            //执行jar
+                            List<LibraryFile> libraryJarFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(version+".jar"))
+                                    .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                            if (CollectionUtils.isNotEmpty(libraryJarFiles)){
+                                LibraryFile libraryJarFile = libraryJarFiles.get(0);
+                                mavenExec(libraryMaven,libraryJarFile,libraryId,"jar");
+                            }
 
-                }
-                //执行
-                ProcessBuilder builder04 = new ProcessBuilder(
-                        "mvn",
-                        "gpg:sign-and-deploy-file",
-                        "-Dgpg.executable=/opt/homebrew/bin/gpg",
-                        "-Durl="+durl,
-                        "-DrepositoryId=sonatype-snapshots",
-                        "-DgroupId="+libraryMaven.getGroupId(),
-                        "-DartifactId="+libraryMaven.getArtifactId(),
-                        "-Dversion="+libraryFile.getLibraryVersion().getVersion(),
-                        "-Dpackaging=jar",
-                        "-Dfile="+libraryFile.getFileUrl()
-                );
-                Integer pushCode = exec(builder04, "push", libraryId);
-                if (pushCode!=0){
-                    this.updatePushLibrary(libraryId,"fail");
-                    pushResultMap.put(libraryId,"推送失败");
-                    return;
-                }
-                this.updatePushLibrary(libraryId,"succeed");
-                pushResultMap.put(libraryId,"succeed");
+                            //执行zip
+                            List<LibraryFile> libraryZipFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(".zip"))
+                                    .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                            if (CollectionUtils.isNotEmpty(libraryZipFiles)){
+                                LibraryFile libraryZipFile = libraryZipFiles.get(0);
+                                mavenExec(libraryMaven,libraryZipFile,libraryId,"zip");
+                            }
+                            //执行pom
+                            Integer integer = mavenExec(libraryMaven, libraryFile, libraryId, "pom");
+                            if (integer==0){
+                                updatePushLibrary(libraryId,"succeed");
+                                pushResultMap.put(libraryId,"succeed");
+                            }
+                        }catch (Exception e) {
+                            updatePushLibrary(libraryId,"fail");
+                            pushResultMap.put(libraryId,"推送失败");
+                            throw  new SystemException("maven推送失败:"+e.getMessage());
+                        }
+                    }
+                });
+        }else {
+                pushResultMap.put(libraryId,"推送失败");
+                throw  new SystemException("maven推送失败");
             }
-        } catch (Exception e) {
+         return "ok";
+    }
+
+    /**
+     * maven  zhix
+     * @param libraryId  制品id
+     */
+    public Integer mavenExec( LibraryMaven libraryMaven, LibraryFile libraryFile,String libraryId,String type) throws Exception {
+        String durl;
+        String libraryAddress = xpakYamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
+        if (StringUtils.isNotEmpty(libraryFile.getSnapshotVersion())){
+            durl="https://s01.oss.sonatype.org/content/repositories/snapshots";
+        }else {
+            durl="https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
+        }
+       // String type = libraryFile.getFileName().endsWith("jar") ? "jar" : "pom";
+
+        String name = libraryFile.getFileName().substring(0, libraryFile.getFileName().lastIndexOf("."));
+
+        String url="/Users/limingliang/source";
+        String oldFile=url+"/test-sources.jar";
+        String source=url+"/"+name+"-sources.jar";
+        String javaDoc=url+"/"+name+"-javadoc.jar";
+        RepositoryUtil.copyFile(oldFile,source);
+        RepositoryUtil.copyFile(oldFile,javaDoc);
+        ProcessBuilder builder04;
+        if (("jar").equals(type)){
+            //执行
+             builder04 = new ProcessBuilder(
+                    "mvn",
+                    "gpg:sign-and-deploy-file",
+                    "-Dgpg.executable=/opt/homebrew/bin/gpg",
+                    "-Durl="+durl,
+                    "-DrepositoryId=sonatype-snapshots",
+                    "-DgroupId="+libraryMaven.getGroupId(),
+                    "-DartifactId="+libraryMaven.getArtifactId(),
+                    "-Dversion="+libraryFile.getLibraryVersion().getVersion(),
+                    "-Dpackaging="+type,
+                    "-Dfile="+libraryAddress,
+                    "-Dsources="+source,
+                    "-Djavadoc="+javaDoc,
+                    "-Dlicense.skipCheck"
+            );
+        }else {
+            //执行
+             builder04 = new ProcessBuilder(
+                    "mvn",
+                    "gpg:sign-and-deploy-file",
+                    "-Dgpg.executable=/opt/homebrew/bin/gpg",
+                    "-Durl="+durl,
+                    "-DrepositoryId=sonatype-snapshots",
+                    "-DgroupId="+libraryMaven.getGroupId(),
+                    "-DartifactId="+libraryMaven.getArtifactId(),
+                    "-Dversion="+libraryFile.getLibraryVersion().getVersion(),
+                    "-Dpackaging="+type,
+                    "-Dfile="+libraryAddress,
+                    "-Dlicense.skipCheck");
+        };
+
+        builder04.command();
+        Integer pushCode = exec(builder04, "push", libraryId);
+        if (pushCode!=0){
+            FileUtils.deleteQuietly(new File(source));
+            FileUtils.deleteQuietly(new File(javaDoc));
             this.updatePushLibrary(libraryId,"fail");
             pushResultMap.put(libraryId,"推送失败");
-            throw  new SystemException("maven推送失败:"+e.getMessage());
         }
+        FileUtils.deleteQuietly(new File(source));
+        FileUtils.deleteQuietly(new File(javaDoc));
+        return pushCode;
     }
 
     /**
@@ -138,9 +219,11 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
             List<LibraryFile> libraryFiles = fileList.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
             LibraryFile libraryFile = libraryFiles.get(0);
             String extractPath = libraryFile.getFileUrl().substring(0, libraryFile.getFileUrl().lastIndexOf(libraryFile.getFileName()));
+            extractPath=xpakYamlDataMaService.repositoryAddress()+"/"+extractPath;
             try {
+                String filePath=xpakYamlDataMaService.repositoryAddress()+"/"+libraryFile.getFileUrl();
                 // 解压
-                ProcessBuilder decompression = new ProcessBuilder("tar", "-xzf", libraryFile.getFileUrl(), "-C", extractPath);
+                ProcessBuilder decompression = new ProcessBuilder("tar", "-xzf", filePath, "-C", extractPath);
                 Process process = decompression.start();
                 int exitCode = process.waitFor();
 
@@ -164,6 +247,9 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
                     if (pushCode==0){
                         pushResultMap.put(libraryId,"succeed");
                         this.updatePushLibrary(libraryId,"succeed");
+                    }else {
+                        pushResultMap.put(libraryId,"推送失败");
+                        this.updatePushLibrary(libraryId,"fail");
                     }
                     /**
                      *  删除解压后的文件
@@ -248,4 +334,6 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
 
         pushLibraryService.updatePushLibrary(pushLibrary);
     }
+
+
 }

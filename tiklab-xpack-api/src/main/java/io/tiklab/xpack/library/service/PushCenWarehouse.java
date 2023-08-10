@@ -7,7 +7,7 @@ public interface PushCenWarehouse {
     * @param libraryId 制品id
     * @param type  类型 maven、npm
     */
-   void pushCentralWare(String libraryId, String type);
+   String pushCentralWare(String libraryId, String type);
 
    /**
     * 推送中央仓库结果

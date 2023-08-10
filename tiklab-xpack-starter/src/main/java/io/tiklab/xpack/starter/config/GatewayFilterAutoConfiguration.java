@@ -84,8 +84,7 @@ public class GatewayFilterAutoConfiguration {
                         "/sockjs-node/info",
                         "/eam/auth/login",
                         "/libraryFile/tag",
-                        "/repositoryRemoteProxy/test",
-                        "/repository/findAllRepository",
+                        "/xpackRepository/findAllRepository",
                         "/version/getVersion",
                         "/licence/import",
                         "/alterSql/updateId",
@@ -100,10 +99,13 @@ public class GatewayFilterAutoConfiguration {
                         "/plugin",
                         "/authConfig",
                         "/services",
-                        "/xpack",
+                        "/repository",
                         "/library",
                         "/repository",
-                        "/pushCenWarehouse"
+                        "/pushCenWarehouse",
+                        "/libraryFile",
+                        "/xpack",
+
 
                 })
                 .get();

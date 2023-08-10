@@ -9,6 +9,7 @@ import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
+import io.tiklab.xpack.library.service.LibraryMavenService;
 import io.tiklab.xpack.library.service.LibraryService;
 import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.dao.RepositoryDao;
@@ -56,10 +57,13 @@ public class RepositoryServiceImpl implements RepositoryService {
     LibraryFileService libraryFileService;
 
     @Autowired
-    private DmRoleService dmRoleService;
+     DmRoleService dmRoleService;
 
     @Autowired
-    private RepositoryMavenService mavenService;
+     RepositoryMavenService repositoryMavenService;
+
+    @Autowired
+    LibraryMavenService libraryMavenService;
 
     @Value("${server.port:8080}")
     private String port;
@@ -75,8 +79,11 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setType(type);
 
         String repositoryId = repositoryDao.createRepository(repositoryEntity);
-
-        dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "xpack");
+        if (ObjectUtils.isEmpty(repository.getCreateUser())){
+            dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "xpack");
+        }else {
+            dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),"xpack");
+        }
         return repositoryId;
     }
 
@@ -107,7 +114,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
 
-
+        if (("maven").equals(repository.getType())){
+            repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
+        }
     }
 
     @Override
@@ -136,7 +145,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         joinTemplate.joinQuery(repository);
 
         if (("maven").equals(repository.getType())&&("local").equals(repository.getRepositoryType())) {
-            List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
+            List<RepositoryMaven> mavenList = repositoryMavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
             if (CollectionUtils.isNotEmpty(mavenList)) {
                 repository.setVersionType(mavenList.get(0).getVersion());
             }
@@ -162,13 +171,36 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
         List<Repository> list = repositoryList.stream().sorted(Comparator.comparing(Repository::getType)).collect(Collectors.toList());
 
-
+        System.out.println("开始时间："+new Timestamp(System.currentTimeMillis()));
         findLibrary(list);
 
-
+        System.out.println("开始时间："+new Timestamp(System.currentTimeMillis()));
         joinTemplate.joinQuery(repositoryList);
 
         return list;
+    }
+
+    @Override
+    public Repository findRepositoryByName(String repositoryName) {
+        Repository repository=null;
+
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery().setName(repositoryName));
+        List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+        if (CollectionUtils.isNotEmpty(repositoryList)){
+             repository = repositoryList.get(0);
+        }
+        return repository;
+    }
+
+    @Override
+    public Repository findRepositoryListByName(String name) {
+        RepositoryQuery repositoryQuery = new RepositoryQuery().setName(name);
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(repositoryQuery);
+        List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+        if (CollectionUtils.isNotEmpty(repositoryList)){
+            return repositoryList.get(0);
+        }
+        return null;
     }
 
     @Override
@@ -219,13 +251,8 @@ public class RepositoryServiceImpl implements RepositoryService {
             for (Repository repository : repositoryList) {
                 String repositoryUrl = findRepositoryUrl(repository);
                 repository.setRepositoryUrl(repositoryUrl);
-
-                List<Library> libraryList = libraryService.findLibraryList(new LibraryQuery().setRepositoryId(repository.getId()));
-                if (CollectionUtils.isNotEmpty(libraryList)) {
-                    repository.setLibraryNum(libraryList.size());
-                } else {
-                    repository.setLibraryNum(0);
-                }
+                Integer libraryNum = libraryService.findLibraryNum(repository.getId());
+                repository.setLibraryNum(libraryNum);
             }
         }
    }
@@ -263,7 +290,7 @@ public class RepositoryServiceImpl implements RepositoryService {
            } catch (Exception e) {
                ip = "172.0.0.1";
            }
-           absoluteAddress="http://" + ip + ":" + port + "/xpack/"+type+"/"+repository.getRepositoryUrl();
+           absoluteAddress="http://" + ip + ":" + port + "/repository/"+repository.getRepositoryUrl();
        }
         return absoluteAddress;
     }

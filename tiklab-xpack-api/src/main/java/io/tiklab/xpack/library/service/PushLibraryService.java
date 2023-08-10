@@ -40,6 +40,13 @@ public interface PushLibraryService {
     */
     void deletePushLibrary(@NotNull String id);
 
+    /**
+     * 条件删除
+     * @param field 根据删除的字段
+     * @param  value value
+     * @return
+     */
+    void deleteVersionByCondition(String field, String value);
 
     @FindOne
     PushLibrary findOne(@NotNull String id);
@@ -76,6 +83,13 @@ public interface PushLibraryService {
     */
     Pagination<PushLibrary> findPushLibraryPage(PushLibraryQuery pushLibraryQuery);
 
+
+    /**
+     * 推送中央仓库
+     * @param pushLibrary
+     * @return
+     */
+    String pushCentralWare(PushLibrary pushLibrary);
 
 
 }

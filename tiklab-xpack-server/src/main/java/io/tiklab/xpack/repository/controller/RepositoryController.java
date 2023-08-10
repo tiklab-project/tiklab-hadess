@@ -22,7 +22,7 @@ import java.util.List;
  * RepositoryController
  */
 @RestController
-@RequestMapping("/repository")
+@RequestMapping("/xpackRepository")
 @Api(name = "RepositoryController",desc = "制品库管理 ")
 public class RepositoryController {
 

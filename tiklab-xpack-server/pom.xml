@@ -7,24 +7,23 @@
     <parent>
         <groupId>io.tiklab</groupId>
         <artifactId>tiklab-xpack</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0.3</version>
     </parent>
     <artifactId>tiklab-xpack-server</artifactId>
     <name>${project.artifactId}</name>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.3</version>
 
     <dependencies>
+        <!--common-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!--common-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -35,90 +34,81 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--tiklab-->
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-postin-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-postin.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-codegen-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-codegen.version}</version>
         </dependency>
-        <!--fcc基础组件依赖-->
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-user-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!--ocs依赖-->
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-dss-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-user.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-eam-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-eam.version}</version>
         </dependency>
-
-        <!--其他引入-->
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-dfs-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-dfs.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-dcs-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-dcs.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-dss-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-dss.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cn.com.louie</groupId>
-            <artifactId>spring-jdbc-mapper</artifactId>
-            <version>1.2.2</version>
-        </dependency>
-        <!--FTP包-->
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.5</version>
-        </dependency>
-
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-message-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-message.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-xpack-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-toolkit-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-toolkit.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-privilege-spring-boot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${tiklab-privilege.version}</version>
         </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-upgrade-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${tiklab-upgrade.version}</version>
+        </dependency>
+
+        <!--other-->
+        <dependency>
+            <groupId>cn.com.louie</groupId>
+            <artifactId>spring-jdbc-mapper</artifactId>
+            <version>${jdbc-mapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>${commons-net.version}</version>
         </dependency>
     </dependencies>
 

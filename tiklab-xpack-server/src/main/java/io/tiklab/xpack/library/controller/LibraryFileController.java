@@ -113,5 +113,11 @@ public class LibraryFileController  {
         return Result.ok(libraryFileList);
     }
 
+    @RequestMapping(path = "/test",method = RequestMethod.POST)
+    @ApiMethod(name = "test",desc = "查询最新版本的文件list")
+    public Result<List<LibraryFile>> test(){
+        libraryFileService.test();
 
+        return Result.ok();
+    }
 }

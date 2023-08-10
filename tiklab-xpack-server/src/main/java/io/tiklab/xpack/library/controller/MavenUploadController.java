@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.controller;
 
 
 import io.tiklab.core.Result;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
@@ -34,7 +35,7 @@ public class MavenUploadController {
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response){
 
         String contextPath = request.getRequestURI();
-        String address = contextPath.substring(7);
+        String address = contextPath.substring(13);
 
         String method = request.getMethod();
 
@@ -71,7 +72,7 @@ public class MavenUploadController {
                 }
             }
         }catch (Exception e){
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
 

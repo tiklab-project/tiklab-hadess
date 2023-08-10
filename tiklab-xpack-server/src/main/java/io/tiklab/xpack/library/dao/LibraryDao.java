@@ -1,5 +1,6 @@
 package io.tiklab.xpack.library.dao;
 
+import io.tiklab.core.page.Page;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
@@ -15,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 
@@ -143,34 +146,31 @@ public class LibraryDao{
      * @param libraryQuery
      * @return Pagination <LibraryEntity>
      */
-    public List<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
-        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
-                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
-
-        if (!ObjectUtils.isEmpty(libraryQuery.getRepositoryIds())){
-            sql = sql + "li.repository_id in (:repositoryIds)";
-        }else {
-            sql = sql + "li.repository_id='" + libraryQuery.getRepositoryId() + "'";
-        }
-        if (!StringUtils.isEmpty(libraryQuery.getGroupId())){
-             sql = sql + " and lim.group_id='" + libraryQuery.getGroupId() + "'";
-        }
-        if (!StringUtils.isEmpty(libraryQuery.getArtifactId())){
-             sql = sql + " and lim.artifact_id='" + libraryQuery.getArtifactId()+ "'";
-        }
-        if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
-            sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
-        }
-        if (!StringUtils.isEmpty(libraryQuery.getName())){
-            sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
-        }
-
+    public Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
+        Pagination pagination = new Pagination();
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("repositoryIds", libraryQuery.getRepositoryIds());
-
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
+        Page pageParam = libraryQuery.getPageParam();
+
+        String countSql="SELECT count(1) FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
+         countSql = findConditionByRpyId(libraryQuery, countSql);
+        Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
+        pagination.setTotalRecord(integer);
+        double result = Math.ceil(integer/pageParam.getPageSize());
+        pagination.setTotalPage((int) result);
+
+
+        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
+        sql=findConditionByRpyId(libraryQuery,sql);
+        int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
+        sql= sql+" LIMIT " +pageParam.getPageSize()+" offset "+offset;
+
         List<Library> query = jdbc.query(sql, paramMap, new BeanPropertyRowMapper(Library.class));
-        return query;
+        pagination.setDataList(query);
+        return pagination;
 
     }
 
@@ -180,29 +180,32 @@ public class LibraryDao{
      * @param libraryQuery
      * @return Pagination <LibraryEntity>
      */
-    public List<LibraryEntity> findLibraryListByCondition(LibraryQuery libraryQuery) {
-        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
-                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
-
-        if (!ObjectUtils.isEmpty(libraryQuery.getRepositoryIds())){
-            sql = sql + "and li.repository_id in (:repositoryIds)";
-        }else {
-            if (StringUtils.isNotEmpty(libraryQuery.getRepositoryId())){
-                sql = sql + "and li.repository_id='" + libraryQuery.getRepositoryId() + "'";
-            }
-        }
-        if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
-            sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
-        }
-        if (!StringUtils.isEmpty(libraryQuery.getName())){
-            sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
-        }
+    public  Pagination<LibraryEntity> findLibraryListByCondition(LibraryQuery libraryQuery) {
+        Pagination pagination = new Pagination();
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("repositoryIds", libraryQuery.getRepositoryIds());
-
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
+        Page pageParam = libraryQuery.getPageParam();
+
+        String countSql="SELECT count(1) FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
+        countSql=findCondition(libraryQuery,countSql);
+        Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
+
+        pagination.setTotalRecord(integer);
+        double result = Math.ceil(integer/pageParam.getPageSize());
+        pagination.setTotalPage((int) result);
+
+        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
+        sql=findCondition(libraryQuery,sql);
+        int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
+        sql= sql+" LIMIT " +pageParam.getPageSize()+" offset "+offset;
+
+
         List<LibraryEntity> query = jdbc.query(sql, paramMap, new BeanPropertyRowMapper(LibraryEntity.class));
-        return query;
+        pagination.setDataList(query);
+        return pagination;
     }
 
     /**
@@ -239,4 +242,77 @@ public class LibraryDao{
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
 
     }
+
+    /**
+     * 通过制品名字查询制品
+     * @param name
+     * @return List <LibraryEntity>
+     */
+    public List<LibraryEntity> findLibraryByName(String name,String type) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name",name)
+                .eq("libraryType",type)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+
+    }
+
+    /**
+     * 通过制品库查询制品数量
+     * @param repositoryId
+     * @return Integer
+     */
+    public Integer findLibraryNum(String repositoryId) {
+        String sql = "SELECT count(1) FROM  pack_library where repository_id='" + repositoryId + "'";
+        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
+        Integer integer = jdbc.queryForObject(sql, new HashMap<String, Object>(), Integer.class);
+        return integer;
+    }
+    /**
+     * 首页条件查询制品列表条件拼接
+     * @param libraryQuery
+     * @return String
+     */
+    public String findCondition(LibraryQuery libraryQuery,String sql){
+        if (!ObjectUtils.isEmpty(libraryQuery.getRepositoryIds())){
+            sql = sql + "and li.repository_id in (:repositoryIds)";
+        }else {
+            if (StringUtils.isNotEmpty(libraryQuery.getRepositoryId())){
+                sql = sql + "and li.repository_id='" + libraryQuery.getRepositoryId() + "'";
+            }
+        }
+        if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
+            sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getName())){
+            sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
+        }
+        return sql;
+    }
+    /**
+     * 查询制品库下面的制品条件拼接
+     * @param libraryQuery
+     * @return String
+     */
+    public String findConditionByRpyId(LibraryQuery libraryQuery,String sql){
+        if (!ObjectUtils.isEmpty(libraryQuery.getRepositoryIds())){
+            sql = sql + "li.repository_id in (:repositoryIds)";
+        }else {
+            sql = sql + "li.repository_id='" + libraryQuery.getRepositoryId() + "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getGroupId())){
+            sql = sql + " and lim.group_id='" + libraryQuery.getGroupId() + "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getArtifactId())){
+            sql = sql + " and lim.artifact_id='" + libraryQuery.getArtifactId()+ "'";
+        }
+        if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
+            sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getName())){
+            sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
+        }
+        return sql;
+    }
+
 }

@@ -25,6 +25,9 @@ public class PushLibraryQuery implements Serializable {
         @ApiProperty(name ="libraryId",desc = "制品id")
         private String libraryId;
 
+        @ApiProperty(name ="type",desc = "推送类型 maven、npm")
+        private String type;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -57,5 +60,13 @@ public class PushLibraryQuery implements Serializable {
         public PushLibraryQuery setLibraryId(String libraryId) {
             this.libraryId = libraryId;
             return this;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
         }
 }

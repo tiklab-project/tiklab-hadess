@@ -43,9 +43,16 @@ public class PushLibrary extends BaseModel {
     @ApiProperty(name="lastPushResult",desc="最后推送结果")
     private String lastPushResult;
 
+    @ApiProperty(name="execState",desc="执行状态 等待中：waite、执行中：exec 、结束：end")
+    private String execState;
+
 
     @ApiProperty(name="userId",desc="userId")
     private String userId;
+
+    /*-----其他字段------*/
+    @ApiProperty(name="pushType",desc="推送类型")
+    private String pushType;
 
     public String getId() {
         return id;
@@ -93,5 +100,23 @@ public class PushLibrary extends BaseModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getExecState() {
+        return execState;
+    }
+
+    public PushLibrary setExecState(String execState) {
+        this.execState = execState;
+        return this;
+    }
+
+    public String getPushType() {
+        return pushType;
+    }
+
+    public void setPushType(String pushType) {
+        this.pushType = pushType;
+
     }
 }
