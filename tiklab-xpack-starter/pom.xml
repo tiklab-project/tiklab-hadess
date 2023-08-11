@@ -96,11 +96,20 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.tiklab</groupId>
+                    <artifactId>tiklab-jdk-linux</artifactId>
+                    <version>${tiklab-jdk.version}</version>
+                    <type>zip</type>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
             <properties>
                 <assembly>linux</assembly>
                 <systemType>linux</systemType>
             </properties>
-          <!--  <build>
+            <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -118,14 +127,14 @@
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-jdk-linux</artifactId>
-                                            <version>${project.version}</version>
+                                            <version>${tiklab-jdk.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-postgresql-linux</artifactId>
-                                            <version>${project.version}</version>
+                                            <version>${tiklab-postgresql.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
@@ -135,7 +144,7 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>-->
+            </build>
         </profile>
 
         <!--windows-->

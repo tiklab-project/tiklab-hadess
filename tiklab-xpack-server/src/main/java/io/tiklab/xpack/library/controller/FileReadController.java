@@ -5,6 +5,7 @@ import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
+import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.service.LibraryFileReadService;
 import io.tiklab.xpack.library.service.LibraryService;
@@ -36,7 +37,9 @@ public class FileReadController  {
 
 
 
-    @RequestMapping(path="/snapshots/**",method = RequestMethod.GET)
+
+
+    @RequestMapping(path="/read/**",method = RequestMethod.GET)
     @ApiMethod(name = "fileRead",desc = "文件读取")
     @ApiParam(name = "library",desc = "library",required = true)
     public void fileRead(HttpServletRequest request, HttpServletResponse response){
@@ -53,12 +56,13 @@ public class FileReadController  {
         }
     }
 
-    @RequestMapping(path = "/downloadSingleFile/**",method = RequestMethod.GET)
+    @RequestMapping(path = "/download/**",method = RequestMethod.GET)
     @ApiMethod(name = "download",desc = "单个制品文件下载")
     @ApiParam(name = "requestParam",desc = "requestParam")
     public void downloadSingleFile(HttpServletRequest request, HttpServletResponse response) {
         try {
             String requestURI = request.getRequestURI();
+
             String fileName = requestURI.substring(requestURI.lastIndexOf("/")+1);
             byte[] bytes = libraryFileReadService.fileRead(requestURI);
             response.setHeader("Content-Disposition", "attachment; filename="+fileName);

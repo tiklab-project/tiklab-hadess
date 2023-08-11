@@ -1,7 +1,9 @@
 package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.xpack.common.XpakYamlDataMaService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +22,20 @@ public class LibraryFileReadServiceImpl implements LibraryFileReadService{
     @Value("${server.port:8080}")
     private String port;
 
+    @Autowired
+    XpakYamlDataMaService xpakYamlDataMaService;
+
     @Override
     public byte[] fileRead(String requestURI) {
 
         try {
+            String rpyAddress=xpakYamlDataMaService.repositoryAddress();
+
             String[] split = requestURI.split("/");
             Integer indexes = split[1].length() + split[2].length() + 2;
             String url = requestURI.substring(indexes);
-            File file = new File(url);
+
+            File file = new File(rpyAddress+url);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
