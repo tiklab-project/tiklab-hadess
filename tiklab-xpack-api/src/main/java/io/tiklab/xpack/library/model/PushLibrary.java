@@ -28,7 +28,6 @@ public class PushLibrary extends BaseModel {
     @ApiProperty(name="repositoryId",desc="制品库id")
     private String repositoryId;
 
-    @NotNull
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
             @Mapping(source = "library.id",target = "libraryId")

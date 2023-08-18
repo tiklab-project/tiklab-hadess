@@ -11,13 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
@@ -43,32 +41,65 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
     XpakYamlDataMaService xpakYamlDataMaService;
     //推送结果
     public static Map<String , String> pushResultMap = new HashMap<>();
+    //执行列表
+    public static Map<String , List<PushLibrary>> execQueue = new HashMap<>();
+    //存放的LibraryList
+    public static Map<String , List<PushLibrary>> libraryListMap = new HashMap<>();
 
     @Override
-    public String pushCentralWare(String libraryId, String type) {
-        String result=null;
-        pushResultMap.remove(libraryId);
-        if (("maven".equals(type))){
-             result = mavenPush(libraryId);
+    public String pushCentralWare(PushLibrary pushLibrary) {
+        //每次重新执行的时候会清空之前的数据
+        if (ObjectUtils.isEmpty(execQueue.get(pushLibrary.getRepositoryId()))){
+            libraryListMap.remove(pushLibrary.getRepositoryId());
         }
-        if (("npm").equals(type)){
-            npmPush(libraryId);
+        //当LibraryList 里面为空的时候存放入
+        if (ObjectUtils.isEmpty(libraryListMap.get(pushLibrary.getRepositoryId()))){
+            List<PushLibrary> pushLibraryList = pushLibraryService.findPushLibraryList(new PushLibraryQuery().setRepositoryId(pushLibrary.getRepositoryId()));
+            libraryListMap.put(pushLibrary.getRepositoryId(),pushLibraryList);
+
+        }
+        updateLibraryExecState(pushLibrary,"waite",pushLibrary.getLastPushResult());
+        String result=null;
+        if (("maven".equals(pushLibrary.getLibrary().getLibraryType()))){
+            
+            List<PushLibrary> pushLibraries;
+            if (ObjectUtils.isEmpty(execQueue.get(pushLibrary.getRepositoryId()))){
+                pushLibraries = new ArrayList<>();
+                pushLibraries.add(pushLibrary);
+                //执行推送
+                result = mavenPush(pushLibrary);
+            }else {
+                 pushLibraries = execQueue.get(pushLibrary.getRepositoryId());
+                 pushLibraries.add(pushLibrary);
+            }
+             execQueue.put(pushLibrary.getRepositoryId(),pushLibraries);
+        }
+        if (("npm").equals(pushLibrary.getLibrary().getLibraryType())){
+            npmPush(pushLibrary);
         }
         return result;
     }
 
     @Override
-    public String pushResult(String libraryId) {
-        return pushResultMap.get(libraryId);
+    public List<PushLibrary> pushResult(String repositoryId) {
+        List<PushLibrary> pushLibraries = libraryListMap.get(repositoryId);
+        if (CollectionUtils.isEmpty(pushLibraries)){
+            return  Collections.emptyList();
+        }
+
+        return pushLibraries;
     }
 
     /**
      * maven  中央仓库提交
-     * @param libraryId  制品id
+     * @param pushLibrary
      */
-    public String mavenPush(String libraryId){
+    public String mavenPush(PushLibrary pushLibrary){
+        String libraryId = pushLibrary.getLibrary().getId();
+        //修改执行状态
+        updateLibraryExecState(pushLibrary,"exec",pushLibrary.getLastPushResult());
 
-            //查询gpg 是否安装
+        //查询gpg 是否安装
            /* ProcessBuilder builder = new ProcessBuilder("which", "gpg");
             Integer code = exec(builder, "gpgIsInstall",libraryId);
             if (code==1){
@@ -121,19 +152,33 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
                             //执行pom
                             Integer integer = mavenExec(libraryMaven, libraryFile, libraryId, "pom");
                             if (integer==0){
-                                updatePushLibrary(libraryId,"succeed");
-                                pushResultMap.put(libraryId,"succeed");
+                                //修改执行状态
+                                updateLibraryExecState(pushLibrary,"end","succeed");
+
+                                updatePushLibrary(pushLibrary,"succeed");
+                                //推送后删除队列里面这条数据
+                                deleteQueueAndExec(pushLibrary);
+                            }else {
+                                updateLibraryExecState(pushLibrary,"end","fail");
+
+                                updatePushLibrary(pushLibrary,"fail");
                             }
+
+
                         }catch (Exception e) {
-                            updatePushLibrary(libraryId,"fail");
-                            pushResultMap.put(libraryId,"推送失败");
-                            throw  new SystemException("maven推送失败:"+e.getMessage());
+                            updateLibraryExecState(pushLibrary,"end","fail");
+                            updatePushLibrary(pushLibrary,"fail");
+                            logger.info("maven推送失败"+e.getMessage());
+                            //推送后删除队列里面这条数据
+                            deleteQueueAndExec(pushLibrary);
                         }
                     }
                 });
         }else {
-                pushResultMap.put(libraryId,"推送失败");
-                throw  new SystemException("maven推送失败");
+                updateLibraryExecState(pushLibrary,"end","fail");
+                updatePushLibrary(pushLibrary,"fail");
+                //推送后删除队列里面这条数据
+                deleteQueueAndExec(pushLibrary);
             }
          return "ok";
     }
@@ -199,8 +244,6 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
         if (pushCode!=0){
             FileUtils.deleteQuietly(new File(source));
             FileUtils.deleteQuietly(new File(javaDoc));
-            this.updatePushLibrary(libraryId,"fail");
-            pushResultMap.put(libraryId,"推送失败");
         }
         FileUtils.deleteQuietly(new File(source));
         FileUtils.deleteQuietly(new File(javaDoc));
@@ -209,9 +252,10 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
 
     /**
      * npm  中央仓库提交
-     * @param libraryId  制品id
+     * @param pushLibrary  制品id
      */
-    public void npmPush(String libraryId) {
+    public void npmPush(PushLibrary pushLibrary) {
+        String libraryId = pushLibrary.getLibrary().getId();
 
         List<LibraryFile> fileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryId));
         if (CollectionUtils.isNotEmpty(fileList)){
@@ -245,23 +289,25 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
                     processBuilder.environment().put("NPM_REGISTRY", registryUrl);
                     Integer pushCode = exec(processBuilder, "pushNpmCommand", libraryId);
                     if (pushCode==0){
-                        pushResultMap.put(libraryId,"succeed");
-                        this.updatePushLibrary(libraryId,"succeed");
+                        updateLibraryExecState(pushLibrary,"end","succeed");
+                        this.updatePushLibrary(pushLibrary,"succeed");
                     }else {
-                        pushResultMap.put(libraryId,"推送失败");
-                        this.updatePushLibrary(libraryId,"fail");
+                        updateLibraryExecState(pushLibrary,"end","fail");
+                        this.updatePushLibrary(pushLibrary,"fail");
                     }
                     /**
                      *  删除解压后的文件
                      */
                     FileUtils.deleteDirectory(new File(extractPath));
                 }else {
-                    this.updatePushLibrary(libraryId,"fail");
+                    updateLibraryExecState(pushLibrary,"end","fail");
+                    this.updatePushLibrary(pushLibrary,"fail");
                     pushResultMap.put(libraryId,"解压文件失败");
                     throw new SystemException("npm推送解压tgz包失败");
                 }
             } catch (IOException | InterruptedException e) {
-                this.updatePushLibrary(libraryId,"fail");
+                updateLibraryExecState(pushLibrary,"end","fail");
+                this.updatePushLibrary(pushLibrary,"fail");
                 pushResultMap.put(libraryId,"解压文件失败");
                throw new SystemException(e.getMessage());
             }
@@ -312,7 +358,6 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
         }
         if ("pushNpmCommand".equals(type)){
             if ( output.toString().contains("code E403")) {
-                this.updatePushLibrary(libraryId,"fail");
                 pushResultMap.put(libraryId,"403 推送中央仓库的版本不能重复且必须大于仓库中存在的版本");
             }
         }
@@ -321,19 +366,58 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
     }
 
     /**
-     * 执行 命令
-     * @param LibraryId 制品id
+     * 修改推送的结果
+     * @param pushLibrary pushLibrary
      * @param  resultState  结果状态
      * @return
      */
-    public void updatePushLibrary(String LibraryId,String resultState){
-        List<PushLibrary> pushLibraryList = pushLibraryService.findPushLibraryList(new PushLibraryQuery().setLibraryId(LibraryId));
-        PushLibrary pushLibrary = pushLibraryList.get(0);
+    public void updatePushLibrary(PushLibrary pushLibrary,String resultState ){
         pushLibrary.setLastPushTime(new Timestamp(System.currentTimeMillis()));
         pushLibrary.setLastPushResult(resultState);
-
         pushLibraryService.updatePushLibrary(pushLibrary);
+    }
+    /**
+     * 修改制品执行的状态
+     * @param pushLibrary pushLibrary
+     * @param execState 执行状态 waite、exec、end
+     * @param  resultState 结果状态
+     * @return
+     */
+    public void updateLibraryExecState(PushLibrary pushLibrary,String execState,String resultState){
+        List<PushLibrary> pushLibraries = libraryListMap.get(pushLibrary.getRepositoryId());
+        List<Object> objectList = pushLibraries.stream().map(Libraries -> {
+            if (pushLibrary.getId() .equals(Libraries.getId()) ) {
+                Libraries.setExecState(execState);
+                Libraries.setLastPushResult(resultState);
+                Libraries.setLastPushTime(new Timestamp(System.currentTimeMillis()));
+            }
+            return Libraries;
+        }).collect(Collectors.toList());
+        System.out.println("修改后："+objectList);
     }
 
 
+    /**
+     * 推送完成后删除list里面的队列、如果队列中仍有数据并执行
+     * @param pushLibrary pushLibrary
+     * @return
+     */
+    public void deleteQueueAndExec(PushLibrary pushLibrary){
+        List<PushLibrary> pushLibraries = execQueue.get(pushLibrary.getRepositoryId());
+        Iterator<PushLibrary> iterator = pushLibraries.iterator();
+        while (iterator.hasNext()) {
+            PushLibrary library = iterator.next();
+            if (library.getId() == pushLibrary.getId()) {
+                iterator.remove();
+                break;
+            }
+        }
+        //删除后查询队列中是否还有
+        List<PushLibrary> Libraries = execQueue.get(pushLibrary.getRepositoryId());
+        if (CollectionUtils.isNotEmpty(Libraries)){
+            mavenPush(Libraries.get(0));
+        }else {
+            libraryListMap.remove(pushLibrary.getRepositoryId());
+        }
+    }
 }

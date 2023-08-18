@@ -231,6 +231,14 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryVersionDao.deleteLibraryVersion(deleteCondition);
     }
 
+    @Override
+    public LibraryVersion findVersionByNameAndVer(String libraryName, String version) {
+        LibraryVersionEntity versionByNameAndVer = libraryVersionDao.findVersionByNameAndVer(libraryName, version);
+        LibraryVersion libraryVersion = BeanMapper.map(versionByNameAndVer, LibraryVersion.class);
+
+        return libraryVersion;
+    }
+
 
     /**
      *  制品版本大小

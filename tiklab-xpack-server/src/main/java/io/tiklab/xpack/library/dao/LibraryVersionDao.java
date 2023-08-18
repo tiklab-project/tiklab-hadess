@@ -1,15 +1,18 @@
 package io.tiklab.xpack.library.dao;
 
 import io.tiklab.core.page.Pagination;
+import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import io.tiklab.xpack.library.entity.LibraryVersionEntity;
 import io.tiklab.xpack.library.model.LibraryVersionQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -113,5 +116,21 @@ public class LibraryVersionDao{
                 .pagination(libraryVersionQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,LibraryVersionEntity.class);
+    }
+    /**
+     * 通过制品名字和版本号查询
+     * @param libraryName 制品名字
+     * @param  version 版本
+     * @return LibraryVersionEntity
+     */
+    public LibraryVersionEntity findVersionByNameAndVer(String libraryName,String version){
+        LibraryVersionEntity libraryVersionEntity=null;
+        String sql="SELECT ve.* from pack_library li LEFT JOIN pack_library_version ve ON li.id=ve.library_id WHERE li.name='"+libraryName+"' AND ve.version='"+version+"'";
+        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
+        List<LibraryVersionEntity> versionEntities = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LibraryVersionEntity.class));
+        if (CollectionUtils.isNotEmpty(versionEntities)){
+             libraryVersionEntity = versionEntities.get(0);
+        }
+        return libraryVersionEntity;
     }
 }

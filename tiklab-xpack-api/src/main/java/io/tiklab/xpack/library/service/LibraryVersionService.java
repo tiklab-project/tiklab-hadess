@@ -105,4 +105,11 @@ public interface LibraryVersionService {
      */
     void deleteVersionByCondition(String field,String value);
 
+    /**
+     * 通过版本好和制品名字查询
+     * @param libraryName  制品名字
+     * @param version 版本好
+     */
+    LibraryVersion findVersionByNameAndVer(String libraryName,String version);
+
 }

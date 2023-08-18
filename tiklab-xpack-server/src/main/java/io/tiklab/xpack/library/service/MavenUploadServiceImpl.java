@@ -10,10 +10,8 @@ import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.service.UserService;
 import io.tiklab.xpack.common.XpakYamlDataMaService;
-import io.tiklab.xpack.library.model.Library;
-import io.tiklab.xpack.library.model.LibraryFile;
-import io.tiklab.xpack.library.model.LibraryFileQuery;
-import io.tiklab.xpack.library.model.LibraryVersion;
+import io.tiklab.xpack.library.entity.LibraryEntity;
+import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryMavenService;
@@ -322,6 +320,16 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
             List<RepositoryMaven> mavenList = mavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repositoryId));
             String version = dataMap.get("version").toLowerCase();
+
+            //正式版本,版本不能冲突
+            if (!dataMap.get("version").toUpperCase().endsWith("-SNAPSHOT")){
+                LibraryVersion libraryVersion = libraryVersionService.findVersionByNameAndVer(dataMap.get("libraryName"), dataMap.get("version"));
+                if (!ObjectUtils.isEmpty(libraryVersion)){
+                    result.setCode(409);
+                    result.setMsg("ReasonPhrase: Conflict");
+                    return result;
+                }
+            }
 
             if (("Release").equals(mavenList.get(0).getVersion())){
                 if (version.endsWith("snapshot")){

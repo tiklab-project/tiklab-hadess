@@ -86,10 +86,15 @@ public interface PushLibraryService {
 
     /**
      * 推送中央仓库
-     * @param pushLibrary
+     * @param pushLibraryId 推送id
      * @return
      */
-    String pushCentralWare(PushLibrary pushLibrary);
+    String pushCentralWare(String pushLibraryId);
 
-
+    /**
+     * 获取推送结果
+     * @param repositoryId 制品库id
+     * @return
+     */
+    List pushResult(String repositoryId);
 }

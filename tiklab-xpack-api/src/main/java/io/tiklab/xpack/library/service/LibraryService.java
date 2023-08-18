@@ -128,5 +128,5 @@ public interface LibraryService {
      */
     List<Library> findNotPushLibraryList(LibraryQuery libraryQuery);
 
-
+    List<Library> findEqLibraryList(LibraryQuery libraryQuery);
 }

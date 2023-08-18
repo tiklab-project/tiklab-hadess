@@ -97,21 +97,21 @@ public class PushLibraryController {
 
     @RequestMapping(path="/pushCentralWare",method = RequestMethod.POST)
     @ApiMethod(name = "pushCentralWare",desc = "推送中央仓库")
-    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
-    public Result<String> pushCentralWare(@RequestBody @NotNull @Valid PushLibrary pushLibrary){
-       // String result = pushLibraryService.pushCentralWare(pushLibrary);
-
-        return Result.ok();
-    }
-
-/*    @RequestMapping(path="/pushResult",method = RequestMethod.POST)
-    @ApiMethod(name = "pushResult",desc = "推送结果")
-    @ApiParam(name = "versionId",desc = "制品id ",required = true)
-    public Result<String> pushResult(@NotNull String libraryId){
-        String result= pushLibraryService.pushResult(libraryId);
+    @ApiParam(name = "pushLibraryId",desc = "pushLibraryId",required = true)
+    public Result<String> pushCentralWare(@NotNull String  pushLibraryId){
+       String result = pushLibraryService.pushCentralWare(pushLibraryId);
 
         return Result.ok(result);
-    }*/
+    }
+
+    @RequestMapping(path="/pushResult",method = RequestMethod.POST)
+    @ApiMethod(name = "pushResult",desc = "获取推送结果")
+    @ApiParam(name = "repositoryId",desc = "制品库id ",required = true)
+    public Result<PushLibrary> pushResult(String repositoryId){
+        List result= pushLibraryService.pushResult(repositoryId);
+
+        return Result.ok(result);
+    }
 }
 
 

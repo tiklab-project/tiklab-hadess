@@ -229,6 +229,13 @@ public class LibraryServiceImpl implements LibraryService {
         return libraries;
     }
 
+    @Override
+    public List<Library> findEqLibraryList(LibraryQuery libraryQuery) {
+        List<LibraryEntity> libraryEntityList =libraryDao.findEqLibraryList(libraryQuery);
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+        return  libraryList;
+    }
+
 
     @Override
     public Pagination<Library> findLibraryPage(LibraryQuery libraryQuery) {

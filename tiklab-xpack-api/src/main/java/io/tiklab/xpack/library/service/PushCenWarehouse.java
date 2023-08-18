@@ -1,17 +1,20 @@
 package io.tiklab.xpack.library.service;
 
+import io.tiklab.xpack.library.model.PushLibrary;
+
+import java.util.List;
+
 public interface PushCenWarehouse {
 
    /**
     * 推送中央仓库
-    * @param libraryId 制品id
-    * @param type  类型 maven、npm
+    * @param pushLibrary
     */
-   String pushCentralWare(String libraryId, String type);
+   String pushCentralWare(PushLibrary pushLibrary);
 
    /**
     * 推送中央仓库结果
-    * @param libraryId 制品id
+    * @param repositoryId 制品id
     */
-   String pushResult(String libraryId);
+   List<PushLibrary> pushResult(String repositoryId);
 }

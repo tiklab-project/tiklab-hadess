@@ -137,10 +137,16 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
 
     @Override
-    public String pushCentralWare(PushLibrary pushLibrary) {
-        this.updatePushLibrary(pushLibrary);
-      //  pushCenWarehouse.pushCentralWare(pushLibrary);
-        return null;
+    public String pushCentralWare(String pushLibraryId) {
+        PushLibrary library = this.findPushLibrary(pushLibraryId);
+        library.setExecState("waite");
+        return pushCenWarehouse.pushCentralWare(library);
+
+    }
+
+    @Override
+    public List<PushLibrary> pushResult(String repositoryId) {
+        return  pushCenWarehouse.pushResult(repositoryId);
     }
 
 }
