@@ -255,8 +255,8 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             writeFile(path,filePath,decodedBytes);
 
             int length = decodedBytes.length;
-            double i =(double)length / 1000;
-            long round = Math.round(i);
+
+            String size = RepositoryUtil.formatSize(length);
 
             //创建制品
             Library library = libraryService.createLibraryData(libraryName, "npm",repositoryList.get(0));
@@ -278,7 +278,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             LibraryFile libraryFile = new LibraryFile();
             libraryFile.setLibrary(library);
             libraryFile.setFileName(tgzName);
-            libraryFile.setFileSize(round+"KB");
+            libraryFile.setFileSize(size);
             libraryFile.setFileUrl(filePath);
             libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);

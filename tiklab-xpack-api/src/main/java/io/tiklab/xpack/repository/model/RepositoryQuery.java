@@ -23,10 +23,10 @@ public class RepositoryQuery implements Serializable {
         @ApiProperty(name ="name",desc = "制品库名字")
         private String name;
 
-        @ApiProperty(name ="repositoryType",desc = "制品库类型")
+        @ApiProperty(name ="repositoryType",desc = "制品库类型 maven、npm")
         private String repositoryType;
 
-        @ApiProperty(name ="type",desc = "类型")
+        @ApiProperty(name ="type",desc = "类型 local、remote、group")
         private String type;
 
         public List<Order> getOrderParams() {

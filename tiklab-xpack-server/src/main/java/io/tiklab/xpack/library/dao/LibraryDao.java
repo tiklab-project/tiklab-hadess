@@ -162,7 +162,7 @@ public class LibraryDao{
         pagination.setTotalPage((int) result);
 
 
-        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+        String sql="SELECT li.* , lim.group_id, lim.artifact_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
         sql=findConditionByRpyId(libraryQuery,sql);
         int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
@@ -196,7 +196,7 @@ public class LibraryDao{
         double result = Math.ceil(integer/pageParam.getPageSize());
         pagination.setTotalPage((int) result);
 
-        String sql="SELECT li.* , lim.group_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
+        String sql="SELECT li.* , lim.group_id,lim.artifact_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
         sql=findCondition(libraryQuery,sql);
         int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
@@ -282,12 +282,19 @@ public class LibraryDao{
                 sql = sql + "and li.repository_id='" + libraryQuery.getRepositoryId() + "'";
             }
         }
+        if (!StringUtils.isEmpty(libraryQuery.getGroupId())){
+            sql = sql + " and lim.group_id='" + libraryQuery.getGroupId() + "'";
+        }
+        if (!StringUtils.isEmpty(libraryQuery.getArtifactId())){
+            sql = sql + " and lim.artifact_id='" + libraryQuery.getArtifactId()+ "'";
+        }
         if(!StringUtils.isEmpty(libraryQuery.getNewVersion())){
             sql = sql + " and li.new_version='" + libraryQuery.getNewVersion()+ "'";
         }
         if (!StringUtils.isEmpty(libraryQuery.getName())){
             sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
         }
+
         return sql;
     }
     /**

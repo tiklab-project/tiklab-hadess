@@ -9,6 +9,7 @@ import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.service.UserService;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpakYamlDataMaService;
 import io.tiklab.xpack.library.entity.LibraryEntity;
 import io.tiklab.xpack.library.model.*;
@@ -165,37 +166,48 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             logger.info("进入:library");
             String repositoryPath = yamlDataMaService.repositoryAddress();
             String fileAbsolutePath;
+            LibraryFileQuery libraryFileQuery = new LibraryFileQuery().setLibraryId(library.getId()).setFileName(fileName);
+            //快照版本拉取拉取maven-metadata.xml 正式版本不会拉取， 一个版本的每个时间搓都有单独的maven-metadata.xml
+            if (upperCase.contains("SNAPSHOT")){
+                List<LibraryVersion> versionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(library.getId()).setVersion(version));
+                if (CollectionUtils.isEmpty(versionList)){
+                    return result(404,null,fileName+"文件不存在");
+                }
+                libraryFileQuery.setLibraryVersionId(versionList.get(0).getId()) ;
+            }
 
-            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()).setFileName(fileName));
+            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(libraryFileQuery);
             //制品库类型
             String repositoryType = library.getRepository().getRepositoryType();
-           if (CollectionUtils.isEmpty(libraryFileList)){
-               logger.info("进入:repositoryType");
-               if (("remote").equals(repositoryType)){
-                   logger.info("进入:代理");
-                   //走代理拉取
-                   return proxyPull(repository,relativePath,storePath);
-               }
+            if (CollectionUtils.isEmpty(libraryFileList)){
+                logger.info("进入:repositoryType");
+                if (("remote").equals(repositoryType)){
+                    logger.info("进入:代理");
+                    //走代理拉取
+                    return proxyPull(repository,relativePath,storePath);
+                }
 
-               if (("local").equals(repositoryType)&&fileName.contains("maven-metadata")){
-                   List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+                if (("local").equals(repositoryType)&&fileName.contains("maven-metadata")){
+                    List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
 
-                   List<RepositoryGroup> collect = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+                    List<RepositoryGroup> collect = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
 
-                   List<RepositoryGroup> collect1 = collect.stream().filter(b -> ("maven-snapshots").equals(b.getRepository().getName())).collect(Collectors.toList());
-                   fileAbsolutePath = repositoryPath + "/" +collect1.get(0).getRepository().getId()+"/"+ relativePath;
-               }else {
-                   logger.info(fileName+":文件为空");
-                   return result(404,null,fileName+"文件不存在");
-               }
-           }else {
-               fileAbsolutePath = repositoryPath + "/" + libraryFileList.get(0).getFileUrl();
-           }
+                    List<RepositoryGroup> collect1 = collect.stream().filter(b -> ("maven-snapshots").equals(b.getRepository().getName())).collect(Collectors.toList());
+                    fileAbsolutePath = repositoryPath + "/" +collect1.get(0).getRepository().getId()+"/"+ relativePath;
+                }else {
+                    logger.info(fileName+":文件为空");
+                    return result(404,null,fileName+"文件不存在");
+                }
+            }else {
+                fileAbsolutePath = repositoryPath + "/" + libraryFileList.get(0).getFileUrl();
+            }
 
             File file = new File(fileAbsolutePath);
             logger.info("私服拉取");
             //私服库拉取
             return readFileData(file);
+
+
         }
         //走代理拉取
         return proxyPull(repository,relativePath,storePath);
@@ -324,11 +336,11 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //正式版本,版本不能冲突
             if (!dataMap.get("version").toUpperCase().endsWith("-SNAPSHOT")){
                 LibraryVersion libraryVersion = libraryVersionService.findVersionByNameAndVer(dataMap.get("libraryName"), dataMap.get("version"));
-                if (!ObjectUtils.isEmpty(libraryVersion)){
+                /*if (!ObjectUtils.isEmpty(libraryVersion)){
                     result.setCode(409);
                     result.setMsg("ReasonPhrase: Conflict");
                     return result;
-                }
+                }*/
             }
 
             if (("Release").equals(mavenList.get(0).getVersion())){
@@ -405,14 +417,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         //文件大小
         long FileLength = file.length();
-        double i =(double)FileLength / 1000;
-        long round = Math.round(i);
+        String size = RepositoryUtil.formatSize(FileLength);
         Result result = new Result<>();
-        if (round>0){
-            result.setData(round+"KB");
-        }else {
-            result.setData(FileLength+"B");
-        }
+        result.setData(size);
         result.setCode(2000);
         return result;
     }

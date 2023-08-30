@@ -112,4 +112,16 @@ public interface LibraryVersionService {
      */
     LibraryVersion findVersionByNameAndVer(String libraryName,String version);
 
+    /**
+     * 通过id 查询
+     * @param versionId
+     */
+    LibraryVersion findLibraryVersionById(String versionId);
+
+
+    /**
+     * 分页查询历史版本
+     * @param libraryVersionQuery
+     */
+    Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery);
 }

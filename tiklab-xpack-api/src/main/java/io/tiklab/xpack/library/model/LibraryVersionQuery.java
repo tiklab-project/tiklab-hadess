@@ -31,6 +31,8 @@ public class LibraryVersionQuery implements Serializable {
         @ApiProperty(name ="libraryType",desc = "制品类型")
         private String libraryType;
 
+        @ApiProperty(name ="currentVersionId",desc = "当前版本id")
+        private String currentVersionId;
 
         public List<Order> getOrderParams() {
             return orderParams;
@@ -83,4 +85,12 @@ public class LibraryVersionQuery implements Serializable {
             this.libraryType = libraryType;
             return this;
         }
+
+    public String getCurrentVersionId() {
+        return currentVersionId;
+    }
+
+    public void setCurrentVersionId(String currentVersionId) {
+        this.currentVersionId = currentVersionId;
+    }
 }

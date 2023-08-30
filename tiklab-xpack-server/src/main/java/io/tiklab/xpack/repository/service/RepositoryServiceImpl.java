@@ -171,10 +171,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
         List<Repository> list = repositoryList.stream().sorted(Comparator.comparing(Repository::getType)).collect(Collectors.toList());
 
-        System.out.println("开始时间："+new Timestamp(System.currentTimeMillis()));
         findLibrary(list);
 
-        System.out.println("开始时间："+new Timestamp(System.currentTimeMillis()));
         joinTemplate.joinQuery(repositoryList);
 
         return list;
@@ -236,7 +234,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public List<Repository> findUnRelevanceRepository(String repositoryType,String repositoryGroupId) {
+        //查询本地、远程制品库
         List<Repository> localAndRemoteRepository = findLocalAndRemoteRepository(repositoryType);
+
         List<Repository> repositoryByGroup = findRepositoryByGroup(repositoryGroupId);
         if (CollectionUtils.isNotEmpty(repositoryByGroup)){
             for (Repository repository:repositoryByGroup){

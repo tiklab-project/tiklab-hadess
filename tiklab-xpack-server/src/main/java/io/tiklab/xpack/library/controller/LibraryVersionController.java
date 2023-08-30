@@ -78,6 +78,15 @@ public class LibraryVersionController {
         return Result.ok(libraryVersion);
     }
 
+    @RequestMapping(path="/findLibraryVersionById",method = RequestMethod.POST)
+    @ApiMethod(name = "findLibraryVersionById",desc = "通过id查询制品版本")
+    @ApiParam(name = "versionId",desc = "id",required = true)
+    public Result<LibraryVersion> findLibraryVersionById(@NotNull String versionId){
+        LibraryVersion libraryVersion = libraryVersionService.findLibraryVersionById(versionId);
+
+        return Result.ok(libraryVersion);
+    }
+
     @RequestMapping(path="/findAllLibraryVersion",method = RequestMethod.POST)
     @ApiMethod(name = "findAllLibraryVersion",desc = "查询所有制品版本")
     public Result<List<LibraryVersion>> findAllLibraryVersion(){
@@ -103,6 +112,16 @@ public class LibraryVersionController {
 
         return Result.ok(pagination);
     }
+
+    @RequestMapping(path = "/findHistoryVersionPage",method = RequestMethod.POST)
+    @ApiMethod(name = "findHistoryVersionPage",desc = "条件分页查询历史版本")
+    @ApiParam(name = "libraryVersionQuery",desc = "libraryVersionQuery",required = true)
+    public Result<Pagination<LibraryVersion>> findHistoryVersionPage(@RequestBody @Valid @NotNull LibraryVersionQuery libraryVersionQuery){
+        Pagination<LibraryVersion> pagination = libraryVersionService.findHistoryVersionPage(libraryVersionQuery);
+
+        return Result.ok(pagination);
+    }
+
 
     @RequestMapping(path = "/findLibraryNewVersion",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryNewVersion",desc = "查询最新制品版本")

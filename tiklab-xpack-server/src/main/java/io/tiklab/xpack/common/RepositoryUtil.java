@@ -13,6 +13,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -154,5 +156,59 @@ public class RepositoryUtil {
         }
         inputStream.close();
         outputStream.close();
+    }
+
+    /**
+     * 格式化文件大小，将字节转换为可读性更好的格式
+     * @param size 单位B
+     */
+    public static String formatSize(long size) {
+        String[] units = {"B", "KB", "MB", "GB", "TB"};
+        double temp = size;
+        int index = 0;
+        while (temp >= 1024) {
+            temp /= 1024;
+            index++;
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(temp) + units[index];
+    }
+
+    /**
+     * 计算和
+     * @param sizeList
+     */
+    public static String formatSizeSum(List<String> sizeList) {
+        Double allSize=0.0;
+        for (String size:sizeList){
+            if (size.endsWith("KB")){
+                String substring = size.substring(0, size.indexOf("KB"));
+                allSize=allSize+(Double.valueOf(substring)*1024);
+                continue;
+            }
+            if (size.endsWith("MB")){
+                String substring = size.substring(0, size.indexOf("MB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024);
+                continue;
+            }
+            if (size.endsWith("GB")){
+                String substring = size.substring(0, size.indexOf("GB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024*1024);
+                continue;
+            }
+            if (size.endsWith("TB")){
+                String substring = size.substring(0, size.indexOf("TB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024*1024*1024);
+                continue;
+            }
+            if (size.endsWith("B")){
+                String substring = size.substring(0, size.indexOf("B"));
+                allSize=allSize+Double.valueOf(substring);
+            }
+
+
+        }
+
+        return formatSize(Math.round(allSize));
     }
 }

@@ -176,6 +176,7 @@ public class LibraryServiceImpl implements LibraryService {
         joinTemplate.joinQuery(libraryList);
 
         if (CollectionUtils.isNotEmpty(libraryList)){
+            //maven 版本有快照版本和正式版本 快照版本有时间戳
             if (("maven").equals(type)){
                 List<String> repositoryIds = libraryList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
                 String[] repositoryId = new String[repositoryIds.size()];

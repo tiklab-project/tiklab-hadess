@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.library.dao.LibraryMavenDao;
 import io.tiklab.xpack.library.dao.LibraryVersionDao;
 import io.tiklab.xpack.library.model.*;
@@ -80,23 +81,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
         LibraryVersion libraryVersion = BeanMapper.map(libraryVersionEntity, LibraryVersion.class);
 
-        List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
-        if (CollectionUtils.isNotEmpty(libraryMavenList)){
-            libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
-            libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
-
-            List<PullInfo> pullInfoList = pullInfoService.findPullInfoList(new PullInfoQuery().setLibraryVersionId(libraryMavenList.get(0).getId()));
-            if (CollectionUtils.isNotEmpty(pullInfoList)){
-                PullInfo pullInfo = pullInfoList.get(0);
-                libraryVersion.setPullUser(pullInfo.getUser().getName());
-                libraryVersion.setPullTime(pullInfo.getPullCreate());
-                libraryVersion.setPullNum(pullInfoList.size());
-            }
-        }
-
-        //制品的大小
-        String librarySize = librarySize(libraryVersion.getId());
-        libraryVersion.setSize(librarySize);
 
 
         return libraryVersion;
@@ -114,10 +98,36 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public LibraryVersion findLibraryVersion(@NotNull String id) {
         LibraryVersion libraryVersion = findOne(id);
 
+        List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
+        if (CollectionUtils.isNotEmpty(libraryMavenList)){
+            libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
+            libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+
+            List<PullInfo> pullInfoList = pullInfoService.findPullInfoList(new PullInfoQuery().setLibraryVersionId(libraryMavenList.get(0).getId()));
+            if (CollectionUtils.isNotEmpty(pullInfoList)){
+                PullInfo pullInfo = pullInfoList.get(0);
+                libraryVersion.setPullUser(pullInfo.getUser().getName());
+                libraryVersion.setPullTime(pullInfo.getPullCreate());
+                libraryVersion.setPullNum(pullInfoList.size());
+            }
+        }
+        //制品的大小
+        String librarySize = librarySize(libraryVersion.getId());
+        libraryVersion.setSize(librarySize);
+
         joinTemplate.joinQuery(libraryVersion);
 
         return libraryVersion;
     }
+
+    @Override
+    public LibraryVersion findLibraryVersionById(String versionId) {
+        LibraryVersion libraryVersion = findOne(versionId);
+        joinTemplate.joinQuery(libraryVersion);
+        return libraryVersion;
+    }
+
+
 
     @Override
     public List<LibraryVersion> findAllLibraryVersion() {
@@ -157,15 +167,26 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         List<LibraryVersion> libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
 
         joinTemplate.joinQuery(libraryVersionList);
-
-        for (LibraryVersion libraryVersion:libraryVersionList){
-            //制品的大小
-            String librarySize = librarySize(libraryVersion.getId());
-            libraryVersion.setSize(librarySize);
-        }
-
         return PaginationBuilder.build(pagination,libraryVersionList);
     }
+
+    @Override
+    public Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery) {
+        Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
+        List<LibraryVersion> libraryVersionList=null;
+        if (CollectionUtils.isNotEmpty(pagination.getDataList())&&pagination.getDataList().size()>1){
+             libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
+             libraryVersionList = libraryVersionList.stream().filter(a -> !(libraryVersionQuery.getCurrentVersionId()).equals(a.getId())).collect(Collectors.toList());
+            joinTemplate.joinQuery(libraryVersionList);
+            for (LibraryVersion libraryVersion:libraryVersionList){
+                //制品的大小
+                String librarySize = librarySize(libraryVersion.getId());
+                libraryVersion.setSize(librarySize);
+            }
+        }
+        return PaginationBuilder.build(pagination,libraryVersionList);
+    }
+
 
     @Override
     public LibraryVersion findLibraryNewVersion(LibraryVersionQuery libraryVersionQuery) {
@@ -240,6 +261,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     }
 
 
+
     /**
      *  制品版本大小
      * @param libraryVersionId    制品版本id
@@ -249,21 +271,9 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         String librarySize=null;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
         if (!CollectionUtils.isEmpty(libraryFileList)){
-            int sumKb = libraryFileList.stream().filter(a -> a.getFileSize().endsWith("KB")).mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "KB"))).sum();
+            List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
+             librarySize = RepositoryUtil.formatSizeSum(sizeList);
 
-            int sumB = libraryFileList.stream().filter(a -> !a.getFileSize().endsWith("KB")).mapToInt(version -> Integer.valueOf(StringUtils.substringBeforeLast(version.getFileSize(), "B"))).sum();
-
-            double i =((double) sumB/1000)*100;
-            double kbNum = i / 100D;
-            Double versionSum = sumKb + kbNum;
-             if (versionSum>1024){
-                 double mB = versionSum / 1024;
-                 BigDecimal bd = new BigDecimal(mB).setScale(2, RoundingMode.UP);
-                 double lastMb = bd.doubleValue();
-                  librarySize = lastMb+"MB";
-             }else {
-                 librarySize = versionSum+"KB";
-             }
         }
         return librarySize;
     }

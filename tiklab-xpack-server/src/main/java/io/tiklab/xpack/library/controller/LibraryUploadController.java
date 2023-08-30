@@ -114,7 +114,7 @@ public  class LibraryUploadController extends HttpServlet {
                     String s = new String(data, "UTF-8");
 
                     ServletOutputStream outputStream = response.getOutputStream();
-                    System.out.println("执行拉取6:"+new Timestamp(System.currentTimeMillis()));
+
                     outputStream.write(data);
                 }else {
                     response.setStatus(result.getCode(),result.getMsg());

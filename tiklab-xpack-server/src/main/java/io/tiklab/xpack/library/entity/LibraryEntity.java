@@ -42,6 +42,9 @@ public class LibraryEntity extends BaseModel {
     /*----其他字段------*/
     private String groupId;
 
+    private String artifactId;
+
+
     public String getId() {
         return id;
     }
@@ -104,5 +107,13 @@ public class LibraryEntity extends BaseModel {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 }
