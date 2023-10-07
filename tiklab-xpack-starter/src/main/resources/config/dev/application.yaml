@@ -15,8 +15,8 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
-  #url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
+  url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -93,7 +93,9 @@ file:
 repository:
   address: ${DATA_HOME}/repository
 
-
+backup:
+  address: ${DATA_HOME}/backup
+  time: 0 0 2 * * ?
 
 
 

@@ -2,18 +2,18 @@ package io.tiklab.xpack.common;
 
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.context.AppHomeContext;
-import io.tiklab.core.exception.SystemException;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -118,6 +118,49 @@ public class RepositoryUtil {
         zipInputStream.close();
     }
 
+
+    /**
+     * 递归压缩当前文件夹 tar.gz
+     * @param sourceFolder 当前文件夹路径
+     * @param tos 压缩文件ZipOutputStream
+     */
+    public static void compressFolder(String sourceFolder, String parentEntryPath, TarArchiveOutputStream tos) throws IOException {
+
+        File folder = new File(sourceFolder);
+        File[] files = folder.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    // 如果是子文件夹，创建对应的tar条目，然后递归压缩子文件夹中的内容
+                    String entryName = parentEntryPath + file.getName() + "/";
+                    TarArchiveEntry entry = new TarArchiveEntry(entryName);
+                    tos.putArchiveEntry(entry);
+                    tos.closeArchiveEntry();
+                    compressFolder(file.getAbsolutePath(), entryName, tos);
+                } else {
+                    // 如果是文件，创建对应的tar条目，并将文件内容写入tar输出流中
+                    String entryName = parentEntryPath + file.getName();
+                    TarArchiveEntry entry = new TarArchiveEntry(entryName);
+                    entry.setSize(file.length());
+                    tos.putArchiveEntry(entry);
+
+                    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                        byte[] buffer = new byte[4096];
+                        int bytesRead;
+                        while ((bytesRead = bis.read(buffer)) != -1) {
+                            tos.write(buffer, 0, bytesRead);
+                        }
+                    }
+
+                    // 关闭当前条目
+                    tos.closeArchiveEntry();
+                }
+            }
+        }
+    }
+
+
     /**
      * 原生http  get调用
      * @param address 解压路径
@@ -210,5 +253,73 @@ public class RepositoryUtil {
         }
 
         return formatSize(Math.round(allSize));
+    }
+
+    /**
+     * 解压tar.gz文件夹
+     * @param outputFolderPath 解压路径
+     * @param inputFilePath 压缩包文件路径
+     */
+
+    public static void decompression(String inputFilePath,String outputFolderPath) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(inputFilePath);
+        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(gzipInputStream);
+
+        TarArchiveEntry entry;
+        while ((entry = tarArchiveInputStream.getNextTarEntry()) != null) {
+            String entryName = entry.getName();
+            File outputFile = new File(outputFolderPath + entryName);
+
+            if (entry.isDirectory()) {
+                outputFile.mkdirs();
+                continue;
+            }
+
+            File parentDir = outputFile.getParentFile();
+            if (!parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = tarArchiveInputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, bytesRead);
+            }
+
+            fileOutputStream.close();
+        }
+
+        tarArchiveInputStream.close();
+        gzipInputStream.close();
+        fileInputStream.close();
+    }
+
+    /**
+     * 返回系统时间
+     * @param type 时间类型 1.(yyyy-MM-dd HH:mm:ss) 2.(yyyy-MM-dd) 3.(HH:mm:ss) 4.([format]) 5.(HH:mm)
+     * @return 时间
+     */
+    public static String date(int type, Date date){
+        switch (type) {
+            case 2 -> {
+                return new SimpleDateFormat("yyyy-MM-dd").format(date);
+            }
+            case 3 -> {
+                return new SimpleDateFormat("HH:mm:ss").format(date);
+            }
+            case 4 -> {
+                String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+                return "[" + format + "]" + "  ";
+            }
+            case 5 -> {
+                return new SimpleDateFormat("HH:mm").format(date);
+            }
+            default -> {
+                return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+            }
+        }
     }
 }

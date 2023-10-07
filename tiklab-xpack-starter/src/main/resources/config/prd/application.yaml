@@ -91,3 +91,6 @@ file:
 repository:
   address: ${DATA_HOME}/repository
 
+backup:
+  address: /opt/tiklab/xpack-backup
+  time: 0 0 2 * * ?

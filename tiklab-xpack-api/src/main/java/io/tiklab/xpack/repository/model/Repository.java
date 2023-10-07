@@ -65,6 +65,9 @@ public class Repository extends BaseModel {
     @ApiProperty(name="libraryNum",desc="制品数量")
     private Integer  libraryNum;
 
+    @ApiProperty(name="prefixPath",desc="前缀地址")
+    private java.lang.String prefixPath;
+
     @ApiProperty(name="versionType",desc="版本控制")
     private String  versionType;
 
@@ -166,5 +169,13 @@ public class Repository extends BaseModel {
 
     public void setRules(String rules) {
         this.rules = rules;
+    }
+
+    public String getPrefixPath() {
+        return prefixPath;
+    }
+
+    public void setPrefixPath(String prefixPath) {
+        this.prefixPath = prefixPath;
     }
 }

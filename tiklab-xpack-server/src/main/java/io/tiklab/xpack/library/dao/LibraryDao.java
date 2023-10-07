@@ -166,7 +166,7 @@ public class LibraryDao{
                 "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;
         sql=findConditionByRpyId(libraryQuery,sql);
         int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
-        sql= sql+" LIMIT " +pageParam.getPageSize()+" offset "+offset;
+        sql= sql+" ORDER BY li.update_time DESC LIMIT " +pageParam.getPageSize()+" offset "+offset;
 
         List<Library> query = jdbc.query(sql, paramMap, new BeanPropertyRowMapper(Library.class));
         pagination.setDataList(query);

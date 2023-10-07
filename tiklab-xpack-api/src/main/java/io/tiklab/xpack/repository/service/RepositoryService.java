@@ -38,6 +38,8 @@ public interface RepositoryService {
     */
     void deleteRepository(@NotNull String id);
 
+
+
     @FindOne
     Repository findOne(@NotNull String id);
 
@@ -65,6 +67,13 @@ public interface RepositoryService {
     */
     List<Repository> findRepositoryList(RepositoryQuery repositoryQuery);
 
+
+    /**
+     * 通过仓库type查询列表
+     * @param type
+     * @return
+     */
+    List<Repository> findRepositoryList(String type);
 
     /**
      * 根据仓库名字查询

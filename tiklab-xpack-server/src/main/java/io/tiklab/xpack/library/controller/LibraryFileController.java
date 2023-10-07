@@ -7,7 +7,6 @@ import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.library.model.LibraryFile;
 import io.tiklab.xpack.library.model.LibraryFileQuery;
-import io.tiklab.xpack.library.service.LibraryFileReadService;
 import io.tiklab.xpack.library.service.LibraryFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.*;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -113,11 +107,4 @@ public class LibraryFileController  {
         return Result.ok(libraryFileList);
     }
 
-    @RequestMapping(path = "/test",method = RequestMethod.POST)
-    @ApiMethod(name = "test",desc = "查询最新版本的文件list")
-    public Result<List<LibraryFile>> test(){
-        libraryFileService.test();
-
-        return Result.ok();
-    }
 }

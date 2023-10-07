@@ -6,6 +6,7 @@ import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
 import io.tiklab.rpc.annotation.Exporter;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
@@ -24,6 +25,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.sql.Timestamp;
@@ -65,8 +67,13 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryMavenService libraryMavenService;
 
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
+
     @Value("${server.port:8080}")
     private String port;
+
+
 
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
@@ -75,10 +82,14 @@ public class RepositoryServiceImpl implements RepositoryService {
         repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         String type = repository.getType().toLowerCase();
-
         repositoryEntity.setType(type);
 
         String repositoryId = repositoryDao.createRepository(repositoryEntity);
+        String repositoryFile = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
+        File file = new File(repositoryFile);
+        if (!file.exists()){
+            file.mkdirs();
+        }
         if (ObjectUtils.isEmpty(repository.getCreateUser())){
             dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "xpack");
         }else {
@@ -113,6 +124,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         libraryVersionService.deleteVersionByCondition("repositoryId",id);
 
         libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
+
+
 
         if (("maven").equals(repository.getType())){
             repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
@@ -150,6 +163,11 @@ public class RepositoryServiceImpl implements RepositoryService {
                 repository.setVersionType(mavenList.get(0).getVersion());
             }
         }
+        if (!ObjectUtils.isEmpty(repository)){
+            String substring = repository.getRepositoryUrl().substring(0, repository.getRepositoryUrl().indexOf(repository.getName()));
+            repository.setPrefixPath(substring);
+        }
+
         return repository;
     }
 
@@ -176,6 +194,13 @@ public class RepositoryServiceImpl implements RepositoryService {
         joinTemplate.joinQuery(repositoryList);
 
         return list;
+    }
+
+    @Override
+    public List<Repository> findRepositoryList(String type) {
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery().setRepositoryType(type));
+        List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+        return repositoryList;
     }
 
     @Override

@@ -50,6 +50,12 @@
         </fileSet>
 
         <fileSet>
+            <directory>${basedir}/file</directory>
+            <fileMode>755</fileMode>
+            <outputDirectory>/file</outputDirectory>
+        </fileSet>
+
+        <fileSet>
             <directory>${basedir}</directory>
             <includes>
                 <include>version</include>

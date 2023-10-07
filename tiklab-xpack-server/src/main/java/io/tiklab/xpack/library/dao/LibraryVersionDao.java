@@ -9,6 +9,7 @@ import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
 import io.tiklab.xpack.library.entity.LibraryVersionEntity;
 import io.tiklab.xpack.library.model.LibraryVersionQuery;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,13 +109,21 @@ public class LibraryVersionDao{
      * @return Pagination <LibraryVersionEntity>
      */
     public Pagination<LibraryVersionEntity> findLibraryVersionPage(LibraryVersionQuery libraryVersionQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryVersionEntity.class)
-                .eq("repositoryId",libraryVersionQuery.getRepositoryId())
-                .eq("version",libraryVersionQuery.getVersion())
-                .eq("libraryId",libraryVersionQuery.getLibraryId())
+
+
+        QueryBuilders pagination = QueryBuilders.createQuery(LibraryVersionEntity.class)
+                .eq("repositoryId", libraryVersionQuery.getRepositoryId())
+                .eq("version", libraryVersionQuery.getVersion())
+                .eq("libraryId", libraryVersionQuery.getLibraryId())
                 .orders(libraryVersionQuery.getOrderParams())
-                .pagination(libraryVersionQuery.getPageParam())
-                .get();
+                .pagination(libraryVersionQuery.getPageParam());
+        if (StringUtils.isNotEmpty(libraryVersionQuery.getCurrentVersionId())){
+            String[] versionIds = {libraryVersionQuery.getCurrentVersionId()};
+            pagination=pagination.notIn("id",versionIds);
+        }
+        QueryCondition queryCondition = pagination.get();
+
+
         return jpaTemplate.findPage(queryCondition,LibraryVersionEntity.class);
     }
     /**

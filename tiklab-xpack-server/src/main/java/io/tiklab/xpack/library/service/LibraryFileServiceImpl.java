@@ -2,7 +2,8 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
-import io.tiklab.xpack.common.XpakYamlDataMaService;
+import io.tiklab.xpack.common.RepositoryUtil;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.dao.LibraryFileDao;
 import io.tiklab.xpack.library.entity.LibraryFileEntity;
 import io.tiklab.beans.BeanMapper;
@@ -44,7 +45,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     LibraryVersionService libraryVersionService;
 
     @Autowired
-    XpakYamlDataMaService xpakYamlDataMaService;
+    XpackYamlDataMaService xpakYamlDataMaService;
 
     @Override
     public String createLibraryFile(@NotNull @Valid LibraryFile libraryFile) {
@@ -178,6 +179,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
             String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
              libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
         }
+
         return libraryFileList;
     }
 
@@ -202,29 +204,4 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         }
     }
 
-  /*  @Override
-    public void test(){
-        List<LibraryFile> allLibraryFile = this.findAllLibraryFile();
-        List<LibraryFile> collect = allLibraryFile.stream().filter(a -> StringUtils.isNotEmpty(a.getSnapshotVersion())).collect(Collectors.toList());
-        List<LibraryFile> collected = collect.stream().filter(b -> b.getRelativePath().contains(b.getSnapshotVersion())).collect(Collectors.toList());
-        for (LibraryFile libraryFile: collected){
-            String snapshotVersion = libraryFile.getSnapshotVersion();
-            String relativePath = libraryFile.getRelativePath();
-            String replace = relativePath.replace( snapshotVersion, "SNAPSHOT");
-            libraryFile.setRelativePath(replace);
-            this.updateLibraryFile(libraryFile);
-        }
-    }*/
-
-    @Override
-    public void test() {
-        List<LibraryFile> allLibraryFile = this.findAllLibraryFile();
-        List<LibraryFile> collected = allLibraryFile.stream().filter(b -> b.getFileUrl().contains("///17fcac6b5f0d")).collect(Collectors.toList());
-        for (LibraryFile libraryFile : collected) {
-            String fileUrl = libraryFile.getFileUrl();
-            String replace = fileUrl.replace("///17fcac6b5f0d", "17fcac6b5f0d");
-            libraryFile.setFileUrl(replace);
-            this.updateLibraryFile(libraryFile);
-        }
-    }
 }

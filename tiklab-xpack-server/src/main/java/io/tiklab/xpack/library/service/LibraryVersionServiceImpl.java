@@ -174,9 +174,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery) {
         Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
         List<LibraryVersion> libraryVersionList=null;
-        if (CollectionUtils.isNotEmpty(pagination.getDataList())&&pagination.getDataList().size()>1){
+        if (CollectionUtils.isNotEmpty(pagination.getDataList())){
              libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
-             libraryVersionList = libraryVersionList.stream().filter(a -> !(libraryVersionQuery.getCurrentVersionId()).equals(a.getId())).collect(Collectors.toList());
             joinTemplate.joinQuery(libraryVersionList);
             for (LibraryVersion libraryVersion:libraryVersionList){
                 //制品的大小

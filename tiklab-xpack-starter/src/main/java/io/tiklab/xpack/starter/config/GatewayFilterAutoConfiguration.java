@@ -105,8 +105,7 @@ public class GatewayFilterAutoConfiguration {
                         "/pushCenWarehouse",
                         "/libraryFile",
                         "/xpack",
-
-
+                        "/backups"
                 })
                 .get();
     }

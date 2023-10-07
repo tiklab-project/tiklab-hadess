@@ -1,19 +1,26 @@
 package io.tiklab.xpack.library.dao;
 
+import io.tiklab.core.page.Page;
 import io.tiklab.core.page.Pagination;
-import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
+import io.tiklab.xpack.library.entity.LibraryEntity;
 import io.tiklab.xpack.library.entity.PushLibraryEntity;
 import io.tiklab.xpack.library.model.PushLibraryQuery;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * PushLibraryDao-制品数据访问
@@ -115,5 +122,44 @@ public class PushLibraryDao {
         return jpaTemplate.findPage(queryCondition,PushLibraryEntity.class);
     }
 
+
+    /**
+     * 条件分页查询
+     * @param pushPushLibraryQuery
+     * @return Pagination <PushLibraryEntity>
+     */
+    public Pagination<PushLibraryEntity> findPushPage(PushLibraryQuery pushPushLibraryQuery) {
+
+        Pagination pagination = new Pagination();
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
+        Page pageParam = pushPushLibraryQuery.getPageParam();
+
+        String countSql="SELECT count(1) FROM pack_push_library pu LEFT JOIN pack_library li ON pu.library_id=li.id WHERE pu.repository_id='"+pushPushLibraryQuery.getRepositoryId()+"'";
+        if (StringUtils.isNotEmpty(pushPushLibraryQuery.getLibraryName())){
+            countSql= countSql + " and li.name like '%" + pushPushLibraryQuery.getLibraryName()+ "%'";
+        }
+
+        Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
+        pagination.setTotalRecord(integer);
+        double result = Math.ceil(integer/pageParam.getPageSize());
+        pagination.setTotalPage((int) result);
+
+        String sql="SELECT pu.* FROM pack_push_library pu LEFT JOIN pack_library li ON pu.library_id=li.id WHERE pu.repository_id='"+pushPushLibraryQuery.getRepositoryId()+"'";
+        if (StringUtils.isNotEmpty(pushPushLibraryQuery.getLibraryName())){
+            sql= sql + " and li.name like '%" + pushPushLibraryQuery.getLibraryName()+ "%'";
+        }
+        int offset = (pageParam.getCurrentPage() - 1) * pageParam.getPageSize();
+        sql= sql+" LIMIT " +pageParam.getPageSize()+" offset "+offset;
+        List<LibraryEntity> query = jdbc.query(sql, paramMap, new BeanPropertyRowMapper(LibraryEntity.class));
+        pagination.setDataList(query);
+        return pagination;
+    }
+
+
+    public JdbcTemplate getJdbcTemplate() {
+
+        return jpaTemplate.getJdbcTemplate();
+    }
 
 }

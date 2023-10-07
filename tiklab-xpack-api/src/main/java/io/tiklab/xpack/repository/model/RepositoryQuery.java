@@ -58,8 +58,9 @@ public class RepositoryQuery implements Serializable {
             return type;
         }
 
-        public void setType(String type) {
+        public RepositoryQuery setType(String type) {
             this.type = type;
+            return this;
         }
 
         public String getName() {

@@ -1,0 +1,75 @@
+package io.tiklab.xpack.scan.service;
+
+
+import io.tiklab.core.page.Pagination;
+import io.tiklab.join.annotation.FindAll;
+import io.tiklab.join.annotation.FindList;
+import io.tiklab.join.annotation.FindOne;
+import io.tiklab.join.annotation.JoinProvider;
+import io.tiklab.xpack.scan.model.ScanResult;
+import io.tiklab.xpack.scan.model.ScanResultQuery;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+* ScanResultService-扫描结果
+*/
+@JoinProvider(model = ScanResult.class)
+public interface ScanResultService {
+
+    /**
+    * 创建
+    * @param scanResult
+    * @return
+    */
+    String createScanResult(@NotNull @Valid ScanResult scanResult);
+
+    /**
+    * 更新
+    * @param scanResult
+    */
+    void updateScanResult(@NotNull @Valid ScanResult scanResult);
+
+    /**
+    * 删除
+    * @param id
+    */
+    void deleteScanResult(@NotNull String id);
+
+    @FindOne
+    ScanResult findOne(@NotNull String id);
+
+    List<ScanResult> findList(List<String> idList);
+
+    /**
+    * 查找
+    * @param id
+    * @return
+    */
+    @FindList
+    ScanResult findScanResult(@NotNull String id);
+
+    /**
+    * 查找所有
+    * @return
+    */
+    @FindAll
+    List<ScanResult> findAllScanResult();
+
+    /**
+    * 查询列表
+    * @param scanResultQuery
+    * @return
+    */
+    List<ScanResult> findScanResultList(ScanResultQuery scanResultQuery);
+
+    /**
+    * 按分页查询
+    * @param scanResultQuery
+    * @return
+    */
+    Pagination<ScanResult> findScanResultPage(ScanResultQuery scanResultQuery);
+
+}

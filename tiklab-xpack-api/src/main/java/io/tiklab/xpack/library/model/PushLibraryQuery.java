@@ -28,7 +28,11 @@ public class PushLibraryQuery implements Serializable {
         @ApiProperty(name ="type",desc = "推送类型 maven、npm")
         private String type;
 
-        public List<Order> getOrderParams() {
+        @ApiProperty(name ="libraryName",desc = "制品名称")
+        private String libraryName;
+
+
+    public List<Order> getOrderParams() {
             return orderParams;
         }
 
@@ -69,4 +73,12 @@ public class PushLibraryQuery implements Serializable {
         public void setType(String type) {
             this.type = type;
         }
+
+    public String getLibraryName() {
+        return libraryName;
+    }
+
+    public void setLibraryName(String libraryName) {
+        this.libraryName = libraryName;
+    }
 }

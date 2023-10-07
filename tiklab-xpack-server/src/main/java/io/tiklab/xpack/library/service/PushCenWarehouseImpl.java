@@ -1,7 +1,7 @@
 package io.tiklab.xpack.library.service;
 
 import io.tiklab.core.exception.SystemException;
-import io.tiklab.xpack.common.XpakYamlDataMaService;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.common.RepositoryUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,7 +38,7 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
     PushLibraryService pushLibraryService;
 
     @Autowired
-    XpakYamlDataMaService xpakYamlDataMaService;
+    XpackYamlDataMaService xpakYamlDataMaService;
     //推送结果
     public static Map<String , String> pushResultMap = new HashMap<>();
     //执行列表
