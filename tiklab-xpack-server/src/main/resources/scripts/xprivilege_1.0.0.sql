@@ -14,8 +14,9 @@ INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('projectuser','项目成员', 'xpack_user',null ,6, 2);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('projectdele','删除项目', 'xpack_delete','projectall' ,2, 2);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('projectup','修改项目', 'xpack_update','projectall' ,3, 2);
+INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('xpackbackup','备份与恢复', 'xpack_backup',null ,1, 1);
 
-
+INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00e50ea15102', '1', 'xpackbackup');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00e840ea5302', '1', 'permission');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('05d66918b2dd', '1', 'messtype');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('064d1a5ddbc5', '1', 'messmanage');

@@ -1,15 +1,18 @@
 package io.tiklab.xpack.library.dao;
 
 import io.tiklab.core.page.Pagination;
+import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
+import io.tiklab.xpack.library.entity.LibraryEntity;
 import io.tiklab.xpack.library.entity.LibraryFileEntity;
 import io.tiklab.xpack.library.model.LibraryFileQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -103,6 +106,14 @@ public class LibraryFileDao{
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 
+
+    public List<LibraryFileEntity> findLibraryFileListByNames(String [] names) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
+                .in("fileName",names)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
+    }
+
     /**
      * 条件分页查询制品文件
      * @param libraryFileQuery
@@ -127,5 +138,37 @@ public class LibraryFileDao{
                 .eq("fileName",fileName)
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
+    }
+
+
+    /**
+     * 条件分页查询制品文件
+     * @param fileUrl
+     * @return Pagination <LibraryFileEntity>
+     */
+    public List<LibraryFileEntity> findLibraryLikeFileUrl(String fileUrl){
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
+                .like("fileUrl",fileUrl)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
+    }
+
+    /**
+     * 通过制品库和制品以及版本查询
+     * @param repositoryId  制品库id
+     * @param libraryName   制品名称
+     * @param version       版本
+     * @return Pagination <LibraryFileEntity>
+     */
+    public List<LibraryFileEntity> findFileByReAndLibraryAndVer(String repositoryId,String libraryName,String version){
+        String sql="SELECT lf.*   FROM pack_library_file lf\n" +
+                "LEFT JOIN pack_library_version lv ON lv.id=lf.library_version_id\n" +
+                "LEFT JOIN pack_library li ON li.id=lv.library_id\n" +
+                "WHERE lf.repository_id='"+repositoryId+"' AND li.name='"+libraryName+"' AND lv.version='"+version+"'";
+
+        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
+        List<LibraryFileEntity> libraryFileEntities = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LibraryFileEntity.class));
+
+        return libraryFileEntities;
     }
 }

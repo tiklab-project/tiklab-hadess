@@ -32,7 +32,6 @@ public class LibraryFile extends BaseModel {
     @JoinQuery(key = "id")
     private Library library;
 
-    @NotNull
     @ApiProperty(name="libraryVersion",desc="制品版本",required = true)
     @Mappings({
             @Mapping(source = "libraryVersion.id",target = "libraryVersionId")
@@ -74,6 +73,8 @@ public class LibraryFile extends BaseModel {
     /*---------其他字段-------*/
     @ApiProperty(name="repositoryName",desc="制品库名字")
     private java.lang.String repositoryName;
+
+
 
     public java.lang.String getId() {
         return id;

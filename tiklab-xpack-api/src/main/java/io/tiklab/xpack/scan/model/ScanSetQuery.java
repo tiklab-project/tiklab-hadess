@@ -1,4 +1,4 @@
-package io.tiklab.xpack.repository.model;
+package io.tiklab.xpack.scan.model;
 
 
 import io.tiklab.core.order.Order;
@@ -10,7 +10,7 @@ import io.tiklab.postin.annotation.ApiProperty;
 import java.util.List;
 
 @ApiModel
-public class StorageQuery {
+public class ScanSetQuery {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
         private List<Order> orderParams = OrderBuilders.instance().asc("id").get();

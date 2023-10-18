@@ -1,7 +1,7 @@
 package io.tiklab.xpack.repository.dao;
 
 import io.tiklab.dal.jpa.JpaTemplate;
-import io.tiklab.xpack.repository.entity.BackupsEntity;
+import io.tiklab.xpack.repository.entity.XpackBackupsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class XpackBackupsDao {
      * 更新
      * @param backupsEntity
      */
-    public void updateBackups(BackupsEntity backupsEntity){
+    public void updateBackups(XpackBackupsEntity backupsEntity){
         jpaTemplate.update(backupsEntity);
     }
 
@@ -31,8 +31,8 @@ public class XpackBackupsDao {
      * findAllBackups
      * @return
      */
-    public List<BackupsEntity> findAllBackups() {
-        return jpaTemplate.findAll(BackupsEntity.class);
+    public List<XpackBackupsEntity> findAllBackups() {
+        return jpaTemplate.findAll(XpackBackupsEntity.class);
     }
 
 

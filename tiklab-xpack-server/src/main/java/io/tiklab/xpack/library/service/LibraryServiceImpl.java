@@ -2,6 +2,8 @@ package io.tiklab.xpack.library.service;
 
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.tiklab.xpack.common.UuidGenerator;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.dao.LibraryDao;
 import io.tiklab.xpack.library.entity.PushLibraryEntity;
 import io.tiklab.xpack.library.model.*;
@@ -11,14 +13,15 @@ import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.library.entity.LibraryEntity;
 
-import io.tiklab.xpack.repository.model.Repository;
-import io.tiklab.xpack.repository.model.RepositoryGroup;
-import io.tiklab.xpack.repository.model.RepositoryGroupQuery;
-import io.tiklab.xpack.repository.model.RepositoryMaven;
+import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryMavenService;
 import io.tiklab.xpack.repository.service.RepositoryService;
+import io.tiklab.xpack.scan.model.ScanLibrary;
+import io.tiklab.xpack.scan.model.ScanLibraryQuery;
+import io.tiklab.xpack.scan.service.ScanLibraryService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +33,13 @@ import org.springframework.util.ObjectUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -68,9 +76,14 @@ public class LibraryServiceImpl implements LibraryService {
     @Autowired
     RepositoryMavenService repositoryMavenService;
 
+    @Autowired
+    ScanLibraryService scanLibraryService;
+
     @Value("${repository.test:null}")
     String testLibrary;
 
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
     Map data=new HashMap();
 
     @Override
@@ -164,14 +177,31 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Integer findLibraryNum(String repositoryId) {
-        return libraryDao.findLibraryNum(repositoryId);
+    public List<Library> likeLibraryListNo(LibraryQuery libraryQuery) {
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryListNo(libraryQuery);
+
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        return libraryList;
     }
 
     @Override
-    public Library findLibraryByName(String name,String type,String version) {
+    public List<Library> likeLibraryByName(LibraryQuery libraryQuery) {
+        List<LibraryEntity> libraryEntityList = libraryDao.likeLibraryByName(libraryQuery);
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        return libraryList;
+    }
+
+    @Override
+    public Integer findLibraryNum(String repositoryId,String repositoryType) {
+        return libraryDao.findLibraryNum(repositoryId,repositoryType);
+    }
+
+    @Override
+    public Library findLibraryByNameAndType(String name,String type,String version) {
         Library library=null;
-        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByName(name,type);
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByNameAndType(name,type);
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
         joinTemplate.joinQuery(libraryList);
 
@@ -231,11 +261,40 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
+    public List<Library> findNotScanLibraryList(LibraryQuery libraryQuery) {
+        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery().setRepositoryId(libraryQuery.getRepositoryId()));
+        String[] libraryIds=null;
+        if (CollectionUtils.isNotEmpty(scanLibraryList)){
+            List<String> libraryId = scanLibraryList.stream().map(a -> a.getLibrary().getId()).collect(Collectors.toList());
+            String[] strings = new String[libraryId.size()];
+            libraryIds = libraryId.toArray(strings);
+        }
+        List<LibraryEntity> libraryEntityList = libraryDao.findNotScanLibraryList(libraryIds, libraryQuery.getRepositoryId(), libraryQuery.getName());
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        List<Library> libraries = libraryList.stream().sorted(Comparator.comparing(Library::getName)).collect(Collectors.toList());
+        return libraries;
+    }
+
+
+
+
+    @Override
     public List<Library> findEqLibraryList(LibraryQuery libraryQuery) {
         List<LibraryEntity> libraryEntityList =libraryDao.findEqLibraryList(libraryQuery);
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
         return  libraryList;
     }
+
+    @Override
+    public Pagination<Library> findScanLibraryPage(LibraryQuery libraryQuery) {
+        Pagination<LibraryEntity>  pagination = libraryDao.findLibraryPage(libraryQuery);
+
+        List<Library> libraryList = BeanMapper.mapList(pagination.getDataList(),Library.class);
+
+        return PaginationBuilder.build(pagination,libraryList);
+    }
+
 
 
     @Override
@@ -299,6 +358,203 @@ public class LibraryServiceImpl implements LibraryService {
         return library;
     }
 
+
+
+    @Override
+    public void updateFile() {
+        List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setType("maven"));
+
+        for (Repository repository:repositoryList){
+            if (repository.getRepositoryType().equals("group")){
+                continue;
+            }
+            //远程库
+            if (repository.getRepositoryType().equals("remote")){
+                //continue;
+                remoteTest(repository);
+            }
+
+            List<RepositoryMaven> mavenList = repositoryMavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
+            ExecutorService executorService = Executors.newCachedThreadPool();
+
+            executorService.submit(new Runnable(){
+                @Override
+                public void run() {
+                    List<LibraryEntity> libraryListNo = libraryDao.findLibraryListNo(new LibraryQuery().setRepositoryId(repository.getId()));
+                    if (CollectionUtils.isNotEmpty(libraryListNo)){
+                        for (LibraryEntity library:libraryListNo){
+                            String generateMath = getFolderLayer(repository.getId());
+                            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()));
+                            String metadata=null;
+                            String fileUr;
+                            String newPath=null;
+                            for (LibraryFile libraryFile:libraryFileList){
+
+                                String fileUrl = libraryFile.getFileUrl();
+                                String repositroyId = fileUrl.substring(0, fileUrl.indexOf("/"));
+                                String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+                                String repositoryAddress = yamlDataMaService.repositoryAddress();
+                                String oldPath = repositoryAddress + "/" + libraryFile.getFileUrl();
+
+
+                                if (mavenList.get(0).getVersion().equals("Snapshot")){
+                                    String version = libraryFile.getLibraryVersion().getVersion();
+                                    newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath + "/" +version;
+
+                                    fileUr = repositroyId + "/" + generateMath + "/" +version+"/"+ fileName;
+                                    String substring = oldPath.substring(0, oldPath.lastIndexOf("/"));
+
+                                    metadata = substring.substring(0, substring.lastIndexOf("/"));
+                                }else {
+                                    newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath ;
+                                    fileUr = repositroyId + "/" + generateMath + "/" + fileName;
+
+                                    metadata = oldPath.substring(0, oldPath.lastIndexOf("/"));
+
+                                }
+
+                                File file = new File(newPath);
+                                if (!file.exists()){
+                                    file.mkdirs();
+                                }
+                                libraryFile.setFileUrl(fileUr);
+                                libraryFileService.updateLibraryFile(libraryFile);
+                                move(oldPath,newPath);
+
+                            }
+                            String metadata1 = metadata + "/" + "maven-metadata.xml";
+
+                            String metadata2 = metadata + "/" + "maven-metadata.xml.md5";
+                            String metadata3 = metadata + "/" + "maven-metadata.xml.sha1";
+                            if (mavenList.get(0).getVersion().equals("Release")){
+                                move(metadata1,newPath);
+                                move(metadata2,newPath);
+                                move(metadata3,newPath);
+                            }else {
+                                String substring = newPath.substring(0, newPath.lastIndexOf("/"));
+                                move(metadata1,substring);
+                                move(metadata2,substring);
+                                move(metadata3,substring);
+                            }
+                            try {
+                                FileUtils.deleteDirectory(new File(metadata));
+                                System.out.println("文件夹删除成功！");
+                            } catch (IOException e) {
+                                System.out.println("文件夹删除失败：" + e.getMessage());
+                            }
+                        }
+                    }
+                }});
+
+        }
+    }
+
+
+    public void remoteTest(Repository repository){
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(new Runnable(){
+            @Override
+            public void run() {
+                     List<LibraryEntity> libraryListNo = libraryDao.findLibraryListNo(new LibraryQuery().setRepositoryId(repository.getId()));
+
+
+                if (CollectionUtils.isNotEmpty(libraryListNo)){
+                    for (LibraryEntity library:libraryListNo){
+                        String generateMath = getFolderLayer(repository.getId());
+                        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()));
+                        String metadata=null;
+                        String fileUr;
+                        String newPath=null;
+                        for (LibraryFile libraryFile:libraryFileList){
+                            String fileUrl = libraryFile.getFileUrl();
+
+
+                            String repositroyId = fileUrl.substring(0, fileUrl.indexOf("/"));
+                            String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+                            String repositoryAddress = yamlDataMaService.repositoryAddress();
+                            String oldPath = repositoryAddress + "/" + libraryFile.getFileUrl();
+
+
+                            newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath ;
+                            fileUr = repositroyId + "/" + generateMath + "/" + fileName;
+
+                            metadata = oldPath.substring(0, oldPath.lastIndexOf("/"));
+
+                            File file = new File(newPath);
+                            if (!file.exists()){
+                                file.mkdirs();
+                            }
+                            libraryFile.setFileUrl(fileUr);
+                            libraryFileService.updateLibraryFile(libraryFile);
+                            move(oldPath,newPath);
+
+                        }
+
+
+                        String metadata1 = metadata + "/" + "maven-metadata.xml";
+                        String metadata2 = metadata + "/" + "maven-metadata.xml.md5";
+                        String metadata3 = metadata + "/" + "maven-metadata.xml.sha1";
+
+                        move(metadata1,newPath);
+                        move(metadata2,newPath);
+                        move(metadata3,newPath);
+
+                        try {
+                            FileUtils.deleteDirectory(new File(metadata));
+                            System.out.println("文件夹删除成功！");
+                        } catch (IOException e) {
+                            System.out.println("文件夹删除失败：" + e.getMessage());
+                        }
+                    }}
+            }});
+
+
+    }
+
+
+    public void move(String oldPath,String newPath){
+        try {
+            Path sourcePath = Path.of(oldPath);
+            File file = new File(oldPath);
+            if (file.exists()){
+                Path destinationPath = Path.of(newPath, sourcePath.getFileName().toString());
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("文件移动成功！");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    /**
+     /**
+     *获取存储制品路径中的随机数 （通过随机数替换制品的groupId）
+     * @param   repositoryId 制品库id
+     * @return  仓库id/随机数
+     */
+    public String getFolderLayer(String repositoryId){
+
+        return generateMath(repositoryId)+"/"+generateMath(repositoryId);
+    }
+
+    /**
+     *生成随机数
+     * @param
+     * @return
+     */
+    public String generateMath(String repositoryId){
+        String tenantMath = UuidGenerator.gen(4);
+        String lowerCase = tenantMath.toLowerCase();
+
+        List<LibraryFile> libraryLikeFileUrl = libraryFileService.findLibraryLikeFileUrl(repositoryId + "/" + lowerCase);
+        //随机生成的id 是否重复
+        if (!ObjectUtils.isEmpty(libraryLikeFileUrl)){
+            generateMath(repositoryId);
+        }
+        return lowerCase;
+    }
 
 }
 

@@ -72,15 +72,19 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     @Override
     public String fileAddress() {
         return DATA_HOME+"/file";
+    }
 
+    @Override
+    public String scanFileAddress() {
+        return DATA_HOME+"/scan";
     }
 
     @Override
     public String pgSqlAddress() {
         String appHome = AppHomeContext.getAppHome();
         String path = new File(appHome).getParentFile().getParentFile().getAbsolutePath();
-        //return path+"/embbed/pgsql-10.23/bin";
-        return "/Users/limingliang/postgreSQL/bin";
+        return path+"/embbed/pgsql-10.23/bin";
+       // return "/Users/limingliang/postgreSQL/bin";
     }
 
 

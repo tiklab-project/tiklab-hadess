@@ -22,7 +22,7 @@ public class LibraryFileEntity extends BaseModel {
     private String libraryId;
 
     //制品版本id
-    @Column(name = "library_version_id",length = 12,notNull = true)
+    @Column(name = "library_version_id",length = 12)
     private String libraryVersionId;
 
     //制品库Id

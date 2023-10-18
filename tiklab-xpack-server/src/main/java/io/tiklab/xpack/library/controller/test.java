@@ -1,31 +1,24 @@
 package io.tiklab.xpack.library.controller;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.boot.SpringApplication;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.*;
 
 public class test {
 
     public static void main(String[] args) throws IOException {
-        String url="/Users/limingliang/source";
+        String folderPath = "/Users/limingliang/tiklab/123/test"; // 要删除的文件夹路径
 
-
-        String sourceFilePath =url+"/tiklab-privilege-spring-boot-starter-1.0.0.1-sources.jar";
-        String targetFilePath =url+ "/"+"tiklab-privilege-spring-boot-starter-1.0.0.2"+"-sources.jar";
-
-        try (
-                InputStream inputStream = new FileInputStream(sourceFilePath);
-                OutputStream outputStream = new FileOutputStream(targetFilePath);
-        ) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
-            }
-            System.out.println("文件拷贝完成！");
+        try {
+            FileUtils.deleteDirectory(new File(folderPath));
+            System.out.println("文件夹删除成功！");
         } catch (IOException e) {
-            System.out.println("拷贝文件时出现错误：" + e.getMessage());
+            System.out.println("文件夹删除失败：" + e.getMessage());
         }
     }
 }

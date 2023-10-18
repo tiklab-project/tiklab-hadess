@@ -5,9 +5,9 @@ import io.tiklab.core.page.Pagination;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
-import io.tiklab.xpack.scan.model.ScanLibrary;
-import io.tiklab.xpack.scan.model.ScanLibraryQuery;
-import io.tiklab.xpack.scan.service.ScanLibraryService;
+import io.tiklab.xpack.scan.model.ScanRecord;
+import io.tiklab.xpack.scan.model.ScanRecordQuery;
+import io.tiklab.xpack.scan.service.ScanRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,68 +21,68 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * ScanLibraryController
+ * ScanRecordController
  */
 @RestController
-@RequestMapping("/scanLibrary")
-@Api(name = "ScanLibraryController",desc = "扫描制品")
-public class ScanLibraryController {
+@RequestMapping("/scanRecord")
+@Api(name = "ScanRecordController",desc = "扫描记录")
+public class ScanRecordController {
 
-    private static Logger logger = LoggerFactory.getLogger(ScanLibraryController.class);
+    private static Logger logger = LoggerFactory.getLogger(ScanRecordController.class);
 
     @Autowired
-    private ScanLibraryService scanLibraryService;
+    private ScanRecordService scanRecordService;
 
-    @RequestMapping(path="/createScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "createScanLibrary",desc = "添加扫描制品")
-    @ApiParam(name = "scanLibrary",desc = "scanLibrary",required = true)
-    public Result<String> createScanLibrary(@RequestBody @Valid @NotNull ScanLibrary scanLibrary){
-        String libraryId = scanLibraryService.createScanLibrary(scanLibrary);
+    @RequestMapping(path="/createScanRecord",method = RequestMethod.POST)
+    @ApiMethod(name = "createScanRecord",desc = "添加扫描记录")
+    @ApiParam(name = "scanRecord",desc = "scanRecord",required = true)
+    public Result<String> createScanRecord(@RequestBody @Valid @NotNull ScanRecord scanRecord){
+        String libraryId = scanRecordService.createScanRecord(scanRecord);
 
         return Result.ok(libraryId);
     }
 
 
-    @RequestMapping(path="/deleteScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteScanLibrary",desc = "删除扫描制品")
+    @RequestMapping(path="/deleteScanRecord",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteScanRecord",desc = "删除扫描记录")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<Void> deleteScanLibrary(@NotNull String id){
-        scanLibraryService.deleteScanLibrary(id);
+    public Result<Void> deleteScanRecord(@NotNull String id){
+        scanRecordService.deleteScanRecord(id);
 
         return Result.ok();
     }
 
-    @RequestMapping(path="/findScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanLibrary",desc = "通过id查询扫描制品")
+    @RequestMapping(path="/findScanRecord",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRecord",desc = "通过id查询扫描记录")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<ScanLibrary> findScanLibrary(@NotNull String id){
-        ScanLibrary scanLibrary = scanLibraryService.findScanLibrary(id);
+    public Result<ScanRecord> findScanRecord(@NotNull String id){
+        ScanRecord scanRecord = scanRecordService.findScanRecord(id);
 
-        return Result.ok(scanLibrary);
+        return Result.ok(scanRecord);
     }
 
-    @RequestMapping(path="/findAllScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllScanLibrary",desc = "查询所有扫描制品")
-    public Result<List<ScanLibrary>> findAllScanLibrary(){
-        List<ScanLibrary> scanLibraryList = scanLibraryService.findAllScanLibrary();
+    @RequestMapping(path="/findAllScanRecord",method = RequestMethod.POST)
+    @ApiMethod(name = "findAllScanRecord",desc = "查询所有扫描记录")
+    public Result<List<ScanRecord>> findAllScanRecord(){
+        List<ScanRecord> scanRecordList = scanRecordService.findAllScanRecord();
 
-        return Result.ok(scanLibraryList);
+        return Result.ok(scanRecordList);
     }
 
-    @RequestMapping(path = "/findScanLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanLibraryList",desc = "条件查询扫描制品")
-    @ApiParam(name = "scanLibraryQuery",desc = "scanLibraryQuery",required = true)
-    public Result<List<ScanLibrary>> findScanLibraryList(@RequestBody @Valid @NotNull ScanLibraryQuery scanLibraryQuery){
-        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(scanLibraryQuery);
+    @RequestMapping(path = "/findScanRecordList",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRecordList",desc = "条件查询扫描记录")
+    @ApiParam(name = "scanRecordQuery",desc = "scanRecordQuery",required = true)
+    public Result<List<ScanRecord>> findScanRecordList(@RequestBody @Valid @NotNull ScanRecordQuery scanRecordQuery){
+        List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(scanRecordQuery);
 
-        return Result.ok(scanLibraryList);
+        return Result.ok(scanRecordList);
     }
 
-    @RequestMapping(path = "/findScanLibraryPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanLibraryPage",desc = "条件分页查询扫描制品")
-    @ApiParam(name = "scanLibraryQuery",desc = "scanLibraryQuery",required = true)
-    public Result<Pagination<ScanLibrary>> findScanLibraryPage(@RequestBody @Valid @NotNull ScanLibraryQuery scanLibraryQuery){
-        Pagination<ScanLibrary> pagination = scanLibraryService.findScanLibraryPage(scanLibraryQuery);
+    @RequestMapping(path = "/findScanRecordPage",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRecordPage",desc = "条件分页查询扫描记录")
+    @ApiParam(name = "scanRecordQuery",desc = "scanRecordQuery",required = true)
+    public Result<Pagination<ScanRecord>> findScanRecordPage(@RequestBody @Valid @NotNull ScanRecordQuery scanRecordQuery){
+        Pagination<ScanRecord> pagination = scanRecordService.findScanRecordPage(scanRecordQuery);
 
         return Result.ok(pagination);
     }

@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * LibraryVersionServiceImpl-制品版本
@@ -269,7 +270,14 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public String librarySize( String libraryVersionId){
         String librarySize=null;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
+
         if (!CollectionUtils.isEmpty(libraryFileList)){
+            LibraryFile libraryFile = libraryFileList.get(0);
+            if (("docker").equals(libraryFile.getRepository().getType())){
+                List<LibraryFile> libraryFiles = libraryFileService.dockerFile(libraryFile);
+                libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
+
+            }
             List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
              librarySize = RepositoryUtil.formatSizeSum(sizeList);
 

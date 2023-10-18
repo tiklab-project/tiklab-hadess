@@ -41,6 +41,7 @@ public interface StorageService {
     @FindOne
     Storage findOne(@NotNull String id);
 
+    @FindList
     List<Storage> findList(List<String> idList);
 
     /**
@@ -48,7 +49,6 @@ public interface StorageService {
     * @param id
     * @return
     */
-    @FindList
     Storage findStorage(@NotNull String id);
 
     /**

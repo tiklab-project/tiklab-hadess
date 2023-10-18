@@ -6,11 +6,11 @@ import io.tiklab.dal.jpa.annotation.*;
 import java.sql.Timestamp;
 
 /**
- * ScanSet-扫描设置
+ * ScanSet-扫描制品
  */
 @Entity
-@Table(name="pack_scan_set")
-public class ScanSetEntity extends BaseModel {
+@Table(name="pack_scan_library")
+public class ScanLibraryEntity extends BaseModel {
 
     @Id
     @GeneratorValue(length = 12)
@@ -18,12 +18,24 @@ public class ScanSetEntity extends BaseModel {
     private String id;
 
     //地址
-    @Column(name = "address",length = 128)
-    private String address;
+    @Column(name = "library_id",length = 32)
+    private String libraryId;
 
-    //token
-    @Column(name = "token",length = 128)
-    private String token;
+    //制品版本id
+    @Column(name = "library_version_id",length = 32)
+    private String libraryVersionId;
+
+
+    //制品库id
+    @Column(name = "repository_id",length = 32)
+    private String repositoryId;
+
+    @Column(name = "create_time")
+    private Timestamp createTime;
+
+
+
+
 
     public String getId() {
         return id;
@@ -33,19 +45,35 @@ public class ScanSetEntity extends BaseModel {
         this.id = id;
     }
 
-    public String getAddress() {
-        return address;
+    public String getLibraryId() {
+        return libraryId;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setLibraryId(String libraryId) {
+        this.libraryId = libraryId;
     }
 
-    public String getToken() {
-        return token;
+    public String getLibraryVersionId() {
+        return libraryVersionId;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setLibraryVersionId(String libraryVersionId) {
+        this.libraryVersionId = libraryVersionId;
+    }
+
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
+    }
+
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 }

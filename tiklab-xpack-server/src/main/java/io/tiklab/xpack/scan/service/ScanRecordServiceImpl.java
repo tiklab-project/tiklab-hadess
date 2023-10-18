@@ -3,12 +3,14 @@ package io.tiklab.xpack.scan.service;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
-import io.tiklab.xpack.scan.dao.ScanLibraryDao;
-import io.tiklab.xpack.scan.entity.ScanLibraryEntity;
+import io.tiklab.xpack.scan.dao.ScanRecordDao;
+import io.tiklab.xpack.scan.entity.ScanRecordEntity;
+import io.tiklab.xpack.scan.entity.ScanRelyEntity;
 import io.tiklab.xpack.scan.model.*;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +19,16 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
-* ScanLibraryServiceImpl-扫描结果
+* ScanRecordServiceImpl-扫描结果
 */
 @Service
-public class ScanLibraryServiceImpl implements ScanLibraryService {
+public class ScanRecordServiceImpl implements ScanRecordService {
 
     @Autowired
-    ScanLibraryDao scanLibraryDao;
+    ScanRecordDao scanRecordDao;
 
     @Autowired
     JoinTemplate joinTemplate;
@@ -40,100 +40,117 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
     ScanRelyService scanRelyService;
 
     @Override
-    public String createScanLibrary(@NotNull @Valid ScanLibrary scanLibrary) {
-        ScanLibraryEntity scanLibraryEntity = BeanMapper.map(scanLibrary, ScanLibraryEntity.class);
-        scanLibraryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        scanLibraryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        return scanLibraryDao.createScanLibrary(scanLibraryEntity);
+    public String createScanRecord(@NotNull @Valid ScanRecord scanRecord) {
+        ScanRecordEntity scanRecordEntity = BeanMapper.map(scanRecord, ScanRecordEntity.class);
+        scanRecordEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        return scanRecordDao.createScanRecord(scanRecordEntity);
     }
 
     @Override
-    public void updateScanLibrary(@NotNull @Valid ScanLibrary scanLibrary) {
-        ScanLibraryEntity scanLibraryEntity = BeanMapper.map(scanLibrary, ScanLibraryEntity.class);
-        scanLibraryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        scanLibraryDao.updateScanLibrary(scanLibraryEntity);
+    public void updateScanRecord(@NotNull @Valid ScanRecord scanRecord) {
+        ScanRecordEntity scanRecordEntity = BeanMapper.map(scanRecord, ScanRecordEntity.class);
+        scanRecordDao.updateScanRecord(scanRecordEntity);
     }
 
     @Override
-    public void deleteScanLibrary(@NotNull String id) {
-        scanRelyService.deleteScanRelyByScanId(id);
+    public void deleteScanRecord(@NotNull String id) {
+        scanRelyService.deleteScanRelyByCondition("scanRecordId",id);
 
-        scanHoleService.deleteScanHoleByScanId(id);
+        scanHoleService.deleteScanHoleByCondition("scanRecordId",id);
 
-        scanLibraryDao.deleteScanLibrary(id);
+        scanRecordDao.deleteScanRecord(id);
     }
 
     @Override
-    public ScanLibrary findOne(String id) {
-        ScanLibraryEntity scanLibraryEntity = scanLibraryDao.findScanLibrary(id);
-
-        ScanLibrary scanLibrary = BeanMapper.map(scanLibraryEntity, ScanLibrary.class);
-        return scanLibrary;
+    public void deleteScanRecordByCondition(String key, String value) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(ScanRelyEntity.class)
+                .eq(key,value)
+                .get();
+        scanRecordDao.deleteScanRecord(deleteCondition);
     }
 
     @Override
-    public List<ScanLibrary> findList(List<String> idList) {
-        List<ScanLibraryEntity> scanLibraryEntityList =  scanLibraryDao.findScanLibraryList(idList);
+    public ScanRecord findOne(String id) {
+        ScanRecordEntity scanRecordEntity = scanRecordDao.findScanRecord(id);
 
-        List<ScanLibrary> scanLibraryList =  BeanMapper.mapList(scanLibraryEntityList,ScanLibrary.class);
-        return scanLibraryList;
+        ScanRecord scanRecord = BeanMapper.map(scanRecordEntity, ScanRecord.class);
+        return scanRecord;
     }
 
     @Override
-    public ScanLibrary findScanLibrary(@NotNull String id) {
-        ScanLibrary scanLibrary = findOne(id);
-        joinTemplate.joinQuery(scanLibrary);
-        List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanLibraryId(id));
-        if (CollectionUtils.isNotEmpty(scanRelyList)){
-            scanLibrary.setRelyNum(scanRelyList.size());
+    public List<ScanRecord> findList(List<String> idList) {
+        List<ScanRecordEntity> scanRecordEntityList =  scanRecordDao.findScanRecordList(idList);
+
+        List<ScanRecord> scanRecordList =  BeanMapper.mapList(scanRecordEntityList,ScanRecord.class);
+        return scanRecordList;
+    }
+
+    @Override
+    public ScanRecord findScanRecord(@NotNull String id) {
+        ScanRecord scanRecord = findOne(id);
+        joinTemplate.joinQuery(scanRecord);
+
+        List<ScanHole> scanHoleList = scanHoleService.findScanHoleList(new ScanHoleQuery().setScanRecordId(id));
+        if (CollectionUtils.isNotEmpty(scanHoleList)){
+            scanRecord.setRelyNum(scanHoleList.size());
         }
-        return scanLibrary;
+        return scanRecord;
     }
 
     @Override
-    public List<ScanLibrary> findAllScanLibrary() {
-        List<ScanLibraryEntity> scanLibraryEntityList =  scanLibraryDao.findAllScanLibrary();
+    public List<ScanRecord> findAllScanRecord() {
+        List<ScanRecordEntity> scanRecordEntityList =  scanRecordDao.findAllScanRecord();
 
-        List<ScanLibrary> scanLibraryList =  BeanMapper.mapList(scanLibraryEntityList,ScanLibrary.class);
+        List<ScanRecord> scanRecordList =  BeanMapper.mapList(scanRecordEntityList,ScanRecord.class);
 
-        joinTemplate.joinQuery(scanLibraryList);
+        joinTemplate.joinQuery(scanRecordList);
 
-        return scanLibraryList;
+        return scanRecordList;
     }
 
     @Override
-    public List<ScanLibrary> findScanLibraryList(ScanLibraryQuery scanLibraryQuery) {
-        List<ScanLibraryEntity> scanLibraryEntityList = scanLibraryDao.findScanLibraryList(scanLibraryQuery);
+    public List<ScanRecord> findScanRecordList(ScanRecordQuery scanRecordQuery) {
+        List<ScanRecordEntity> scanRecordEntityList = scanRecordDao.findScanRecordList(scanRecordQuery);
 
-        List<ScanLibrary> scanLibraryList = BeanMapper.mapList(scanLibraryEntityList,ScanLibrary.class);
+        List<ScanRecord> scanRecordList = BeanMapper.mapList(scanRecordEntityList,ScanRecord.class);
 
-        joinTemplate.joinQuery(scanLibraryList);
+        joinTemplate.joinQuery(scanRecordList);
 
-        return scanLibraryList;
+        return scanRecordList;
     }
 
     @Override
-    public List<ScanLibrary> findScanLibraryListNoJoin(ScanLibraryQuery scanLibraryQuery) {
-        List<ScanLibraryEntity> scanLibraryEntityList = scanLibraryDao.findScanLibraryList(scanLibraryQuery);
-
-        List<ScanLibrary> scanLibraryList = BeanMapper.mapList(scanLibraryEntityList,ScanLibrary.class);
-        return scanLibraryList;
+    public ScanRecord findNewScanRecord(String scanRecordId) {
+        List<ScanRecordEntity> scanRecordEntityList = scanRecordDao.findScanRecordList(new ScanRecordQuery().setScanLibraryId(scanRecordId));
+        List<ScanRecord> scanRecordList = BeanMapper.mapList(scanRecordEntityList,ScanRecord.class);
+        if (CollectionUtils.isNotEmpty(scanRecordList)){
+            List<ScanRecord> scanRecords = scanRecordList.stream().sorted(Comparator.comparing(ScanRecord::getCreateTime).reversed()).collect(Collectors.toList());
+            return scanRecords.get(0);
+        }
+        return null;
     }
 
     @Override
-    public Pagination<ScanLibrary> findScanLibraryPage(ScanLibraryQuery scanLibraryQuery) {
-        Pagination<ScanLibraryEntity>  pagination = scanLibraryDao.findScanLibraryPage(scanLibraryQuery);
+    public List<ScanRecord> findScanRecordListNoJoin(ScanRecordQuery scanRecordQuery) {
+        List<ScanRecordEntity> scanRecordEntityList = scanRecordDao.findScanRecordList(scanRecordQuery);
 
-        List<ScanLibrary> scanLibraryList = BeanMapper.mapList(pagination.getDataList(),ScanLibrary.class);
+        List<ScanRecord> scanRecordList = BeanMapper.mapList(scanRecordEntityList,ScanRecord.class);
+        return scanRecordList;
+    }
 
-        joinTemplate.joinQuery(scanLibraryList);
+    @Override
+    public Pagination<ScanRecord> findScanRecordPage(ScanRecordQuery scanRecordQuery) {
+        Pagination<ScanRecordEntity>  pagination = scanRecordDao.findScanRecordPage(scanRecordQuery);
 
-        if (CollectionUtils.isNotEmpty(scanLibraryList)){
-            scanLibraryList = scanLibraryList.stream().sorted(Comparator.comparing(ScanLibrary::getCreateTime))
-                    .sorted(Comparator.comparing(ScanLibrary::getScanState)).collect(Collectors.toList());
+        List<ScanRecord> scanRecordList = BeanMapper.mapList(pagination.getDataList(),ScanRecord.class);
+
+        joinTemplate.joinQuery(scanRecordList);
+
+        if (CollectionUtils.isNotEmpty(scanRecordList)){
+            scanRecordList = scanRecordList.stream().sorted(Comparator.comparing(ScanRecord::getCreateTime)).collect(Collectors.toList());
 
         }
-        return PaginationBuilder.build(pagination,scanLibraryList);
+        return PaginationBuilder.build(pagination,scanRecordList);
     }
 
 }

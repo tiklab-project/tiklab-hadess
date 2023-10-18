@@ -5,8 +5,8 @@ import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
-import io.tiklab.xpack.scan.entity.ScanResultEntity;
-import io.tiklab.xpack.scan.model.ScanResultQuery;
+import io.tiklab.xpack.scan.entity.ScanLibraryEntity;
+import io.tiklab.xpack.scan.model.ScanLibraryQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,46 +15,46 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * ScanResultDao-存储库数据访问
+ * ScanLibraryDao-扫描制品数据库访问
  */
 @Repository
-public class ScanResultDao {
+public class ScanLibraryDao {
 
-    private static Logger logger = LoggerFactory.getLogger(ScanResultDao.class);
+    private static Logger logger = LoggerFactory.getLogger(ScanLibraryDao.class);
 
     @Autowired
     JpaTemplate jpaTemplate;
 
     /**
      * 创建
-     * @param scanResultEntity
+     * @param scanLibraryEntity
      * @return
      */
-    public String createScanResult(ScanResultEntity scanResultEntity) {
-        return jpaTemplate.save(scanResultEntity,String.class);
+    public String createScanLibrary(ScanLibraryEntity scanLibraryEntity) {
+        return jpaTemplate.save(scanLibraryEntity,String.class);
     }
 
     /**
      * 更新
-     * @param scanResultEntity
+     * @param scanLibraryEntity
      */
-    public void updateScanResult(ScanResultEntity scanResultEntity){
-        jpaTemplate.update(scanResultEntity);
+    public void updateScanLibrary(ScanLibraryEntity scanLibraryEntity){
+        jpaTemplate.update(scanLibraryEntity);
     }
 
     /**
      * 删除
      * @param id
      */
-    public void deleteScanResult(String id){
-        jpaTemplate.delete(ScanResultEntity.class,id);
+    public void deleteScanLibrary(String id){
+        jpaTemplate.delete(ScanLibraryEntity.class,id);
     }
 
     /**
      * 条件删除存储库
      * @param deleteCondition
      */
-    public void deleteScanResult(DeleteCondition deleteCondition){
+    public void deleteScanLibrary(DeleteCondition deleteCondition){
         jpaTemplate.delete(deleteCondition);
     }
 
@@ -63,49 +63,53 @@ public class ScanResultDao {
      * @param id
      * @return
      */
-    public ScanResultEntity findScanResult(String id){
-        return jpaTemplate.findOne(ScanResultEntity.class,id);
+    public ScanLibraryEntity findScanLibrary(String id){
+        return jpaTemplate.findOne(ScanLibraryEntity.class,id);
     }
 
     /**
     * 查询所有存储库
     * @return
     */
-    public List<ScanResultEntity> findAllScanResult() {
-        return jpaTemplate.findAll(ScanResultEntity.class);
+    public List<ScanLibraryEntity> findAllScanLibrary() {
+        return jpaTemplate.findAll(ScanLibraryEntity.class);
     }
 
     /**
      * 通过ids查询存储库
      * @param idList
-     * @return List <ScanResultEntity>
+     * @return List <ScanLibraryEntity>
      */
-    public List<ScanResultEntity> findScanResultList(List<String> idList) {
-        return jpaTemplate.findList(ScanResultEntity.class,idList);
+    public List<ScanLibraryEntity> findScanLibraryList(List<String> idList) {
+        return jpaTemplate.findList(ScanLibraryEntity.class,idList);
     }
 
     /**
      * 条件查询存储库
-     * @param scanResultQuery
-     * @return List <ScanResultEntity>
+     * @param scanLibraryQuery
+     * @return List <ScanLibraryEntity>
      */
-    public List<ScanResultEntity> findScanResultList(ScanResultQuery scanResultQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(ScanResultEntity.class)
-                .orders(scanResultQuery.getOrderParams())
+    public List<ScanLibraryEntity> findScanLibraryList(ScanLibraryQuery scanLibraryQuery) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(ScanLibraryEntity.class)
+                .eq("libraryId",scanLibraryQuery.getLibraryId())
+                .eq("repositoryId",scanLibraryQuery.getRepositoryId())
+                .orders(scanLibraryQuery.getOrderParams())
                 .get();
-        return jpaTemplate.findList(queryCondition,ScanResultEntity.class);
+        return jpaTemplate.findList(queryCondition,ScanLibraryEntity.class);
     }
 
     /**
      * 条件分页查询存储库
-     * @param scanResultQuery
-     * @return Pagination <ScanResultEntity>
+     * @param scanLibraryQuery
+     * @return Pagination <ScanLibraryEntity>
      */
-    public Pagination<ScanResultEntity> findScanResultPage(ScanResultQuery scanResultQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(ScanResultEntity.class)
-                .orders(scanResultQuery.getOrderParams())
-                .pagination(scanResultQuery.getPageParam())
+    public Pagination<ScanLibraryEntity> findScanLibraryPage(ScanLibraryQuery scanLibraryQuery) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(ScanLibraryEntity.class)
+                .eq("libraryId",scanLibraryQuery.getLibraryId())
+                .eq("repositoryId",scanLibraryQuery.getRepositoryId())
+                .orders(scanLibraryQuery.getOrderParams())
+                .pagination(scanLibraryQuery.getPageParam())
                 .get();
-        return jpaTemplate.findPage(queryCondition,ScanResultEntity.class);
+        return jpaTemplate.findPage(queryCondition,ScanLibraryEntity.class);
     }
 }

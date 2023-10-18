@@ -6,34 +6,29 @@ import io.tiklab.dal.jpa.annotation.*;
 import java.sql.Timestamp;
 
 /**
- * ScanSet-扫描制品
+ * ScanRecordEntity-扫描制品结果
  */
 @Entity
-@Table(name="pack_scan_library")
-public class ScanLibraryEntity extends BaseModel {
+@Table(name="pack_scan_record")
+public class ScanRecordEntity extends BaseModel {
 
     @Id
     @GeneratorValue(length = 12)
     @Column(name = "id",length = 12)
     private String id;
 
-    //地址
-    @Column(name = "library_id",length = 32)
+    //扫描制品的id
+    @Column(name = "scan_library_id",length = 12)
+    private String scanLibraryId;
+
+    //制品的id
+    @Column(name = "library_id",length = 12)
     private String libraryId;
 
-    //制品版本id
-    @Column(name = "library_version_id",length = 32)
-    private String libraryVersionId;
+    //制品的版本
+    @Column(name = "library_version",length = 64)
+    private String libraryVersion;
 
-
-    //制品库id
-    @Column(name = "repository_id",length = 32)
-    private String repositoryId;
-
-
-    //类型
-    @Column(name = "scan_type",length = 32)
-    private String scanType;
 
     //严重漏洞
     @Column(name = "hole_severity")
@@ -55,15 +50,10 @@ public class ScanLibraryEntity extends BaseModel {
     @Column(name = "scan_time_long",length = 32)
     private String scanTimeLong;
 
-    //扫描状态 0 未扫描 1
-    @Column(name = "scan_state")
-    private Integer scanState=0;
 
     @Column(name = "create_time")
     private Timestamp createTime;
 
-    @Column(name = "update_time")
-    private Timestamp updateTime;
 
     public String getId() {
         return id;
@@ -73,36 +63,12 @@ public class ScanLibraryEntity extends BaseModel {
         this.id = id;
     }
 
-    public String getLibraryId() {
-        return libraryId;
+    public String getScanLibraryId() {
+        return scanLibraryId;
     }
 
-    public void setLibraryId(String libraryId) {
-        this.libraryId = libraryId;
-    }
-
-    public String getScanTimeLong() {
-        return scanTimeLong;
-    }
-
-    public void setScanTimeLong(String scanTimeLong) {
-        this.scanTimeLong = scanTimeLong;
-    }
-
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getScanType() {
-        return scanType;
-    }
-
-    public void setScanType(String scanType) {
-        this.scanType = scanType;
+    public void setScanLibraryId(String scanLibraryId) {
+        this.scanLibraryId = scanLibraryId;
     }
 
     public Integer getHoleSeverity() {
@@ -137,35 +103,35 @@ public class ScanLibraryEntity extends BaseModel {
         this.holeLow = holeLow;
     }
 
-    public String getLibraryVersionId() {
-        return libraryVersionId;
+    public String getScanTimeLong() {
+        return scanTimeLong;
     }
 
-    public void setLibraryVersionId(String libraryVersionId) {
-        this.libraryVersionId = libraryVersionId;
+    public void setScanTimeLong(String scanTimeLong) {
+        this.scanTimeLong = scanTimeLong;
     }
 
-    public String getRepositoryId() {
-        return repositoryId;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setRepositoryId(String repositoryId) {
-        this.repositoryId = repositoryId;
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
-    public Timestamp getUpdateTime() {
-        return updateTime;
+    public String getLibraryId() {
+        return libraryId;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
+    public void setLibraryId(String libraryId) {
+        this.libraryId = libraryId;
     }
 
-    public Integer getScanState() {
-        return scanState;
+    public String getLibraryVersion() {
+        return libraryVersion;
     }
 
-    public void setScanState(Integer scanState) {
-        this.scanState = scanState;
+    public void setLibraryVersion(String libraryVersion) {
+        this.libraryVersion = libraryVersion;
     }
 }

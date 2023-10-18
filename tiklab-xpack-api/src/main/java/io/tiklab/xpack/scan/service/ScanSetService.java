@@ -1,7 +1,6 @@
 package io.tiklab.xpack.scan.service;
 
 
-import io.tiklab.core.page.Pagination;
 import io.tiklab.join.annotation.FindAll;
 import io.tiklab.join.annotation.FindList;
 import io.tiklab.join.annotation.FindOne;
@@ -14,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* ScanSetService-存储库接口
+* ScanSetService-扫描设置
 */
 @JoinProvider(model = ScanSet.class)
 public interface ScanSetService {
@@ -41,6 +40,7 @@ public interface ScanSetService {
     @FindOne
     ScanSet findOne(@NotNull String id);
 
+    @FindList
     List<ScanSet> findList(List<String> idList);
 
     /**
@@ -48,7 +48,6 @@ public interface ScanSetService {
     * @param id
     * @return
     */
-    @FindList
     ScanSet findScanSet(@NotNull String id);
 
     /**
@@ -65,11 +64,6 @@ public interface ScanSetService {
     */
     List<ScanSet> findScanSetList(ScanSetQuery scanSetQuery);
 
-    /**
-    * 按分页查询
-    * @param scanSetQuery
-    * @return
-    */
-    Pagination<ScanSet> findScanSetPage(ScanSetQuery scanSetQuery);
+
 
 }

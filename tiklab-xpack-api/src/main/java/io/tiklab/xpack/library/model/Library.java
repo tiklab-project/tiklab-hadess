@@ -11,6 +11,7 @@ import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.xpack.repository.model.Repository;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -61,6 +62,25 @@ public class Library extends BaseModel {
     @ApiProperty(name="children",desc="版本list")
     private List<LibraryVersion> children;
 
+
+    @ApiProperty(name="holeSeverity",desc="严重漏洞")
+    private Integer holeSeverity;
+
+    @ApiProperty(name="holeHigh",desc="高级漏洞")
+    private Integer holeHigh;
+
+    @ApiProperty(name="holeMiddle",desc="中级漏洞")
+    private Integer holeMiddle;
+
+    @ApiProperty(name="holeLow",desc="低级漏洞")
+    private Integer holeLow;
+
+    @ApiProperty(name="scanLibraryId",desc="扫描id")
+    private String scanLibraryId;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
+    @ApiProperty(name="scanDate",desc="扫描时间")
+    private Timestamp scanDate;
 
     public java.lang.String getId() {
         return id;
@@ -137,5 +157,53 @@ public class Library extends BaseModel {
 
     public void setChildren(List<LibraryVersion> children) {
         this.children = children;
+    }
+
+    public Integer getHoleSeverity() {
+        return holeSeverity;
+    }
+
+    public void setHoleSeverity(Integer holeSeverity) {
+        this.holeSeverity = holeSeverity;
+    }
+
+    public Integer getHoleHigh() {
+        return holeHigh;
+    }
+
+    public void setHoleHigh(Integer holeHigh) {
+        this.holeHigh = holeHigh;
+    }
+
+    public Integer getHoleMiddle() {
+        return holeMiddle;
+    }
+
+    public void setHoleMiddle(Integer holeMiddle) {
+        this.holeMiddle = holeMiddle;
+    }
+
+    public Integer getHoleLow() {
+        return holeLow;
+    }
+
+    public void setHoleLow(Integer holeLow) {
+        this.holeLow = holeLow;
+    }
+
+    public Timestamp getScanDate() {
+        return scanDate;
+    }
+
+    public void setScanDate(Timestamp scanDate) {
+        this.scanDate = scanDate;
+    }
+
+    public String getScanLibraryId() {
+        return scanLibraryId;
+    }
+
+    public void setScanLibraryId(String scanLibraryId) {
+        this.scanLibraryId = scanLibraryId;
     }
 }

@@ -1,4 +1,4 @@
-package io.tiklab.xpack.library.controller;
+package io.tiklab.xpack.upload.controller;
 
 
 import io.tiklab.core.Result;
@@ -6,7 +6,7 @@ import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.library.model.LibraryFileHand;
-import io.tiklab.xpack.library.service.LibraryFileHandService;
+import io.tiklab.xpack.upload.HandUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +26,7 @@ import java.io.*;
 public class FileHandleController  {
 
     @Autowired
-    private LibraryFileHandService libraryFileHandService;
+    private HandUploadService handUploadService;
 
 
 
@@ -37,7 +37,7 @@ public class FileHandleController  {
         String requestURI = request.getRequestURI();
 
         try {
-            byte[] bytes = libraryFileHandService.fileRead(requestURI);
+            byte[] bytes = handUploadService.fileRead(requestURI);
             String s = new String(bytes, "UTF-8");
 
             ServletOutputStream outputStream = response.getOutputStream();
@@ -55,7 +55,7 @@ public class FileHandleController  {
             String requestURI = request.getRequestURI();
 
             String fileName = requestURI.substring(requestURI.lastIndexOf("/")+1);
-            byte[] bytes = libraryFileHandService.fileRead(requestURI);
+            byte[] bytes = handUploadService.fileRead(requestURI);
             response.setHeader("Content-Disposition", "attachment; filename="+fileName);
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(bytes);
@@ -71,7 +71,7 @@ public class FileHandleController  {
         try {
             String fileName = uploadFile.getOriginalFilename();   //获取文件名字
             InputStream inputStream = uploadFile.getInputStream();
-            String finePath = libraryFileHandService.fileUpload(inputStream, fileName);
+            String finePath = handUploadService.fileUpload(inputStream, fileName);
             return Result.ok(finePath);
         } catch (IOException e) {
             throw new SystemException(e.getMessage());
@@ -83,7 +83,7 @@ public class FileHandleController  {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Result<String> findServerIp() {
 
-        String address=libraryFileHandService.findServerIp();
+        String address=handUploadService.findServerIp();
         return Result.ok(address);
     }
 
@@ -93,7 +93,7 @@ public class FileHandleController  {
     @ApiParam(name = "requestParam",desc = "requestParam")
     public Result<String> libraryHandPush(@RequestBody @Valid @NotNull LibraryFileHand libraryFileHand){
 
-        String handPush = libraryFileHandService.libraryHandPush(libraryFileHand);
+        String handPush = handUploadService.libraryHandPush(libraryFileHand);
 
         return Result.ok(handPush);
     }
@@ -101,7 +101,7 @@ public class FileHandleController  {
     @ApiMethod(name = "findHandPushResult",desc = "获取手动上传结果")
     @ApiParam(name = "repositoryId",desc = "制品库id")
     public Result<String> findHandPushResult(@NotNull String repositoryId){
-        String handPushResult = libraryFileHandService.findHandPushResult(repositoryId);
+        String handPushResult = handUploadService.findHandPushResult(repositoryId);
         return Result.ok(handPushResult);
     }
 

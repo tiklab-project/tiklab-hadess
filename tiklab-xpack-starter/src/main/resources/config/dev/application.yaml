@@ -15,8 +15,9 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  #url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
   url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.11.1.10/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -25,6 +26,7 @@ postgresql:
   embbed:
     enable: false
   database: tiklab_xpack
+  type: local
 
 #eas config
 eas:
@@ -97,5 +99,12 @@ backup:
   address: ${DATA_HOME}/backup
   time: 0 0 2 * * ?
 
+backups:
+  dir: ${DATA_HOME}/backup
+  time: 0 0 2 * * ?
 
 
+openscan_mvn:
+  repo: http://172.13.1.24:8080/repository/maven-public
+  user: admin
+  password: 123456

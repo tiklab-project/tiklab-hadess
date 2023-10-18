@@ -8,9 +8,12 @@ import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.library.dao.PushLibraryDao;
 import io.tiklab.xpack.library.entity.PushLibraryEntity;
+import io.tiklab.xpack.library.model.Library;
+import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.model.PushLibrary;
 import io.tiklab.xpack.library.model.PushLibraryQuery;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
     @Autowired
     PushCenWarehouseImpl pushCenWarehouse;
+
+    @Autowired
+    LibraryService libraryService;
 
 
     @Override
@@ -126,7 +132,20 @@ public class PushLibraryServiceImpl implements PushLibraryService {
 
     @Override
     public Pagination<PushLibrary> findPushLibraryPage(PushLibraryQuery pushLibraryQuery) {
-        Pagination<PushLibraryEntity>  pagination = pushLibraryDao.findPushLibraryPage(pushLibraryQuery);
+        String[] LibraryIdList=null;
+        String libraryName = pushLibraryQuery.getLibraryName();
+        if (StringUtils.isNotEmpty(libraryName)){
+            List<Library> libraryList = libraryService.likeLibraryByName(new LibraryQuery().setRepositoryId(pushLibraryQuery.getRepositoryId()).setName(pushLibraryQuery.getLibraryName()));
+            if (CollectionUtils.isNotEmpty(libraryList)){
+                List<String> LibraryIds = libraryList.stream().map(Library::getId).distinct().collect(Collectors.toList());
+                String[] LibraryIdSize = new String[LibraryIds.size()];
+                LibraryIdList = LibraryIds.toArray(LibraryIdSize);
+            }else {
+                return PaginationBuilder.build(new Pagination<>(),null);
+            }
+        }
+
+        Pagination<PushLibraryEntity>  pagination = pushLibraryDao.findPushLibraryPage(pushLibraryQuery,LibraryIdList);
 
         List<PushLibrary> pushLibraryList = BeanMapper.mapList(pagination.getDataList(),PushLibrary.class);
 

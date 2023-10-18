@@ -48,6 +48,7 @@ public interface RepositoryMavenService {
     @FindOne
     RepositoryMaven findOne(@NotNull String id);
 
+    @FindList
     List<RepositoryMaven> findList(List<String> idList);
 
     /**
@@ -55,7 +56,6 @@ public interface RepositoryMavenService {
     * @param id
     * @return
     */
-    @FindList
     RepositoryMaven findRepositoryMaven(@NotNull String id);
 
     /**

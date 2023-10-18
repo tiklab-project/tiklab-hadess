@@ -29,7 +29,7 @@ public class Repository extends BaseModel {
     private java.lang.String repositoryUrl;
 
     @NotNull
-    @ApiProperty(name="type",desc="创建类型 maven、npm等 ",required = true)
+    @ApiProperty(name="type",desc="创建类型 maven、npm、generic、docker等 ",required = true)
     private java.lang.String type;
 
     @NotNull

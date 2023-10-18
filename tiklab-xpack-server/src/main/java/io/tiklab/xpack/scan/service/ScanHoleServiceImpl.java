@@ -3,104 +3,115 @@ package io.tiklab.xpack.scan.service;
 import io.tiklab.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
+import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
+import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
-import io.tiklab.xpack.scan.dao.ScanResultDao;
-import io.tiklab.xpack.scan.entity.ScanResultEntity;
-import io.tiklab.xpack.scan.model.ScanResult;
-import io.tiklab.xpack.scan.model.ScanResultQuery;
+import io.tiklab.xpack.scan.dao.ScanHoleDao;
+import io.tiklab.xpack.scan.entity.ScanHoleEntity;
+import io.tiklab.xpack.scan.model.ScanHole;
+import io.tiklab.xpack.scan.model.ScanHoleQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
-* ScanResultServiceImpl-扫描结果
+* ScanHoleServiceImpl-扫描结果
 */
 @Service
-public class ScanResultServiceImpl implements ScanResultService {
+public class ScanHoleServiceImpl implements ScanHoleService {
 
     @Autowired
-    ScanResultDao scanResultDao;
+    ScanHoleDao scanHoleDao;
 
     @Autowired
     JoinTemplate joinTemplate;
 
     @Override
-    public String createScanResult(@NotNull @Valid ScanResult scanResult) {
-        ScanResultEntity scanResultEntity = BeanMapper.map(scanResult, ScanResultEntity.class);
-
-        return scanResultDao.createScanResult(scanResultEntity);
+    public String createScanHole(@NotNull @Valid ScanHole scanHole) {
+        ScanHoleEntity scanHoleEntity = BeanMapper.map(scanHole, ScanHoleEntity.class);
+        scanHoleEntity.setCreatTime(new Timestamp(System.currentTimeMillis()));
+        return scanHoleDao.createScanHole(scanHoleEntity);
     }
 
     @Override
-    public void updateScanResult(@NotNull @Valid ScanResult scanResult) {
-        ScanResultEntity scanResultEntity = BeanMapper.map(scanResult, ScanResultEntity.class);
+    public void updateScanHole(@NotNull @Valid ScanHole scanHole) {
+        ScanHoleEntity scanHoleEntity = BeanMapper.map(scanHole, ScanHoleEntity.class);
 
-        scanResultDao.updateScanResult(scanResultEntity);
+        scanHoleDao.updateScanHole(scanHoleEntity);
     }
 
     @Override
-    public void deleteScanResult(@NotNull String id) {
-        scanResultDao.deleteScanResult(id);
+    public void deleteScanHole(@NotNull String id) {
+        scanHoleDao.deleteScanHole(id);
     }
 
     @Override
-    public ScanResult findOne(String id) {
-        ScanResultEntity scanResultEntity = scanResultDao.findScanResult(id);
-
-        ScanResult scanResult = BeanMapper.map(scanResultEntity, ScanResult.class);
-        return scanResult;
+    public void deleteScanHoleByCondition(String key,String value) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(ScanHoleEntity.class)
+                .eq(key, value)
+                .get();
+        scanHoleDao.deleteScanHole(deleteCondition);
     }
 
     @Override
-    public List<ScanResult> findList(List<String> idList) {
-        List<ScanResultEntity> scanResultEntityList =  scanResultDao.findScanResultList(idList);
+    public ScanHole findOne(String id) {
+        ScanHoleEntity scanHoleEntity = scanHoleDao.findScanHole(id);
 
-        List<ScanResult> scanResultList =  BeanMapper.mapList(scanResultEntityList,ScanResult.class);
-        return scanResultList;
+        ScanHole scanHole = BeanMapper.map(scanHoleEntity, ScanHole.class);
+        return scanHole;
     }
 
     @Override
-    public ScanResult findScanResult(@NotNull String id) {
-        ScanResult scanResult = findOne(id);
+    public List<ScanHole> findList(List<String> idList) {
+        List<ScanHoleEntity> scanHoleEntityList =  scanHoleDao.findScanHoleList(idList);
 
-        joinTemplate.joinQuery(scanResult);
-
-        return scanResult;
+        List<ScanHole> scanHoleList =  BeanMapper.mapList(scanHoleEntityList,ScanHole.class);
+        return scanHoleList;
     }
 
     @Override
-    public List<ScanResult> findAllScanResult() {
-        List<ScanResultEntity> scanResultEntityList =  scanResultDao.findAllScanResult();
+    public ScanHole findScanHole(@NotNull String id) {
+        ScanHole scanHole = findOne(id);
 
-        List<ScanResult> scanResultList =  BeanMapper.mapList(scanResultEntityList,ScanResult.class);
+        joinTemplate.joinQuery(scanHole);
 
-        joinTemplate.joinQuery(scanResultList);
-
-        return scanResultList;
+        return scanHole;
     }
 
     @Override
-    public List<ScanResult> findScanResultList(ScanResultQuery scanResultQuery) {
-        List<ScanResultEntity> scanResultEntityList = scanResultDao.findScanResultList(scanResultQuery);
+    public List<ScanHole> findAllScanHole() {
+        List<ScanHoleEntity> scanHoleEntityList =  scanHoleDao.findAllScanHole();
 
-        List<ScanResult> scanResultList = BeanMapper.mapList(scanResultEntityList,ScanResult.class);
+        List<ScanHole> scanHoleList =  BeanMapper.mapList(scanHoleEntityList,ScanHole.class);
 
-        joinTemplate.joinQuery(scanResultList);
+        joinTemplate.joinQuery(scanHoleList);
 
-        return scanResultList;
+        return scanHoleList;
     }
 
     @Override
-    public Pagination<ScanResult> findScanResultPage(ScanResultQuery scanResultQuery) {
-        Pagination<ScanResultEntity>  pagination = scanResultDao.findScanResultPage(scanResultQuery);
+    public List<ScanHole> findScanHoleList(ScanHoleQuery scanHoleQuery) {
+        List<ScanHoleEntity> scanHoleEntityList = scanHoleDao.findScanHoleList(scanHoleQuery);
 
-        List<ScanResult> scanResultList = BeanMapper.mapList(pagination.getDataList(),ScanResult.class);
+        List<ScanHole> scanHoleList = BeanMapper.mapList(scanHoleEntityList,ScanHole.class);
 
-        joinTemplate.joinQuery(scanResultList);
+        joinTemplate.joinQuery(scanHoleList);
 
-        return PaginationBuilder.build(pagination,scanResultList);
+        return scanHoleList;
+    }
+
+    @Override
+    public Pagination<ScanHole> findScanHolePage(ScanHoleQuery scanHoleQuery) {
+        Pagination<ScanHoleEntity>  pagination = scanHoleDao.findScanHolePage(scanHoleQuery);
+
+        List<ScanHole> scanHoleList = BeanMapper.mapList(pagination.getDataList(),ScanHole.class);
+
+        joinTemplate.joinQuery(scanHoleList);
+
+        return PaginationBuilder.build(pagination,scanHoleList);
     }
 }

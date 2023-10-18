@@ -3,8 +3,8 @@ package io.tiklab.xpack.upload.controller;
 import com.alibaba.fastjson.JSON;
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
-import io.tiklab.xpack.uoload.MavenUploadService;
-import io.tiklab.xpack.uoload.NpmUploadService;
+import io.tiklab.xpack.upload.MavenUploadService;
+import io.tiklab.xpack.upload.NpmUploadService;
 import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import org.apache.commons.lang.StringUtils;
@@ -90,6 +90,7 @@ public  class LibraryUploadController extends HttpServlet {
                 // String authorization = request.getHeader("Authorization");
                 if (StringUtils.isEmpty(authorization)){
                     response.setStatus(401,"Unauthorized");
+                    response.getWriter().print("Unauthorized");
                 }else {
                     //用户信息
                     String basic = authorization.replace("Basic", "").trim();
@@ -98,6 +99,7 @@ public  class LibraryUploadController extends HttpServlet {
                     String userData = new String(decode, "UTF-8");
                     Result<byte[]> result = downloadMavenService.mavenSubmit(repositoryPath, inputStream, userData);
                     response.setStatus(result.getCode(),result.getMsg());
+                    response.getWriter().print(result.getMsg());
                 }
             }else {
                 Result<byte[]> result = downloadMavenService.mavenPull(repositoryPath);
@@ -111,6 +113,7 @@ public  class LibraryUploadController extends HttpServlet {
                     outputStream.write(data);
                 }else {
                     response.setStatus(result.getCode(),result.getMsg());
+                    response.getWriter().print(result.getMsg());
                 }
             }
         }catch (Exception e){

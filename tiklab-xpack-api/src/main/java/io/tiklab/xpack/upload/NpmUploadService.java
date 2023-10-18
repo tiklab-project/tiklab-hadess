@@ -1,4 +1,4 @@
-package io.tiklab.xpack.uoload;
+package io.tiklab.xpack.upload;
 
 import com.alibaba.fastjson.JSONObject;
 

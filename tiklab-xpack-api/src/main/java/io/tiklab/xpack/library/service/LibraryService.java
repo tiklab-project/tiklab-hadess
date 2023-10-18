@@ -74,20 +74,35 @@ public interface LibraryService {
     List<Library> findLibraryList(LibraryQuery libraryQuery);
 
     /**
-     * 通过制品库查询制品数量
-     * @param repositoryId 制品库id
+     * 制品匹配仓库
+     * @param libraryQuery
      * @return
      */
-    Integer findLibraryNum(String  repositoryId);
+    List<Library> likeLibraryListNo(LibraryQuery libraryQuery);
 
     /**
-     * 通过制品名字查询制品
+     * 制品匹配仓库
+     * @param libraryQuery
+     * @return
+     */
+    List<Library> likeLibraryByName(LibraryQuery libraryQuery);
+
+    /**
+     * 通过制品库查询制品数量
+     * @param repositoryId 制品库id
+     * @param  repositoryType 仓库类型                     
+     * @return
+     */
+    Integer findLibraryNum(String  repositoryId,String repositoryType);
+
+    /**
+     * 通过制品名字查询制品和类型查询
      * @param name 制品名字
      * @param type 制品类型  maven、npm
      * @param version  版本, Release 、Snapshot
      * @return
      */
-    Library findLibraryByName(String name,String type,String version);
+    Library findLibraryByNameAndType(String name,String type,String version);
 
 
     /**
@@ -129,4 +144,20 @@ public interface LibraryService {
     List<Library> findNotPushLibraryList(LibraryQuery libraryQuery);
 
     List<Library> findEqLibraryList(LibraryQuery libraryQuery);
+
+    /**
+     * 分页查询扫描制品
+     * @param libraryQuery
+     * @return
+     */
+    Pagination<Library> findScanLibraryPage(LibraryQuery libraryQuery);
+
+    /**
+     * 查询未添加到扫描列表的制品
+     * @param libraryQuery
+     * @return
+     */
+    List<Library> findNotScanLibraryList(LibraryQuery libraryQuery);
+
+    void updateFile();
 }

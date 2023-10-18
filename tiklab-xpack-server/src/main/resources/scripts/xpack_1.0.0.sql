@@ -108,12 +108,13 @@ CREATE TABLE pack_library_version(
 CREATE TABLE pack_library_file(
       id VARCHAR(12) PRIMARY KEY,
       library_id varchar(12) NOT NULL,
-      library_version_id varchar(12) NOT NULL,
+      library_version_id varchar(12),
       repository_id varchar (12) NOT NULL,
       file_size varchar (32) NOT NULL,
       file_name varchar (128) NOT NULL,
       file_url varchar (688) NOT NULL,
       relative_path varchar (688),
+
       snapshot_version varchar(255),
       create_time  timestamp
 );

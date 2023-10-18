@@ -6,9 +6,9 @@ import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
-import io.tiklab.xpack.repository.model.Backups;
+import io.tiklab.xpack.repository.model.XpackBackups;
 import io.tiklab.xpack.repository.model.ExecLog;
-import io.tiklab.xpack.repository.service.BackupsServer;
+import io.tiklab.xpack.repository.service.XpackBackupsServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,17 +20,17 @@ import java.io.InputStream;
 
 
 @RestController
-@RequestMapping("/backups")
+@RequestMapping("/xpackBackups")
 @Api(name = "BackupsController",desc = "数据备份")
 public class XpackBackupsController {
 
     @Autowired
-    BackupsServer backupsServer;
+    XpackBackupsServer backupsServer;
 
     @RequestMapping(path="/backupsExec",method = RequestMethod.POST)
     @ApiMethod(name = "backupsExec",desc = "执行备份")
     @ApiParam(name = "auth",desc = "auth",required = true)
-    public Result<String> backupsExec(@RequestBody @NotNull @Valid Backups backups){
+    public Result<String> backupsExec(@RequestBody @NotNull @Valid XpackBackups backups){
 
         String exec = backupsServer.backupsExec(backups);
 
@@ -39,9 +39,9 @@ public class XpackBackupsController {
 
     @RequestMapping(path="/findBackups",method = RequestMethod.POST)
     @ApiMethod(name = "findBackups",desc = "查询备份相关数据")
-    public Result<Backups> findBackups(){
+    public Result<XpackBackups> findBackups(){
         String appHome = AppHomeContext.getAppHome();
-        Backups backups=  backupsServer.findBackups();
+        XpackBackups backups=  backupsServer.findBackups();
 
         return Result.ok(backups);
     }
@@ -49,7 +49,7 @@ public class XpackBackupsController {
     @RequestMapping(path="/updateBackups",method = RequestMethod.POST)
     @ApiMethod(name = "updateBackups",desc = "修改备份相关数据")
     @ApiParam(name = "auth",desc = "auth",required = true)
-    public Result<String> updateBackups(@RequestBody @NotNull @Valid Backups backups){
+    public Result<String> updateBackups(@RequestBody @NotNull @Valid XpackBackups backups){
 
         backupsServer.updateBackups(backups);
 

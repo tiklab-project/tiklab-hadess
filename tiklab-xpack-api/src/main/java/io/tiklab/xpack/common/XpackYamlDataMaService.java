@@ -43,6 +43,11 @@ public interface XpackYamlDataMaService {
      String fileAddress();
 
     /**
+     * 扫描文件地址
+     */
+    String scanFileAddress();
+
+    /**
      * pgsql的地址
      */
     String pgSqlAddress();

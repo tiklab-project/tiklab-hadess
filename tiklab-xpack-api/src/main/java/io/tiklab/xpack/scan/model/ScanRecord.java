@@ -12,19 +12,25 @@ import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryVersion;
 
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
- * ScanResult扫描制品
+ * ScanRecord 扫描记录
  */
 @ApiModel
 @Join
 @Mapper
-public class ScanLibrary extends BaseModel {
+public class ScanRecord extends BaseModel {
 
     @ApiProperty(name="id",desc="id")
     private String id;
+
+    @ApiProperty(name="scanLibrary",desc="扫描制品",required = true)
+    @Mappings({
+            @Mapping(source = "scanLibrary.id",target = "scanLibraryId")
+    })
+    @JoinQuery(key = "id")
+    private ScanLibrary scanLibrary;
 
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
@@ -33,15 +39,10 @@ public class ScanLibrary extends BaseModel {
     @JoinQuery(key = "id")
     private Library library;
 
-    @ApiProperty(name="libraryVersion",desc="制品版本",required = true)
-    @Mappings({
-            @Mapping(source = "libraryVersion.id",target = "libraryVersionId")
-    })
-    @JoinQuery(key = "id")
-    private LibraryVersion libraryVersion;
+    @ApiProperty(name="libraryVersion",desc="制品版本")
+    private String libraryVersion;
 
-    @ApiProperty(name="repositoryId",desc="制品库id")
-    private String repositoryId;
+
 
     @ApiProperty(name="holeSeverity",desc="严重漏洞")
     private Integer holeSeverity;
@@ -55,24 +56,12 @@ public class ScanLibrary extends BaseModel {
     @ApiProperty(name="holeLow",desc="低级漏洞")
     private Integer holeLow;
 
-    @ApiProperty(name="scanType",desc="类型 library:制品列表扫描、")
-    private String scanType;
-
-    @ApiProperty(name="scanState",desc="扫描状态: 未扫描：0  、扫描：1 ")
-    private Integer scanState=0;
-
-
-
     @ApiProperty(name="scanTimeLong",desc="扫描时常")
     private String scanTimeLong;
 
     @ApiProperty(name="创建时间",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Timestamp createTime;
-
-    @ApiProperty(name="更新时间",desc="updateTime")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
-    private Timestamp updateTime;
 
 
 
@@ -88,36 +77,12 @@ public class ScanLibrary extends BaseModel {
         this.id = id;
     }
 
-    public Library getLibrary() {
-        return library;
+    public ScanLibrary getScanLibrary() {
+        return scanLibrary;
     }
 
-    public void setLibrary(Library library) {
-        this.library = library;
-    }
-
-    public String getScanTimeLong() {
-        return scanTimeLong;
-    }
-
-    public void setScanTimeLong(String scanTimeLong) {
-        this.scanTimeLong = scanTimeLong;
-    }
-
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getScanType() {
-        return scanType;
-    }
-
-    public void setScanType(String scanType) {
-        this.scanType = scanType;
+    public void setScanLibrary(ScanLibrary scanLibrary) {
+        this.scanLibrary = scanLibrary;
     }
 
     public Integer getHoleSeverity() {
@@ -152,12 +117,20 @@ public class ScanLibrary extends BaseModel {
         this.holeLow = holeLow;
     }
 
-    public LibraryVersion getLibraryVersion() {
-        return libraryVersion;
+    public String getScanTimeLong() {
+        return scanTimeLong;
     }
 
-    public void setLibraryVersion(LibraryVersion libraryVersion) {
-        this.libraryVersion = libraryVersion;
+    public void setScanTimeLong(String scanTimeLong) {
+        this.scanTimeLong = scanTimeLong;
+    }
+
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
     public Integer getRelyNum() {
@@ -168,27 +141,19 @@ public class ScanLibrary extends BaseModel {
         this.relyNum = relyNum;
     }
 
-    public String getRepositoryId() {
-        return repositoryId;
+    public Library getLibrary() {
+        return library;
     }
 
-    public void setRepositoryId(String repositoryId) {
-        this.repositoryId = repositoryId;
+    public void setLibrary(Library library) {
+        this.library = library;
     }
 
-    public Timestamp getUpdateTime() {
-        return updateTime;
+    public String getLibraryVersion() {
+        return libraryVersion;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getScanState() {
-        return scanState;
-    }
-
-    public void setScanState(Integer scanState) {
-        this.scanState = scanState;
+    public void setLibraryVersion(String libraryVersion) {
+        this.libraryVersion = libraryVersion;
     }
 }

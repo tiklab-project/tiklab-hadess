@@ -1,0 +1,28 @@
+package io.tiklab.xpack.upload;
+
+import io.tiklab.core.Result;
+
+import java.io.InputStream;
+
+public interface GenericUploadService {
+
+
+    /**
+     * generic提交
+     * @param inputStream 文件liu
+     * @param   contextPath 仓库名称/制品文件
+     * @param userData 用户信息
+     * @param version 产品版本
+     * @return
+     */
+     String GenericUpload( InputStream inputStream,String contextPath,String userData,String version );
+
+    /**
+     * generic下载
+     * @param   contextPath 仓库名称/制品文件
+     * @param userData 用户信息
+     * @param version 产品版本
+     * @return
+     */
+    Result<byte[]> GenericDownload(String contextPath, String userData, String version);
+}

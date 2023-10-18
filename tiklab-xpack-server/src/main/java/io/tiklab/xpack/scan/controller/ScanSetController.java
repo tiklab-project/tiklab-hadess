@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/scanSet")
-@Api(name = "ScanSetController",desc = "存储库管理")
+@Api(name = "ScanSetController",desc = "扫描设置管理")
 public class ScanSetController {
 
     private static Logger logger = LoggerFactory.getLogger(ScanSetController.class);
@@ -34,7 +34,7 @@ public class ScanSetController {
     private ScanSetService scanSetService;
 
     @RequestMapping(path="/createScanSet",method = RequestMethod.POST)
-    @ApiMethod(name = "createScanSet",desc = "创建存储库")
+    @ApiMethod(name = "createScanSet",desc = "创建扫描设置")
     @ApiParam(name = "scanSet",desc = "scanSet",required = true)
     public Result<String> createScanSet(@RequestBody @NotNull @Valid ScanSet scanSet){
         String id = scanSetService.createScanSet(scanSet);
@@ -43,7 +43,7 @@ public class ScanSetController {
     }
 
     @RequestMapping(path="/updateScanSet",method = RequestMethod.POST)
-    @ApiMethod(name = "updateScanSet",desc = "更新存储库")
+    @ApiMethod(name = "updateScanSet",desc = "更新扫描设置")
     @ApiParam(name = "scanSet",desc = "scanSet",required = true)
     public Result<Void> updateScanSet(@RequestBody @NotNull @Valid ScanSet scanSet){
         scanSetService.updateScanSet(scanSet);
@@ -52,7 +52,7 @@ public class ScanSetController {
     }
 
     @RequestMapping(path="/deleteScanSet",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteScanSet",desc = "删除存储库")
+    @ApiMethod(name = "deleteScanSet",desc = "删除扫描设置")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteScanSet(@NotNull String id){
         scanSetService.deleteScanSet(id);
@@ -61,7 +61,7 @@ public class ScanSetController {
     }
 
     @RequestMapping(path="/findScanSet",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanSet",desc = "通过id查询存储库")
+    @ApiMethod(name = "findScanSet",desc = "通过id查询扫描设置")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<ScanSet> findScanSet(@NotNull String id){
         ScanSet scanSet = scanSetService.findScanSet(id);
@@ -70,7 +70,7 @@ public class ScanSetController {
     }
 
     @RequestMapping(path="/findAllScanSet",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllScanSet",desc = "查询所有存储库")
+    @ApiMethod(name = "findAllScanSet",desc = "查询所有扫描设置")
     public Result<List<ScanSet>> findAllScanSet(){
         List<ScanSet> scanSetList = scanSetService.findAllScanSet();
 
@@ -78,7 +78,7 @@ public class ScanSetController {
     }
 
     @RequestMapping(path = "/findScanSetList",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanSetList",desc = "条件查询存储库")
+    @ApiMethod(name = "findScanSetList",desc = "条件查询扫描设置")
     @ApiParam(name = "scanSetQuery",desc = "scanSetQuery",required = true)
     public Result<List<ScanSet>> findScanSetList(@RequestBody @Valid @NotNull ScanSetQuery scanSetQuery){
         List<ScanSet> scanSetList = scanSetService.findScanSetList(scanSetQuery);
@@ -86,13 +86,6 @@ public class ScanSetController {
         return Result.ok(scanSetList);
     }
 
-    @RequestMapping(path = "/findScanSetPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanSetPage",desc = "条件分页查询存储库")
-    @ApiParam(name = "scanSetQuery",desc = "scanSetQuery",required = true)
-    public Result<Pagination<ScanSet>> findScanSetPage(@RequestBody @Valid @NotNull ScanSetQuery scanSetQuery){
-        Pagination<ScanSet> pagination = scanSetService.findScanSetPage(scanSetQuery);
 
-        return Result.ok(pagination);
-    }
 
 }

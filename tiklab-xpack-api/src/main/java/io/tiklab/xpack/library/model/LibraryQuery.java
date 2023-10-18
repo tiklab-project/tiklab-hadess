@@ -73,8 +73,9 @@ public class LibraryQuery implements Serializable {
             return libraryType;
         }
 
-        public void setLibraryType(String libraryType) {
+        public LibraryQuery setLibraryType(String libraryType) {
             this.libraryType = libraryType;
+            return this;
         }
 
         public String getName() {

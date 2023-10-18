@@ -1,7 +1,7 @@
 package io.tiklab.xpack.repository.service;
 
 
-import io.tiklab.xpack.repository.model.Backups;
+import io.tiklab.xpack.repository.model.XpackBackups;
 import io.tiklab.xpack.repository.model.ExecLog;
 
 import java.io.InputStream;
@@ -11,17 +11,17 @@ public interface XpackBackupsServer {
     /**
      * 查询备份相关数据
      */
-    Backups findBackups();
+    XpackBackups findBackups();
 
     /**
      * 修改备份相关数据
      */
-    void updateBackups(Backups backups);
+    void updateBackups(XpackBackups backups);
 
     /**
      * 执行备份
      */
-    String backupsExec(Backups backups);
+    String backupsExec(XpackBackups backups);
 
 
     /**

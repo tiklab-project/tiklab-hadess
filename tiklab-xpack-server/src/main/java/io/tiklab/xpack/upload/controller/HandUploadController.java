@@ -1,12 +1,12 @@
-package io.tiklab.xpack.library.controller;
+package io.tiklab.xpack.upload.controller;
 
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
-import io.tiklab.xpack.uoload.MavenUploadService;
-import io.tiklab.xpack.uoload.NpmUploadService;
+import io.tiklab.xpack.upload.MavenUploadService;
+import io.tiklab.xpack.upload.NpmUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +20,7 @@ import java.io.InputStream;
 @RestController
 @RequestMapping("/xpack")
 @Api(name = "MavenUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
-public class HaMavenUploadController {
+public class HandUploadController {
 
     @Autowired
     MavenUploadService downloadMavenService;
@@ -28,7 +28,7 @@ public class HaMavenUploadController {
     @Autowired
     NpmUploadService downloadNpmService;
     @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
-    @ApiMethod(name = "mavenSubmit",desc = "mavne")
+    @ApiMethod(name = "mavenSubmit",desc = "通过xpack界面手动上传maven")
     @ApiParam(name = "requestParam",desc = "requestParam")
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
@@ -64,5 +64,6 @@ public class HaMavenUploadController {
             throw new SystemException(e);
         }
     }
+
 
 }

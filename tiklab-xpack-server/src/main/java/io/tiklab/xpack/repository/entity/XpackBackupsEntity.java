@@ -28,6 +28,12 @@ public class XpackBackupsEntity {
     private String execState;
 
 
+    //日志
+    @Column(name = "log")
+    private String log;
+
+
+
     public String getId() {
         return id;
     }
@@ -66,5 +72,13 @@ public class XpackBackupsEntity {
 
     public void setExecState(String execState) {
         this.execState = execState;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
     }
 }

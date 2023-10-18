@@ -11,24 +11,22 @@ import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryVersion;
-import io.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * ScanResult扫描结果
+ * ScanResult扫描制品
  */
 @ApiModel
 @Join
 @Mapper
-public class ScanResult extends BaseModel {
+public class ScanLibrary extends BaseModel {
 
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @NotNull
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
             @Mapping(source = "library.id",target = "libraryId")
@@ -36,33 +34,30 @@ public class ScanResult extends BaseModel {
     @JoinQuery(key = "id")
     private Library library;
 
+    @ApiProperty(name="libraryVersion",desc="制品版本",required = true)
+    @Mappings({
+            @Mapping(source = "libraryVersion.id",target = "libraryVersionId")
+    })
+    @JoinQuery(key = "id")
+    private LibraryVersion libraryVersion;
+
+    @ApiProperty(name="repositoryId",desc="制品库id")
+    private String repositoryId;
+
+    @ApiProperty(name="scanState",desc="扫描状态: 未扫描：0  、扫描：1 ")
+    private Integer scanState=0;
 
 
-    @ApiProperty(name="holeName",desc="漏洞名字")
-    private String holeName;
-
-
-    @ApiProperty(name="holeLevel",desc="漏洞等级")
-    private String holeLevel;
-
-    @ApiProperty(name="holeNumber",desc="漏洞编号")
-    private String holeNumber;
-
-
-    @ApiProperty(name="releaseTime",desc="发布时间")
-    private String releaseTime;
+    @ApiProperty(name="创建时间",desc="createTime")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
+    private Timestamp createTime;
 
 
 
-    @ApiProperty(name="holeDesc",desc="漏洞描述")
-    private String holeDesc;
+    /*--------其他字段----------*/
+    @ApiProperty(name="scanRecord",desc="scanRecord")
+    private ScanRecord scanRecord;
 
-    @ApiProperty(name="repairSuggest",desc="修复建议")
-    private String repairSuggest;
-
-    @ApiProperty(name="创建时间",desc="creatTime")
-    @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
-    private java.sql.Timestamp creatTime;
 
     public String getId() {
         return id;
@@ -80,59 +75,45 @@ public class ScanResult extends BaseModel {
         this.library = library;
     }
 
-    public String getHoleName() {
-        return holeName;
+    public LibraryVersion getLibraryVersion() {
+        return libraryVersion;
     }
 
-    public void setHoleName(String holeName) {
-        this.holeName = holeName;
+    public void setLibraryVersion(LibraryVersion libraryVersion) {
+        this.libraryVersion = libraryVersion;
     }
 
-    public String getHoleLevel() {
-        return holeLevel;
+    public String getRepositoryId() {
+        return repositoryId;
     }
 
-    public void setHoleLevel(String holeLevel) {
-        this.holeLevel = holeLevel;
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
     }
 
-    public String getHoleNumber() {
-        return holeNumber;
+    public Integer getScanState() {
+        return scanState;
     }
 
-    public void setHoleNumber(String holeNumber) {
-        this.holeNumber = holeNumber;
+    public void setScanState(Integer scanState) {
+        this.scanState = scanState;
     }
 
-    public String getReleaseTime() {
-        return releaseTime;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setReleaseTime(String releaseTime) {
-        this.releaseTime = releaseTime;
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
-    public String getHoleDesc() {
-        return holeDesc;
+    public ScanRecord getScanRecord() {
+        return scanRecord;
     }
 
-    public void setHoleDesc(String holeDesc) {
-        this.holeDesc = holeDesc;
+    public void setScanRecord(ScanRecord scanRecord) {
+        this.scanRecord = scanRecord;
     }
 
-    public String getRepairSuggest() {
-        return repairSuggest;
-    }
 
-    public void setRepairSuggest(String repairSuggest) {
-        this.repairSuggest = repairSuggest;
-    }
-
-    public Timestamp getCreatTime() {
-        return creatTime;
-    }
-
-    public void setCreatTime(Timestamp creatTime) {
-        this.creatTime = creatTime;
-    }
 }

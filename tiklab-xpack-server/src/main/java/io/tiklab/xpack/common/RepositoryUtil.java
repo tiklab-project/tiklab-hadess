@@ -2,6 +2,7 @@ package io.tiklab.xpack.common;
 
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.context.AppHomeContext;
+import io.tiklab.core.exception.SystemException;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -11,6 +12,9 @@ import org.springframework.util.ObjectUtils;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -125,7 +129,7 @@ public class RepositoryUtil {
      * @param tos 压缩文件ZipOutputStream
      */
     public static void compressFolder(String sourceFolder, String parentEntryPath, TarArchiveOutputStream tos) throws IOException {
-
+        tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles();
 
@@ -322,4 +326,51 @@ public class RepositoryUtil {
             }
         }
     }
+
+
+    /**
+     * SHA256 加密
+     * @param input 加密内容
+     * @return 时间
+     */
+    public static String generateSHA256(String input) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hexString = new StringBuilder();
+
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+
+        return hexString.toString();
+    }
+
+    /**
+     * 读取信息
+     * @param file
+     * @return
+     */
+    public static String readFile( File file) {
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(inputStream.available());
+            BufferedInputStream in = new BufferedInputStream(inputStream);
+            int buf_size = 1024;
+            byte[] buffer = new byte[buf_size];
+            int len = 0;
+            while (-1 != (len = in.read(buffer, 0, buf_size))) {
+                bos.write(buffer, 0, len);
+            }
+            String string = bos.toString();
+
+            return string;
+        }catch (Exception e){
+           throw  new SystemException("读取信息失败");
+        }
+    }
+
 }

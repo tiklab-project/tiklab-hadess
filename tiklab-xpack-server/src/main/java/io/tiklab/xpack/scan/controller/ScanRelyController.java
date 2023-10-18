@@ -5,9 +5,9 @@ import io.tiklab.core.page.Pagination;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
-import io.tiklab.xpack.scan.model.ScanResult;
-import io.tiklab.xpack.scan.model.ScanResultQuery;
-import io.tiklab.xpack.scan.service.ScanResultService;
+import io.tiklab.xpack.scan.model.ScanRely;
+import io.tiklab.xpack.scan.model.ScanRelyQuery;
+import io.tiklab.xpack.scan.service.ScanRelyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,60 +21,77 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * ScanResultController
+ * ScanRelyController
  */
 @RestController
-@RequestMapping("/scanResult")
-@Api(name = "ScanResultController",desc = "扫描结果")
-public class ScanResultController {
+@RequestMapping("/scanRely")
+@Api(name = "ScanRelyController",desc = "扫描依赖")
+public class ScanRelyController {
 
-    private static Logger logger = LoggerFactory.getLogger(ScanResultController.class);
+    private static Logger logger = LoggerFactory.getLogger(ScanRelyController.class);
 
     @Autowired
-    private ScanResultService scanResultService;
+    private ScanRelyService scanRelyService;
 
-    @RequestMapping(path="/deleteScanResult",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteScanResult",desc = "删除扫描结果")
+    @RequestMapping(path="/deleteScanRely",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteScanRely",desc = "删除扫描依赖")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<Void> deleteScanResult(@NotNull String id){
-        scanResultService.deleteScanResult(id);
+    public Result<Void> deleteScanRely(@NotNull String id){
+        scanRelyService.deleteScanRely(id);
 
         return Result.ok();
     }
 
-    @RequestMapping(path="/findScanResult",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanResult",desc = "通过id查询扫描结果")
+    @RequestMapping(path="/findScanRely",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRely",desc = "通过id查询扫描依赖")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<ScanResult> findScanResult(@NotNull String id){
-        ScanResult scanResult = scanResultService.findScanResult(id);
+    public Result<ScanRely> findScanRely(@NotNull String id){
+        ScanRely scanRely = scanRelyService.findScanRely(id);
 
-        return Result.ok(scanResult);
+        return Result.ok(scanRely);
     }
 
-    @RequestMapping(path="/findAllScanResult",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllScanResult",desc = "查询所有扫描结果")
-    public Result<List<ScanResult>> findAllScanResult(){
-        List<ScanResult> scanResultList = scanResultService.findAllScanResult();
+    @RequestMapping(path="/findAllScanRely",method = RequestMethod.POST)
+    @ApiMethod(name = "findAllScanRely",desc = "查询所有扫描依赖")
+    public Result<List<ScanRely>> findAllScanRely(){
+        List<ScanRely> scanRelyList = scanRelyService.findAllScanRely();
 
-        return Result.ok(scanResultList);
+        return Result.ok(scanRelyList);
     }
 
-    @RequestMapping(path = "/findScanResultList",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanResultList",desc = "条件查询扫描结果")
-    @ApiParam(name = "scanResultQuery",desc = "scanResultQuery",required = true)
-    public Result<List<ScanResult>> findScanResultList(@RequestBody @Valid @NotNull ScanResultQuery scanResultQuery){
-        List<ScanResult> scanResultList = scanResultService.findScanResultList(scanResultQuery);
+    @RequestMapping(path = "/findScanRelyList",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRelyList",desc = "条件查询扫描依赖")
+    @ApiParam(name = "scanRelyQuery",desc = "scanRelyQuery",required = true)
+    public Result<List<ScanRely>> findScanRelyList(@RequestBody @Valid @NotNull ScanRelyQuery scanRelyQuery){
+        List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(scanRelyQuery);
 
-        return Result.ok(scanResultList);
+        return Result.ok(scanRelyList);
     }
 
-    @RequestMapping(path = "/findScanResultPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanResultPage",desc = "条件分页查询扫描结果")
-    @ApiParam(name = "scanResultQuery",desc = "scanResultQuery",required = true)
-    public Result<Pagination<ScanResult>> findScanResultPage(@RequestBody @Valid @NotNull ScanResultQuery scanResultQuery){
-        Pagination<ScanResult> pagination = scanResultService.findScanResultPage(scanResultQuery);
+    @RequestMapping(path = "/findScanRelyPage",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRelyPage",desc = "条件分页查询扫描依赖")
+    @ApiParam(name = "scanRelyQuery",desc = "scanRelyQuery",required = true)
+    public Result<Pagination<ScanRely>> findScanRelyPage(@RequestBody @Valid @NotNull ScanRelyQuery scanRelyQuery){
+        Pagination<ScanRely> pagination = scanRelyService.findScanRelyPage(scanRelyQuery);
 
         return Result.ok(pagination);
     }
 
+    @RequestMapping(path = "/findScanRelyTreeList",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRelyList",desc = "条件查询扫描依赖树")
+    @ApiParam(name = "scanRelyQuery",desc = "scanRelyQuery",required = true)
+    public Result<List<ScanRely>> findScanRelyTreeList(@RequestBody @Valid @NotNull ScanRelyQuery scanRelyQuery){
+        List<ScanRely> scanRelyList = scanRelyService.findScanRelyTreeList(scanRelyQuery);
+
+        return Result.ok(scanRelyList);
+    }
+
+    @RequestMapping(path = "/findHaveHoleRelyTreeList",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRelyList",desc = "条件查询有漏洞的扫描依赖树")
+    @ApiParam(name = "scanRelyQuery",desc = "scanRelyQuery",required = true)
+    public Result<List<ScanRely>> findHaveHoleRelyTreeList(@RequestBody @Valid @NotNull ScanRelyQuery scanRelyQuery){
+        List<ScanRely> scanRelyList = scanRelyService.findHaveHoleRelyTreeList(scanRelyQuery);
+
+        return Result.ok(scanRelyList);
+    }
 }

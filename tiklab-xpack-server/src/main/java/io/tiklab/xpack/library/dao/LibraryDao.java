@@ -123,6 +123,15 @@ public class LibraryDao{
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
+
+    public List<LibraryEntity> findLibraryListNo(LibraryQuery libraryQuery) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("repositoryId", libraryQuery.getRepositoryId())
+                .eq("name", libraryQuery.getName())
+                .get();
+
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
     /**
      * 条件分页查询制品
      * @param libraryQuery
@@ -224,7 +233,7 @@ public class LibraryDao{
     }
 
     public JdbcTemplate getJdbcTemplate() {
-
+        io.tiklab.dal.jdbc.JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
         return jpaTemplate.getJdbcTemplate();
     }
 
@@ -240,7 +249,20 @@ public class LibraryDao{
                 .eq("repositoryId", repositoryId)
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
 
+    /**
+     * 查询未添加到扫描制品列表
+     * @param libraryIds
+     * @return List <LibraryEntity>
+     */
+    public List<LibraryEntity> findNotScanLibraryList(String[] libraryIds,String repositoryId,String name) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .notIn("id",libraryIds)
+                .like("name",name)
+                .eq("repositoryId", repositoryId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
     /**
@@ -248,7 +270,7 @@ public class LibraryDao{
      * @param name
      * @return List <LibraryEntity>
      */
-    public List<LibraryEntity> findLibraryByName(String name,String type) {
+    public List<LibraryEntity> findLibraryByNameAndType(String name,String type) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
                 .eq("name",name)
                 .eq("libraryType",type)
@@ -263,8 +285,13 @@ public class LibraryDao{
      * @param repositoryId
      * @return Integer
      */
-    public Integer findLibraryNum(String repositoryId) {
-        String sql = "SELECT count(1) FROM  pack_library where repository_id='" + repositoryId + "'";
+    public Integer findLibraryNum(String repositoryId,String repositoryType) {
+        String sql;
+        if (("group").equals(repositoryType)){
+            sql="SELECT count(1) FROM pack_repository_group_items reg RIGHT JOIN  pack_library li ON reg.repository_id=li.repository_id WHERE reg.repository_group_id='"+repositoryId+"'";
+        }else {
+            sql = "SELECT count(1) FROM  pack_library where repository_id='" + repositoryId + "'";
+        }
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(getJdbcTemplate());
         Integer integer = jdbc.queryForObject(sql, new HashMap<String, Object>(), Integer.class);
         return integer;
@@ -324,5 +351,11 @@ public class LibraryDao{
     }
 
 
-
+    public List<LibraryEntity> likeLibraryByName(LibraryQuery libraryQuery) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name",libraryQuery.getName())
+                .eq("repositoryId", libraryQuery.getRepositoryId())
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
 }

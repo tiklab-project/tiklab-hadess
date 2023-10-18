@@ -14,6 +14,9 @@ public class XpackBackups {
     @ApiProperty(name="taskState",desc="定时任务状态")
     private String taskState;
 
+    @ApiProperty(name="log",desc="日志")
+    private String log;
+
     @ApiProperty(name="execResult",desc="最后执行结果 未执行：non 失败：fail 成功：success")
     private String execResult;
 
@@ -26,6 +29,8 @@ public class XpackBackups {
 
     @ApiProperty(name="backupsAddress",desc="备份地址")
     private String backupsAddress;
+
+
 
     public String getId() {
         return id;
@@ -74,5 +79,13 @@ public class XpackBackups {
 
     public void setExecState(String execState) {
         this.execState = execState;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
     }
 }

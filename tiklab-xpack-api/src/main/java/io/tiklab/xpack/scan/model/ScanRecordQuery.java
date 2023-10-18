@@ -10,7 +10,7 @@ import io.tiklab.postin.annotation.ApiProperty;
 import java.util.List;
 
 @ApiModel
-public class ScanLibraryQuery {
+public class ScanRecordQuery {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
         private List<Order> orderParams = OrderBuilders.instance().asc("id").get();
@@ -18,11 +18,10 @@ public class ScanLibraryQuery {
         @ApiProperty(name ="pageParam",desc = "分页参数")
         private Page pageParam = new Page();
 
-        @ApiProperty(name ="libraryId",desc = "制品id")
-        private String libraryId;
+        @ApiProperty(name ="scanLibraryId",desc = "扫描制品id")
+        private String scanLibraryId;
 
-        @ApiProperty(name ="repositoryId",desc = "制品库id")
-        private String repositoryId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -39,21 +38,12 @@ public class ScanLibraryQuery {
             this.pageParam = pageParam;
         }
 
-        public String getLibraryId() {
-            return libraryId;
+        public String getScanLibraryId() {
+            return scanLibraryId;
         }
 
-        public ScanLibraryQuery setLibraryId(String libraryId) {
-            this.libraryId = libraryId;
-            return this;
-        }
-
-        public String getRepositoryId() {
-            return repositoryId;
-        }
-
-        public ScanLibraryQuery setRepositoryId(String repositoryId) {
-            this.repositoryId = repositoryId;
+        public ScanRecordQuery setScanLibraryId(String scanLibraryId) {
+            this.scanLibraryId = scanLibraryId;
             return this;
         }
 }

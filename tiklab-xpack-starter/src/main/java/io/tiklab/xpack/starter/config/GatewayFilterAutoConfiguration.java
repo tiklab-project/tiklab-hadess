@@ -102,10 +102,13 @@ public class GatewayFilterAutoConfiguration {
                         "/repository",
                         "/library",
                         "/repository",
+                        "/generic",
                         "/pushCenWarehouse",
                         "/libraryFile",
                         "/xpack",
-                        "/backups"
+                        "/backups",
+                        "/scan",
+                        "/v2"
                 })
                 .get();
     }

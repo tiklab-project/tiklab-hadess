@@ -29,6 +29,8 @@ public class RepositoryQuery implements Serializable {
         @ApiProperty(name ="type",desc = "类型 local、remote、group")
         private String type;
 
+
+
         public List<Order> getOrderParams() {
             return orderParams;
         }

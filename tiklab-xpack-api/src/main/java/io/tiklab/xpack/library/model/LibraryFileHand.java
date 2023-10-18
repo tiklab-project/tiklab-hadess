@@ -35,6 +35,14 @@ public class LibraryFileHand implements Serializable {
     @ApiProperty(name="repositoryId",desc="仓库id")
     private String repositoryId;
 
+    @ApiProperty(name="type",desc="类型  maven、generic")
+    private String type;
+
+    @ApiProperty(name="fileName",desc="文件名称")
+    private String fileName;
+
+    @ApiProperty(name="user",desc="用户")
+    private String user;
 
     public String getFilePath() {
         return filePath;
@@ -99,5 +107,29 @@ public class LibraryFileHand implements Serializable {
 
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

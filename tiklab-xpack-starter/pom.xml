@@ -90,7 +90,6 @@
             <artifactId>webhook-sdk</artifactId>
             <version>${webhook-sdk.version}</version>
         </dependency>
-
     </dependencies>
 
     <profiles>
@@ -105,6 +104,13 @@
                     <groupId>io.tiklab</groupId>
                     <artifactId>tiklab-jdk-linux</artifactId>
                     <version>${tiklab-jdk.version}</version>
+                    <type>zip</type>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>io.tiklab</groupId>
+                    <artifactId>tiklab-opensca-linux</artifactId>
+                    <version>${tiklab-opensca.version}</version>
                     <type>zip</type>
                     <scope>provided</scope>
                 </dependency>
@@ -139,6 +145,13 @@
                                             <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-postgresql-linux</artifactId>
                                             <version>${tiklab-postgresql.version}</version>
+                                            <type>zip</type>
+                                            <outputDirectory>embbed</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>io.tiklab</groupId>
+                                            <artifactId>tiklab-opensca-linux</artifactId>
+                                            <version>${tiklab-opensca.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>

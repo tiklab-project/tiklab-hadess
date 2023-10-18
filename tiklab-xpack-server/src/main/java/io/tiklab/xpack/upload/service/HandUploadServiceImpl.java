@@ -6,7 +6,7 @@ import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.model.LibraryFileHand;
 import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.service.RepositoryService;
-import io.tiklab.xpack.uoload.LibraryFileHandService;
+import io.tiklab.xpack.upload.HandUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-public class HandUploadServiceImpl implements LibraryFileHandService {
+public class HandUploadServiceImpl implements HandUploadService {
     private static Logger logger = LoggerFactory.getLogger(HandUploadServiceImpl.class);
 
     @Value("${server.port:8080}")
@@ -202,17 +202,17 @@ public class HandUploadServiceImpl implements LibraryFileHandService {
      */
     public Process genericProcessBuilder(LibraryFileHand libraryFileHand,String repositoryUrl) throws IOException {
 
+        String path = repositoryUrl.replaceFirst("repository", "generic");
 
         String filePath = libraryFileHand.getFilePath();
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
 
-        String lastPath = repositoryUrl + "/" + fileName + "?version=" + libraryFileHand.getVersion();
+        String lastPath = path + "/" + fileName + "?version=" + libraryFileHand.getVersion();
 
-        String[]  cmd = new String[] { "curl", "-T", libraryFileHand.getFilePath() , "-u" , libraryFileHand.getUser()+":xpackDemo", "\""+lastPath+"\"" };
         Runtime runtime=Runtime.getRuntime();
 
-        String order="curl -T "+libraryFileHand.getFilePath()+" -u "+libraryFileHand.getUser()+":xpackhand "+ "\""+lastPath+"\"";
-        Process process = runtime.exec(order);
+        String command="curl -T "+libraryFileHand.getFilePath()+" -u "+libraryFileHand.getUser()+":xpackhand "+ lastPath;
+        Process process = runtime.exec(command);
         //其他执行日志
         StringBuilder output = new StringBuilder();
         InputStream errorStream = process.getErrorStream();
@@ -222,9 +222,6 @@ public class HandUploadServiceImpl implements LibraryFileHandService {
             logger.info("手动推送:"+errorLine);
             output.append(errorLine);
         }
-
-        //curl -T /Users/limingliang/项目/manage.sql  -u admin:123456 "http://192.168.10.17:8080/generic/generic-local/manage.sql?version=4.1"
-
         return process;
     }
 }

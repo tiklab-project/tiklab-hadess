@@ -94,6 +94,25 @@ public interface LibraryFileService {
      */
      void libraryFileSplice(LibraryFile libraryFile,String versionId);
 
+    /**
+     * 通过地址like 查询
+     * @param fileUrl 地址
+     * @return
+     */
+    List<LibraryFile> findLibraryLikeFileUrl(String fileUrl);
 
+    /**
+     * 通过制品库和制品以及版本查询
+     * @param repositoryId  制品库id
+     * @param libraryName   制品名称
+     * @param version       版本
+     * @return Pagination <LibraryFileEntity>
+     */
+    List<LibraryFile> findFileByReAndLibraryAndVer(String repositoryId,String libraryName,String version);
 
+    /**
+     * 查询docker 文件的镜像文件
+     * @return Pagination <LibraryFileEntity>
+     */
+    List<LibraryFile> dockerFile(LibraryFile libraryFile);
 }

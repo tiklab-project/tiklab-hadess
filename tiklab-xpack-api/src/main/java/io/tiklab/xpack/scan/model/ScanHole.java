@@ -10,12 +10,9 @@ import io.tiklab.join.annotation.JoinQuery;
 import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.xpack.library.model.Library;
-import io.tiklab.xpack.library.model.LibraryVersion;
-import io.tiklab.xpack.repository.model.Repository;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * ScanResult扫描结果
@@ -23,36 +20,51 @@ import java.util.List;
 @ApiModel
 @Join
 @Mapper
-public class ScanResult extends BaseModel {
+public class ScanHole extends BaseModel {
 
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @NotNull
-    @ApiProperty(name="library",desc="制品",required = true)
-    @Mappings({
-            @Mapping(source = "library.id",target = "libraryId")
-    })
-    @JoinQuery(key = "id")
-    private Library library;
+    @ApiProperty(name="holeType",desc="漏洞类型 本地制品：scanLibrary、依赖：relyLibrary")
+    private String holeType;
 
+    @ApiProperty(name="libraryId",desc="制品ID 本地制品和依赖制品")
+    private String libraryId;
+
+    @ApiProperty(name="scanRecordId",desc="扫描结果的id")
+    private String scanRecordId;
+
+
+    @ApiProperty(name="scanLibraryId",desc="扫描制品id")
+    private String scanLibraryId;
 
 
     @ApiProperty(name="holeName",desc="漏洞名字")
     private String holeName;
 
 
-    @ApiProperty(name="holeLevel",desc="漏洞等级")
-    private String holeLevel;
+    @ApiProperty(name="holeLevel",desc="漏洞等级 1-4递减")
+    private Integer holeLevel;
 
-    @ApiProperty(name="holeNumber",desc="漏洞编号")
-    private String holeNumber;
+    @ApiProperty(name="holeCwe",desc="漏洞holeCwe编号")
+    private String holeCwe;
+
+    @ApiProperty(name="holeCve",desc="漏洞cve编号")
+    private String holeCve;
+
+
+    @ApiProperty(name="holeCnnvd",desc="漏洞cnnvd 编号")
+    private String holeCnnvd;
+
+    @ApiProperty(name="holeCnvd",desc="漏洞Cnvd编号")
+    private String holeCnvd;
+
+    @ApiProperty(name="holeXmirror",desc="漏洞Xmirror编号")
+    private String holeXmirror;
 
 
     @ApiProperty(name="releaseTime",desc="发布时间")
     private String releaseTime;
-
-
 
     @ApiProperty(name="holeDesc",desc="漏洞描述")
     private String holeDesc;
@@ -60,9 +72,11 @@ public class ScanResult extends BaseModel {
     @ApiProperty(name="repairSuggest",desc="修复建议")
     private String repairSuggest;
 
-    @ApiProperty(name="创建时间",desc="creatTime")
+    @ApiProperty(name="creatTime",desc="creatTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private java.sql.Timestamp creatTime;
+
+
 
     public String getId() {
         return id;
@@ -72,13 +86,6 @@ public class ScanResult extends BaseModel {
         this.id = id;
     }
 
-    public Library getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(Library library) {
-        this.library = library;
-    }
 
     public String getHoleName() {
         return holeName;
@@ -88,20 +95,44 @@ public class ScanResult extends BaseModel {
         this.holeName = holeName;
     }
 
-    public String getHoleLevel() {
+    public Integer getHoleLevel() {
         return holeLevel;
     }
 
-    public void setHoleLevel(String holeLevel) {
+    public void setHoleLevel(Integer holeLevel) {
         this.holeLevel = holeLevel;
     }
 
-    public String getHoleNumber() {
-        return holeNumber;
+    public String getHoleCve() {
+        return holeCve;
     }
 
-    public void setHoleNumber(String holeNumber) {
-        this.holeNumber = holeNumber;
+    public void setHoleCve(String holeCve) {
+        this.holeCve = holeCve;
+    }
+
+    public String getHoleCnnvd() {
+        return holeCnnvd;
+    }
+
+    public void setHoleCnnvd(String holeCnnvd) {
+        this.holeCnnvd = holeCnnvd;
+    }
+
+    public String getHoleCnvd() {
+        return holeCnvd;
+    }
+
+    public void setHoleCnvd(String holeCnvd) {
+        this.holeCnvd = holeCnvd;
+    }
+
+    public String getHoleXmirror() {
+        return holeXmirror;
+    }
+
+    public void setHoleXmirror(String holeXmirror) {
+        this.holeXmirror = holeXmirror;
     }
 
     public String getReleaseTime() {
@@ -134,5 +165,45 @@ public class ScanResult extends BaseModel {
 
     public void setCreatTime(Timestamp creatTime) {
         this.creatTime = creatTime;
+    }
+
+    public String getHoleType() {
+        return holeType;
+    }
+
+    public void setHoleType(String holeType) {
+        this.holeType = holeType;
+    }
+
+    public String getLibraryId() {
+        return libraryId;
+    }
+
+    public void setLibraryId(String libraryId) {
+        this.libraryId = libraryId;
+    }
+
+    public String getHoleCwe() {
+        return holeCwe;
+    }
+
+    public void setHoleCwe(String holeCwe) {
+        this.holeCwe = holeCwe;
+    }
+
+    public String getScanLibraryId() {
+        return scanLibraryId;
+    }
+
+    public void setScanLibraryId(String scanLibraryId) {
+        this.scanLibraryId = scanLibraryId;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
     }
 }

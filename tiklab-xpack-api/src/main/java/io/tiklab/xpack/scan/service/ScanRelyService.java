@@ -6,70 +6,92 @@ import io.tiklab.join.annotation.FindAll;
 import io.tiklab.join.annotation.FindList;
 import io.tiklab.join.annotation.FindOne;
 import io.tiklab.join.annotation.JoinProvider;
-import io.tiklab.xpack.scan.model.ScanResult;
-import io.tiklab.xpack.scan.model.ScanResultQuery;
+import io.tiklab.xpack.scan.model.ScanRely;
+import io.tiklab.xpack.scan.model.ScanRelyQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* ScanResultService-扫描结果
+* ScanRelyService-扫描结果
 */
-@JoinProvider(model = ScanResult.class)
-public interface ScanResultService {
+@JoinProvider(model = ScanRely.class)
+public interface ScanRelyService {
 
     /**
     * 创建
-    * @param scanResult
+    * @param scanRely
     * @return
     */
-    String createScanResult(@NotNull @Valid ScanResult scanResult);
+    String createScanRely(@NotNull @Valid ScanRely scanRely);
 
     /**
     * 更新
-    * @param scanResult
+    * @param scanRely
     */
-    void updateScanResult(@NotNull @Valid ScanResult scanResult);
+    void updateScanRely(@NotNull @Valid ScanRely scanRely);
 
     /**
     * 删除
     * @param id
     */
-    void deleteScanResult(@NotNull String id);
+    void deleteScanRely(@NotNull String id);
+
+    /**
+     * 条件删除扫描依赖
+     * @param  key  删除条件字段
+     * @param value
+     */
+    void deleteScanRelyByCondition(@NotNull String key,@NotNull String value);
 
     @FindOne
-    ScanResult findOne(@NotNull String id);
+    ScanRely findOne(@NotNull String id);
 
-    List<ScanResult> findList(List<String> idList);
+    @FindList
+    List<ScanRely> findList(List<String> idList);
 
     /**
     * 查找
     * @param id
     * @return
     */
-    @FindList
-    ScanResult findScanResult(@NotNull String id);
+
+    ScanRely findScanRely(@NotNull String id);
 
     /**
     * 查找所有
     * @return
     */
     @FindAll
-    List<ScanResult> findAllScanResult();
+    List<ScanRely> findAllScanRely();
 
     /**
     * 查询列表
-    * @param scanResultQuery
+    * @param scanRelyQuery
     * @return
     */
-    List<ScanResult> findScanResultList(ScanResultQuery scanResultQuery);
+    List<ScanRely> findScanRelyList(ScanRelyQuery scanRelyQuery);
 
     /**
     * 按分页查询
-    * @param scanResultQuery
+    * @param scanRelyQuery
     * @return
     */
-    Pagination<ScanResult> findScanResultPage(ScanResultQuery scanResultQuery);
+    Pagination<ScanRely> findScanRelyPage(ScanRelyQuery scanRelyQuery);
+
+    /**
+     * 按扫描制品依赖树
+     * @param scanRelyQuery
+     * @return
+     */
+    List<ScanRely> findScanRelyTreeList(ScanRelyQuery scanRelyQuery);
+
+    /**
+     * 条件查询有漏洞的扫描依赖树
+     * @param scanRelyQuery
+     * @return
+     */
+    List<ScanRely> findHaveHoleRelyTreeList(ScanRelyQuery scanRelyQuery);
 
 }

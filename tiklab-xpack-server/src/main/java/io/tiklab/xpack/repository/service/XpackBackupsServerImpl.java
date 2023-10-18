@@ -8,9 +8,8 @@ import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpackYamlDataMaService;
-import io.tiklab.xpack.repository.dao.BackupsDao;
 import io.tiklab.xpack.repository.dao.XpackBackupsDao;
-import io.tiklab.xpack.repository.entity.BackupsEntity;
+import io.tiklab.xpack.repository.entity.XpackBackupsEntity;
 import io.tiklab.xpack.repository.model.XpackBackups;
 import io.tiklab.xpack.repository.model.ExecLog;
 import io.tiklab.xpack.repository.model.Repository;
@@ -67,8 +66,8 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
 
     @Override
     public XpackBackups findBackups() {
-        List<BackupsEntity> allBackups = backupsDao.findAllBackups();
-        BackupsEntity backupsEntity = allBackups.get(0);
+        List<XpackBackupsEntity> allBackups = backupsDao.findAllBackups();
+        XpackBackupsEntity backupsEntity = allBackups.get(0);
         XpackBackups backups = BeanMapper.map(backupsEntity, XpackBackups.class);
 
         backups.setBackupsAddress(yamlDataMaService.backupAddress());
@@ -78,7 +77,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
 
     @Override
     public void updateBackups(XpackBackups backups)  {
-        BackupsEntity backupsEntity = BeanMapper.map(backups, BackupsEntity.class);
+        XpackBackupsEntity backupsEntity = BeanMapper.map(backups, XpackBackupsEntity.class);
 
         backupsDao.updateBackups(backupsEntity);
     }
@@ -196,7 +195,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     String substring = backupPath.substring(0, backupPath.lastIndexOf("/"));
                     LocalDateTime now = LocalDateTime.now();
                     //备份压缩文件名称
-                    String backupsName="xcode_backups_"+now.getYear()+"_"+now.getMonthValue()+"_" +now.getDayOfMonth()+"_"
+                    String backupsName="xpack_backups_"+now.getYear()+"_"+now.getMonthValue()+"_" +now.getDayOfMonth()+"_"
                             +now.getHour()+"_"+now.getMinute()+"_"+String.valueOf(System.currentTimeMillis()).substring(0,9)+".tar.gz";
 
                     String backupsAbsoluteUrl = substring + "/"+backupsName;
@@ -476,9 +475,13 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
     }
 
     public void updateBackup(XpackBackups backups,String result){
+        String loginId = LoginContext.getLoginId();
+        ExecLog execResultLog = backupsExecLog.get(loginId);
+
         backups.setExecTime(RepositoryUtil.date(1,new Date()));
         backups.setExecResult(result);
         backups.setExecState("end");
+        backups.setLog(execResultLog.getLog());
         this.updateBackups(backups);
     }
 }

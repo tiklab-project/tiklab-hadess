@@ -13,6 +13,7 @@ import io.tiklab.xpack.library.model.Library;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * ScanResult扫描依赖
@@ -25,14 +26,6 @@ public class ScanRely extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @NotNull
-    @ApiProperty(name="library",desc="制品",required = true)
-    @Mappings({
-            @Mapping(source = "library.id",target = "libraryId")
-    })
-    @JoinQuery(key = "id")
-    private Library library;
-
 
     @NotNull
     @ApiProperty(name="scanLibrary",desc="扫描制品",required = true)
@@ -41,6 +34,10 @@ public class ScanRely extends BaseModel {
     })
     @JoinQuery(key = "id")
     private ScanLibrary scanLibrary;
+
+
+    @ApiProperty(name="scanRecordId",desc="扫描结果的id")
+    private String scanRecordId;
 
     @ApiProperty(name="relyName",desc="依赖名字")
     private String relyName;
@@ -57,16 +54,32 @@ public class ScanRely extends BaseModel {
     @ApiProperty(name="relyPath",desc="依赖地址")
     private String relyPath;
 
-    @ApiProperty(name="relyType",desc="依赖类型  直接依赖、简介依赖")
+    @ApiProperty(name="relyType",desc="依赖类型 direct： 直接依赖、indirect：间接依赖")
     private String relyType;
 
     @ApiProperty(name="relyLicenses",desc="licenses")
     private String relyLicenses;
 
+    @ApiProperty(name="relyParentId",desc="依赖父级id")
+    private String relyParentId;
+
+    @ApiProperty(name="relyOneId",desc="第一层 依赖的id")
+    private String relyOneId;
+
+
+
+    @ApiProperty(name="holeCount",desc="漏洞数量")
+    private Integer holeCount;
 
     @ApiProperty(name="创建时间",desc="creatTime")
-    @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Timestamp creatTime;
+
+    /*--- 其他字段---*/
+
+    private List<ScanRely> scanRelyList;
+
+    private List<ScanHole> scanHoleList;
 
     public String getId() {
         return id;
@@ -76,13 +89,6 @@ public class ScanRely extends BaseModel {
         this.id = id;
     }
 
-    public Library getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(Library library) {
-        this.library = library;
-    }
 
     public ScanLibrary getScanLibrary() {
         return scanLibrary;
@@ -154,5 +160,53 @@ public class ScanRely extends BaseModel {
 
     public void setCreatTime(Timestamp creatTime) {
         this.creatTime = creatTime;
+    }
+
+    public String getRelyParentId() {
+        return relyParentId;
+    }
+
+    public void setRelyParentId(String relyParentId) {
+        this.relyParentId = relyParentId;
+    }
+
+    public Integer getHoleCount() {
+        return holeCount;
+    }
+
+    public void setHoleCount(Integer holeCount) {
+        this.holeCount = holeCount;
+    }
+
+    public List<ScanRely> getScanRelyList() {
+        return scanRelyList;
+    }
+
+    public void setScanRelyList(List<ScanRely> scanRelyList) {
+        this.scanRelyList = scanRelyList;
+    }
+
+    public String getRelyOneId() {
+        return relyOneId;
+    }
+
+    public void setRelyOneId(String relyOneId) {
+        this.relyOneId = relyOneId;
+    }
+
+    public List<ScanHole> getScanHoleList() {
+        return scanHoleList;
+    }
+
+    public void setScanHoleList(List<ScanHole> scanHoleList) {
+        this.scanHoleList = scanHoleList;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
     }
 }

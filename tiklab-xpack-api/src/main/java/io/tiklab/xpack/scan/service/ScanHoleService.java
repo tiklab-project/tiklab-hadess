@@ -6,70 +6,78 @@ import io.tiklab.join.annotation.FindAll;
 import io.tiklab.join.annotation.FindList;
 import io.tiklab.join.annotation.FindOne;
 import io.tiklab.join.annotation.JoinProvider;
-import io.tiklab.xpack.scan.model.ScanResult;
-import io.tiklab.xpack.scan.model.ScanResultQuery;
+import io.tiklab.xpack.scan.model.ScanHole;
+import io.tiklab.xpack.scan.model.ScanHoleQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* ScanResultService-扫描结果
+* ScanHoleService-扫描结果
 */
-@JoinProvider(model = ScanResult.class)
-public interface ScanResultService {
+@JoinProvider(model = ScanHole.class)
+public interface ScanHoleService {
 
     /**
     * 创建
-    * @param scanResult
+    * @param scanHole
     * @return
     */
-    String createScanResult(@NotNull @Valid ScanResult scanResult);
+    String createScanHole(@NotNull @Valid ScanHole scanHole);
 
     /**
     * 更新
-    * @param scanResult
+    * @param scanHole
     */
-    void updateScanResult(@NotNull @Valid ScanResult scanResult);
+    void updateScanHole(@NotNull @Valid ScanHole scanHole);
 
     /**
     * 删除
     * @param id
     */
-    void deleteScanResult(@NotNull String id);
+    void deleteScanHole(@NotNull String id);
+
+    /**
+     * 条件删除扫描结果
+     * @param  key  删除条件字段
+     * @param value
+     */
+    void deleteScanHoleByCondition(@NotNull String key,@NotNull String value);
 
     @FindOne
-    ScanResult findOne(@NotNull String id);
+    ScanHole findOne(@NotNull String id);
 
-    List<ScanResult> findList(List<String> idList);
+    @FindList
+    List<ScanHole> findList(List<String> idList);
 
     /**
     * 查找
     * @param id
     * @return
     */
-    @FindList
-    ScanResult findScanResult(@NotNull String id);
+
+    ScanHole findScanHole(@NotNull String id);
 
     /**
     * 查找所有
     * @return
     */
     @FindAll
-    List<ScanResult> findAllScanResult();
+    List<ScanHole> findAllScanHole();
 
     /**
     * 查询列表
-    * @param scanResultQuery
+    * @param scanHoleQuery
     * @return
     */
-    List<ScanResult> findScanResultList(ScanResultQuery scanResultQuery);
+    List<ScanHole> findScanHoleList(ScanHoleQuery scanHoleQuery);
 
     /**
     * 按分页查询
-    * @param scanResultQuery
+    * @param scanHoleQuery
     * @return
     */
-    Pagination<ScanResult> findScanResultPage(ScanResultQuery scanResultQuery);
+    Pagination<ScanHole> findScanHolePage(ScanHoleQuery scanHoleQuery);
 
 }

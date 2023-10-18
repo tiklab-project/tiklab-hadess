@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -112,11 +113,16 @@ public class PushLibraryDao {
      * @param pushPushLibraryQuery
      * @return Pagination <PushLibraryEntity>
      */
-    public Pagination<PushLibraryEntity> findPushLibraryPage(PushLibraryQuery pushPushLibraryQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(PushLibraryEntity.class)
-                .eq("repositoryId",pushPushLibraryQuery.getRepositoryId())
-                .eq("libraryId",pushPushLibraryQuery.getLibraryId())
-                .orders(pushPushLibraryQuery.getOrderParams())
+    public Pagination<PushLibraryEntity> findPushLibraryPage(PushLibraryQuery pushPushLibraryQuery,String[] LibraryIdList) {
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(PushLibraryEntity.class)
+                .eq("repositoryId", pushPushLibraryQuery.getRepositoryId());
+        if (!ObjectUtils.isEmpty(LibraryIdList)&&LibraryIdList.length>0){
+            queryBuilders.in("libraryId",LibraryIdList);
+       }else {
+            queryBuilders.eq("libraryId",pushPushLibraryQuery.getLibraryId());
+        }
+
+        QueryCondition queryCondition = queryBuilders.orders(pushPushLibraryQuery.getOrderParams())
                 .pagination(pushPushLibraryQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,PushLibraryEntity.class);

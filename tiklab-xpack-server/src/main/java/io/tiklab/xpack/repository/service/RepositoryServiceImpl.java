@@ -137,8 +137,10 @@ public class RepositoryServiceImpl implements RepositoryService {
         RepositoryEntity repositoryEntity = repositoryDao.findRepository(id);
 
         Repository repository = BeanMapper.map(repositoryEntity, Repository.class);
+        if (!ObjectUtils.isEmpty(repository)){
+            repository.setRepositoryUrl(findRepositoryUrl(repository));
+        }
 
-        repository.setRepositoryUrl(findRepositoryUrl(repository));
         return repository;
     }
 
@@ -157,7 +159,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         joinTemplate.joinQuery(repository);
 
-        if (("maven").equals(repository.getType())&&("local").equals(repository.getRepositoryType())) {
+        if (!ObjectUtils.isEmpty(repository)&&("maven").equals(repository.getType())&&("local").equals(repository.getRepositoryType())) {
             List<RepositoryMaven> mavenList = repositoryMavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
             if (CollectionUtils.isNotEmpty(mavenList)) {
                 repository.setVersionType(mavenList.get(0).getVersion());
@@ -276,7 +278,7 @@ public class RepositoryServiceImpl implements RepositoryService {
             for (Repository repository : repositoryList) {
                 String repositoryUrl = findRepositoryUrl(repository);
                 repository.setRepositoryUrl(repositoryUrl);
-                Integer libraryNum = libraryService.findLibraryNum(repository.getId());
+                Integer libraryNum = libraryService.findLibraryNum(repository.getId(),repository.getRepositoryType());
                 repository.setLibraryNum(libraryNum);
             }
         }
@@ -315,7 +317,15 @@ public class RepositoryServiceImpl implements RepositoryService {
            } catch (Exception e) {
                ip = "172.0.0.1";
            }
-           absoluteAddress="http://" + ip + ":" + port + "/repository/"+repository.getRepositoryUrl();
+           if (("docker").equals(repository.getType())){
+               absoluteAddress="http://" + ip + ":" + port + "/"+repository.getRepositoryUrl();
+           }
+           if (("generic").equals(repository.getType())){
+               absoluteAddress="http://" + ip + ":" + port + "/generic/"+repository.getRepositoryUrl();
+           }
+           if (("npm").equals(repository.getType())||("maven").equals(repository.getType())){
+               absoluteAddress="http://" + ip + ":" + port + "/repository/"+repository.getRepositoryUrl();
+           }
        }
         return absoluteAddress;
     }

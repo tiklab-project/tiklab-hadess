@@ -1,14 +1,11 @@
-package io.tiklab.xpack.repository.service;
+package io.tiklab.xpack.scan.service;
 
-import io.tiklab.xpack.repository.dao.StorageDao;
-import io.tiklab.xpack.repository.entity.StorageEntity;
 import io.tiklab.beans.BeanMapper;
-import io.tiklab.core.page.Pagination;
-import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.join.JoinTemplate;
-import io.tiklab.xpack.repository.model.Storage;
-import io.tiklab.xpack.repository.model.StorageQuery;
-
+import io.tiklab.xpack.scan.dao.ScanSetDao;
+import io.tiklab.xpack.scan.entity.ScanSetEntity;
+import io.tiklab.xpack.scan.model.ScanSet;
+import io.tiklab.xpack.scan.model.ScanSetQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,91 +14,82 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* StorageServiceImpl-存储库
+* ScanSetServiceImpl-扫描设置
 */
 @Service
-public class StorageServiceImpl implements StorageService {
+public class ScanSetServiceImpl implements ScanSetService {
 
     @Autowired
-    StorageDao storageDao;
+    ScanSetDao scanSetDao;
 
     @Autowired
     JoinTemplate joinTemplate;
 
     @Override
-    public String createStorage(@NotNull @Valid Storage storage) {
-        StorageEntity storageEntity = BeanMapper.map(storage, StorageEntity.class);
+    public String createScanSet(@NotNull @Valid ScanSet scanSet) {
+        ScanSetEntity scanSetEntity = BeanMapper.map(scanSet, ScanSetEntity.class);
 
-        return storageDao.createStorage(storageEntity);
+        return scanSetDao.createScanSet(scanSetEntity);
     }
 
     @Override
-    public void updateStorage(@NotNull @Valid Storage storage) {
-        StorageEntity storageEntity = BeanMapper.map(storage, StorageEntity.class);
+    public void updateScanSet(@NotNull @Valid ScanSet scanSet) {
+        ScanSetEntity scanSetEntity = BeanMapper.map(scanSet, ScanSetEntity.class);
 
-        storageDao.updateStorage(storageEntity);
+        scanSetDao.updateScanSet(scanSetEntity);
     }
 
     @Override
-    public void deleteStorage(@NotNull String id) {
-        storageDao.deleteStorage(id);
+    public void deleteScanSet(@NotNull String id) {
+        scanSetDao.deleteScanSet(id);
     }
 
     @Override
-    public Storage findOne(String id) {
-        StorageEntity storageEntity = storageDao.findStorage(id);
+    public ScanSet findOne(String id) {
+        ScanSetEntity scanSetEntity = scanSetDao.findScanSet(id);
 
-        Storage storage = BeanMapper.map(storageEntity, Storage.class);
-        return storage;
+        ScanSet scanSet = BeanMapper.map(scanSetEntity, ScanSet.class);
+        return scanSet;
     }
 
     @Override
-    public List<Storage> findList(List<String> idList) {
-        List<StorageEntity> storageEntityList =  storageDao.findStorageList(idList);
+    public List<ScanSet> findList(List<String> idList) {
+        List<ScanSetEntity> scanSetEntityList =  scanSetDao.findScanSetList(idList);
 
-        List<Storage> storageList =  BeanMapper.mapList(storageEntityList,Storage.class);
-        return storageList;
+        List<ScanSet> scanSetList =  BeanMapper.mapList(scanSetEntityList,ScanSet.class);
+        return scanSetList;
     }
 
     @Override
-    public Storage findStorage(@NotNull String id) {
-        Storage storage = findOne(id);
+    public ScanSet findScanSet(@NotNull String id) {
+        ScanSet scanSet = findOne(id);
 
-        joinTemplate.joinQuery(storage);
+        joinTemplate.joinQuery(scanSet);
 
-        return storage;
+        return scanSet;
     }
 
     @Override
-    public List<Storage> findAllStorage() {
-        List<StorageEntity> storageEntityList =  storageDao.findAllStorage();
+    public List<ScanSet> findAllScanSet() {
+        List<ScanSetEntity> scanSetEntityList =  scanSetDao.findAllScanSet();
 
-        List<Storage> storageList =  BeanMapper.mapList(storageEntityList,Storage.class);
+        List<ScanSet> scanSetList =  BeanMapper.mapList(scanSetEntityList,ScanSet.class);
 
-        joinTemplate.joinQuery(storageList);
+        joinTemplate.joinQuery(scanSetList);
 
-        return storageList;
+        return scanSetList;
     }
 
     @Override
-    public List<Storage> findStorageList(StorageQuery storageQuery) {
-        List<StorageEntity> storageEntityList = storageDao.findStorageList(storageQuery);
+    public List<ScanSet> findScanSetList(ScanSetQuery scanSetQuery) {
+        List<ScanSetEntity> scanSetEntityList = scanSetDao.findScanSetList(scanSetQuery);
 
-        List<Storage> storageList = BeanMapper.mapList(storageEntityList,Storage.class);
+        List<ScanSet> scanSetList = BeanMapper.mapList(scanSetEntityList,ScanSet.class);
 
-        joinTemplate.joinQuery(storageList);
+        joinTemplate.joinQuery(scanSetList);
 
-        return storageList;
+        return scanSetList;
     }
 
-    @Override
-    public Pagination<Storage> findStoragePage(StorageQuery storageQuery) {
-        Pagination<StorageEntity>  pagination = storageDao.findStoragePage(storageQuery);
 
-        List<Storage> storageList = BeanMapper.mapList(pagination.getDataList(),Storage.class);
-
-        joinTemplate.joinQuery(storageList);
-
-        return PaginationBuilder.build(pagination,storageList);
-    }
 }

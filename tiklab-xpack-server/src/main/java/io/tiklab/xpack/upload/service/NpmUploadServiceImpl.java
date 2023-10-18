@@ -15,7 +15,7 @@ import io.tiklab.xpack.library.model.*;
 import io.tiklab.xpack.library.service.LibraryFileService;
 import io.tiklab.xpack.library.service.LibraryService;
 import io.tiklab.xpack.library.service.LibraryVersionService;
-import io.tiklab.xpack.uoload.NpmUploadService;
+import io.tiklab.xpack.upload.NpmUploadService;
 import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
@@ -277,7 +277,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryFile.setLibrary(library);
             libraryFile.setFileName(tgzName);
             libraryFile.setFileSize(size);
-            libraryFile.setFileUrl(filePath);
+            libraryFile.setFileUrl(replace+"/"+tgzName);
             libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
@@ -334,7 +334,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         LibraryQuery libraryQuery = new LibraryQuery();
         libraryQuery.setLibraryType("npm");
         libraryQuery.setName(libraryName);
-        Library library = libraryService.findLibraryByName(libraryName,"npm",null);
+        Library library = libraryService.findLibraryByNameAndType(libraryName,"npm",null);
         if (!ObjectUtils.isEmpty(library)){
             //查询版本
             LibraryVersionQuery libraryVersionQuery = new LibraryVersionQuery();

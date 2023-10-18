@@ -8,12 +8,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * WorkbenchApplication
  */
 @SpringBootApplication
 @PropertySource(value = {"classpath:application.yaml" },factory = PropertyAndYamlSourceFactory.class )
+@EnableScheduling
 @EnableXpack
 @ServletComponentScan("io.tiklab.xpack")
 public class XpackApplication {

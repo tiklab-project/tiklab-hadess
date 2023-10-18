@@ -1,5 +1,6 @@
 package io.tiklab.xpack.library.service;
 
+import com.alibaba.fastjson.JSONObject;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.xpack.common.RepositoryUtil;
@@ -23,11 +24,14 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.sql.Array;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * LibraryFileServiceImpl-制品文件
@@ -180,6 +184,17 @@ public class LibraryFileServiceImpl implements LibraryFileService {
              libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
         }
 
+        //处理docker 特殊情况
+        if (CollectionUtils.isNotEmpty(libraryFileList)){
+            LibraryFile libraryFile = libraryFileList.get(0);
+            String type = libraryFileList.get(0).getRepository().getType();
+            if (("docker").equals(type)){
+                List<LibraryFile> libraryFiles = dockerFile(libraryFile);
+                libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
+            }
+        }
+
+
         return libraryFileList;
     }
 
@@ -194,7 +209,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         libraryVersion.setId(versionId);
         libraryFile.setLibraryVersion(libraryVersion);
 
-        List<LibraryFile> libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(versionId)
+        List<LibraryFile> libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryFile.getLibrary().getId()).setLibraryVersionId(versionId)
                 .setFileName(libraryFile.getFileName()));
         if (CollectionUtils.isNotEmpty(libraryFileList)){
             libraryFile.setId(libraryFileList.get(0).getId());
@@ -202,6 +217,58 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         }else {
             this.createLibraryFile(libraryFile);
         }
+    }
+
+    @Override
+    public List<LibraryFile> findLibraryLikeFileUrl(String fileUrl) {
+        List<LibraryFileEntity> libraryLikeFileUrl = libraryFileDao.findLibraryLikeFileUrl(fileUrl);
+
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryLikeFileUrl,LibraryFile.class);
+
+        return libraryFileList;
+    }
+
+    @Override
+    public List<LibraryFile> findFileByReAndLibraryAndVer(String repositoryId, String libraryName, String version) {
+        List<LibraryFileEntity> libraryFileEntity = libraryFileDao.findFileByReAndLibraryAndVer(repositoryId, libraryName, version);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntity,LibraryFile.class);
+
+        return libraryFileList;
+    }
+
+    /**
+     * 查询docker 文件
+     * @param libraryFile  制品库id
+     * @return Pagination <LibraryFileEntity>
+     */
+    public List<LibraryFile> dockerFile(LibraryFile libraryFile){
+        List<String> arrayList = new ArrayList<>();
+
+        String address = xpakYamlDataMaService.repositoryAddress();
+        String filePath = address + "/" + libraryFile.getFileUrl();
+        String readFile = RepositoryUtil.readFile(new File(filePath));
+
+        JSONObject allData = JSONObject.parseObject(readFile);
+        JSONObject config = (JSONObject) allData.get("config");
+        String digest = config.get("digest").toString();
+
+        arrayList.add(digest);
+        for (JSONObject layers : (List<JSONObject>) allData.get("layers")) {
+            String o = layers.get("digest").toString();
+            arrayList.add(o);
+        }
+
+        String[] fileName = new String[arrayList.size()];
+        String[] strings = arrayList.toArray(fileName);
+        List<LibraryFileEntity> listByNames = libraryFileDao.findLibraryFileListByNames(strings);
+
+        List<LibraryFile> libraryFiles = BeanMapper.mapList(listByNames, LibraryFile.class);
+        List<LibraryFile> collected = libraryFiles.stream().map(a -> {
+            a.setLibraryVersion(libraryFile.getLibraryVersion());
+            return a;
+        }).collect(Collectors.toList());
+        joinTemplate.joinQuery(collected);
+        return collected;
     }
 
 }

@@ -6,43 +6,50 @@ import io.tiklab.join.annotation.FindAll;
 import io.tiklab.join.annotation.FindList;
 import io.tiklab.join.annotation.FindOne;
 import io.tiklab.join.annotation.JoinProvider;
-import io.tiklab.xpack.scan.model.ScanLibrary;
-import io.tiklab.xpack.scan.model.ScanLibraryQuery;
+import io.tiklab.xpack.scan.model.ScanRecord;
+import io.tiklab.xpack.scan.model.ScanRecordQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* ScanLibraryService-扫描制品
+* ScanRecordService-扫描制品数据
 */
-@JoinProvider(model = ScanLibrary.class)
-public interface ScanLibraryService {
+@JoinProvider(model = ScanRecord.class)
+public interface ScanRecordService {
 
     /**
     * 创建
-    * @param scanLibrary
+    * @param scanRecord
     * @return
     */
-    String createScanLibrary(@NotNull @Valid ScanLibrary scanLibrary);
+    String createScanRecord(@NotNull @Valid ScanRecord scanRecord);
 
     /**
     * 更新
-    * @param scanLibrary
+    * @param scanRecord
     */
-    void updateScanLibrary(@NotNull @Valid ScanLibrary scanLibrary);
+    void updateScanRecord(@NotNull @Valid ScanRecord scanRecord);
 
     /**
     * 删除
     * @param id
     */
-    void deleteScanLibrary(@NotNull String id);
+    void deleteScanRecord(@NotNull String id);
+
+    /**
+     * 条件删除
+     * @param key
+     * @param  value
+     */
+    void deleteScanRecordByCondition(@NotNull String key,@NotNull String value);
 
     @FindOne
-    ScanLibrary findOne(@NotNull String id);
+    ScanRecord findOne(@NotNull String id);
 
     @FindList
-    List<ScanLibrary> findList(List<String> idList);
+    List<ScanRecord> findList(List<String> idList);
 
     /**
     * 查找
@@ -50,34 +57,41 @@ public interface ScanLibraryService {
     * @return
     */
 
-    ScanLibrary findScanLibrary(@NotNull String id);
+    ScanRecord findScanRecord(@NotNull String id);
 
     /**
     * 查找所有
     * @return
     */
     @FindAll
-    List<ScanLibrary> findAllScanLibrary();
+    List<ScanRecord> findAllScanRecord();
 
     /**
     * 查询列表
-    * @param scanLibraryQuery
+    * @param scanRecordQuery
     * @return
     */
-    List<ScanLibrary> findScanLibraryList(ScanLibraryQuery scanLibraryQuery);
+    List<ScanRecord> findScanRecordList(ScanRecordQuery scanRecordQuery);
+
+    /**
+     * 通过扫描记录查询最新扫描结果
+     * @param scanRecordId
+     * @return
+     */
+     ScanRecord findNewScanRecord(String scanRecordId);
 
     /**
      * 查询列表 不joinTemplate 查询
-     * @param scanLibraryQuery
+     * @param scanRecordQuery
      * @return
      */
-    List<ScanLibrary> findScanLibraryListNoJoin(ScanLibraryQuery scanLibraryQuery);
+    List<ScanRecord> findScanRecordListNoJoin(ScanRecordQuery scanRecordQuery);
 
     /**
     * 按分页查询
-    * @param scanLibraryQuery
+    * @param scanRecordQuery
     * @return
     */
-    Pagination<ScanLibrary> findScanLibraryPage(ScanLibraryQuery scanLibraryQuery);
+    Pagination<ScanRecord> findScanRecordPage(ScanRecordQuery scanRecordQuery);
 
 }
