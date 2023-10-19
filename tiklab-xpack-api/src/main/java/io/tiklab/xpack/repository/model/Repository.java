@@ -44,6 +44,9 @@ public class Repository extends BaseModel {
     private Storage storage;
 
 
+    @ApiProperty(name="category",desc="1 、演示 ；2、正式仓库")
+    private Integer category;
+
     @ApiProperty(name="rules",desc="权限 public、private")
     private java.lang.String rules= "public";
 
@@ -177,5 +180,13 @@ public class Repository extends BaseModel {
 
     public void setPrefixPath(String prefixPath) {
         this.prefixPath = prefixPath;
+    }
+
+    public Integer getCategory() {
+        return category;
+    }
+
+    public void setCategory(Integer category) {
+        this.category = category;
     }
 }

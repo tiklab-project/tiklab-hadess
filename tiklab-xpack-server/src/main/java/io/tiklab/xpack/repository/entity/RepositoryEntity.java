@@ -40,6 +40,11 @@ public class RepositoryEntity extends BaseModel {
     @Column(name = "storage_id",length = 12)
     private String storageId;
 
+    //种类 1 、演示 ；2、正式仓库
+    @Column(name = "category")
+    private Integer category;
+
+
     //描述
     @Column(name = "description",length = 160)
     private String description;
@@ -140,5 +145,13 @@ public class RepositoryEntity extends BaseModel {
 
     public void setRules(String rules) {
         this.rules = rules;
+    }
+
+    public Integer getCategory() {
+        return category;
+    }
+
+    public void setCategory(Integer category) {
+        this.category = category;
     }
 }

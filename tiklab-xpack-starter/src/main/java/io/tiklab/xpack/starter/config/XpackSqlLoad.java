@@ -46,6 +46,10 @@ public class XpackSqlLoad {
                 //xpack
                 "xpack_1.0.3",
         });
+        dsmConfig.newVersion("1.0.4", new String[]{
+                //xpack
+                "xpack_1.0.4",
+        });
         return dsmConfig;
     }
 }

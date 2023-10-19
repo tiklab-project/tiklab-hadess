@@ -74,15 +74,10 @@ public class RepositoryServiceImpl implements RepositoryService {
     private String port;
 
 
-
     @Override
     public String createRepository(@NotNull @Valid Repository repository) {
-        RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
 
-        repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        String type = repository.getType().toLowerCase();
-        repositoryEntity.setType(type);
+        RepositoryEntity repositoryEntity = setRepositoryEntity(repository);
 
         String repositoryId = repositoryDao.createRepository(repositoryEntity);
         String repositoryFile = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
@@ -97,6 +92,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
         return repositoryId;
     }
+
 
     @Override
     public void updateRepository(@NotNull @Valid Repository repository) {
@@ -189,7 +185,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(repositoryQuery);
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
-        List<Repository> list = repositoryList.stream().sorted(Comparator.comparing(Repository::getType)).collect(Collectors.toList());
+        List<Repository> list = repositoryList.stream().sorted(Comparator.comparing(Repository::getType)).sorted(Comparator.comparing(Repository::getCategory)).collect(Collectors.toList());
+
 
         findLibrary(list);
 
@@ -328,5 +325,22 @@ public class RepositoryServiceImpl implements RepositoryService {
            }
        }
         return absoluteAddress;
+    }
+
+    /**
+     * 向RepositoryEntity 添加参数
+     * @param repository
+     * @return
+     */
+    public RepositoryEntity setRepositoryEntity( Repository repository){
+        RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
+
+        repositoryEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        repositoryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        String type = repository.getType().toLowerCase();
+        repositoryEntity.setType(type);
+
+        return repositoryEntity;
+
     }
 }

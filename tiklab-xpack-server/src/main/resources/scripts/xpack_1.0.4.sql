@@ -1,0 +1,1 @@
+ALTER TABLE pack_repository ADD category int;
