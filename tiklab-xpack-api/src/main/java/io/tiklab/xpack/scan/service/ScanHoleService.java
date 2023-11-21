@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
-* ScanHoleService-扫描结果
+* ScanHoleService-扫描漏洞
 */
 @JoinProvider(model = ScanHole.class)
 public interface ScanHoleService {
@@ -79,5 +79,21 @@ public interface ScanHoleService {
     * @return
     */
     Pagination<ScanHole> findScanHolePage(ScanHoleQuery scanHoleQuery);
+
+    /**
+     * 条件分页查询没有添加方案的扫描漏洞
+     * @param scanHoleQuery
+     * @return
+     */
+    Pagination<ScanHole> findNotScanHolePage(ScanHoleQuery scanHoleQuery);
+
+    /**
+     * 条件分页方案下面的漏洞
+     * @param scanHoleQuery
+     * @return
+     */
+    Pagination<ScanHole> findSchemeHolePage(ScanHoleQuery scanHoleQuery);
+
+
 
 }

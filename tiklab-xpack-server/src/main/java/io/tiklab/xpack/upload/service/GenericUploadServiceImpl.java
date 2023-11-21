@@ -1,7 +1,6 @@
 package io.tiklab.xpack.upload.service;
 
 import io.tiklab.core.Result;
-import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.xpack.common.RepositoryUtil;
@@ -13,6 +12,7 @@ import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import io.tiklab.xpack.upload.GenericUploadService;
+import io.tiklab.xpack.common.UserCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,35 +47,38 @@ public class GenericUploadServiceImpl implements GenericUploadService {
     @Autowired
     LibraryFileService libraryFileService;
 
+    @Autowired
+    UserCheckService userCheckService;
+
     @Override
-    public String GenericUpload(InputStream inputStream,String contextPath,String userData,String version) {
+    public String GenericUpload(InputStream inputStream,String repositoryPath,String userData,String version) {
         String userName=null;
         try {
             //账号校验
-            userName=userVerify(userData);
+             userName = userCheckService.genericUserCheck(userData);
         }catch (Exception e){
             return "{code:401,msg:"+e.getMessage()+"}";
         }
 
         try {
-          return   fileWriteData(contextPath,inputStream,userName,version);
+          return   fileWriteData(repositoryPath,inputStream,userName,version);
         } catch (IOException e) {
             return "{code:400,msg:"+e.getMessage()+"}";
         }
     }
 
     @Override
-    public Result<byte[]> GenericDownload(String contextPath, String userData, String version) {
+    public Result<byte[]> GenericDownload(String repositoryPath, String userData, String version) {
         try {
             //账号校验
-            userVerify(userData);
+          userCheckService.genericUserCheck(userData);
         }catch (Exception e){
             return Result.error(401,e.getMessage());
         }
 
-        String[] split = contextPath.split("/");
+        String[] split = repositoryPath.split("/");
         //制品库
-        String repositoryName = split[2];
+        String repositoryName = split[0];
         Repository repository = repositoryService.findRepositoryByName(repositoryName);
         if (ObjectUtils.isEmpty(repository)){
             return Result.error(400,"仓库不存在");
@@ -121,16 +124,16 @@ public class GenericUploadServiceImpl implements GenericUploadService {
      * fileWriteData  写入文件
      * @param userName 用户名称
      * @param inputStream inputStream
-     * @param contextPath 制品库
+     * @param repositoryPath 制品库
      * @param version  产品版本
      */
-    public String fileWriteData(String contextPath, InputStream inputStream,
+    public String fileWriteData(String repositoryPath, InputStream inputStream,
                                 String userName ,String version) throws IOException {
 
         //仓库和文件名称
-        String[] split = contextPath.split("/");
-        String repositoryName = split[2];
-        String fileName = split[3];
+        String[] split = repositoryPath.split("/");
+        String repositoryName = split[0];
+        String fileName = split[1];
         String name = fileName.substring(0, fileName.indexOf("."));
 
 
@@ -141,12 +144,12 @@ public class GenericUploadServiceImpl implements GenericUploadService {
 
         //仓库地址
         String versionPath= repository.getId()+"/"+name+"/"+version;
-        String repositoryPath = yamlDataMaService.repositoryAddress() + "/" +versionPath;
-        File folder = new File(repositoryPath);
+        String folderPath = yamlDataMaService.repositoryAddress() + "/" +versionPath;
+        File folder = new File(folderPath);
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
-        String filePath = repositoryPath + "/" + fileName;
+        String filePath = folderPath + "/" + fileName;
         File fileData = new File(filePath);
         if (!fileData.exists()){
             fileData.createNewFile();
@@ -209,29 +212,5 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         }
         byte[] bytes = bos.toByteArray();
         return Result.ok(bytes);
-    }
-
-
-
-    /**
-     * userVerify  用户校验
-     * @param userData 用户信息
-     */
-    public String userVerify(String userData){
-        String[]  userObject=userData.split(":");
-        String userName = userObject[0];
-        String password = userObject[1];
-
-        //通过xpack 界面手动上传不需要校验密码
-        if (("xpackhand").equals(password)){
-            return userName;
-        }
-
-        UserPassport userPassport = new UserPassport();
-        userPassport.setAccount(userName);
-        userPassport.setPassword(password);
-        userPassport.setDirId("1");
-        userPassportService.login(userPassport);
-        return userName;
     }
 }

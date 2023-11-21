@@ -1,6 +1,7 @@
 package io.tiklab.xpack.scan.service;
 
 import io.tiklab.beans.BeanMapper;
+import io.tiklab.core.page.Page;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
@@ -8,18 +9,20 @@ import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.scan.dao.ScanHoleDao;
 import io.tiklab.xpack.scan.entity.ScanHoleEntity;
-import io.tiklab.xpack.scan.model.ScanHole;
-import io.tiklab.xpack.scan.model.ScanHoleQuery;
+import io.tiklab.xpack.scan.model.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
-* ScanHoleServiceImpl-扫描结果
+* ScanHoleServiceImpl-扫描漏洞
 */
 @Service
 public class ScanHoleServiceImpl implements ScanHoleService {
@@ -30,17 +33,25 @@ public class ScanHoleServiceImpl implements ScanHoleService {
     @Autowired
     JoinTemplate joinTemplate;
 
+    @Autowired
+    ScanLibraryService scanLibraryService;
+
+    @Autowired
+    ScanSchemeHoleService schemeHoleService;
+
+    @Autowired
+    ScanSchemeService scanSchemeService;
+
     @Override
     public String createScanHole(@NotNull @Valid ScanHole scanHole) {
         ScanHoleEntity scanHoleEntity = BeanMapper.map(scanHole, ScanHoleEntity.class);
-        scanHoleEntity.setCreatTime(new Timestamp(System.currentTimeMillis()));
+        scanHoleEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return scanHoleDao.createScanHole(scanHoleEntity);
     }
 
     @Override
     public void updateScanHole(@NotNull @Valid ScanHole scanHole) {
         ScanHoleEntity scanHoleEntity = BeanMapper.map(scanHole, ScanHoleEntity.class);
-
         scanHoleDao.updateScanHole(scanHoleEntity);
     }
 
@@ -114,4 +125,37 @@ public class ScanHoleServiceImpl implements ScanHoleService {
 
         return PaginationBuilder.build(pagination,scanHoleList);
     }
+
+    @Override
+    public Pagination<ScanHole> findSchemeHolePage(ScanHoleQuery scanHoleQuery) {
+        Pagination pagination = new Pagination();
+        Pagination<ScanSchemeHole> scanSchemeHolePage = schemeHoleService.findScanSchemeHolePage(new ScanSchemeHoleQuery().setScanSchemeId(scanHoleQuery.getScanSchemeId()));
+        List<ScanSchemeHole> schemeHoleList = scanSchemeHolePage.getDataList();
+        if (CollectionUtils.isNotEmpty(schemeHoleList)){
+            List<String> stringList = schemeHoleList.stream().map(ScanSchemeHole::getScanHoleId).collect(Collectors.toList());
+            String[] strings = new String[stringList.size()];
+            String[] holeIds = stringList.toArray(strings);
+
+            List<ScanHoleEntity> scanHoleEntity = scanHoleDao.findScanHoleByIds(holeIds);
+            List<ScanHole> scanHoleList = BeanMapper.mapList(scanHoleEntity,ScanHole.class);
+            pagination.setDataList(scanHoleList);
+            pagination.setTotalPage(scanSchemeHolePage.getTotalPage());
+            pagination.setCurrentPage(scanSchemeHolePage.getCurrentPage());
+        }
+        return pagination;
+    }
+
+    @Override
+    public Pagination<ScanHole> findNotScanHolePage(ScanHoleQuery scanHoleQuery) {
+        ScanScheme scanScheme = scanSchemeService.findScanScheme(scanHoleQuery.getScanSchemeId());
+        if (ObjectUtils.isEmpty(scanScheme)){
+            return null;
+        }
+        //制品方案下面的漏洞
+        List<ScanSchemeHole> schemeHoleList = schemeHoleService.findScanSchemeHoleList(new ScanSchemeHoleQuery().setScanSchemeId(scanHoleQuery.getScanSchemeId()));
+
+        return null;
+    }
+
+
 }

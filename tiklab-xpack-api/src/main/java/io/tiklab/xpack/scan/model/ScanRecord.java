@@ -13,6 +13,7 @@ import io.tiklab.xpack.library.model.Library;
 import io.tiklab.xpack.library.model.LibraryVersion;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * ScanRecord 扫描记录
@@ -25,12 +26,8 @@ public class ScanRecord extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @ApiProperty(name="scanLibrary",desc="扫描制品",required = true)
-    @Mappings({
-            @Mapping(source = "scanLibrary.id",target = "scanLibraryId")
-    })
-    @JoinQuery(key = "id")
-    private ScanLibrary scanLibrary;
+    @ApiProperty(name="scanLibraryId",desc="扫描制品Id",required = true)
+    private String scanLibraryId;
 
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
@@ -42,7 +39,15 @@ public class ScanRecord extends BaseModel {
     @ApiProperty(name="libraryVersion",desc="制品版本")
     private String libraryVersion;
 
+    @ApiProperty(name="scanPlayId",desc="扫描计划id")
+    private String scanPlayId;
 
+    @ApiProperty(name="scanGroup",desc="扫描组")
+    private String scanGroup;
+
+
+    @ApiProperty(name="scanType",desc="扫描类型 ")
+    private Timestamp scanType;
 
     @ApiProperty(name="holeSeverity",desc="严重漏洞")
     private Integer holeSeverity;
@@ -69,6 +74,10 @@ public class ScanRecord extends BaseModel {
     @ApiProperty(name="relyNum",desc="依赖数量")
     private Integer relyNum;
 
+    /*--- 其他字段---*/
+
+    private List<ScanRely> scanRelyList;
+
     public String getId() {
         return id;
     }
@@ -77,12 +86,20 @@ public class ScanRecord extends BaseModel {
         this.id = id;
     }
 
-    public ScanLibrary getScanLibrary() {
-        return scanLibrary;
+    public String getScanLibraryId() {
+        return scanLibraryId;
     }
 
-    public void setScanLibrary(ScanLibrary scanLibrary) {
-        this.scanLibrary = scanLibrary;
+    public void setScanLibraryId(String scanLibraryId) {
+        this.scanLibraryId = scanLibraryId;
+    }
+
+    public Timestamp getScanType() {
+        return scanType;
+    }
+
+    public void setScanType(Timestamp scanType) {
+        this.scanType = scanType;
     }
 
     public Integer getHoleSeverity() {
@@ -155,5 +172,29 @@ public class ScanRecord extends BaseModel {
 
     public void setLibraryVersion(String libraryVersion) {
         this.libraryVersion = libraryVersion;
+    }
+
+    public String getScanPlayId() {
+        return scanPlayId;
+    }
+
+    public void setScanPlayId(String scanPlayId) {
+        this.scanPlayId = scanPlayId;
+    }
+
+    public String getScanGroup() {
+        return scanGroup;
+    }
+
+    public void setScanGroup(String scanGroup) {
+        this.scanGroup = scanGroup;
+    }
+
+    public List<ScanRely> getScanRelyList() {
+        return scanRelyList;
+    }
+
+    public void setScanRelyList(List<ScanRely> scanRelyList) {
+        this.scanRelyList = scanRelyList;
     }
 }

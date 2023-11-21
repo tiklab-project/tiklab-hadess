@@ -17,6 +17,10 @@ public class ScanLibraryEntity extends BaseModel {
     @Column(name = "id",length = 12)
     private String id;
 
+    //扫描计划id
+    @Column(name = "scan_play_id",length = 32)
+    private String scanPlayId;
+
     //地址
     @Column(name = "library_id",length = 32)
     private String libraryId;
@@ -75,5 +79,13 @@ public class ScanLibraryEntity extends BaseModel {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getScanPlayId() {
+        return scanPlayId;
+    }
+
+    public void setScanPlayId(String scanPlayId) {
+        this.scanPlayId = scanPlayId;
     }
 }

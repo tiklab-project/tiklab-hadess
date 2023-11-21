@@ -6,7 +6,7 @@ import io.tiklab.dal.jpa.annotation.*;
 import java.sql.Timestamp;
 
 /**
- * ScanResultEntity-扫描结果
+ * ScanHoleEntity-扫描制品漏洞
  */
 @Entity
 @Table(name="pack_scan_hole")
@@ -17,68 +17,37 @@ public class ScanHoleEntity extends BaseModel {
     @Column(name = "id",length = 12)
     private String id;
 
-    //制品id(本地制品和依赖制品)
-    @Column(name = "library_id",length = 12)
-    private String libraryId;
+    //vendor  （groupId）
+    @Column(name = "vendor",length = 64)
+    private String vendor;
 
-    //扫描制品id
-    @Column(name = "scan_library_id",length = 12)
-    private String scanLibraryId;
+    //仓配
+    @Column(name = "product",length = 32)
+    private String product;
 
-    //扫描制品结果id
-    @Column(name = "scan_record_id",length = 12)
-    private String scanRecordId;
+    @Column(name = "version")
+    private String version;
 
+    @Column(name = "language")
+    private String language;
 
-    //漏洞名字
-    @Column(name = "hole_name",length = 324)
+    @Column(name = "hole_name")
     private String holeName;
 
+    @Column(name = "hole_number")
+    private String holeNumber;
 
-    //漏洞等级
     @Column(name = "hole_level")
     private Integer holeLevel;
 
-    //漏洞cve编号
-    @Column(name = "hole_cwe",length = 64)
-    private String holeCwe;
+    @Column(name = "suggestion")
+    private String suggestion;
 
-    //漏洞cve编号
-    @Column(name = "hole_cve",length = 64)
-    private String holeCve;
+    @Column(name = "describe")
+    private String describe;
 
-    //漏洞Cnnvd编号
-    @Column(name = "hole_cnnvd",length = 64)
-    private String holeCnnvd;
-
-    //漏洞Cnvd编号
-    @Column(name = "hole_cnvd",length = 64)
-    private String holeCnvd;
-
-    //漏洞Xmirror编号
-    @Column(name = "hole_xmirror",length = 64)
-    private String holeXmirror;
-
-
-    //发布时间
-    @Column(name = "release_time",length = 32)
-    private String releaseTime;
-
-
-    //漏洞描述
-    @Column(name = "hole_desc")
-    private String holeDesc;
-
-    //修复建议
-    @Column(name = "repair_suggest")
-    private String repairSuggest;
-
-    //漏洞类型
-    @Column(name = "hole_type")
-    private String holeType;
-
-    @Column(name = "creat_time")
-    private Timestamp creatTime;
+    @Column(name = "create_time")
+    private Timestamp createTime;
 
     public String getId() {
         return id;
@@ -88,20 +57,36 @@ public class ScanHoleEntity extends BaseModel {
         this.id = id;
     }
 
-    public String getLibraryId() {
-        return libraryId;
+    public String getVendor() {
+        return vendor;
     }
 
-    public void setLibraryId(String libraryId) {
-        this.libraryId = libraryId;
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
     }
 
-    public String getHoleType() {
-        return holeType;
+    public String getProduct() {
+        return product;
     }
 
-    public void setHoleType(String holeType) {
-        this.holeType = holeType;
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public String getHoleName() {
@@ -112,6 +97,14 @@ public class ScanHoleEntity extends BaseModel {
         this.holeName = holeName;
     }
 
+    public String getHoleNumber() {
+        return holeNumber;
+    }
+
+    public void setHoleNumber(String holeNumber) {
+        this.holeNumber = holeNumber;
+    }
+
     public Integer getHoleLevel() {
         return holeLevel;
     }
@@ -120,91 +113,27 @@ public class ScanHoleEntity extends BaseModel {
         this.holeLevel = holeLevel;
     }
 
-    public String getHoleCve() {
-        return holeCve;
+    public String getSuggestion() {
+        return suggestion;
     }
 
-    public void setHoleCve(String holeCve) {
-        this.holeCve = holeCve;
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
     }
 
-    public String getHoleCnnvd() {
-        return holeCnnvd;
+    public String getDescribe() {
+        return describe;
     }
 
-    public void setHoleCnnvd(String holeCnnvd) {
-        this.holeCnnvd = holeCnnvd;
+    public void setDescribe(String describe) {
+        this.describe = describe;
     }
 
-    public String getHoleCnvd() {
-        return holeCnvd;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setHoleCnvd(String holeCnvd) {
-        this.holeCnvd = holeCnvd;
-    }
-
-    public String getHoleXmirror() {
-        return holeXmirror;
-    }
-
-    public void setHoleXmirror(String holeXmirror) {
-        this.holeXmirror = holeXmirror;
-    }
-
-    public String getReleaseTime() {
-        return releaseTime;
-    }
-
-    public void setReleaseTime(String releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public String getHoleDesc() {
-        return holeDesc;
-    }
-
-    public void setHoleDesc(String holeDesc) {
-        this.holeDesc = holeDesc;
-    }
-
-    public String getRepairSuggest() {
-        return repairSuggest;
-    }
-
-    public void setRepairSuggest(String repairSuggest) {
-        this.repairSuggest = repairSuggest;
-    }
-
-    public Timestamp getCreatTime() {
-        return creatTime;
-    }
-
-    public void setCreatTime(Timestamp creatTime) {
-        this.creatTime = creatTime;
-    }
-
-    public String getHoleCwe() {
-        return holeCwe;
-    }
-
-    public void setHoleCwe(String holeCwe) {
-        this.holeCwe = holeCwe;
-    }
-
-    public String getScanLibraryId() {
-        return scanLibraryId;
-    }
-
-    public void setScanLibraryId(String scanLibraryId) {
-        this.scanLibraryId = scanLibraryId;
-    }
-
-    public String getScanRecordId() {
-        return scanRecordId;
-    }
-
-    public void setScanRecordId(String scanRecordId) {
-        this.scanRecordId = scanRecordId;
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 }

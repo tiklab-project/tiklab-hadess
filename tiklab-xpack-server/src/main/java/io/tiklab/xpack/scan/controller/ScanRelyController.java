@@ -89,9 +89,10 @@ public class ScanRelyController {
     @RequestMapping(path = "/findHaveHoleRelyTreeList",method = RequestMethod.POST)
     @ApiMethod(name = "findScanRelyList",desc = "条件查询有漏洞的扫描依赖树")
     @ApiParam(name = "scanRelyQuery",desc = "scanRelyQuery",required = true)
-    public Result<List<ScanRely>> findHaveHoleRelyTreeList(@RequestBody @Valid @NotNull ScanRelyQuery scanRelyQuery){
-        List<ScanRely> scanRelyList = scanRelyService.findHaveHoleRelyTreeList(scanRelyQuery);
+    public Result<List<ScanRely>> findHaveHoleRelyTreeList(@NotNull String scanGroup){
+        List<ScanRely> scanRelyList = scanRelyService.findHaveHoleRelyTreeList(scanGroup);
 
         return Result.ok(scanRelyList);
     }
+
 }

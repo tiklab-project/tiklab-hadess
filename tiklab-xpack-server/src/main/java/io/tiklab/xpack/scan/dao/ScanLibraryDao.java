@@ -93,6 +93,7 @@ public class ScanLibraryDao {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanLibraryEntity.class)
                 .eq("libraryId",scanLibraryQuery.getLibraryId())
                 .eq("repositoryId",scanLibraryQuery.getRepositoryId())
+                .eq("scanPlayId",scanLibraryQuery.getScanPlayId())
                 .orders(scanLibraryQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,ScanLibraryEntity.class);
@@ -106,6 +107,7 @@ public class ScanLibraryDao {
     public Pagination<ScanLibraryEntity> findScanLibraryPage(ScanLibraryQuery scanLibraryQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanLibraryEntity.class)
                 .eq("libraryId",scanLibraryQuery.getLibraryId())
+                .eq("scanPlayId",scanLibraryQuery.getScanPlayId())
                 .eq("repositoryId",scanLibraryQuery.getRepositoryId())
                 .orders(scanLibraryQuery.getOrderParams())
                 .pagination(scanLibraryQuery.getPageParam())

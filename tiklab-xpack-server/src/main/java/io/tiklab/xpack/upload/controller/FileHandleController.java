@@ -5,6 +5,7 @@ import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.library.model.LibraryFileHand;
 import io.tiklab.xpack.upload.HandUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.io.*;
  * fileReadController  读取文件
  */
 @RestController
-@RequestMapping("/libraryFile")
+@RequestMapping("/fileHand")
 public class FileHandleController  {
 
     @Autowired
@@ -65,7 +66,7 @@ public class FileHandleController  {
     }
 
 
-    @RequestMapping(path="/fileUpload",method = RequestMethod.POST)
+    @RequestMapping(path="/fileUpload/**",method = RequestMethod.POST)
     @ApiMethod(name = "fileUpload",desc = "文件上传")
     public Result<String> fileUpload(@RequestParam("uploadFile") MultipartFile uploadFile){
         try {

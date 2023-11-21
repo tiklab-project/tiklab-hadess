@@ -7,11 +7,11 @@
     <parent>
         <groupId>io.tiklab</groupId>
         <artifactId>tiklab-xpack</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>tiklab-xpack-starter</artifactId>
     <name>${project.artifactId}</name>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <!--common-->
@@ -89,6 +89,12 @@
             <groupId>ai.active</groupId>
             <artifactId>webhook-sdk</artifactId>
             <version>${webhook-sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.1.0</version>
         </dependency>
     </dependencies>
 
@@ -212,11 +218,20 @@
         <!--mac-->
         <profile>
             <id>system-mac</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.tiklab</groupId>
+                    <artifactId>tiklab-opensca-mac</artifactId>
+                    <version>${tiklab-opensca.version}</version>
+                    <type>zip</type>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
             <properties>
                 <assembly>mac</assembly>
                 <systemType>mac</systemType>
             </properties>
-      <!--      <build>
+            <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -234,14 +249,21 @@
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-jdk-mac</artifactId>
-                                            <version>${project.version}</version>
+                                            <version>${tiklab-jdk.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>io.tiklab</groupId>
                                             <artifactId>tiklab-postgresql-linux</artifactId>
-                                            <version>${project.version}</version>
+                                            <version>${tiklab-postgresql.version}</version>
+                                            <type>zip</type>
+                                            <outputDirectory>embbed</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>io.tiklab</groupId>
+                                            <artifactId>tiklab-opensca-mac</artifactId>
+                                            <version>${tiklab-opensca.version}</version>
                                             <type>zip</type>
                                             <outputDirectory>embbed</outputDirectory>
                                         </artifactItem>
@@ -251,7 +273,7 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>-->
+            </build>
         </profile>
 
         <!--dev-->

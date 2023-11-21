@@ -2,6 +2,7 @@ package io.tiklab.xpack.upload.service;
 
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.common.context.LoginContext;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.library.model.LibraryFileHand;
 import io.tiklab.xpack.repository.model.Repository;
@@ -44,12 +45,9 @@ public class HandUploadServiceImpl implements HandUploadService {
 
         try {
             String rpyAddress=xpakYamlDataMaService.repositoryAddress();
-
-            String[] split = requestURI.split("/");
-            Integer indexes = split[1].length() + split[2].length() + 2;
-            String url = requestURI.substring(indexes);
-
-            File file = new File(rpyAddress+url);
+            //截取文件
+            String fileUrl = getFileUrl(requestURI);
+            File file = new File(rpyAddress+fileUrl);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -69,31 +67,9 @@ public class HandUploadServiceImpl implements HandUploadService {
 
     @Override
     public String findServerIp() {
-        String ip=null;
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = interfaces.nextElement();
-                if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
-                    continue;  // 跳过回环和虚拟网络接口
-                }
-                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress address = addresses.nextElement();
-                    if (address.isLoopbackAddress()) {
-                        continue;  // 跳过回环地址
-                    }
-                    if (address.getHostAddress().contains(":")) {
-                        continue;  // 跳过IPv6地址
-                    }
-                    ip = address.getHostAddress();
-                }
-            }
-        } catch (Exception e) {
-            ip = "172.0.0.1";
-        }
-        String absoluteAddressl="http://" + ip + ":" + port;
-        return absoluteAddressl;
+        String serverIp = RepositoryUtil.getServerIp();
+        String absoluteAddress="http://" + serverIp + ":" + port;
+        return absoluteAddress;
     }
 
     @Override
@@ -194,6 +170,13 @@ public class HandUploadServiceImpl implements HandUploadService {
         return result;
     }
 
+    public String getFileUrl(String requestURI){
+        String[] split = requestURI.split("/");
+        Integer indexes = split[1].length() + split[2].length() + 2;
+        String url = requestURI.substring(indexes);
+        return url;
+    }
+
     /**
      *  generic
      * @param repositoryUrl
@@ -224,4 +207,6 @@ public class HandUploadServiceImpl implements HandUploadService {
         }
         return process;
     }
+
+
 }

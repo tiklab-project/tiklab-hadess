@@ -9,34 +9,16 @@ import java.util.Map;
 public interface ScanService {
 
     /**
-     * 执行单个扫描
-     * @param scanQueue 扫描制品
+     * 执行扫描
+     * @param scanPlayId 扫描计划id
      * @return
      */
-    String excOneScanLibrary(ScanQueue scanQueue);
+    String execScan(String scanPlayId);
 
     /**
-     * 多个制品扫描
-     * @param scanQueue 扫描制品
+     * 查询扫描结果
+     * @param scanPlayId 扫描计划id
      * @return
      */
-    String excMultiScanLibrary(ScanQueue scanQueue);
-
-    /**
-     * 通过制品库id 查询执行队列
-     * @param repositoryId
-     * @return
-     */
-    List findScanQueue(String repositoryId);
-
-    /**
-     * 查询单个扫描结果
-     * @param scanLibraryId 扫描制品id
-     * @return
-     */
-    Map findOneScanResult(String scanLibraryId);
-
-
-
-
+    ScanQueue findExecResult(String scanPlayId);
 }

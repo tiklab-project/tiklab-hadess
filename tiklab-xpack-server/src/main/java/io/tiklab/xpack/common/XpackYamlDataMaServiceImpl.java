@@ -87,5 +87,9 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
        // return "/Users/limingliang/postgreSQL/bin";
     }
 
+    public String getUploadRepositoryUrl(String contextPath){
+        return contextPath.substring(contextPath.indexOf("/", 1) + 1);
+    }
+
 
 }

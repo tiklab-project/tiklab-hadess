@@ -14,39 +14,39 @@ public interface DockerUploadService {
 
     /**
      * 推送-校验Sha256
-     * @param pathUrl 路径
+     * @param repositoryPath 路径
      */
-    Map<String, String> v2Sha256Check(String pathUrl) throws Exception;
+    Map<String, String> v2Sha256Check(String repositoryPath) throws Exception;
 
     /**
      * 推送-文件上传
      * @param inputStream 文件流
      */
-    void uploadData(InputStream inputStream,String contextPath) throws IOException;
+    void uploadData(InputStream inputStream,String repositoryPath) throws IOException;
 
     /**
      * 推送-创建文件
      * @param digest 文件名
-     * @param contextPath 客户端请求路径
+     * @param repositoryPath 客户端请求路径
      */
-    String createFile(String digest,String contextPath) throws IOException;
+    String createFile(String digest,String repositoryPath) throws IOException;
 
     /**
      * 推送-创建tag（版本）信息
      * @param inputStream 文件流
      * @param  authorization 用户信息
      */
-    String createTag(InputStream inputStream, String contextPath,String authorization) throws IOException, NoSuchAlgorithmException;
+    String createTag(InputStream inputStream, String repositoryPath,String authorization) throws IOException, NoSuchAlgorithmException;
 
     /**
      * 拉取-manifests
-     * @param contextPath
+     * @param repositoryPath
      */
-    Map<String, String> pullManifests(String contextPath);
+    Map<String, String> pullManifests(String repositoryPath);
 
     /**
      * 拉取-读取manifests、镜像数据
-     * @param contextPath
+     * @param repositoryPath
      */
-    Map<String, String> readMirroringData(String contextPath) throws IOException;
+    Map<String, String> readMirroringData(String repositoryPath) throws IOException;
 }

@@ -35,7 +35,7 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
     JoinTemplate joinTemplate;
 
     @Autowired
-    ScanHoleService scanHoleService;
+    ScanResultService scanResultService;
 
     @Autowired
     ScanRelyService scanRelyService;
@@ -62,7 +62,7 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
 
         scanRelyService.deleteScanRelyByCondition("scanLibraryId",id);
 
-        scanHoleService.deleteScanHoleByCondition("scanLibraryId",id);
+        scanResultService.deleteScanResultByCondition("scanLibraryId",id);
 
         scanLibraryDao.deleteScanLibrary(id);
     }
@@ -143,6 +143,10 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
                 ScanRecord newScanRecord = scanRecordService.findNewScanRecord(scanLibrary.getId());
                 if (!ObjectUtils.isEmpty(newScanRecord)){
                     scanLibrary.setScanRecord(newScanRecord);
+                    List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanRecordId(scanLibrary.getScanRecord().getId()));
+                    if (CollectionUtils.isNotEmpty(scanRelyList)){
+                        scanLibrary.setRelyNum(scanRelyList.size());
+                    }
                 }
             }
         }

@@ -52,4 +52,9 @@ public interface XpackYamlDataMaService {
      */
     String pgSqlAddress();
 
+
+    /**
+     * 获取上传的制品的路径
+     */
+     String getUploadRepositoryUrl(String contextPath);
 }

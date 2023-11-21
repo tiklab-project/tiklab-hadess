@@ -3,8 +3,6 @@ package io.tiklab.xpack.upload.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.exception.SystemException;
-import io.tiklab.eam.common.model.EamTicket;
-import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.user.user.model.User;
 import io.tiklab.user.user.model.UserQuery;
@@ -20,6 +18,7 @@ import io.tiklab.xpack.repository.model.*;
 import io.tiklab.xpack.repository.service.RepositoryGroupService;
 import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
+import io.tiklab.xpack.common.UserCheckService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -69,6 +68,8 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     @Autowired
     XpackYamlDataMaService yamlDataMaService;
 
+    @Autowired
+    UserCheckService userCheckService;
 
     @Override
     public Map npmLogin(BufferedReader reader) {
@@ -81,7 +82,21 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         }catch (Exception e){
             throw new SystemException(e);
         }
-       return verifyUser(result.toString());
+
+        JSONObject allData =(JSONObject) JSONObject.parse(result.toString());
+        String userName = allData.get("name").toString();
+        String password = allData.get("password").toString();
+        try{
+            userCheckService.npmUserCheck(userName, password);
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("success",true);
+            return resultMap;
+        }catch (Exception e){
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("success",false);
+            resultMap.put("error","Bad username or password");
+            return resultMap;
+        }
     }
 
     @Override
@@ -102,9 +117,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             JSONObject userData = (JSONObject) UserData;
             String name = userData.get("name").toString();
 
-            UserQuery userQuery = new UserQuery();
-            userQuery.setName(name);
-            List<User> userList = userService.findUserList(userQuery);
+            List<User> userList = userCheckService.npmUserCheckByName(name);
             if (CollectionUtils.isEmpty(userList)){
                 return 401;
             }
@@ -161,45 +174,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     }
 
     /**
-     *  npm登陆
-     * @param LoginData: npm上传的登陆数据
-     */
-    public Map verifyUser(String LoginData){
-        JSONObject allData =(JSONObject) JSONObject.parse(LoginData);
-
-        String userName = allData.get("name").toString();
-        String password = allData.get("password").toString();
-
-        try{
-            EamTicket eamTicket = accountLogin(userName,password,"1");
-            Map<String, Object> result = new HashMap<>();
-            result.put("success",true);
-            result.put("ticket",eamTicket.getTicket());
-            return result;
-        }catch (Exception e){
-            Map<String, Object> result = new HashMap<>();
-            result.put("success",false);
-            result.put("error","Bad username or password");
-            return result;
-        }
-    }
-
-    /**
-     *  npm登陆-账号密码登陆、校验
-     * @param userName: 用户名
-     * @param  password 密码
-     * @return
-     */
-    public EamTicket accountLogin(String userName,String password,String dirId){
-        UserPassport userPassport = new UserPassport();
-        userPassport.setAccount(userName);
-        userPassport.setPassword(password);
-        userPassport.setDirId(dirId);
-        EamTicket login = userPassportService.login(userPassport);
-        return login;
-    }
-
-    /**
      *  npm上传-文件的处理
      * @param contextPath: 客户端请求路径
      * @param allData:   上传的文件
@@ -242,6 +216,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         //查询制品库是否存在
         List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setName(repositoryName));
         if (CollectionUtils.isNotEmpty(repositoryList)){
+            //将制品库的名字替换成制品库的id
             String replace = contextPath.replace(repositoryName, repositoryList.get(0).getId());
             String path=yamlDataMaService.repositoryAddress()+"/"+replace;
             //tag 文件存储的绝对路径

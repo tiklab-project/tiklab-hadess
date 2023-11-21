@@ -1,6 +1,7 @@
 package io.tiklab.xpack.scan.dao;
 
 import io.tiklab.core.page.Pagination;
+import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
@@ -58,6 +59,7 @@ public class ScanRecordDao {
         jpaTemplate.delete(deleteCondition);
     }
 
+
     /**
      * 查找
      * @param id
@@ -92,6 +94,8 @@ public class ScanRecordDao {
     public List<ScanRecordEntity> findScanRecordList(ScanRecordQuery scanRecordQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanRecordEntity.class)
                 .eq("scanLibraryId",scanRecordQuery.getScanLibraryId())
+                .eq("scanPlayId",scanRecordQuery.getScanPlayId())
+                .eq("scanGroup",scanRecordQuery.getScanGroup())
                 .orders(scanRecordQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,ScanRecordEntity.class);
@@ -105,6 +109,8 @@ public class ScanRecordDao {
     public Pagination<ScanRecordEntity> findScanRecordPage(ScanRecordQuery scanRecordQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanRecordEntity.class)
                 .eq("scanLibraryId",scanRecordQuery.getScanLibraryId())
+                .eq("scanPlayId",scanRecordQuery.getScanPlayId())
+                .eq("scanGroup",scanRecordQuery.getScanGroup())
                 .orders(scanRecordQuery.getOrderParams())
                 .pagination(scanRecordQuery.getPageParam())
                 .get();

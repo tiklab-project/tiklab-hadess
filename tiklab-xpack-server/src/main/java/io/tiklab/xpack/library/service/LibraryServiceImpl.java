@@ -105,8 +105,17 @@ public class LibraryServiceImpl implements LibraryService {
     public void deleteLibrary(@NotNull String id) {
         Library library = this.findLibrary(id);
         if ("maven".equals(library.getLibraryType())){
-            libraryMavenService.deleteLibraryMavenByLibraryId(id);
+            libraryMavenService.deleteLibraryMavenByCondition("libraryId",id);
         }
+
+        String substring=null;
+        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(id));
+        if (CollectionUtils.isNotEmpty(libraryFileList)){
+            String fileUrl = libraryFileList.get(0).getFileUrl();
+            substring = fileUrl.substring(0, fileUrl.indexOf("/", fileUrl.indexOf("/") + 1));
+
+        }
+
         libraryVersionService.deleteVersionByCondition("libraryId",id);
 
         libraryFileService.deleteLibraryFileByCondition("libraryId",id);
@@ -115,7 +124,15 @@ public class LibraryServiceImpl implements LibraryService {
 
         libraryDao.deleteLibrary(id);
 
-
+        //删除文件
+        if (substring!=null){
+            try {
+                String folderPath = yamlDataMaService.repositoryAddress() + "/" + substring;
+                FileUtils.deleteDirectory(new File(folderPath));
+            }catch (Exception e){
+                logger.info("删除制品时删除文件失败:"+e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -262,7 +279,8 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public List<Library> findNotScanLibraryList(LibraryQuery libraryQuery) {
-        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery().setRepositoryId(libraryQuery.getRepositoryId()));
+        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery()
+                .setRepositoryId(libraryQuery.getRepositoryId()).setScanPlayId(libraryQuery.getScanPlayId()));
         String[] libraryIds=null;
         if (CollectionUtils.isNotEmpty(scanLibraryList)){
             List<String> libraryId = scanLibraryList.stream().map(a -> a.getLibrary().getId()).collect(Collectors.toList());
@@ -352,6 +370,7 @@ public class LibraryServiceImpl implements LibraryService {
         }else {
             libraryId = libraryList.get(0).getId();
         }
+        library.setRepository(repository);
         library.setLibraryType(libraryType);
         library.setId(libraryId);
 

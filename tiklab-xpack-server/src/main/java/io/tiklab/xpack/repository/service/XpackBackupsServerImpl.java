@@ -137,7 +137,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
 
                     File repositoryFile = new File(yamlDataMaService.repositoryAddress());
 
-                    List<Repository> localRpy = repositoryServer.findRepositoryList("local");
+                    List<Repository> localRpy = repositoryServer.findRepositoryListByType("local");
 
                     boolean isResidue = memSize(file, repositoryFile);
                     //当剩余空间不足删除最先备份的那个文件
@@ -285,7 +285,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     /**
                      *  copy代码文件到代码仓库
                      */
-                    List<Repository> localRpy = repositoryServer.findRepositoryList("local");
+                    List<Repository> localRpy = repositoryServer.findRepositoryListByType("local");
                     for (Repository repository:localRpy){
                         joinRecoveryLog(repository.getName()+ "  start Recovery ...");
                         String codePath = yamlDataMaService.repositoryAddress() + "/" + repository.getId();

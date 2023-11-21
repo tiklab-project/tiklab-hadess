@@ -21,8 +21,15 @@ public class ScanRecordQuery {
         @ApiProperty(name ="scanLibraryId",desc = "扫描制品id")
         private String scanLibraryId;
 
+        @ApiProperty(name ="scanPlayId",desc = "扫描计划的id")
+        private String scanPlayId;
 
-        public List<Order> getOrderParams() {
+        @ApiProperty(name ="scanGroup",desc = "扫描组")
+        private String scanGroup;
+
+
+
+    public List<Order> getOrderParams() {
             return orderParams;
         }
 
@@ -44,6 +51,23 @@ public class ScanRecordQuery {
 
         public ScanRecordQuery setScanLibraryId(String scanLibraryId) {
             this.scanLibraryId = scanLibraryId;
+            return this;
+        }
+
+        public String getScanPlayId() {
+            return scanPlayId;
+        }
+
+        public void setScanPlayId(String scanPlayId) {
+            this.scanPlayId = scanPlayId;
+        }
+
+        public String getScanGroup() {
+            return scanGroup;
+        }
+
+        public ScanRecordQuery setScanGroup(String scanGroup) {
+            this.scanGroup = scanGroup;
             return this;
         }
 }

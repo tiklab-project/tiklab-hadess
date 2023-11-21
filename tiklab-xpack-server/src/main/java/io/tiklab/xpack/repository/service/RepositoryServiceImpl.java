@@ -6,9 +6,8 @@ import io.tiklab.eam.common.context.LoginContext;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
 import io.tiklab.rpc.annotation.Exporter;
+import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpackYamlDataMaService;
-import io.tiklab.xpack.library.model.Library;
-import io.tiklab.xpack.library.model.LibraryQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
 import io.tiklab.xpack.library.service.LibraryMavenService;
 import io.tiklab.xpack.library.service.LibraryService;
@@ -17,7 +16,10 @@ import io.tiklab.xpack.repository.dao.RepositoryDao;
 import io.tiklab.xpack.repository.entity.RepositoryEntity;
 import io.tiklab.xpack.repository.model.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,6 @@ import org.springframework.util.ObjectUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
 @Service
 @Exporter
 public class RepositoryServiceImpl implements RepositoryService {
+
+    private static Logger logger = LoggerFactory.getLogger(RepositoryServiceImpl.class);
 
     @Autowired
     RepositoryDao repositoryDao;
@@ -69,6 +71,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
     XpackYamlDataMaService yamlDataMaService;
+
 
     @Value("${server.port:8080}")
     private String port;
@@ -122,9 +125,17 @@ public class RepositoryServiceImpl implements RepositoryService {
         libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
 
 
-
         if (("maven").equals(repository.getType())){
             repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
+            libraryMavenService.deleteLibraryMavenByCondition("repositoryId",id);
+        }
+
+        //删除文件
+        try {
+            String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
+            FileUtils.deleteDirectory(new File(folderPath));
+        }catch (Exception e){
+            logger.info("删除制品库时删除文件失败:"+e.getMessage());
         }
     }
 
@@ -196,7 +207,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public List<Repository> findRepositoryList(String type) {
+    public List<Repository> findRepositoryListByType(String type) {
         List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery().setRepositoryType(type));
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
         return repositoryList;
@@ -214,16 +225,6 @@ public class RepositoryServiceImpl implements RepositoryService {
         return repository;
     }
 
-    @Override
-    public Repository findRepositoryListByName(String name) {
-        RepositoryQuery repositoryQuery = new RepositoryQuery().setName(name);
-        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(repositoryQuery);
-        List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
-        if (CollectionUtils.isNotEmpty(repositoryList)){
-            return repositoryList.get(0);
-        }
-        return null;
-    }
 
     @Override
     public List<Repository> findLocalAndRemoteRepository(String type) {
@@ -270,6 +271,9 @@ public class RepositoryServiceImpl implements RepositoryService {
         return localAndRemoteRepository;
     }
 
+
+
+
     public void findLibrary(List<Repository> repositoryList){
         if (CollectionUtils.isNotEmpty(repositoryList)) {
             for (Repository repository : repositoryList) {
@@ -291,37 +295,15 @@ public class RepositoryServiceImpl implements RepositoryService {
        if (!ObjectUtils.isEmpty(repository)){
            String type = repository.getType().toLowerCase();
            //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
-           String ip=null;
-           try {
-               Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-               while (interfaces.hasMoreElements()) {
-                   NetworkInterface networkInterface = interfaces.nextElement();
-                   if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
-                       continue;  // 跳过回环和虚拟网络接口
-                   }
-                   Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-                   while (addresses.hasMoreElements()) {
-                       InetAddress address = addresses.nextElement();
-                       if (address.isLoopbackAddress()) {
-                           continue;  // 跳过回环地址
-                       }
-                       if (address.getHostAddress().contains(":")) {
-                           continue;  // 跳过IPv6地址
-                       }
-                       ip = address.getHostAddress();
-                   }
-               }
-           } catch (Exception e) {
-               ip = "172.0.0.1";
-           }
+           String serverIp = RepositoryUtil.getServerIp();
            if (("docker").equals(repository.getType())){
-               absoluteAddress="http://" + ip + ":" + port + "/"+repository.getRepositoryUrl();
+               absoluteAddress= serverIp + ":" + port + "/"+repository.getRepositoryUrl();
            }
            if (("generic").equals(repository.getType())){
-               absoluteAddress="http://" + ip + ":" + port + "/generic/"+repository.getRepositoryUrl();
+               absoluteAddress="http://" + serverIp + ":" + port + "/generic/"+repository.getRepositoryUrl();
            }
            if (("npm").equals(repository.getType())||("maven").equals(repository.getType())){
-               absoluteAddress="http://" + ip + ":" + port + "/repository/"+repository.getRepositoryUrl();
+               absoluteAddress="http://" + serverIp + ":" + port + "/repository/"+repository.getRepositoryUrl();
            }
        }
         return absoluteAddress;

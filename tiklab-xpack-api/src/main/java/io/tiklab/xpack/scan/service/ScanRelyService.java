@@ -45,6 +45,12 @@ public interface ScanRelyService {
      */
     void deleteScanRelyByCondition(@NotNull String key,@NotNull String value);
 
+    /**
+     * 通过扫描记录的ids 删除
+     * @param  recordIds
+     */
+    void deleteScanRelyByRecordIds(@NotNull StringBuilder recordIds);
+
     @FindOne
     ScanRely findOne(@NotNull String id);
 
@@ -93,5 +99,19 @@ public interface ScanRelyService {
      * @return
      */
     List<ScanRely> findHaveHoleRelyTreeList(ScanRelyQuery scanRelyQuery);
+
+    /**
+     * 条件查询有漏洞的扫描依赖树
+     * @param scanGroup
+     * @return
+     */
+    List<ScanRely> findHaveHoleRelyTreeList(String scanGroup);
+
+    /**
+     * 通过recordIds 查询
+     * @param scanRecordIds
+     * @return
+     */
+    List<ScanRely> findScanRelyListByRecordIds(String [] scanRecordIds);
 
 }

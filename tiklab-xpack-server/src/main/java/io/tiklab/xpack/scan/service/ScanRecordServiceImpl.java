@@ -13,13 +13,15 @@ import io.tiklab.xpack.scan.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.sql.Array;
 import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * ScanRecordServiceImpl-扫描结果
@@ -34,10 +36,13 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     JoinTemplate joinTemplate;
 
     @Autowired
-    ScanHoleService scanHoleService;
+    ScanResultService scanResultService;
 
     @Autowired
     ScanRelyService scanRelyService;
+
+    @Autowired
+    ScanRecordService scanRecordService;
 
     @Override
     public String createScanRecord(@NotNull @Valid ScanRecord scanRecord) {
@@ -56,17 +61,33 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     public void deleteScanRecord(@NotNull String id) {
         scanRelyService.deleteScanRelyByCondition("scanRecordId",id);
 
-        scanHoleService.deleteScanHoleByCondition("scanRecordId",id);
+        scanResultService.deleteScanResultByCondition("scanRecordId",id);
 
         scanRecordDao.deleteScanRecord(id);
     }
 
     @Override
     public void deleteScanRecordByCondition(String key, String value) {
-        DeleteCondition deleteCondition = DeleteBuilders.createDelete(ScanRelyEntity.class)
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(ScanRecordEntity.class)
                 .eq(key,value)
                 .get();
         scanRecordDao.deleteScanRecord(deleteCondition);
+    }
+
+    @Override
+    public void deleteScanRecordByGroup(String scanGroup) {
+        List<ScanRecord> scanRecordList = this.findScanRecordList(new ScanRecordQuery().setScanGroup(scanGroup));
+        List<String> stringList = scanRecordList.stream().map(ScanRecord::getId).collect(Collectors.toList());
+        StringBuilder builder = new StringBuilder();
+        for (String part : stringList) {
+            builder.append("'").append(part).append("',");
+        }
+        builder.setLength(builder.length() - 1);
+
+        scanRelyService.deleteScanRelyByRecordIds(builder);
+        scanResultService.deleteScanResultByRecordIds(builder);
+        deleteScanRecordByCondition("scanGroup",scanGroup);
+
     }
 
     @Override
@@ -90,9 +111,10 @@ public class ScanRecordServiceImpl implements ScanRecordService {
         ScanRecord scanRecord = findOne(id);
         joinTemplate.joinQuery(scanRecord);
 
-        List<ScanHole> scanHoleList = scanHoleService.findScanHoleList(new ScanHoleQuery().setScanRecordId(id));
-        if (CollectionUtils.isNotEmpty(scanHoleList)){
-            scanRecord.setRelyNum(scanHoleList.size());
+        //List<ScanResult> scanResultList = scanResultService.findScanResultList(new ScanResultQuery().setScanRecordId(id));
+        List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanRecordId(id));
+        if (CollectionUtils.isNotEmpty(scanRelyList)){
+            scanRecord.setRelyNum(scanRelyList.size());
         }
         return scanRecord;
     }
@@ -151,6 +173,107 @@ public class ScanRecordServiceImpl implements ScanRecordService {
 
         }
         return PaginationBuilder.build(pagination,scanRecordList);
+    }
+
+    @Override
+    public List<ScanRecord> findScanRecordByPlay(ScanRecordQuery scanRecordQuery) {
+        List<ScanRecord> arrayList = new ArrayList<>();
+        List<ScanRecord> scanRecordList = this.findScanRecordList(scanRecordQuery);
+        if (CollectionUtils.isEmpty(scanRecordList)){
+            return null;
+        }
+        Map<String, List<ScanRecord>> listMap = scanRecordList.stream().collect(Collectors.groupingBy(ScanRecord::getScanGroup));
+        Set<String> stringSet = listMap.keySet();
+        for (String key:stringSet){
+            List<ScanRecord> scanRecords = listMap.get(key);
+            arrayList.add(addScanRecord(scanRecords));
+        }
+        return arrayList;
+    }
+
+    @Override
+    public ScanRecord findScanRecordByGroup(String scanGroup) {
+        List<ScanRecord> scanRecordList = this.findScanRecordList(new ScanRecordQuery().setScanGroup(scanGroup));
+        if (CollectionUtils.isEmpty(scanRecordList)){
+            return null;
+        }
+        ScanRecord scanRecord = addScanRecord(scanRecordList);
+
+        List<String> scanRecordIds = scanRecordList.stream().map(ScanRecord::getId).collect(Collectors.toList());
+        String[] RecordId = new String[scanRecordIds.size()];
+        String[] strings = scanRecordIds.toArray(RecordId);
+
+        List<ScanRely> scanRelyListByRecordIds = scanRelyService.findScanRelyListByRecordIds(strings);
+        int size = CollectionUtils.isNotEmpty(scanRelyListByRecordIds) ? scanRelyListByRecordIds.size() : 0;
+        scanRecord.setRelyNum(size);
+
+        return scanRecord;
+    }
+
+    @Override
+    public List<ScanRecord> findHaveHoleRelyTreeList(String scanGroup) {
+        List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanGroup(scanGroup));
+        if (CollectionUtils.isNotEmpty(scanRecordList)){
+            List<ScanRely> relyList=null;
+
+            List<String> groups = scanRecordList.stream().map(ScanRecord::getId).collect(Collectors.toList());
+            String[] RecordId = new String[groups.size()];
+            String[] strings = groups.toArray(RecordId);
+            List<ScanResult> scanResultList = scanResultService.findScanResultByRecordIds(strings);
+            if (CollectionUtils.isNotEmpty(scanResultList)){
+                List<String> RelyLibraryList = scanResultList.stream().map(ScanResult::getLibraryId).distinct().collect(Collectors.toList());
+                List<ScanRely> scanRelyList = scanRelyService.findList(RelyLibraryList);
+                //第一级依赖（通过子级依赖查询他的第一）
+                List<String> relyOneId = scanRelyList.stream().filter(a -> !ObjectUtils.isEmpty(a.getRelyOneId())).map(ScanRely::getRelyOneId).distinct().collect(Collectors.toList());
+                List<String> stringList = scanRelyList.stream().filter(a -> ObjectUtils.isEmpty(a.getRelyOneId())).map(ScanRely::getId).distinct().collect(Collectors.toList());
+
+                List<String> list = Stream.concat(relyOneId.stream(), stringList.stream()).collect(Collectors.toList());
+
+                List<ScanRely> oneRelyList = scanRelyService.findList(list);
+
+                for (ScanRely scanRely:oneRelyList){
+                    //直接依赖的漏洞
+                    List<ScanResult> scanResult = scanResultList.stream().filter(a -> a.getLibraryId().equals(scanRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                    scanRely.setScanResultList(scanResult);
+
+                    //直接依赖
+                    List<ScanRely> scanRelies = scanRelyList.stream().filter(a ->(scanRely.getId()).equals( a.getRelyOneId())).collect(Collectors.toList());
+                    for (ScanRely secondRely:scanRelies){
+                        List<ScanResult> scanResults = scanResultList.stream().filter(a -> a.getLibraryId().equals(secondRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                        secondRely.setScanResultList(scanResults);
+                    }
+                    scanRely.setScanRelyList(scanRelies);
+
+                }
+                relyList = oneRelyList.stream().sorted(Comparator.comparing(a -> {
+                    return a.getScanRelyList().isEmpty() ? 0 : 1;
+                })).collect(Collectors.toList());
+            }
+
+            for (ScanRecord scanRecord:scanRecordList){
+                List<ScanRely> relyList1 = relyList.stream().filter(a -> scanRecord.getId().equals(a.getScanRecordId())).collect(Collectors.toList());
+                scanRecord.setScanRelyList(relyList1);
+            }
+        }
+        return scanRecordList;
+    }
+
+
+    public ScanRecord addScanRecord(List<ScanRecord> scanRecords){
+        int holeSeverity = scanRecords.stream().mapToInt(ScanRecord::getHoleSeverity).sum();
+        int holeHigh = scanRecords.stream().mapToInt(ScanRecord::getHoleHigh).sum();
+        int holeMiddle = scanRecords.stream().mapToInt(ScanRecord::getHoleMiddle).sum();
+        int holeLow = scanRecords.stream().mapToInt(ScanRecord::getHoleLow).sum();
+
+        ScanRecord scanRecord = new ScanRecord();
+        scanRecord.setHoleSeverity(holeSeverity);
+        scanRecord.setHoleHigh(holeHigh);
+        scanRecord.setHoleMiddle(holeMiddle);
+        scanRecord.setHoleLow(holeLow);
+        scanRecord.setScanGroup(scanRecords.get(0).getScanGroup());
+        scanRecord.setCreateTime(scanRecords.get(0).getCreateTime());
+
+        return scanRecord;
     }
 
 }

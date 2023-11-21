@@ -55,9 +55,9 @@ create table pack_scan_rely(
 );
 
 -- ---------------------------
--- 扫描漏洞
+-- 扫描漏洞结果
 -- ----------------------------
-create table pack_scan_hole(
+create table pack_scan_result(
       id          varchar(12) PRIMARY KEY,
       library_id varchar(12) NOT NULL,
       scan_library_id varchar(12),

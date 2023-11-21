@@ -1,6 +1,7 @@
 package io.tiklab.xpack.upload.controller;
 
 import io.tiklab.core.Result;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import io.tiklab.xpack.upload.GenericUploadService;
 import org.apache.commons.lang.StringUtils;
@@ -32,9 +33,14 @@ public class GenericUploadController  extends HttpServlet {
     @Autowired
     GenericUploadService genericUploadService;
 
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String contextPath = request.getRequestURI();
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
+
         response.setCharacterEncoding("UTF-8");
         //版本
         String substring = request.getQueryString();
@@ -56,7 +62,7 @@ public class GenericUploadController  extends HttpServlet {
 
         if (StringUtils.isNotEmpty(methodType)&&("download").equals(methodType)){
             //下载
-            Result<byte[]> result = genericUploadService.GenericDownload(contextPath, userData, version);
+            Result<byte[]> result = genericUploadService.GenericDownload(repositoryPath, userData, version);
           if (result.getCode()==0){
               byte[] data = result.getData();
               ServletOutputStream outputStream = response.getOutputStream();
@@ -68,7 +74,7 @@ public class GenericUploadController  extends HttpServlet {
         }else {
             //上传
             InputStream inputStream = request.getInputStream();
-            String result=genericUploadService.GenericUpload(inputStream,contextPath, userData,version);
+            String result=genericUploadService.GenericUpload(inputStream,repositoryPath, userData,version);
 
             response.getWriter().print(result);
         }

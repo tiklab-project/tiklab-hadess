@@ -4,6 +4,7 @@ import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.UuidGenerator;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.upload.DockerUploadService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
@@ -26,12 +28,17 @@ public class DockerUploadController {
     @Autowired
     DockerUploadService dockerUploadService;
 
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
 
     @RequestMapping(path="/**",method = {RequestMethod.GET,RequestMethod.HEAD,RequestMethod.POST,
             RequestMethod.PATCH,RequestMethod.PUT})
     @ApiMethod(name = "dockerPush",desc = "docker上传")
     public void dockerPush(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String contextPath = request.getRequestURI();
+
+        String repositoryPath =contextPath.substring(contextPath.indexOf("/", 1) + 1);
+
         String method = request.getMethod();
         StringBuffer requestURL = request.getRequestURL();
         //登陆用户校验 或者pull 镜像数据
@@ -39,7 +46,7 @@ public class DockerUploadController {
             //请求路径中存在sha256 代表pull 请求
             if (contextPath.contains("/sha256:")){
                 String sha256 = contextPath.substring(contextPath.lastIndexOf("sha256"));
-                Map<String, String> resultMap = dockerUploadService.readMirroringData(contextPath);
+                Map<String, String> resultMap = dockerUploadService.readMirroringData(repositoryPath);
                 String data = resultMap.get("data");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.setHeader("Content-Length",resultMap.get("size"));
@@ -94,7 +101,7 @@ public class DockerUploadController {
             //HEAD类型的请求带有/manifests 为拉取；否则推送
             if (contextPath.contains("/manifests")){
                 //获取manifests 镜像校验数据
-                Map<String, String> manifests = dockerUploadService.pullManifests(contextPath);
+                Map<String, String> manifests = dockerUploadService.pullManifests(repositoryPath);
                 if (("200").equals(manifests.get("code"))){
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/vnd.docker.distribution.manifest.v2+json");
@@ -102,7 +109,7 @@ public class DockerUploadController {
                     response.getWriter().close();
                 }
             }else {
-                Map<String, String> resultMap = dockerUploadService.v2Sha256Check(contextPath);
+                Map<String, String> resultMap = dockerUploadService.v2Sha256Check(repositoryPath);
                 if (("200").equals(resultMap.get("code"))){
                     String substring = contextPath.substring(contextPath.indexOf("/") + 1);
                     String fileLength = resultMap.get("data");
@@ -143,9 +150,11 @@ public class DockerUploadController {
         if (("PATCH").equals(method)){
             String uploadID = contextPath.substring(contextPath.lastIndexOf("/") + 1);
 
-           dockerUploadService.uploadData(request.getInputStream(), contextPath);
+           dockerUploadService.uploadData(request.getInputStream(), repositoryPath);
 
             String length = request.getHeader("content-length");
+
+            //镜像文件大小区间
             int i = Integer.valueOf(length) - 1;
             String range="0-"+i;
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -160,7 +169,7 @@ public class DockerUploadController {
             //路径中存在manifests 为校验 否则为上传数据
             if (contextPath.contains("/manifests")){
                 String authorization = request.getHeader("Authorization");
-                String tag = dockerUploadService.createTag(request.getInputStream(), contextPath, authorization);
+                String tag = dockerUploadService.createTag(request.getInputStream(), repositoryPath, authorization);
                 String sha256 = RepositoryUtil.generateSHA256(tag);
 
                 // 设置响应的内容类型和状态码
@@ -172,7 +181,7 @@ public class DockerUploadController {
             }else {
                 Map<String, String[]> parameterMap = request.getParameterMap();
                 String digest = parameterMap.get("digest")[0];
-                String file = dockerUploadService.createFile(digest, contextPath);
+                String file = dockerUploadService.createFile(digest, repositoryPath);
 
                 String range="0-"+file;
                 response.setStatus(HttpServletResponse.SC_CREATED);

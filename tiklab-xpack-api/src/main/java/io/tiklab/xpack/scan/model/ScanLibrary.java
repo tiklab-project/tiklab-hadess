@@ -27,6 +27,9 @@ public class ScanLibrary extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
+    @ApiProperty(name="scanPlayId",desc="扫描计划id",required = true)
+    private String scanPlayId;
+
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
             @Mapping(source = "library.id",target = "libraryId")
@@ -44,6 +47,7 @@ public class ScanLibrary extends BaseModel {
     @ApiProperty(name="repositoryId",desc="制品库id")
     private String repositoryId;
 
+
     @ApiProperty(name="scanState",desc="扫描状态: 未扫描：0  、扫描：1 ")
     private Integer scanState=0;
 
@@ -58,6 +62,12 @@ public class ScanLibrary extends BaseModel {
     @ApiProperty(name="scanRecord",desc="scanRecord")
     private ScanRecord scanRecord;
 
+
+    @ApiProperty(name="scanResult",desc="扫描结果 success、false")
+    private String  scanResult;
+
+    @ApiProperty(name="relyNum",desc="依赖数量")
+    private Integer relyNum;
 
     public String getId() {
         return id;
@@ -115,5 +125,27 @@ public class ScanLibrary extends BaseModel {
         this.scanRecord = scanRecord;
     }
 
+    public String getScanPlayId() {
+        return scanPlayId;
+    }
 
+    public void setScanPlayId(String scanPlayId) {
+        this.scanPlayId = scanPlayId;
+    }
+
+    public String getScanResult() {
+        return scanResult;
+    }
+
+    public void setScanResult(String scanResult) {
+        this.scanResult = scanResult;
+    }
+
+    public Integer getRelyNum() {
+        return relyNum;
+    }
+
+    public void setRelyNum(Integer relyNum) {
+        this.relyNum = relyNum;
+    }
 }

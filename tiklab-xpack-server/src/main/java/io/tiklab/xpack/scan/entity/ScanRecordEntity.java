@@ -25,6 +25,16 @@ public class ScanRecordEntity extends BaseModel {
     @Column(name = "library_id",length = 12)
     private String libraryId;
 
+
+    //扫描计划的id
+    @Column(name = "scan_play_id",length = 12)
+    private String scanPlayId;
+
+    //扫描group
+    @Column(name = "scan_group",length = 12)
+    private String scanGroup;
+
+
     //制品的版本
     @Column(name = "library_version",length = 64)
     private String libraryVersion;
@@ -134,4 +144,22 @@ public class ScanRecordEntity extends BaseModel {
     public void setLibraryVersion(String libraryVersion) {
         this.libraryVersion = libraryVersion;
     }
+
+    public String getScanPlayId() {
+        return scanPlayId;
+    }
+
+    public void setScanPlayId(String scanPlayId) {
+        this.scanPlayId = scanPlayId;
+    }
+
+    public String getScanGroup() {
+        return scanGroup;
+    }
+
+    public void setScanGroup(String scanGroup) {
+        this.scanGroup = scanGroup;
+    }
+
+
 }

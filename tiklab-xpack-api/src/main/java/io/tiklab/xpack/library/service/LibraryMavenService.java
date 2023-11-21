@@ -34,11 +34,13 @@ public interface LibraryMavenService {
     */
     void deleteLibraryMaven(@NotNull String id);
 
+
     /**
-     * 通过制品id删除maven
-     * @param libraryId
+     * 通过条件删除
+     * @param field  删除条件字段
+     * @param value 删除字段值
      */
-    void deleteLibraryMavenByLibraryId(@NotNull String libraryId);
+    void deleteLibraryMavenByCondition(@NotNull String field ,@NotNull String value);
 
 
     LibraryMaven findOne(@NotNull String id);

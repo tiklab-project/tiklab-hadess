@@ -1,8 +1,6 @@
 package io.tiklab.xpack.upload.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.xpack.common.RepositoryUtil;
 import io.tiklab.xpack.common.XpackYamlDataMaService;
@@ -13,6 +11,7 @@ import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.model.Repository;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import io.tiklab.xpack.upload.DockerUploadService;
+import io.tiklab.xpack.common.UserCheckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -47,23 +46,16 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     @Autowired
     LibraryVersionService versionService;
 
-
+    @Autowired
+    UserCheckService userCheckService;
 
     public static Map<String , String> blobsDataSize = new HashMap<>();
 
     public static Map<String , InputStream> blobsData = new HashMap<>();
     @Override
     public int userCheck(String userData) {
-        String[] split = userData.split(":");
-        String userName = split[0];
-        String password = split[1];
-
-        UserPassport userPassport = new UserPassport();
-        userPassport.setAccount(userName);
-        userPassport.setPassword(password);
-        userPassport.setDirId("1");
         try {
-            userPassportService.login(userPassport);
+            userCheckService.dockerUserCheck(userData);
             return 200;
         }catch (Exception e){
             return 401;
@@ -71,17 +63,17 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> v2Sha256Check(String pathUrl) throws Exception {
+    public Map<String, String> v2Sha256Check(String repositoryPath) throws Exception {
         Map<String, String> resultMap = new HashMap<>();
-        String sha256 = pathUrl.substring(pathUrl.indexOf("sha256:") );
+        String sha256 = repositoryPath.substring(repositoryPath.indexOf("sha256:") );
         // 创建错误响应的 JSON 对象
         Map<String, Object> errorResponse = new HashMap<>();
 
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
-        int secondIndex = pathUrl.indexOf("/", pathUrl.indexOf("/") + 1);
+
         //仓库名称
-        String repositoryName = pathUrl.substring(secondIndex + 1, pathUrl.indexOf("/", secondIndex+1));
+        String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
         Repository repository = repositoryService.findRepositoryByName(repositoryName);
 
         if (ObjectUtils.isEmpty(repository)){
@@ -112,21 +104,18 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public void uploadData(InputStream inputStream,String contextPath) throws IOException {
+    public void uploadData(InputStream inputStream,String repositoryPath) throws IOException {
 
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
-
-        String fileName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
+        String fileName = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
         blobsData.put(fileName,inputStream);
 
         //制品库名称
-        String repositoryName = contextPath.substring(secondIndex + 1, threeIndex);
-        Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+        String repositoryName = repositoryPath.substring(0, repositoryPath.indexOf("/"));
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
 
         //制品名称
-        String libraryName =getLibraryName(contextPath,"/blobs");
+        String libraryName =getLibraryName(repositoryPath,"/blobs");
 
         //创建制品
         Library library = libraryService.createLibraryData(libraryName, "docker", repository);
@@ -173,19 +162,16 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public String createFile(String digest,String contextPath) throws IOException {
-        String fileName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
-
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
+    public String createFile(String digest,String repositoryPath) throws IOException {
+        String fileName = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
 
         //制品名称
-        String libraryName =getLibraryName(contextPath,"/blobs/");
+        String libraryName =getLibraryName(repositoryPath,"/blobs/");
 
         //制品库名称
-        String repositoryName = contextPath.substring(secondIndex + 1, threeIndex);
-        Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+        String repositoryName = repositoryPath.substring(0, repositoryPath.indexOf("/"));
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
 
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
@@ -216,20 +202,19 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public String createTag(InputStream inputStream, String contextPath,String authorization) throws IOException, NoSuchAlgorithmException {
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
+    public String createTag(InputStream inputStream, String repositoryPath,String authorization) throws IOException, NoSuchAlgorithmException {
 
-        String version = contextPath.substring(contextPath.lastIndexOf("/") + 1);
+
+        String version = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
         //制品库名称
-        String repositoryName = contextPath.substring(secondIndex + 1, threeIndex);
+        String repositoryName = repositoryPath.substring(0, repositoryPath.indexOf("/"));
 
 
         //制品名称
-        String libraryName =getLibraryName(contextPath,"/manifests");
+        String libraryName =getLibraryName(repositoryPath,"/manifests");
 
-        Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
 
@@ -292,20 +277,17 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> pullManifests(String contextPath) {
+    public Map<String, String> pullManifests(String repositoryPath) {
 
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
-        int fourIndex = contextPath.indexOf("/", threeIndex + 1);
         //版本
-        String version = contextPath.substring(contextPath.lastIndexOf("/") + 1);
+        String version = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
         //仓库名称
-        String repositoryName = contextPath.substring(secondIndex + 1, threeIndex);
+        String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
         //制品名称
-        String libraryName = getLibraryName(contextPath,"/manifests");
+        String libraryName = getLibraryName(repositoryPath,"/manifests");
 
-        Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
         if (ObjectUtils.isEmpty(repository)){
             return putMapData("400","制品库不存在");
         }
@@ -325,15 +307,14 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> readMirroringData(String contextPath) throws IOException {
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
+    public Map<String, String> readMirroringData(String repositoryPath) throws IOException {
+
 
         //仓库名称
-        String repositoryName = contextPath.substring(secondIndex + 1, threeIndex);
-        Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+        String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
 
-        String substring = contextPath.substring(threeIndex);
+        String substring =repositoryPath.substring(repositoryPath.indexOf("/"));
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
         String manifestsPath = repositoryAddress + "/" + repository.getId() + substring;
@@ -418,13 +399,11 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
     /**
      * 制品名字
-     * @param contextPath 请求路径
+     * @param repositoryPath 请求路径
      */
-    public  String getLibraryName(String contextPath,String type){
-        int secondIndex = contextPath.indexOf("/", contextPath.indexOf("/") + 1);
-        int threeIndex = contextPath.indexOf("/", secondIndex + 1);
-        //制品名称
-        String libraryName = contextPath.substring(threeIndex + 1, contextPath.indexOf(type));
+    public  String getLibraryName(String repositoryPath,String type){
+     //制品名称
+        String libraryName = repositoryPath.substring(repositoryPath.indexOf("/") + 1, repositoryPath.indexOf(type));
         return libraryName;
     }
 

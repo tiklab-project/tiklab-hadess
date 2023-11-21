@@ -5,6 +5,7 @@ import io.tiklab.core.exception.SystemException;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.upload.MavenUploadService;
 import io.tiklab.xpack.upload.NpmUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,18 @@ public class HandUploadController {
 
     @Autowired
     NpmUploadService downloadNpmService;
+
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
+
     @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "通过xpack界面手动上传maven")
     @ApiParam(name = "requestParam",desc = "requestParam")
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
 
-        int sencendIndex = contextPath.indexOf("/", 1) + 1;
-        String repositoryPath = contextPath.substring(contextPath.indexOf("/", 1)+sencendIndex);
+        String path = yamlDataMaService.getUploadRepositoryUrl(contextPath);
+        String repositoryPath=path.substring(path.indexOf("/")+1);
         String method = request.getMethod();
 
         try {

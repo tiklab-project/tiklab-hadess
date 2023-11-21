@@ -1,6 +1,7 @@
 package io.tiklab.xpack.scan.dao;
 
 import io.tiklab.core.page.Pagination;
+import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
@@ -59,6 +60,16 @@ public class ScanRelyDao {
     }
 
     /**
+     * 通过扫描记录的ids 删除
+     * @param recordIds
+     */
+    public void deleteScanRelyByRecordIds(StringBuilder recordIds) {
+        String sql="DELETE FROM pack_scan_rely WHERE scan_record_id IN ("+recordIds+")";
+        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
+        jdbcTemplate.execute(sql);
+    }
+
+    /**
      * 查找
      * @param id
      * @return
@@ -113,5 +124,17 @@ public class ScanRelyDao {
                 .pagination(scanRelyQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,ScanRelyEntity.class);
+    }
+
+    /**
+     * 条件查询存储库
+     * @param scanRecordIds
+     * @return List <ScanRelyEntity>
+     */
+    public List<ScanRelyEntity> findScanRelyListByRecordIds(String [] scanRecordIds) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(ScanRelyEntity.class)
+                .in("scanRecordId",scanRecordIds)
+                .get();
+        return jpaTemplate.findList(queryCondition,ScanRelyEntity.class);
     }
 }

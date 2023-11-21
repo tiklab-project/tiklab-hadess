@@ -393,7 +393,6 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
             }
             return Libraries;
         }).collect(Collectors.toList());
-        System.out.println("修改后："+objectList);
     }
 
 

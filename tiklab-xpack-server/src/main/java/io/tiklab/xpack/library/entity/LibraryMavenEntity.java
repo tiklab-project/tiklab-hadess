@@ -2,6 +2,7 @@ package io.tiklab.xpack.library.entity;
 
 import io.tiklab.core.BaseModel;
 import io.tiklab.dal.jpa.annotation.*;
+import io.tiklab.postin.annotation.ApiProperty;
 
 import java.sql.Timestamp;
 
@@ -16,6 +17,10 @@ public class LibraryMavenEntity extends BaseModel {
     @GeneratorValue(length = 12)
     @Column(name = "id",length = 12)
     private String id;
+
+    //制品库id
+    @Column(name = "repository_id",length = 32)
+    private String repositoryId;
 
     //制品Id
     @Column(name = "library_id",length = 32,notNull = true)
@@ -71,5 +76,13 @@ public class LibraryMavenEntity extends BaseModel {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
     }
 }

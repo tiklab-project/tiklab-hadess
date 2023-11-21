@@ -35,4 +35,5 @@ public interface HandUploadService {
      * 获取手动上传结果
      */
     String findHandPushResult(String repositoryId);
+
 }

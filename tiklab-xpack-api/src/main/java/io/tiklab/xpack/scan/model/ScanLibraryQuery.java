@@ -23,6 +23,10 @@ public class ScanLibraryQuery {
 
         @ApiProperty(name ="repositoryId",desc = "制品库id")
         private String repositoryId;
+
+        @ApiProperty(name ="scanPlayId",desc = "扫描计划id")
+        private String scanPlayId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -54,6 +58,15 @@ public class ScanLibraryQuery {
 
         public ScanLibraryQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public String getScanPlayId() {
+            return scanPlayId;
+        }
+
+        public ScanLibraryQuery setScanPlayId(String scanPlayId) {
+            this.scanPlayId = scanPlayId;
             return this;
         }
 }

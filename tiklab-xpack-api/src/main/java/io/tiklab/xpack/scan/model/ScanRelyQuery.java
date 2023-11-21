@@ -75,7 +75,8 @@ public class ScanRelyQuery {
             return scanRecordId;
         }
 
-        public void setScanRecordId(String scanRecordId) {
+        public ScanRelyQuery setScanRecordId(String scanRecordId) {
             this.scanRecordId = scanRecordId;
+            return this;
         }
 }

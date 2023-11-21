@@ -191,6 +191,10 @@ public class LibraryFileServiceImpl implements LibraryFileService {
             if (("docker").equals(type)){
                 List<LibraryFile> libraryFiles = dockerFile(libraryFile);
                 libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
+                //通过名字过滤相同
+                 libraryFileList = libraryFileList.stream()
+                        .filter(distinctByKey(LibraryFile::getFileName))
+                        .collect(Collectors.toList());
             }
         }
 
@@ -271,4 +275,8 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         return collected;
     }
 
+    public static <T> java.util.function.Predicate<T> distinctByKey(java.util.function.Function<? super T, ?> keyExtractor) {
+        java.util.Map<Object, Boolean> seen = new java.util.concurrent.ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
 }

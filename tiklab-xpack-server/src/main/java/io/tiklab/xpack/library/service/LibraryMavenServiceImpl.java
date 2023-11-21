@@ -52,10 +52,11 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
         libraryMavenDao.deleteLibraryMaven(id);
     }
 
+
     @Override
-    public void deleteLibraryMavenByLibraryId(String libraryId) {
+    public void deleteLibraryMavenByCondition(String field, String value) {
         DeleteCondition libraryMaven = DeleteBuilders.createDelete(LibraryMavenEntity.class)
-                .eq("libraryId",libraryId)
+                .eq(field,value)
                 .get();
         libraryMavenDao.deleteLibraryMaven(libraryMaven);
     }
@@ -126,6 +127,7 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
             libraryMaven.setArtifactId(artifactId);
             libraryMaven.setGroupId(groupId);
             libraryMaven.setLibrary(library);
+            libraryMaven.setRepositoryId(library.getRepository().getId());
             this.createLibraryMaven(libraryMaven);
         }
     }

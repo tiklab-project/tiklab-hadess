@@ -34,21 +34,23 @@ public class XpackSqlLoad {
 
         });
         dsmConfig.newVersion("1.0.1", new String[]{
-                //xpack
                 "xpack_1.0.1",
 
         });
         dsmConfig.newVersion("1.0.2", new String[]{
-                //xpack
                 "xpack_1.0.2",
         });
         dsmConfig.newVersion("1.0.3", new String[]{
-                //xpack
                 "xpack_1.0.3",
         });
         dsmConfig.newVersion("1.0.4", new String[]{
-                //xpack
                 "xpack_1.0.4",
+        });
+        dsmConfig.newVersion("1.0.5", new String[]{
+                "xpack_1.0.5",
+        });
+        dsmConfig.newVersion("1.0.5", new String[]{
+                "xpack_1.0.6",
         });
         return dsmConfig;
     }

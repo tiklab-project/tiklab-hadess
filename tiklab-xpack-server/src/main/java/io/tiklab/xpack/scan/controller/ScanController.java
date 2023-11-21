@@ -3,6 +3,7 @@ package io.tiklab.xpack.scan.controller;
 import io.tiklab.core.Result;
 import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
+import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.scan.model.ScanQueue;
 import io.tiklab.xpack.scan.service.ScanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,41 +22,22 @@ public class ScanController {
     ScanService scanService;
 
 
-    @RequestMapping(path="/excOneScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "excOneScanLibrary",desc = "执行单个制品扫描")
-    public Result<String> excOneScanLibrary(@RequestBody ScanQueue scanQueue){
+    @RequestMapping(path="/execScan",method = RequestMethod.POST)
+    @ApiMethod(name = "execScan",desc = "执行扫描")
+    @ApiParam(name = "scanPlayId",desc = "扫描计划的id",required = true)
+    public Result<String> execScan(@NotNull String scanPlayId){
 
-        String result = scanService.excOneScanLibrary(scanQueue);
-
+        String result = scanService.execScan(scanPlayId);
         return Result.ok(result);
     }
 
-    @RequestMapping(path="/excMultiScanLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "excMultiScanLibrary",desc = "扫描多个制品")
-    public Result<String> excMultiScanLibrary(@RequestBody ScanQueue scanQueue){
+    @RequestMapping(path="/findExecResult",method = RequestMethod.POST)
+    @ApiMethod(name = "findExecResult",desc = "查询扫描结果")
+    @ApiParam(name = "scanPlayId",desc = "扫描计划的id",required = true)
+    public Result<ScanQueue> findExecResult(@NotNull String scanPlayId){
 
-        String result = scanService.excMultiScanLibrary(scanQueue);
-        return Result.ok(result);
+        ScanQueue execResult = scanService.findExecResult(scanPlayId);
+        return Result.ok(execResult);
     }
-
-    @RequestMapping(path="/findScanQueue",method = RequestMethod.POST)
-    @ApiMethod(name = "findScanQueue",desc = "查询扫描队列")
-    public Result<List> findScanQueue(@NotNull String repositoryId){
-
-        List result= scanService.findScanQueue(repositoryId);
-
-        return Result.ok(result);
-    }
-
-    @RequestMapping(path="/findOneScanResult",method = RequestMethod.POST)
-    @ApiMethod(name = "findOneScanResult",desc = "查询单个扫描结果")
-    public Result<Map> findOneScanResult(@NotNull  String scanLibraryId){
-
-        Map result= scanService.findOneScanResult(scanLibraryId);
-
-        return Result.ok(result);
-    }
-
-
 
 }

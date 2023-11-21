@@ -107,6 +107,7 @@ public class GatewayFilterAutoConfiguration {
                         "/libraryFile",
                         "/xpack",
                         "/backups",
+                        "/fileHand",
                         "/scan",
                         "/v2"
                 })

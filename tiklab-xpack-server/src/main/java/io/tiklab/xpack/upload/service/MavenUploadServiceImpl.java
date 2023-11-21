@@ -2,8 +2,6 @@ package io.tiklab.xpack.upload.service;
 
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.ApplicationException;
-import io.tiklab.eam.common.context.LoginContext;
-import io.tiklab.eam.passport.user.model.UserPassport;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.user.user.service.UserService;
@@ -18,11 +16,13 @@ import io.tiklab.xpack.repository.service.RepositoryMavenService;
 import io.tiklab.xpack.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.xpack.repository.service.RepositoryService;
 import io.tiklab.xpack.upload.MavenUploadService;
+import io.tiklab.xpack.common.UserCheckService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -77,13 +77,16 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     @Autowired
     XpackYamlDataMaService yamlDataMaService;
 
+    @Autowired
+    UserCheckService userCheckService;
+
     @Override
     public Result<byte[]> mavenSubmit(String contextPath, InputStream inputStream, String userData) {
         logger.info("userData:"+contextPath+":"+userData);
         String userName;
         try {
             //账号校验
-            userName=verifyUser(userData);
+            userName=userCheckService.mavenUserCheck(userData);
         }catch (Exception e){
             return Result.error(401,e.getMessage());
         }
@@ -176,6 +179,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             type="Release";
         }
         Library library= libraryService.findLibraryByNameAndType(libraryName,"maven",type);
+        logger.info("拉取制品名字："+libraryName);
         if (!ObjectUtils.isEmpty(library)){
             logger.info("进入:library");
             String repositoryPath = yamlDataMaService.repositoryAddress();
@@ -244,14 +248,11 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(groupList)){
             RepositoryGroup repositoryGroup = groupList.get(0);
-
             //远程代理路径
             List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
             if (CollectionUtils.isNotEmpty(remoteProxyList)){
-                System.out.println("执行拉取4:"+new Timestamp(System.currentTimeMillis()));
                 //转发到远程
                 Result<byte[]> result = restTemplateMethod(remoteProxyList,remoteProxyList.get(0), relativePath);
-                System.out.println("执行拉取5:"+new Timestamp(System.currentTimeMillis()));
                 if (result.getCode()==200){
                     String remoteFileUrl  = repositoryGroup.getRepository().getId() + "/"+relativePath;
                     //解析相对路径 获取文件名称、版本、groupId
@@ -311,9 +312,13 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String relativeAbsoluteUrl=proxyUrl+"/"+relativePath;
         try {
             RestTemplate restTemplate = new RestTemplate();
+            logger.info("开始执行拉取远程restTemplate路径:"+relativeAbsoluteUrl);
             ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
+            int codeValue = entity.getStatusCodeValue();
+            logger.info("结束执行拉取远程restTemplate状态:"+codeValue);
+
             byte[] entityBody = entity.getBody();
-            return result(200,entityBody,"OK");
+            return result(codeValue,entityBody,"OK");
         }catch (Exception e){
             if (defaultNum+1<remoteProxyList.size()){
                 RepositoryRemoteProxy proxy = remoteProxyList.get(defaultNum + 1);
@@ -610,32 +615,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
     }
 
-
-    /**
-     *  maven提交-获取用户
-     * @param userData  提交用户信息
-     * @return
-     */
-    public String verifyUser(String userData){
-        String userName;
-        if (("xpack".equals(userData))){
-            //项目里面手动提交maven用户信息默认用的xpack
-            String loginId = LoginContext.getLoginId();
-            userName = userService.findUser(loginId).getName();
-        }else {
-            String[]  userObject=userData.split(":");
-            userName = userObject[0];
-            String password = userObject[1];
-
-            UserPassport userPassport = new UserPassport();
-            userPassport.setAccount(userName);
-            userPassport.setPassword(password);
-            userPassport.setDirId("1");
-            userPassportService.login(userPassport);
-        }
-        return userName;
-    }
-
     /**
      *  获取快照时间戳
      * @param
@@ -700,7 +679,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     public String getFolderLayer(String libraryName,String repositoryId){
         String url;
         //制品文件位置 用随机数据替换过长的groupId
-        List<Library> libraryList = libraryService.likeLibraryByName(new LibraryQuery().setName(libraryName).setRepositoryId(repositoryId));
+        List<Library> libraryList = libraryService.likeLibraryListNo(new LibraryQuery().setName(libraryName).setRepositoryId(repositoryId));
 
         //已经存在直接获取，不存在生成
         if (CollectionUtils.isNotEmpty(libraryList)){

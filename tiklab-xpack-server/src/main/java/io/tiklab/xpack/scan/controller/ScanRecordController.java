@@ -7,6 +7,7 @@ import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.postin.annotation.ApiParam;
 import io.tiklab.xpack.scan.model.ScanRecord;
 import io.tiklab.xpack.scan.model.ScanRecordQuery;
+import io.tiklab.xpack.scan.model.ScanRely;
 import io.tiklab.xpack.scan.service.ScanRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,15 @@ public class ScanRecordController {
         return Result.ok();
     }
 
+    @RequestMapping(path="/deleteScanRecordByGroup",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteScanRecordByGroup",desc = "通过条件组删除")
+    @ApiParam(name = "scanGroup",desc = "scanGroup",required = true)
+    public Result<Void> deleteScanRecordByGroup(@NotNull String scanGroup){
+        scanRecordService.deleteScanRecordByGroup(scanGroup);
+
+        return Result.ok();
+    }
+
     @RequestMapping(path="/findScanRecord",method = RequestMethod.POST)
     @ApiMethod(name = "findScanRecord",desc = "通过id查询扫描记录")
     @ApiParam(name = "id",desc = "id",required = true)
@@ -85,6 +95,33 @@ public class ScanRecordController {
         Pagination<ScanRecord> pagination = scanRecordService.findScanRecordPage(scanRecordQuery);
 
         return Result.ok(pagination);
+    }
+
+    @RequestMapping(path = "/findScanRecordByPlay",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRecordPage",desc = "查询扫描计划的总报告")
+    @ApiParam(name = "scanRecordQuery",desc = "scanRecordQuery",required = true)
+    public Result< List<ScanRecord>> findScanRecordByPlay(@RequestBody @Valid @NotNull ScanRecordQuery scanRecordQuery){
+        List<ScanRecord> scanRecordList = scanRecordService.findScanRecordByPlay(scanRecordQuery);
+
+        return Result.ok(scanRecordList);
+    }
+
+    @RequestMapping(path = "/findScanRecordByGroup",method = RequestMethod.POST)
+    @ApiMethod(name = "findScanRecordByPlay",desc = "通过group 查询")
+    @ApiParam(name = "scanGroup",desc = "scanGroup",required = true)
+    public Result<ScanRecord> findScanRecordByGroup( @NotNull String scanGroup){
+         ScanRecord scanRecord= scanRecordService.findScanRecordByGroup(scanGroup);
+
+        return Result.ok(scanRecord);
+    }
+
+    @RequestMapping(path = "/findHaveHoleRelyTreeList",method = RequestMethod.POST)
+    @ApiMethod(name = "findHaveHoleRelyTreeList",desc = "条件查询有漏洞的扫描依赖树")
+    @ApiParam(name = "scanGroup",desc = "scanGroup",required = true)
+    public Result<ScanRecord> findHaveHoleRelyTreeList( @NotNull String scanGroup){
+        List<ScanRecord> scanRelyList = scanRecordService.findHaveHoleRelyTreeList(scanGroup);
+
+        return Result.ok(scanRelyList);
     }
 
 }

@@ -2,21 +2,17 @@ package io.tiklab.xpack.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.tiklab.beans.annotation.Mapper;
-import io.tiklab.beans.annotation.Mapping;
-import io.tiklab.beans.annotation.Mappings;
 import io.tiklab.core.BaseModel;
 import io.tiklab.join.annotation.Join;
-import io.tiklab.join.annotation.JoinQuery;
 import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
-import io.tiklab.xpack.library.model.Library;
 
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
-/**
- * ScanResult扫描结果
- */
+/*
+* 扫码漏洞
+* */
 @ApiModel
 @Join
 @Mapper
@@ -25,57 +21,37 @@ public class ScanHole extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @ApiProperty(name="holeType",desc="漏洞类型 本地制品：scanLibrary、依赖：relyLibrary")
-    private String holeType;
+    @ApiProperty(name="vendor",desc="vendor （groupId）")
+    private String vendor;
 
-    @ApiProperty(name="libraryId",desc="制品ID 本地制品和依赖制品")
-    private String libraryId;
+    @ApiProperty(name="product",desc="产品名字")
+    private String product;
 
-    @ApiProperty(name="scanRecordId",desc="扫描结果的id")
-    private String scanRecordId;
+    @ApiProperty(name="version",desc="版本")
+    private String version;
 
+    @ApiProperty(name="language",desc="语言")
+    private String language;
 
-    @ApiProperty(name="scanLibraryId",desc="扫描制品id")
-    private String scanLibraryId;
-
-
-    @ApiProperty(name="holeName",desc="漏洞名字")
+    @ApiProperty(name="holeName",desc="漏洞名称")
     private String holeName;
 
+    @ApiProperty(name="hole_number",desc="漏洞编号")
+    private String holeNumber;
 
     @ApiProperty(name="holeLevel",desc="漏洞等级 1-4递减")
     private Integer holeLevel;
 
-    @ApiProperty(name="holeCwe",desc="漏洞holeCwe编号")
-    private String holeCwe;
+    @ApiProperty(name="suggestion",desc="建议")
+    private String suggestion;
 
-    @ApiProperty(name="holeCve",desc="漏洞cve编号")
-    private String holeCve;
-
-
-    @ApiProperty(name="holeCnnvd",desc="漏洞cnnvd 编号")
-    private String holeCnnvd;
-
-    @ApiProperty(name="holeCnvd",desc="漏洞Cnvd编号")
-    private String holeCnvd;
-
-    @ApiProperty(name="holeXmirror",desc="漏洞Xmirror编号")
-    private String holeXmirror;
+    @ApiProperty(name="describe",desc="描述")
+    private String describe;
 
 
-    @ApiProperty(name="releaseTime",desc="发布时间")
-    private String releaseTime;
-
-    @ApiProperty(name="holeDesc",desc="漏洞描述")
-    private String holeDesc;
-
-    @ApiProperty(name="repairSuggest",desc="修复建议")
-    private String repairSuggest;
-
-    @ApiProperty(name="creatTime",desc="creatTime")
+    @ApiProperty(name="创建时间",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
-    private java.sql.Timestamp creatTime;
-
+    private Timestamp createTime;
 
 
     public String getId() {
@@ -86,6 +62,37 @@ public class ScanHole extends BaseModel {
         this.id = id;
     }
 
+    public String getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public String getHoleName() {
         return holeName;
@@ -93,6 +100,14 @@ public class ScanHole extends BaseModel {
 
     public void setHoleName(String holeName) {
         this.holeName = holeName;
+    }
+
+    public String getHoleNumber() {
+        return holeNumber;
+    }
+
+    public void setHoleNumber(String holeNumber) {
+        this.holeNumber = holeNumber;
     }
 
     public Integer getHoleLevel() {
@@ -103,107 +118,27 @@ public class ScanHole extends BaseModel {
         this.holeLevel = holeLevel;
     }
 
-    public String getHoleCve() {
-        return holeCve;
+    public String getSuggestion() {
+        return suggestion;
     }
 
-    public void setHoleCve(String holeCve) {
-        this.holeCve = holeCve;
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
     }
 
-    public String getHoleCnnvd() {
-        return holeCnnvd;
+    public String getDescribe() {
+        return describe;
     }
 
-    public void setHoleCnnvd(String holeCnnvd) {
-        this.holeCnnvd = holeCnnvd;
+    public void setDescribe(String describe) {
+        this.describe = describe;
     }
 
-    public String getHoleCnvd() {
-        return holeCnvd;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setHoleCnvd(String holeCnvd) {
-        this.holeCnvd = holeCnvd;
-    }
-
-    public String getHoleXmirror() {
-        return holeXmirror;
-    }
-
-    public void setHoleXmirror(String holeXmirror) {
-        this.holeXmirror = holeXmirror;
-    }
-
-    public String getReleaseTime() {
-        return releaseTime;
-    }
-
-    public void setReleaseTime(String releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public String getHoleDesc() {
-        return holeDesc;
-    }
-
-    public void setHoleDesc(String holeDesc) {
-        this.holeDesc = holeDesc;
-    }
-
-    public String getRepairSuggest() {
-        return repairSuggest;
-    }
-
-    public void setRepairSuggest(String repairSuggest) {
-        this.repairSuggest = repairSuggest;
-    }
-
-    public Timestamp getCreatTime() {
-        return creatTime;
-    }
-
-    public void setCreatTime(Timestamp creatTime) {
-        this.creatTime = creatTime;
-    }
-
-    public String getHoleType() {
-        return holeType;
-    }
-
-    public void setHoleType(String holeType) {
-        this.holeType = holeType;
-    }
-
-    public String getLibraryId() {
-        return libraryId;
-    }
-
-    public void setLibraryId(String libraryId) {
-        this.libraryId = libraryId;
-    }
-
-    public String getHoleCwe() {
-        return holeCwe;
-    }
-
-    public void setHoleCwe(String holeCwe) {
-        this.holeCwe = holeCwe;
-    }
-
-    public String getScanLibraryId() {
-        return scanLibraryId;
-    }
-
-    public void setScanLibraryId(String scanLibraryId) {
-        this.scanLibraryId = scanLibraryId;
-    }
-
-    public String getScanRecordId() {
-        return scanRecordId;
-    }
-
-    public void setScanRecordId(String scanRecordId) {
-        this.scanRecordId = scanRecordId;
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 }

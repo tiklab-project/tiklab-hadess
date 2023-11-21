@@ -44,6 +44,9 @@ public class LibraryQuery implements Serializable {
         private String artifactId;
 
 
+        @ApiProperty(name ="scanPlayId",desc = "扫描计划id")
+        private String scanPlayId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -120,5 +123,12 @@ public class LibraryQuery implements Serializable {
             this.artifactId = artifactId;
         }
 
+        public String getScanPlayId() {
+            return scanPlayId;
+        }
 
+        public LibraryQuery setScanPlayId(String scanPlayId) {
+            this.scanPlayId = scanPlayId;
+            return this;
+        }
 }

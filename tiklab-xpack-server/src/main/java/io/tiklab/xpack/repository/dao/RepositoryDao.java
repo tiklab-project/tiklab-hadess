@@ -93,6 +93,7 @@ public class RepositoryDao{
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryEntity.class)
                 .eq("repositoryType",repositoryQuery.getRepositoryType())
                 .eq("type",repositoryQuery.getType())
+                .eq("category",repositoryQuery.getCategory())
                 .eq("name",repositoryQuery.getName())
                 .orders(repositoryQuery.getOrderParams())
                 .get();

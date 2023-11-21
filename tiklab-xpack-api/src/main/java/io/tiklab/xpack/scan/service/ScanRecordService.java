@@ -45,6 +45,12 @@ public interface ScanRecordService {
      */
     void deleteScanRecordByCondition(@NotNull String key,@NotNull String value);
 
+    /**
+     * 通过条件组删除
+     * @param scanGroup
+     */
+    void deleteScanRecordByGroup(String scanGroup);
+
     @FindOne
     ScanRecord findOne(@NotNull String id);
 
@@ -93,5 +99,25 @@ public interface ScanRecordService {
     * @return
     */
     Pagination<ScanRecord> findScanRecordPage(ScanRecordQuery scanRecordQuery);
+
+    /**
+     * 查询扫描计划的总报告
+     * @param scanRecordQuery
+     * @return
+     */
+    List<ScanRecord> findScanRecordByPlay(ScanRecordQuery scanRecordQuery);
+
+    /**
+     * 通过group查询扫描结果
+     * @param scanGroup
+     */
+    ScanRecord findScanRecordByGroup(String scanGroup);
+
+    /**
+     * 条件查询有漏洞的扫描依赖树
+     * @param scanGroup
+     */
+    List<ScanRecord> findHaveHoleRelyTreeList(String scanGroup);
+
 
 }

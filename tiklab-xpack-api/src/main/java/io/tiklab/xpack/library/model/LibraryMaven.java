@@ -20,6 +20,9 @@ public class LibraryMaven extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private java.lang.String id;
 
+    @ApiProperty(name="repositoryId",desc="repositoryId")
+    private String repositoryId;
+
     @NotNull
     @ApiProperty(name="library",desc="制品",required = true)
     @Mappings({
@@ -74,5 +77,13 @@ public class LibraryMaven extends BaseModel {
 
     public void setCreateTime(java.sql.Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
     }
 }

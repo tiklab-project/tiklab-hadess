@@ -11,25 +11,37 @@ import java.util.List;
 @ApiModel
 public class ScanQueue {
 
-    @ApiProperty(name="repositoryId",desc="制品库id")
-    private String repositoryId;
+    @ApiProperty(name="state",desc="状态 start、end")
+    private String state;
 
-    @ApiProperty(name="scanList",desc="扫描list")
-    private List<Scan> scanList;
+    @ApiProperty(name="scanPlayId",desc="扫描计划id")
+    private String scanPlayId;
 
-    public String getRepositoryId() {
-        return repositoryId;
+    @ApiProperty(name="scanLibraryList",desc="扫描list")
+    private List<ScanLibrary> scanLibraryList;
+
+    public String getScanPlayId() {
+        return scanPlayId;
     }
 
-    public void setRepositoryId(String repositoryId) {
-        this.repositoryId = repositoryId;
+    public void setScanPlayId(String scanPlayId) {
+        this.scanPlayId = scanPlayId;
     }
 
-    public List<Scan> getScanList() {
-        return scanList;
+    public List<ScanLibrary> getScanLibraryList() {
+        return scanLibraryList;
     }
 
-    public void setScanList(List<Scan> scanList) {
-        this.scanList = scanList;
+    public void setScanLibraryList(List<ScanLibrary> scanLibraryList) {
+        this.scanLibraryList = scanLibraryList;
     }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
 }

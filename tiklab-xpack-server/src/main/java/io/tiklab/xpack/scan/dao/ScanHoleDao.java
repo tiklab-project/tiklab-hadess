@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * ScanHoleDao-扫描结果数据库访问
+ * ScanHoleDao-扫描漏洞数据库访问
  */
 @Repository
 public class ScanHoleDao {
@@ -51,7 +51,7 @@ public class ScanHoleDao {
     }
 
     /**
-     * 条件删除存储库
+     * 条件删除漏洞
      * @param deleteCondition
      */
     public void deleteScanHole(DeleteCondition deleteCondition){
@@ -68,7 +68,7 @@ public class ScanHoleDao {
     }
 
     /**
-    * 查询所有存储库
+    * 查询所有漏洞
     * @return
     */
     public List<ScanHoleEntity> findAllScanHole() {
@@ -76,7 +76,7 @@ public class ScanHoleDao {
     }
 
     /**
-     * 通过ids查询存储库
+     * 通过ids查询漏洞
      * @param idList
      * @return List <ScanHoleEntity>
      */
@@ -85,37 +85,43 @@ public class ScanHoleDao {
     }
 
     /**
-     * 条件查询存储库
+     * 条件查询漏洞
      * @param scanHoleQuery
      * @return List <ScanHoleEntity>
      */
     public List<ScanHoleEntity> findScanHoleList(ScanHoleQuery scanHoleQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
-                .eq("libraryId",scanHoleQuery.getLibraryId())
-                .eq("holeType",scanHoleQuery.getHoleType())
-                .eq("scanLibraryId",scanHoleQuery.getScanLibraryId())
                 .eq("holeLevel",scanHoleQuery.getHoleLevel())
-                .eq("scanRecordId",scanHoleQuery.getScanRecordId())
+                .eq("language",scanHoleQuery.getLanguage())
                 .orders(scanHoleQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,ScanHoleEntity.class);
     }
 
     /**
-     * 条件分页查询存储库
+     * 条件分页查询漏洞
      * @param scanHoleQuery
      * @return Pagination <ScanHoleEntity>
      */
     public Pagination<ScanHoleEntity> findScanHolePage(ScanHoleQuery scanHoleQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
-                .eq("libraryId",scanHoleQuery.getLibraryId())
-                .eq("holeType",scanHoleQuery.getHoleType())
-                .eq("scanLibraryId",scanHoleQuery.getScanLibraryId())
                 .eq("holeLevel",scanHoleQuery.getHoleLevel())
-                .eq("scanRecordId",scanHoleQuery.getScanRecordId())
+                .eq("language",scanHoleQuery.getLanguage())
                 .orders(scanHoleQuery.getOrderParams())
                 .pagination(scanHoleQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,ScanHoleEntity.class);
+    }
+
+    /**
+     * 条件分页查询漏洞
+     * @param holeIds
+     * @return Pagination <ScanHoleEntity>
+     */
+    public List<ScanHoleEntity> findScanHoleByIds(String[] holeIds) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
+                .in("id",holeIds)
+                .get();
+        return jpaTemplate.findList(queryCondition,ScanHoleEntity.class);
     }
 }

@@ -23,12 +23,14 @@ public class RepositoryQuery implements Serializable {
         @ApiProperty(name ="name",desc = "制品库名字")
         private String name;
 
-        @ApiProperty(name ="repositoryType",desc = "制品库类型 maven、npm")
+        @ApiProperty(name ="repositoryType",desc = "类型 local、remote、group")
         private String repositoryType;
 
-        @ApiProperty(name ="type",desc = "类型 local、remote、group")
+        @ApiProperty(name ="type",desc = "制品库类型 maven、npm ")
         private String type;
 
+        @ApiProperty(name ="category",desc = "1演示、2正式")
+        private Integer category;
 
 
         public List<Order> getOrderParams() {
@@ -71,6 +73,15 @@ public class RepositoryQuery implements Serializable {
 
         public RepositoryQuery setName(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Integer getCategory() {
+            return category;
+        }
+
+        public RepositoryQuery setCategory(Integer category) {
+            this.category = category;
             return this;
         }
 }

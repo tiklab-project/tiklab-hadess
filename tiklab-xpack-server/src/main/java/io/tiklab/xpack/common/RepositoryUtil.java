@@ -11,6 +11,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -222,6 +225,33 @@ public class RepositoryUtil {
     }
 
     /**
+     * 获取与当前时间的时间差
+     * @param longTime
+     * @return 位置
+     */
+    public static String timeBad(Long longTime){
+        long days = longTime / (24 * 60 * 60 * 1000); // 计算天数
+        long hours = (longTime % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000); // 计算小时数
+        long minutes = (longTime % (60 * 60 * 1000)) / (60 * 1000); // 计算分钟数
+        long second =(longTime % (60 * 60 * 1000)) % (60 * 1000) / 1000;  //计算秒数
+
+        String badTime=null;
+        if (days!=0){
+            badTime= days + "天"+ hours + "时";
+        }
+        if (days==0&&hours!=0){
+            badTime= hours + "时"+ minutes + "分";
+        }
+        if (days==0&&hours==0){
+            badTime= minutes + "分"+second+"秒";
+        }
+        if (days==0&&hours==0&&minutes==0){
+            badTime= second+"秒";
+        }
+
+        return badTime;
+    }
+    /**
      * 计算和
      * @param sizeList
      */
@@ -371,6 +401,37 @@ public class RepositoryUtil {
         }catch (Exception e){
            throw  new SystemException("读取信息失败");
         }
+    }
+
+    /**
+     * 获取当前服务器的ip
+     * @return
+     */
+    public static String getServerIp(){
+        String ip=null;
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                if (networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                    continue;  // 跳过回环和虚拟网络接口
+                }
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (address.isLoopbackAddress()) {
+                        continue;  // 跳过回环地址
+                    }
+                    if (address.getHostAddress().contains(":")) {
+                        continue;  // 跳过IPv6地址
+                    }
+                    ip = address.getHostAddress();
+                }
+            }
+        } catch (Exception e) {
+            ip = "172.0.0.1";
+        }
+        return ip;
     }
 
 }

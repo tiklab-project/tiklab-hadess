@@ -239,7 +239,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryService.deleteLibrary(libraryVersion.getLibrary().getId());
 
         if ("maven".equals(libraryVersion.getLibrary().getLibraryType())){
-            libraryMavenService.deleteLibraryMavenByLibraryId(libraryVersion.getLibrary().getId());
+            libraryMavenService.deleteLibraryMavenByCondition("libraryId",libraryVersion.getLibrary().getId());
         }
         this.deleteLibraryVersion(id);
     }

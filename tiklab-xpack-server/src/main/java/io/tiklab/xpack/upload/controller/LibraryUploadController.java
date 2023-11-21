@@ -3,6 +3,7 @@ package io.tiklab.xpack.upload.controller;
 import com.alibaba.fastjson.JSON;
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.xpack.common.XpackYamlDataMaService;
 import io.tiklab.xpack.upload.MavenUploadService;
 import io.tiklab.xpack.upload.NpmUploadService;
 import io.tiklab.xpack.repository.model.Repository;
@@ -23,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Base64;
 import java.util.Map;
-
+/*
+* maven、npm 制品上传拉取
+* */
 @WebServlet(name = "xpackServlet",urlPatterns = {"/repository/*"},
         initParams = {
         @WebInitParam(name = "base-path", value = "//"),
@@ -41,15 +44,17 @@ public  class LibraryUploadController extends HttpServlet {
     @Autowired
     NpmUploadService downloadNpmService;
 
+    @Autowired
+    XpackYamlDataMaService yamlDataMaService;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String contextPath = request.getRequestURI();
-
-        String repositoryPath = contextPath.substring(contextPath.indexOf("/", 1) + 1);
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
         String repositoryName=repositoryPath.substring(0,repositoryPath.indexOf("/", 1));
 
         if (StringUtils.isNotEmpty(repositoryName)){
-            Repository repository = repositoryService.findRepositoryListByName(repositoryName);
+            Repository repository = repositoryService.findRepositoryByName(repositoryName);
             if (ObjectUtils.isEmpty(repository)){
                 response.setStatus(404);
                 return;
@@ -127,9 +132,6 @@ public  class LibraryUploadController extends HttpServlet {
      */
     public void npm(HttpServletRequest request,HttpServletResponse response,String repositoryPath){
 
-       /* String a="""
-
-        """;*/
         String referer = request.getHeader("referer");
         if (StringUtils.isNotEmpty(referer)){
             try {

@@ -79,7 +79,7 @@ public class ScanRely extends BaseModel {
 
     private List<ScanRely> scanRelyList;
 
-    private List<ScanHole> scanHoleList;
+    private List<ScanResult> scanResultList;
 
     public String getId() {
         return id;
@@ -194,12 +194,12 @@ public class ScanRely extends BaseModel {
         this.relyOneId = relyOneId;
     }
 
-    public List<ScanHole> getScanHoleList() {
-        return scanHoleList;
+    public List<ScanResult> getScanResultList() {
+        return scanResultList;
     }
 
-    public void setScanHoleList(List<ScanHole> scanHoleList) {
-        this.scanHoleList = scanHoleList;
+    public void setScanResultList(List<ScanResult> scanResultList) {
+        this.scanResultList = scanResultList;
     }
 
     public String getScanRecordId() {

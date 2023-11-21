@@ -6,19 +6,29 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.springframework.util.ClassUtils;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class test {
 
     public static void main(String[] args) throws IOException {
         String folderPath = "/Users/limingliang/tiklab/123/test"; // 要删除的文件夹路径
 
+        int ceil =(int) Math.ceil((double) 7 / 2);
+        System.out.println("ceil:"+ceil);
+
+        int dividend = 10;  // 被除数
+        int divisor = 3;   // 除数
         try {
             FileUtils.deleteDirectory(new File(folderPath));
             System.out.println("文件夹删除成功！");
         } catch (IOException e) {
             System.out.println("文件夹删除失败：" + e.getMessage());
         }
+
     }
+
 }

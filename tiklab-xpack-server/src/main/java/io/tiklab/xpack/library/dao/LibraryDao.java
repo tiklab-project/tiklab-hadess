@@ -167,7 +167,7 @@ public class LibraryDao{
          countSql = findConditionByRpyId(libraryQuery, countSql);
         Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
         pagination.setTotalRecord(integer);
-        double result = Math.ceil(integer/pageParam.getPageSize());
+        double result = Math.ceil((double)integer/pageParam.getPageSize());
         pagination.setTotalPage((int) result);
 
 
@@ -202,7 +202,7 @@ public class LibraryDao{
         Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
 
         pagination.setTotalRecord(integer);
-        double result = Math.ceil(integer/pageParam.getPageSize());
+        double result = Math.ceil((double)integer/pageParam.getPageSize());
         pagination.setTotalPage((int) result);
 
         String sql="SELECT li.* , lim.group_id,lim.artifact_id FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
@@ -353,7 +353,7 @@ public class LibraryDao{
 
     public List<LibraryEntity> likeLibraryByName(LibraryQuery libraryQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .eq("name",libraryQuery.getName())
+                .like("name",libraryQuery.getName())
                 .eq("repositoryId", libraryQuery.getRepositoryId())
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);

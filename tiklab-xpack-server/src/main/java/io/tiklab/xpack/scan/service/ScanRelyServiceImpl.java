@@ -8,10 +8,7 @@ import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.scan.dao.ScanRelyDao;
 import io.tiklab.xpack.scan.entity.ScanRelyEntity;
-import io.tiklab.xpack.scan.model.ScanHole;
-import io.tiklab.xpack.scan.model.ScanHoleQuery;
-import io.tiklab.xpack.scan.model.ScanRely;
-import io.tiklab.xpack.scan.model.ScanRelyQuery;
+import io.tiklab.xpack.scan.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +36,10 @@ public class ScanRelyServiceImpl implements ScanRelyService {
     JoinTemplate joinTemplate;
 
     @Autowired
-    ScanHoleService scanHoleService;
+    ScanResultService scanResultService;
+
+    @Autowired
+    ScanRecordService scanRecordService;
 
     @Override
     public String createScanRely(@NotNull @Valid ScanRely scanRely) {
@@ -66,6 +66,11 @@ public class ScanRelyServiceImpl implements ScanRelyService {
                 .eq(key, value)
                 .get();
         scanRelyDao.deleteScanRely(deleteCondition);
+    }
+
+    @Override
+    public void deleteScanRelyByRecordIds(StringBuilder recordIds) {
+        scanRelyDao.deleteScanRelyByRecordIds(recordIds);
     }
 
     @Override
@@ -148,10 +153,10 @@ public class ScanRelyServiceImpl implements ScanRelyService {
 
     @Override
     public List<ScanRely> findHaveHoleRelyTreeList(ScanRelyQuery scanRelyQuery) {
-        List<ScanHole> scanHoleList = scanHoleService.findScanHoleList(new ScanHoleQuery().
+        List<ScanResult> scanResultList = scanResultService.findScanResultList(new ScanResultQuery().
                 setScanRecordId(scanRelyQuery.getScanRecordId()).setHoleType("relyLibrary"));
-        if (CollectionUtils.isNotEmpty(scanHoleList)){
-            List<String> RelyLibraryList = scanHoleList.stream().map(ScanHole::getLibraryId).distinct().collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(scanResultList)){
+            List<String> RelyLibraryList = scanResultList.stream().map(ScanResult::getLibraryId).distinct().collect(Collectors.toList());
             List<ScanRely> scanRelyList = this.findList(RelyLibraryList);
             //第一级依赖（通过子级依赖查询他的第一）
             List<String> relyOneId = scanRelyList.stream().filter(a -> !ObjectUtils.isEmpty(a.getRelyOneId())).map(ScanRely::getRelyOneId).distinct().collect(Collectors.toList());
@@ -163,14 +168,14 @@ public class ScanRelyServiceImpl implements ScanRelyService {
 
             for (ScanRely scanRely:oneRelyList){
                 //直接依赖的漏洞
-                List<ScanHole> scanHole = scanHoleList.stream().filter(a -> a.getLibraryId().equals(scanRely.getId())).sorted(Comparator.comparing(ScanHole::getHoleLevel)).collect(Collectors.toList());
-                scanRely.setScanHoleList(scanHole);
+                List<ScanResult> scanResult = scanResultList.stream().filter(a -> a.getLibraryId().equals(scanRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                scanRely.setScanResultList(scanResult);
 
                 //直接依赖
                 List<ScanRely> scanRelies = scanRelyList.stream().filter(a ->(scanRely.getId()).equals( a.getRelyOneId())).collect(Collectors.toList());
                 for (ScanRely secondRely:scanRelies){
-                    List<ScanHole> scanHoles = scanHoleList.stream().filter(a -> a.getLibraryId().equals(secondRely.getId())).sorted(Comparator.comparing(ScanHole::getHoleLevel)).collect(Collectors.toList());
-                    secondRely.setScanHoleList(scanHoles);
+                    List<ScanResult> scanResults = scanResultList.stream().filter(a -> a.getLibraryId().equals(secondRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                    secondRely.setScanResultList(scanResults);
                 }
                 scanRely.setScanRelyList(scanRelies);
 
@@ -182,6 +187,56 @@ public class ScanRelyServiceImpl implements ScanRelyService {
             return relyList;
         }
         return null;
+    }
+
+    @Override
+    public List<ScanRely> findHaveHoleRelyTreeList(String scanGroup) {
+        List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanGroup(scanGroup));
+        if (CollectionUtils.isNotEmpty(scanRecordList)){
+            List<String> groups = scanRecordList.stream().map(ScanRecord::getId).collect(Collectors.toList());
+            String[] RecordId = new String[groups.size()];
+            String[] strings = groups.toArray(RecordId);
+            List<ScanResult> scanResultList = scanResultService.findScanResultByRecordIds(strings);
+            if (CollectionUtils.isNotEmpty(scanResultList)){
+                List<String> RelyLibraryList = scanResultList.stream().map(ScanResult::getLibraryId).distinct().collect(Collectors.toList());
+                List<ScanRely> scanRelyList = this.findList(RelyLibraryList);
+                //第一级依赖（通过子级依赖查询他的第一）
+                List<String> relyOneId = scanRelyList.stream().filter(a -> !ObjectUtils.isEmpty(a.getRelyOneId())).map(ScanRely::getRelyOneId).distinct().collect(Collectors.toList());
+                List<String> stringList = scanRelyList.stream().filter(a -> ObjectUtils.isEmpty(a.getRelyOneId())).map(ScanRely::getId).distinct().collect(Collectors.toList());
+
+                List<String> list = Stream.concat(relyOneId.stream(), stringList.stream()).collect(Collectors.toList());
+
+                List<ScanRely> oneRelyList = this.findList(list);
+
+                for (ScanRely scanRely:oneRelyList){
+                    //直接依赖的漏洞
+                    List<ScanResult> scanResult = scanResultList.stream().filter(a -> a.getLibraryId().equals(scanRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                    scanRely.setScanResultList(scanResult);
+
+                    //直接依赖
+                    List<ScanRely> scanRelies = scanRelyList.stream().filter(a ->(scanRely.getId()).equals( a.getRelyOneId())).collect(Collectors.toList());
+                    for (ScanRely secondRely:scanRelies){
+                        List<ScanResult> scanResults = scanResultList.stream().filter(a -> a.getLibraryId().equals(secondRely.getId())).sorted(Comparator.comparing(ScanResult::getHoleLevel)).collect(Collectors.toList());
+                        secondRely.setScanResultList(scanResults);
+                    }
+                    scanRely.setScanRelyList(scanRelies);
+
+                }
+                List<ScanRely> relyList = oneRelyList.stream().sorted(Comparator.comparing(a -> {
+                    return a.getScanRelyList().isEmpty() ? 0 : 1;
+                })).collect(Collectors.toList());
+
+                return relyList;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<ScanRely> findScanRelyListByRecordIds(String[] scanRecordIds) {
+        List<ScanRelyEntity> scanRelyEntity = scanRelyDao.findScanRelyListByRecordIds(scanRecordIds);
+        List<ScanRely> scanRelyList =  BeanMapper.mapList(scanRelyEntity,ScanRely.class);
+        return scanRelyList;
     }
 
     /**

@@ -61,7 +61,7 @@ public interface RepositoryService {
     List<Repository> findAllRepository();
 
     /**
-    * 查询列表
+    * 条件查询仓库查询列表
     * @param repositoryQuery
     * @return
     */
@@ -73,7 +73,7 @@ public interface RepositoryService {
      * @param type
      * @return
      */
-    List<Repository> findRepositoryList(String type);
+    List<Repository> findRepositoryListByType(String type);
 
     /**
      * 根据仓库名字查询
@@ -82,12 +82,7 @@ public interface RepositoryService {
      */
     Repository findRepositoryByName(String repositoryName);
 
-    /**
-     * 通过仓库名字查询仓库
-     * @param name 仓库名字
-     * @return
-     */
-    Repository findRepositoryListByName(String name);
+
 
     /**
      * 查询本地和远程库
