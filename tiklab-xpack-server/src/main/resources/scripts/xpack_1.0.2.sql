@@ -10,7 +10,7 @@ create table pack_backups(
       exec_state varchar (12)
 );
 
-INSERT INTO pack_backups (id, task_state, log,exec_result,exec_time,exec_state) VALUES ('0230645439', 'false',null,'non','non','end');
+INSERT INTO pack_backups (id, task_state,log,exec_result,exec_time,exec_state) VALUES ('0230645439', 'false',null,'non','non','end');
 
 
 

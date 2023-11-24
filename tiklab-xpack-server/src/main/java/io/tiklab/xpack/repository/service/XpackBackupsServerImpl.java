@@ -26,6 +26,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,6 +53,9 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
 
     @Autowired
     XpackYamlDataMaService yamlDataMaService;
+
+    @Value("${backup.valid.time}")
+    Integer validTime;
 
 
     @Value("${jdbc.username}")
@@ -140,15 +149,22 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     List<Repository> localRpy = repositoryServer.findRepositoryListByType("local");
 
                     boolean isResidue = memSize(file, repositoryFile);
+
+                    File[] files = file.listFiles();
                     //当剩余空间不足删除最先备份的那个文件
                     if(!isResidue){
                         //获取备份文件夹下面备份文件并根据创建时间排序
-                        File[] files = file.listFiles();
                         List<File> collected = Arrays.stream(files).sorted(Comparator.comparing(a -> a.lastModified())).collect(Collectors.toList());
                         File firstFile = collected.get(0);
                         //删除文件
-                        FileUtils.deleteQuietly(firstFile);
+                       // FileUtils.deleteQuietly(firstFile);
+                        logger.info("备份空间不足");
+                        return;
                     }
+
+                    //根据有效时间删除别分数据 默认7天
+                    getFileCreateTime(validTime);
+
                     //添加最后一层目录压缩
                     String backupAddress = yamlDataMaService.backupAddress();
                     String lastName = backupAddress.substring(backupAddress.lastIndexOf("/"));
@@ -483,5 +499,39 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
         backups.setExecState("end");
         backups.setLog(execResultLog.getLog());
         this.updateBackups(backups);
+    }
+
+    /**
+     *  备份的时候删除超过存储有效的备份数据
+     *  @param validTime 有效时间 单位小时
+     */
+    public void getFileCreateTime(Integer validTime) throws IOException {
+        File file1 = new File(yamlDataMaService.backupAddress());
+        File[] files = file1.listFiles();
+        List<File> collected = Arrays.stream(files).sorted(Comparator.comparing(a -> a.lastModified()))
+                .filter(b->b.getName().contains("xpack_backups")).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(collected)){
+            for (int a=0;a<collected.size();a++) {
+                Path path = Paths.get(collected.get(a).getPath());
+                BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+
+                //文件创建毫秒
+                long millis = attributes.creationTime().toMillis();
+                //当前毫秒
+                long presentMillis = System.currentTimeMillis();
+                int validMillis = validTime * 3600000;
+
+                //创建时间已经超过有效时间
+                if (millis + validMillis <= presentMillis) {
+                    System.out.println("文件"+collected.get(a).getName()+"失效了");
+                    //所有文件都失效了，保留最后一个
+                    if (collected.size()-1==a){
+                        break;
+                    }
+                    //删除文件
+                    FileUtils.deleteQuietly(collected.get(a));
+                }
+            }
+        }
     }
 }

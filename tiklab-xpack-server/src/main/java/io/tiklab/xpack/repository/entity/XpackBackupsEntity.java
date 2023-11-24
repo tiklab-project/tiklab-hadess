@@ -15,6 +15,7 @@ public class XpackBackupsEntity {
     @Column(name = "task_state")
     private String taskState;
 
+
     //最后执行的结果
     @Column(name = "exec_result")
     private String execResult;
@@ -81,4 +82,5 @@ public class XpackBackupsEntity {
     public void setLog(String log) {
         this.log = log;
     }
+
 }

@@ -120,8 +120,7 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
     }
 
     public void libraryMavenSplice(String artifactId, String  groupId, Library library ){
-        List<LibraryMaven> libraryMavenList = this.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId())
-                .setArtifactId(artifactId).setGroupId(groupId));
+        List<LibraryMaven> libraryMavenList = this.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(library.getId()));
         if (CollectionUtils.isEmpty(libraryMavenList)){
             LibraryMaven libraryMaven = new LibraryMaven();
             libraryMaven.setArtifactId(artifactId);
@@ -130,5 +129,12 @@ public class LibraryMavenServiceImpl implements LibraryMavenService {
             libraryMaven.setRepositoryId(library.getRepository().getId());
             this.createLibraryMaven(libraryMaven);
         }
+    }
+
+    @Override
+    public List<LibraryMaven> libraryMavenByLibraryIds(String[] libraryIds) {
+        List<LibraryMavenEntity> libraryMavenEntityList = libraryMavenDao.libraryMavenByLibraryIds(libraryIds);
+        List<LibraryMaven> libraryMavenList = BeanMapper.mapList(libraryMavenEntityList,LibraryMaven.class);
+        return libraryMavenList;
     }
 }

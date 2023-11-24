@@ -35,6 +35,7 @@ public class XpackSqlLoad {
         });
         dsmConfig.newVersion("1.0.1", new String[]{
                 "xpack_1.0.1",
+                //"xprivilege_1.0.1",
 
         });
         dsmConfig.newVersion("1.0.2", new String[]{

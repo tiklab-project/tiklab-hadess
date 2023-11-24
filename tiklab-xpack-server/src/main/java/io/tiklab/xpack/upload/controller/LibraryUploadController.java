@@ -53,6 +53,7 @@ public  class LibraryUploadController extends HttpServlet {
         String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
         String repositoryName=repositoryPath.substring(0,repositoryPath.indexOf("/", 1));
 
+        StringBuffer requestURL = request.getRequestURL();
         if (StringUtils.isNotEmpty(repositoryName)){
             Repository repository = repositoryService.findRepositoryByName(repositoryName);
             if (ObjectUtils.isEmpty(repository)){
@@ -84,7 +85,7 @@ public  class LibraryUploadController extends HttpServlet {
      * maven
      */
     public void maven(HttpServletRequest request,HttpServletResponse response,String repositoryPath){
-        logger.info("开始执行maven");
+        logger.info("开始执行maven："+repositoryPath);
         String method = request.getMethod();
         //用户信息
         String authorization = request.getHeader("Authorization");
@@ -131,7 +132,7 @@ public  class LibraryUploadController extends HttpServlet {
      * npm
      */
     public void npm(HttpServletRequest request,HttpServletResponse response,String repositoryPath){
-
+        logger.info("开始执行npm："+repositoryPath);
         String referer = request.getHeader("referer");
         if (StringUtils.isNotEmpty(referer)){
             try {
@@ -150,7 +151,8 @@ public  class LibraryUploadController extends HttpServlet {
                         if ("200".equals(data.get("code"))){
                             response.setContentType("application/json;charset=utf-8");
                             Object o = JSON.toJSON(data.get("data"));
-                            response.getWriter().print(o);
+                            response.setStatus(200);
+                            response.getWriter().print(data.get("data"));
                         }
                         if ("404".equals(data.get("code"))){
                             response.setStatus(404);

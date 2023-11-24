@@ -84,5 +84,11 @@ public interface LibraryMavenService {
     void libraryMavenSplice(String artifactId, String  groupId, Library library );
 
 
+    /**
+     *  通过制品的ids  查询
+     * @param libraryIds     libraryIds
+     * @return
+     */
+    List<LibraryMaven> libraryMavenByLibraryIds(String[] libraryIds );
 
 }

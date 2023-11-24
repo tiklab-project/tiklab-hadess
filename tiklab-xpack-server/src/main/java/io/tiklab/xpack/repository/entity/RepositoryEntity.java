@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 public class RepositoryEntity extends BaseModel {
 
     @Id
-    @GeneratorValue(length = 12)
     @Column(name = "id",length = 12)
     private String id;
 

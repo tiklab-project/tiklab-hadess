@@ -114,17 +114,22 @@ public class RepositoryRemoteProxyDao{
         return jpaTemplate.findPage(queryCondition,RepositoryRemoteProxyEntity.class);
     }
 
-    public String findAgencyUrl(String repositoryName){
+    public List<String> findAgencyUrl(String repositoryName){
         String sql="SELECT pr.agency_url from pack_repository_remote_proxy pr " +
                 " LEFT JOIN pack_repository_group_items gr ON gr.repository_id=pr.repository_id  " +
                 "LEFT JOIN pack_repository re ON gr.repository_group_id=re.id" +
                 " WHERE re.name='"+repositoryName +"'";
         JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
         List<String> agencyUrlList = jdbcTemplate.queryForList(sql,String.class);
-        if (CollectionUtils.isNotEmpty(agencyUrlList)){
-           return agencyUrlList.get(0);
-        }
-        return null;
+
+        return agencyUrlList;
     }
 
+    public List<RepositoryRemoteProxyEntity> findAgencyByRpyIdAndPath(String[] repositoryIds, String agencyUrl) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
+                .in("repositoryId",repositoryIds)
+                .eq("agencyUrl",agencyUrl)
+                .get();
+        return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
+    }
 }

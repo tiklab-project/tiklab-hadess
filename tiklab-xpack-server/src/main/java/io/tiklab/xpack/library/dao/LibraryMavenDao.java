@@ -114,4 +114,11 @@ public class LibraryMavenDao{
                 .get();
         return jpaTemplate.findPage(queryCondition,LibraryMavenEntity.class);
     }
+
+    public List<LibraryMavenEntity> libraryMavenByLibraryIds(String[] libraryIds) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryMavenEntity.class)
+                .in("libraryId", libraryIds)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryMavenEntity.class);
+    }
 }

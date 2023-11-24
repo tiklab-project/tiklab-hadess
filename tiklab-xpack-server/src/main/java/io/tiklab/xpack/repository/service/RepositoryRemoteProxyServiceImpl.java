@@ -9,6 +9,7 @@ import io.tiklab.join.JoinTemplate;
 import io.tiklab.xpack.repository.model.RepositoryRemoteProxy;
 import io.tiklab.xpack.repository.model.RepositoryRemoteProxyQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,7 +109,17 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
     }
 
     @Override
-    public String findAgencyUrl(String repositoryName) {
-      return repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+    public List<String> findAgencyUrl(String repositoryName) {
+        return repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+    }
+
+    @Override
+    public RepositoryRemoteProxy findAgencyByRpyIdAndPath(String[] repositoryIds,String path) {
+        List<RepositoryRemoteProxyEntity> agencyByRpyIdAndPath = repositoryRemoteProxyDao.findAgencyByRpyIdAndPath(repositoryIds, path);
+        List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(agencyByRpyIdAndPath,RepositoryRemoteProxy.class);
+       if (CollectionUtils.isNotEmpty(repositoryRemoteProxyList)){
+           return repositoryRemoteProxyList.get(0);
+       }
+        return null;
     }
 }

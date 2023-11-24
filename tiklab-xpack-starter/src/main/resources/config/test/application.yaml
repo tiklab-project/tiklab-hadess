@@ -95,6 +95,9 @@ repository:
 backup:
   address: /opt/tiklab/xpack-backup
   time: 0 0 2 * * ?
+  valid:
+    time: 168
+
 
 backups:
   dir: /data/xcode

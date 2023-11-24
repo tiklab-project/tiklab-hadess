@@ -96,10 +96,12 @@ repository:
 backup:
   address: /opt/tiklab/xpack-backup
   time: 0 0 2 * * ?
-
+  valid:
+    time: 168
 backups:
   dir: /data/xcode
   time: 0 0 2 * * ?
+
 
 openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public

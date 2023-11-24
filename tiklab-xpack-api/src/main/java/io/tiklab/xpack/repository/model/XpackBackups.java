@@ -14,6 +14,7 @@ public class XpackBackups {
     @ApiProperty(name="taskState",desc="定时任务状态")
     private String taskState;
 
+
     @ApiProperty(name="log",desc="日志")
     private String log;
 
@@ -88,4 +89,5 @@ public class XpackBackups {
     public void setLog(String log) {
         this.log = log;
     }
+
 }

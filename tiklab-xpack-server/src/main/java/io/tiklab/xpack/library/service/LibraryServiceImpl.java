@@ -216,25 +216,56 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Library findLibraryByNameAndType(String name,String type,String version) {
+    public Library findLibraryByNameAndType(String name,String type) {
         Library library=null;
         List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByNameAndType(name,type);
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
         joinTemplate.joinQuery(libraryList);
-
         if (CollectionUtils.isNotEmpty(libraryList)){
-            //maven 版本有快照版本和正式版本 快照版本有时间戳
-            if (("maven").equals(type)){
-                List<String> repositoryIds = libraryList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
-                String[] repositoryId = new String[repositoryIds.size()];
-                String[] rpyIds = repositoryIds.toArray(repositoryId);
-                RepositoryMaven repositoryMaven = repositoryMavenService.findRepositoryMavenByRpyIds(rpyIds, version);
-                if (!ObjectUtils.isEmpty(repositoryMaven)){
-                    libraryList = libraryList.stream().filter(b -> b.getRepository().getId().equals(repositoryMaven.getRepository().getId())).collect(Collectors.toList());
-                }
-            }
              library = libraryList.get(0);
         }
+        return library;
+    }
+
+    @Override
+    public Library findMvnLibraryByGroupId(String name, String groupId) {
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByNameAndType(name,"maven");
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+        joinTemplate.joinQuery(libraryList);
+        if (CollectionUtils.isNotEmpty(libraryList)){
+
+            //查询maven-group
+            List<String> libraryIds = libraryList.stream().map(Library::getId).collect(Collectors.toList());
+            String[] libraryId = libraryIds.toArray(new String[libraryIds.size()]);
+            List<LibraryMaven> libraryMavens = libraryMavenService.libraryMavenByLibraryIds(libraryId);
+            List<LibraryMaven> collect = libraryMavens.stream().filter(a -> (groupId).equals(a.getGroupId())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                LibraryMaven libraryMaven = collect.get(0);
+                List<Library> libraries = libraryList.stream().filter(a -> (libraryMaven.getLibrary().getId()).equals(a.getId())).collect(Collectors.toList());
+                return libraries.get(0);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Library createMvnLibrary(Repository repository, String libraryName, String groupId) {
+        Library library = new Library();
+        library.setLibraryType("maven");
+
+        String libraryId;
+
+        //查询制品是否存在
+        Library mvnLibraryByGroupId = this.findMvnLibraryByGroupId(libraryName, groupId);
+        if (ObjectUtils.isEmpty(mvnLibraryByGroupId)){
+            library.setName(libraryName);
+            //创建制品信息
+            library.setRepository(repository);
+            libraryId = this.createLibrary(library);
+        }else {
+            libraryId = mvnLibraryByGroupId.getId();
+        }
+        library.setId(libraryId);
         return library;
     }
 

@@ -100,13 +100,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
     @Override
     public Result<byte[]> mavenPull(String contextPath) {
-        logger.info("执行拉取1:"+new Timestamp(System.currentTimeMillis()));
-        //仓库名称
+        logger.info("maven拉取1-路径:"+contextPath);
+        //通过访问路径获取仓库名称
         String repositoryName=cutRepositoryName(contextPath);
-        //文件相对路径
+        //通过访问路径获取文件相对路径
         String relativePath =cutRelativePath(contextPath);
+
         try {
-            //查询组合的制品库
+            //通过制品库名字查询制品库
             Repository repository = repositoryService.findRepositoryByName(repositoryName);
             if (!ObjectUtils.isEmpty(repository)){
 
@@ -138,11 +139,12 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     }
                    return readFileData(file);
                 }
+
                 logger.info("进入拉取:"+new Timestamp(System.currentTimeMillis()));
                 //拉取 走组合库
                 if ("group".equals(repository.getRepositoryType())){
-                    logger.info("执行拉取2:"+new Timestamp(System.currentTimeMillis()));
-                  return  groupRepositoryPull(repository,relativePath,contextPath);
+                    logger.info("maven拉取2-进入组合库:"+new Timestamp(System.currentTimeMillis()));
+                  return  groupRepositoryPull(repository,relativePath);
                 }
             }
         }catch (Exception e){
@@ -158,8 +160,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath
      * @return
      */
-    public Result groupRepositoryPull(Repository repository,String relativePath,String storePath) throws IOException {
-        logger.info("执行拉取3:"+relativePath+":"+new Timestamp(System.currentTimeMillis()));
+    public Result groupRepositoryPull(Repository repository,String relativePath ) throws IOException {
         int lastIndexOf = relativePath.lastIndexOf("/");
         //文件名称
         String fileName = relativePath.substring(lastIndexOf+1);
@@ -167,6 +168,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String libraryPath = relativePath.substring(0, lastButOneIndex);
         //制品名称
         String libraryName = libraryPath.substring(libraryPath.lastIndexOf("/") + 1);
+
+        String groupId = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
+        groupId = groupId.replace("/", ".");
 
         //这是拿到请求文件的版本，区分快照版本和正式版本
         int lastIndex = relativePath.lastIndexOf("/");
@@ -178,10 +182,13 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }else {
             type="Release";
         }
-        Library library= libraryService.findLibraryByNameAndType(libraryName,"maven",type);
-        logger.info("拉取制品名字："+libraryName);
+
+
+        //通过制品名字和groupId 定位制品是否存在
+        Library library= libraryService.findMvnLibraryByGroupId(libraryName,groupId);
+        logger.info("maven拉取3-拉取制品名字:"+libraryName+",groupId:"+groupId);
         if (!ObjectUtils.isEmpty(library)){
-            logger.info("进入:library");
+            logger.info("maven拉取4-制品存在进入本地服务器拉取");
             String repositoryPath = yamlDataMaService.repositoryAddress();
             String fileAbsolutePath;
 
@@ -199,16 +206,21 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             //制品库类型
             String repositoryType = library.getRepository().getRepositoryType();
 
-            //制品文件为空走代理拉取
+
+            //正式版本和快照版本外层的 maven-metadata 文件数据不会存在数据库中  (快照版本制品下面有一个maven-metadata文件、每个时间戳下面也有一个maven-metadata文件)
             if (CollectionUtils.isEmpty(libraryFileList)){
 
-                logger.info("进入:repositoryType");
+                /*
+                * 仓库类型为快照版本 并且制品文件还不存在
+                * 2. 拉取失败下次可以重新拉取
+                * */
                 if (("remote").equals(repositoryType)){
-                    logger.info("进入:代理拉取制品文件");
+                    logger.info("maven拉取5-制品存在制品文件不存在进入代理拉取通道");
                     //走代理拉取
-                    return proxyPull(repository,relativePath,storePath);
+                    return proxyPull(repository,relativePath);
                 }
 
+                //仓库类型为正式版本 并且是maven-metadata文件
                 if (("local").equals(repositoryType)&&fileName.contains("maven-metadata")){
                     List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
 
@@ -217,22 +229,32 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     List<RepositoryGroup> collect1 = collect.stream().filter(b -> ("maven-snapshots").equals(b.getRepository().getName())).collect(Collectors.toList());
                     fileAbsolutePath = repositoryPath + "/" +collect1.get(0).getRepository().getId()+"/"+ relativePath;
                 }else {
-                    logger.info(fileName+":文件为空");
+                    logger.info("maven拉取错误该文件为空："+fileName);
                     return result(404,null,fileName+"文件不存在");
                 }
             }else {
                 fileAbsolutePath = repositoryPath + "/" + libraryFileList.get(0).getFileUrl();
             }
-
+            /*
+             * 制品和制品文件都存在、制品库类型为代理库时
+             *  数据备份数据库数据全量同步、制品文件只备份本地制品的,  就会出现代理库有数据没有文件情况，需要重新拉取
+             * */
+            if (("remote").equals(repositoryType)){
+                File file = new File(fileAbsolutePath);
+                //制品和制品文件都存在 制品数据不存在 走代理
+                if (!file.exists()){
+                    logger.info("maven拉取5-制品存在制品数据不存在进入代理拉取通道");
+                    return proxyPull(repository,relativePath);
+                }
+            }
             //私服库拉取 （读取文件信息）
             File file = new File(fileAbsolutePath);
-            logger.info("私服拉取");
+            logger.info("maven拉取5-进入本地服务器拉取");
             return readFileData(file);
-
         }
         //走代理拉取
-        logger.info("进入:代理拉取制品");
-        return proxyPull(repository,relativePath,storePath);
+        logger.info("maven拉取4-制品不存在进入代理拉取通道");
+        return proxyPull(repository,relativePath);
     }
 
     /**
@@ -241,7 +263,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath
      * @return
      */
-    public Result proxyPull(Repository repository,String relativePath,String storePath) throws IOException {
+    public Result proxyPull(Repository repository,String relativePath) throws IOException {
         List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
 
         // 过滤代理库信息
@@ -252,7 +274,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
             if (CollectionUtils.isNotEmpty(remoteProxyList)){
                 //转发到远程
-                Result<byte[]> result = restTemplateMethod(remoteProxyList,remoteProxyList.get(0), relativePath);
+                Result<byte[]> result = restTemplateMethod(remoteProxyList,0, relativePath);
                 if (result.getCode()==200){
                     String remoteFileUrl  = repositoryGroup.getRepository().getId() + "/"+relativePath;
                     //解析相对路径 获取文件名称、版本、groupId
@@ -302,9 +324,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath  maven客户端相对路径
      * @return
      */
-    public Result restTemplateMethod(List<RepositoryRemoteProxy> remoteProxyList,RepositoryRemoteProxy remoteProxy,String relativePath){
-        int defaultNum=0;
-        String proxyUrl = remoteProxy.getAgencyUrl();
+    public Result restTemplateMethod(List<RepositoryRemoteProxy> remoteProxyList, Integer index,String relativePath){
+        String proxyUrl = remoteProxyList.get(index).getAgencyUrl();
         //设置的代理地址 以/结尾  就去掉相对路径第一个/
         if (proxyUrl.endsWith("/")&&relativePath.startsWith("/")){
             relativePath = relativePath.substring(1);
@@ -312,18 +333,19 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String relativeAbsoluteUrl=proxyUrl+"/"+relativePath;
         try {
             RestTemplate restTemplate = new RestTemplate();
-            logger.info("开始执行拉取远程restTemplate路径:"+relativeAbsoluteUrl);
+            logger.info("maven拉取6-开始远程拉取路径："+relativeAbsoluteUrl);
             ResponseEntity<byte[]> entity = restTemplate.getForEntity(relativeAbsoluteUrl, byte[].class);
             int codeValue = entity.getStatusCodeValue();
-            logger.info("结束执行拉取远程restTemplate状态:"+codeValue);
-
+            logger.info("maven拉取7-结束执行拉取远程拉取状态："+codeValue);
             byte[] entityBody = entity.getBody();
             return result(codeValue,entityBody,"OK");
         }catch (Exception e){
-            if (defaultNum+1<remoteProxyList.size()){
-                RepositoryRemoteProxy proxy = remoteProxyList.get(defaultNum + 1);
-                restTemplateMethod(remoteProxyList,proxy,relativePath);
+            if (index+1<remoteProxyList.size()){
+                RepositoryRemoteProxy proxy = remoteProxyList.get(index + 1);
+                logger.info("maven拉取-远程路径："+proxyUrl+"拉取错误执行其他远程路径："+proxy.getAgencyUrl());
+                restTemplateMethod(remoteProxyList,index + 1,relativePath);
             }else {
+                logger.info("maven拉取-远程路径报错："+e.getMessage());
                 return result(404,null,"null");
             }
         }
@@ -504,7 +526,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     public void createLibrary( Map<String, String> dataMap,Repository repository,String fileSize)  {
 
         //创建制品
-        Library library = libraryService.createLibraryData(dataMap.get("libraryName"), "maven",repository);
+        Library library = libraryService.createMvnLibrary(repository,dataMap.get("libraryName"),dataMap.get("groupId"));
 
         //制品版本创建、修改
         LibraryVersion libraryVersion = new LibraryVersion();

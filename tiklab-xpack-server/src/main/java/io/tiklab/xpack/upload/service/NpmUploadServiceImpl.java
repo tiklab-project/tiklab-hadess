@@ -129,14 +129,20 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     }
     @Override
     public Map<String,Object> npmPullTgzData(String contextPath) {
-       String url = StringUtils.substringBeforeLast(contextPath, "/-/");
-        String versionData = findLibraryVersion(url);
+        logger.info("npm拉取01(tgz)-请求地址："+contextPath);
+        String url = StringUtils.substringBeforeLast(contextPath, "/-/");
+        String repositoryName = url.substring(url.indexOf("/") + 1);
+        int startIndex = contextPath.lastIndexOf(repositoryName) + repositoryName.length()+1;
+        String version = contextPath.substring(startIndex, contextPath.lastIndexOf(".tgz"));
+
+        String versionData = findLibraryVersion(url,version);
 
         //本地制品库制品文件不存在 走代理
         if (StringUtils.isEmpty(versionData)){
+            logger.info("npm拉取02(tgz)-进入代理通道");
             return callAgencyNpm(contextPath);
         }
-
+        logger.info("npm拉取02(tgz)-进入本地服务器拉取");
         JSONObject allData =(JSONObject) JSONObject.parse(versionData);
 
         //tga的内容
@@ -161,12 +167,14 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
     @Override
     public Map<String,String> npmPull(String contextPath) {
-        String libraryVersion = findLibraryVersion(contextPath);
+        logger.info("npm拉取01(json)-请求地址："+contextPath);
+        String libraryVersion = findLibraryVersion(contextPath,null);
         //本地制品库制品文件不存在 走代理
         if (StringUtils.isEmpty(libraryVersion)){
+            logger.info("npm拉取02(json)-进入代理通道");
             return callAgencyNpm(contextPath);
         }
-
+        logger.info("npm拉取02(json)-本地服务器拉取");
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("code","200");
         resultMap.put("data",libraryVersion);
@@ -174,7 +182,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     }
 
     /**
-     *  npm上传-文件的处理
+     *  npm上传-文件的处理（存制品到数据库）
      * @param contextPath: 客户端请求路径
      * @param allData:   上传的文件
      * @return
@@ -299,9 +307,10 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     /**
      *  npm拉取-查询npm的json数据
      * @param contextPath: contextPath
+     * @param  version 版本
      * @return
      */
-    public String findLibraryVersion(String contextPath){
+    public String findLibraryVersion(String contextPath,String version){
 
         String libraryName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
         String contentJson =null;
@@ -309,63 +318,116 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         LibraryQuery libraryQuery = new LibraryQuery();
         libraryQuery.setLibraryType("npm");
         libraryQuery.setName(libraryName);
-        Library library = libraryService.findLibraryByNameAndType(libraryName,"npm",null);
+        Library library = libraryService.findLibraryByNameAndType(libraryName,"npm");
         if (!ObjectUtils.isEmpty(library)){
             //查询版本
             LibraryVersionQuery libraryVersionQuery = new LibraryVersionQuery();
             libraryVersionQuery.setLibraryId(library.getId());
-            /*//没带版本号就取最新的版本
-            if (!StringUtils.isEmpty(version)){
-                libraryVersionQuery.setVersion(version);
-            }*/
+            libraryVersionQuery.setVersion(version);
+
             List<LibraryVersion>  libraryVersionList = libraryVersionService.findLibraryVersionList(libraryVersionQuery);
-            List<LibraryVersion> versions = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(versions)){
-                contentJson = versions.get(0).getContentJson();
+            //版本为空取最后创建的
+           if (StringUtils.isEmpty(version)){
+              libraryVersionList = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
+           }
+            if (CollectionUtils.isNotEmpty(libraryVersionList)){
+                contentJson = libraryVersionList.get(0).getContentJson();
             }
         }
         return contentJson;
     }
+
 
     /**
      *  根据代理信息  转发远程库
      * @param
      * @return
      */
-    public Map callAgencyNpm(String contextPath ){
-        Map resultMap = new HashMap<>();
-        RestTemplate restTemplate = new RestTemplate();
+    public Map callAgencyNpm(String contextPath){
 
         String repositoryName = contextPath.substring(0, contextPath.indexOf("/",1));
-
-        String substring = contextPath.substring(contextPath.indexOf("/", 1) );
-        String agencyUrl = remoteProxyService.findAgencyUrl(repositoryName);
-        if (StringUtils.isEmpty(agencyUrl)){
-            resultMap.put("code","404");
+        List<String> remoteProxy = remoteProxyService.findAgencyUrl(repositoryName);
+        if (CollectionUtils.isEmpty(remoteProxy)){
+            Map resultMap = new HashMap<>();
+            logger.info("npm拉取错误-没有配置代理地址");
+           resultMap.put("code","404");
+           return resultMap;
         }else {
+            Map<String,String> map = execCallAgency(remoteProxy, 0, contextPath);
+            if (map.get("code").equals("200")){
+                pullCreateLibrary(contextPath,map);
+            }
+             return map;
+        }
+    }
+
+
+    /**
+     *  根据代理地址执行远程拉取
+     * @param  remoteProxy 代理地址
+     * @param  index 索引
+     * @return  data 读取的数据
+     */
+    public Map<String,String> execCallAgency(List<String> remoteProxy,Integer index,String contextPath){
+        Map resultMap = new HashMap<>();
+        RestTemplate restTemplate = new RestTemplate();
+        String substring = contextPath.substring(contextPath.indexOf("/", 1) );
+        try {
+            String agencyUrl = remoteProxy.get(index);
             String url=agencyUrl+substring;
-             url = url.trim();
-            logger.info("开始执行代理拉取："+url);
+            url = url.trim();
             if (contextPath.contains("/-/")){
                 ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
                 byte[] entityBody = entity.getBody();
                 resultMap.put("200",entityBody);
-                logger.info("执行代理拉取成功");
+                resultMap.put("agencyUrl",agencyUrl);
+                logger.info("npm拉取(tgz)-代理拉取状态："+entity.getStatusCode());
                 return resultMap;
-            }else {
-                try {
+                }else {
                     String entityBody = RepositoryUtil.httpGet(url);
+                    // ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
+                    // String entityBody = forEntity.getBody();
                     resultMap.put("code","200");
                     resultMap.put("data",entityBody);
-                    logger.info("执行代理拉取成功");
-                } catch (Exception e) {
+                    resultMap.put("agencyUrl",agencyUrl);
+                    logger.info("npm拉取(json)-代理拉取状态："+200);
+            }} catch (Exception e) {
+                if (index+1<remoteProxy.size()){
+                    String agencyUrl = remoteProxy.get(index + 1);
+                    logger.info("maven拉取-远程路径："+remoteProxy.get(0)+"拉取错误执行其他远程路径："+agencyUrl);
+                    execCallAgency(remoteProxy,index + 1,contextPath);
+                }else {
+                    logger.info("npm拉取-远程路径报错："+e.getMessage());
                     resultMap.put("code","500");
-                    throw new SystemException(e.getMessage());
+                    resultMap.put("data",e.getMessage());
                 }
             }
-        }
         return resultMap;
     }
+
+
+    public void pullCreateLibrary(String contextPath,Map<String,String> map){
+        String repositoryName = contextPath.substring(0, contextPath.indexOf("/",1));
+        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        if (("group").equals(repository.getRepositoryType())){
+            List<RepositoryGroup> repositoryGroupList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+            List<RepositoryGroup> RepositoryGroups = repositoryGroupList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+            List<String> ids = RepositoryGroups.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
+            String[] repositoryIds = ids.toArray(new String[ids.size()]);
+
+            RepositoryRemoteProxy agencyByRpyIdAndPath = remoteProxyService.findAgencyByRpyIdAndPath(repositoryIds, map.get("agencyUrl"));
+
+            String libraryName = contextPath.substring(contextPath.indexOf("/", 1)+1 );
+
+            //创建制品
+            Library library = libraryService.createLibraryData(libraryName, "npm",agencyByRpyIdAndPath.getRepository());
+
+            String data = map.get("data");
+
+
+        }
+    }
+
 
     /**
      *  读取输入流中的数据

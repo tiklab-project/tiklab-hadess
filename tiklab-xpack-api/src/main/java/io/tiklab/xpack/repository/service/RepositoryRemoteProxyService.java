@@ -71,6 +71,14 @@ public interface RepositoryRemoteProxyService {
      * @param repositoryName 制品库名字
      * @return
      */
-    String findAgencyUrl(String repositoryName);
+    List<String> findAgencyUrl(String repositoryName);
+
+
+    /**
+     * 通过仓库的ids 和代理地址查询
+     * @param repositoryIds 制品库ids
+     * @return
+     */
+    RepositoryRemoteProxy findAgencyByRpyIdAndPath(String[] repositoryIds,String agencyUrl);
 
 }

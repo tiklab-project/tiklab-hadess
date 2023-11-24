@@ -118,4 +118,14 @@ public class RepositoryController {
 
         return Result.ok(repositoryList);
     }
+
+
+    @RequestMapping(path = "/test01",method = RequestMethod.POST)
+    @ApiMethod(name = "test01",desc = "查询未关联组合库的本地和远程库list")
+    public Result<Void> test01(String repositoryId){
+      repositoryService.test01(repositoryId);
+
+        return Result.ok();
+    }
+
 }

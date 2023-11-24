@@ -102,7 +102,8 @@ public interface LibraryService {
      * @param version  版本, Release 、Snapshot
      * @return
      */
-    Library findLibraryByNameAndType(String name,String type,String version);
+    Library findLibraryByNameAndType(String name,String type);
+
 
 
     /**
@@ -160,4 +161,23 @@ public interface LibraryService {
     List<Library> findNotScanLibraryList(LibraryQuery libraryQuery);
 
     void updateFile();
+
+
+    /**
+     * 通过制品名字查询和groupId 查询mvn制品
+     * @param name 制品名字
+     * @param groupId 制品groupId
+     * @return
+     */
+    Library findMvnLibraryByGroupId(String name,String groupId);
+
+
+    /**
+     * 创建mvn 类型的制品
+     * @param repository 制品库
+     * @param libraryName 制品名字
+     * @param groupId 制品groupId
+     * @return
+     */
+    Library createMvnLibrary(Repository repository,String libraryName,String groupId);
 }

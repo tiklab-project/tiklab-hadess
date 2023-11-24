@@ -7,7 +7,10 @@ import io.tiklab.join.JoinTemplate;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.xpack.common.RepositoryUtil;
+import io.tiklab.xpack.common.UuidGenerator;
 import io.tiklab.xpack.common.XpackYamlDataMaService;
+import io.tiklab.xpack.library.model.LibraryFile;
+import io.tiklab.xpack.library.model.LibraryFileQuery;
 import io.tiklab.xpack.library.service.LibraryFileService;
 import io.tiklab.xpack.library.service.LibraryMavenService;
 import io.tiklab.xpack.library.service.LibraryService;
@@ -15,6 +18,8 @@ import io.tiklab.xpack.library.service.LibraryVersionService;
 import io.tiklab.xpack.repository.dao.RepositoryDao;
 import io.tiklab.xpack.repository.entity.RepositoryEntity;
 import io.tiklab.xpack.repository.model.*;
+import io.tiklab.xpack.scan.model.ScanRecord;
+import io.tiklab.xpack.scan.model.ScanRecordQuery;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -82,7 +87,10 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         RepositoryEntity repositoryEntity = setRepositoryEntity(repository);
 
-        String repositoryId = repositoryDao.createRepository(repositoryEntity);
+        String repositoryId = getRandom(repository.getRepositoryType());
+        repositoryEntity.setId(repositoryId);
+
+        repositoryDao.createRepository(repositoryEntity);
         String repositoryFile = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
         File file = new File(repositoryFile);
         if (!file.exists()){
@@ -271,7 +279,27 @@ public class RepositoryServiceImpl implements RepositoryService {
         return localAndRemoteRepository;
     }
 
-
+    @Override
+    public void test01(String repositoryId) {
+        List<LibraryFile> fileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setRepositoryId(repositoryId));
+        if (CollectionUtils.isNotEmpty(fileList)){
+            for (LibraryFile libraryFile:fileList){
+                String fileUrl = libraryFile.getFileUrl();
+                String substring = fileUrl.substring(0, fileUrl.indexOf("/"));
+             /*   if (substring.equals(repositoryId)){
+                    System.out.println("删除路径:"+fileUrl);
+                    libraryFileService.deleteLibraryFile(libraryFile.getId());
+                }*/
+                if (!substring.equals(repositoryId)){
+                    System.out.println("原id:"+substring+"修改的id:"+repositoryId);
+                    String replace = fileUrl.replaceAll(substring, repositoryId);
+                    System.out.println("替换后:"+replace);
+                    libraryFile.setFileUrl(replace);
+                    libraryFileService.updateLibraryFile(libraryFile);
+                }
+            }
+        }
+    }
 
 
     public void findLibrary(List<Repository> repositoryList){
@@ -324,5 +352,29 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         return repositoryEntity;
 
+    }
+
+    /**
+     * 获取随机数
+     * @param repositoryType 仓库类型 local 本地、remote 远程、group 组合
+     */
+    public String getRandom(String repositoryType){
+        String math =  UuidGenerator.gen(10);
+
+        if (("local").equals(repositoryType)){
+             math = math + "bd";
+        }
+        if (("remote").equals(repositoryType)){
+            math = math + "yc";
+        }
+        if (("group").equals(repositoryType)){
+            math = math + "zh";
+        }
+
+        Repository repository = this.findOne(math);
+        if (!ObjectUtils.isEmpty(repository)){
+            getRandom(repositoryType);
+        }
+        return math;
     }
 }

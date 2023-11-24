@@ -112,4 +112,9 @@ public interface RepositoryService {
      * @return
      */
     List<Repository> findUnRelevanceRepository(String repositoryType,String repositoryGroupId);
+
+
+
+
+    void test01(String repositoryId);
 }

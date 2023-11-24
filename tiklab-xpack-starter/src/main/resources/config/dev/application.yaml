@@ -98,10 +98,14 @@ repository:
 backup:
   address: ${DATA_HOME}/backup
   time: 0 0 2 * * ?
+  valid:
+    time: 168
 
 backups:
   dir: ${DATA_HOME}/backup
   time: 0 0 2 * * ?
+
+
 
 
 openscan_mvn:
