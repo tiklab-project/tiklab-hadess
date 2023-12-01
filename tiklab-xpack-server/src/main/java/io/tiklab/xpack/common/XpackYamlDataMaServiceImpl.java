@@ -14,9 +14,6 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     private String dataHome;
 
 
-    @Value("${backup.address}")
-    private String backupAddress;
-
     @Value("${server.port}")
     private String port;
 
@@ -53,10 +50,6 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
         return "public";
     }
 
-    @Override
-    public String backupAddress() {
-        return backupAddress;
-    }
 
     @Override
     public String repositoryAddress() {

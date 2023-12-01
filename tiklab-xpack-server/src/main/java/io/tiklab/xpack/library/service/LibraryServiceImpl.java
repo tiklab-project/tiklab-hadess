@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * LibraryServiceImpl-制品
@@ -228,21 +229,29 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Library findMvnLibraryByGroupId(String name, String groupId) {
-        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByNameAndType(name,"maven");
-        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
-        joinTemplate.joinQuery(libraryList);
-        if (CollectionUtils.isNotEmpty(libraryList)){
+    public Library findMvnLibraryByGroupId(Repository repository,String name, String groupId,String type) {
 
-            //查询maven-group
-            List<String> libraryIds = libraryList.stream().map(Library::getId).collect(Collectors.toList());
-            String[] libraryId = libraryIds.toArray(new String[libraryIds.size()]);
-            List<LibraryMaven> libraryMavens = libraryMavenService.libraryMavenByLibraryIds(libraryId);
-            List<LibraryMaven> collect = libraryMavens.stream().filter(a -> (groupId).equals(a.getGroupId())).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(collect)){
-                LibraryMaven libraryMaven = collect.get(0);
-                List<Library> libraries = libraryList.stream().filter(a -> (libraryMaven.getLibrary().getId()).equals(a.getId())).collect(Collectors.toList());
-                return libraries.get(0);
+        List<LibraryMaven> libraryMavens = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery()
+                .setGroupId(groupId).setArtifactId(name));
+
+        if (CollectionUtils.isNotEmpty(libraryMavens)){
+
+            List<RepositoryGroup> groupList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+            List<String> stringList = groupList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
+
+            if (CollectionUtils.isNotEmpty(stringList)){
+                String[] repositoryId = new String[stringList.size()];
+                String[] rpyIds = stringList.toArray(repositoryId);
+                // 查询制品库的 类型  快照版本、正式版本
+                RepositoryMaven repositoryMaven = repositoryMavenService.findRepositoryMavenByRpyIds(rpyIds, type);
+
+                if (!ObjectUtils.isEmpty(repositoryMaven)){
+                    List<LibraryMaven> collected = libraryMavens.stream().filter(a -> (repositoryMaven.getRepository().getId()).equals(a.getLibrary().getRepository().getId()))
+                            .collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(collected)){
+                        return collected.get(0).getLibrary();
+                    }
+                }
             }
         }
         return null;
@@ -253,19 +262,23 @@ public class LibraryServiceImpl implements LibraryService {
         Library library = new Library();
         library.setLibraryType("maven");
 
-        String libraryId;
-
         //查询制品是否存在
-        Library mvnLibraryByGroupId = this.findMvnLibraryByGroupId(libraryName, groupId);
-        if (ObjectUtils.isEmpty(mvnLibraryByGroupId)){
+        List<LibraryEntity> libraryEntity = libraryDao.findLibraryByRpyIdAndName(repository.getId(), libraryName);
+        if (CollectionUtils.isNotEmpty(libraryEntity)){
+            List<String> libraryIds = libraryEntity.stream().map(LibraryEntity::getId).collect(Collectors.toList());
+            String[] libraryIdList = libraryIds.toArray(new String[libraryIds.size()]);
+            List<LibraryMaven> libraryMavens = libraryMavenService.libraryMavenByLibraryIds(libraryIdList);
+            List<LibraryMaven> collect = libraryMavens.stream().filter(a -> (groupId).equals(a.getGroupId())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(collect)){
+                library.setId(collect.get(0).getLibrary().getId());
+            }
+        }else {
             library.setName(libraryName);
             //创建制品信息
             library.setRepository(repository);
-            libraryId = this.createLibrary(library);
-        }else {
-            libraryId = mvnLibraryByGroupId.getId();
+            String libraryId = this.createLibrary(library);
+            library.setId(libraryId);
         }
-        library.setId(libraryId);
         return library;
     }
 
@@ -605,6 +618,7 @@ public class LibraryServiceImpl implements LibraryService {
         }
         return lowerCase;
     }
+
 
 }
 

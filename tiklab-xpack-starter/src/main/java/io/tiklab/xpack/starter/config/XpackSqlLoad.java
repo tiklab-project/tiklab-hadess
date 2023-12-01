@@ -12,6 +12,7 @@ public class XpackSqlLoad {
     DsmConfig initDsmConfig() {
         DsmConfig dsmConfig = DsmConfigBuilder.instance();
         dsmConfig.newVersion("1.0.0", new String[]{
+                "backups_1.0.0",
                 //PrivilegeDsm
                 "privilege_1.0.0",
                 //UserDsm

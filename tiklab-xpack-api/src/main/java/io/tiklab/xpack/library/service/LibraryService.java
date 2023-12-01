@@ -165,11 +165,13 @@ public interface LibraryService {
 
     /**
      * 通过制品名字查询和groupId 查询mvn制品
+     * @param  repository   组合库
      * @param name 制品名字
      * @param groupId 制品groupId
+     * @param  type    Snapshot 快照版本、Release 正式版本
      * @return
      */
-    Library findMvnLibraryByGroupId(String name,String groupId);
+    Library findMvnLibraryByGroupId(Repository repository,String name,String groupId,String type);
 
 
     /**

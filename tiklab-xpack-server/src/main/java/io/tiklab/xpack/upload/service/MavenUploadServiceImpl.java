@@ -185,7 +185,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
 
         //通过制品名字和groupId 定位制品是否存在
-        Library library= libraryService.findMvnLibraryByGroupId(libraryName,groupId);
+        Library library= libraryService.findMvnLibraryByGroupId(repository,libraryName,groupId,type);
         logger.info("maven拉取3-拉取制品名字:"+libraryName+",groupId:"+groupId);
         if (!ObjectUtils.isEmpty(library)){
             logger.info("maven拉取4-制品存在进入本地服务器拉取");
@@ -197,6 +197,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             if (upperCase.contains("SNAPSHOT")){
                 List<LibraryVersion> versionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(library.getId()).setVersion(version));
                 if (CollectionUtils.isEmpty(versionList)){
+                    logger.info("maven拉取错误-快照版本的制品版本为空");
                     return result(404,null,fileName+"文件不存在");
                 }
                 libraryFileQuery.setLibraryVersionId(versionList.get(0).getId()) ;
@@ -419,6 +420,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             int indexOf = storePath.indexOf("maven-metadata");
             boolean contains = contextPath.contains("-SNAPSHOT");
             if (indexOf==-1||contains){
+                logger.info("提交制品成功，进入创建数据表数据:"+relativePath);
                 createLibrary(dataMap,repositoryList.get(0),fileSize);
             }
 

@@ -279,6 +279,20 @@ public class LibraryDao{
 
     }
 
+    /**
+     * 通过制品名字查询制品
+     * @param name
+     * @return List <LibraryEntity>
+     */
+    public List<LibraryEntity> findLibraryByNameAndType(String name,String type,String[] rpyId) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .in("repositoryId",rpyId)
+                .eq("name",name)
+                .eq("libraryType",type)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+
+    }
 
     /**
      * 通过制品库查询制品数量
@@ -358,4 +372,21 @@ public class LibraryDao{
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
+
+
+    /**
+     * 查找制品是否存在
+     * @param rpyId
+     * @return
+     */
+    public List<LibraryEntity> findLibraryByRpyIdAndName(String rpyId,String name ){
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name",name)
+                .eq("repositoryId", rpyId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
+
+
+
 }

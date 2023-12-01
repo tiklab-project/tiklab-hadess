@@ -95,15 +95,15 @@ file:
 repository:
   address: ${DATA_HOME}/repository
 
-backup:
-  address: ${DATA_HOME}/backup
-  time: 0 0 2 * * ?
-  valid:
-    time: 168
+
 
 backups:
-  dir: ${DATA_HOME}/backup
   time: 0 0 2 * * ?
+  dir: ${DATA_HOME}
+  xpack:
+    dir: /Users/limingliang/tiklab/tiklab-xpack/repository
+  pgsql:
+    dir: /Users/limingliang/postgreSQL/bin
 
 
 

@@ -4,6 +4,7 @@ import io.tiklab.beans.annotation.Mapper;
 import io.tiklab.beans.annotation.Mapping;
 import io.tiklab.beans.annotation.Mappings;
 import io.tiklab.core.BaseModel;
+import io.tiklab.join.annotation.Join;
 import io.tiklab.join.annotation.JoinQuery;
 import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @ApiModel
 @Mapper
+@Join
 public class LibraryMaven extends BaseModel {
 
     @ApiProperty(name="id",desc="id")

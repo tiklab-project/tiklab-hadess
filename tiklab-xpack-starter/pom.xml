@@ -96,6 +96,23 @@
             <artifactId>maven-gpg-plugin</artifactId>
             <version>3.1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-openapi-spring-boot-starter</artifactId>
+            <version>${tiklab-openapi-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-security-spring-boot-starter</artifactId>
+            <version>${tiklab-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postin-doclet</artifactId>
+            <version>${tiklab-postin-doclet-version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -380,6 +397,32 @@
                             <include>${project.build.finalName}-distribution.tar.gz</include>
                         </resource>
                     </resources>
+                </configuration>
+            </plugin>
+
+            <!--postin-doclet-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>io.tiklab.postin.doclet.starter.DocletApplication</mainClass>
+                    <arguments>
+                        <!-- modules 传入api，server两个文件-->
+                        <argument>/Users/limingliang/xcode-xpack/tiklab-xpack/tiklab-xpack-api;/Users/limingliang/xcode-xpack/tiklab-xpack/tiklab-xpack-server</argument>
+                        <!-- workspaceId 空间Id，放到哪个空间-->
+                        <argument>40ab61b6e1c7</argument>
+                        <!-- server  postin服务-->
+                        <argument>http://192.168.10.21:8090</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

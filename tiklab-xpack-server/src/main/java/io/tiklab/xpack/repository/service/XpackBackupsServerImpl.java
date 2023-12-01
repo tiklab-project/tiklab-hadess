@@ -54,9 +54,6 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
     @Autowired
     XpackYamlDataMaService yamlDataMaService;
 
-    @Value("${backup.valid.time}")
-    Integer validTime;
-
 
     @Value("${jdbc.username}")
     String jdbcUserName;
@@ -79,7 +76,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
         XpackBackupsEntity backupsEntity = allBackups.get(0);
         XpackBackups backups = BeanMapper.map(backupsEntity, XpackBackups.class);
 
-        backups.setBackupsAddress(yamlDataMaService.backupAddress());
+       // backups.setBackupsAddress(yamlDataMaService.backupAddress());
 
         return backups;
     }
@@ -127,7 +124,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
 
     @Override
     public String backupsExec(XpackBackups backups) {
-        backups.setExecState("exec");
+        /*backups.setExecState("exec");
         updateBackups(backups);
 
         String loginId = LoginContext.getLoginId();
@@ -166,7 +163,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     getFileCreateTime(validTime);
 
                     //添加最后一层目录压缩
-                    String backupAddress = yamlDataMaService.backupAddress();
+                   // String backupAddress = yamlDataMaService.backupAddress();
                     String lastName = backupAddress.substring(backupAddress.lastIndexOf("/"));
 
                     String backupPath=backupAddress+lastName;
@@ -189,9 +186,9 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                         String repositoryUrl = yamlDataMaService.repositoryAddress() +"/"+ repository.getId();
                         File codeFileUrl = new File(repositoryUrl);
 
-                        /*
+                        *//*
                          * 复制代码源文件到备份文件夹
-                         * */
+                         * *//*
                         String backupsCodePath = backupPath + "/code/" + repository.getId();
                         File backupsCodeFilePath = new File(backupsCodePath);
 
@@ -204,9 +201,9 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                         joinBackupsLog(name+"  backups success...[DONE]");
                     }
 
-                    /*
+                    *//*
                      * 压缩备份代码文件夹
-                     * */
+                     * *//*
                     joinBackupsLog(" start compress tar.gz...");
                     String substring = backupPath.substring(0, backupPath.lastIndexOf("/"));
                     LocalDateTime now = LocalDateTime.now();
@@ -230,9 +227,9 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     bos.close();
                     fos.close();
 
-                    /*
+                    *//*
                      *  删除备份文件夹
-                     * */
+                     * *//*
                     FileUtils.deleteDirectory(new File(backupPath));
 
                     joinBackupsLog(" XpackBackups file success end [DONE]");
@@ -248,7 +245,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                     throw new SystemException(e.getMessage());
                 }
             }
-        });
+        });*/
         return "OK";
     }
 
@@ -505,7 +502,7 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
      *  备份的时候删除超过存储有效的备份数据
      *  @param validTime 有效时间 单位小时
      */
-    public void getFileCreateTime(Integer validTime) throws IOException {
+/*    public void getFileCreateTime(Integer validTime) throws IOException {
         File file1 = new File(yamlDataMaService.backupAddress());
         File[] files = file1.listFiles();
         List<File> collected = Arrays.stream(files).sorted(Comparator.comparing(a -> a.lastModified()))
@@ -533,5 +530,5 @@ public class XpackBackupsServerImpl implements XpackBackupsServer {
                 }
             }
         }
-    }
+    }*/
 }

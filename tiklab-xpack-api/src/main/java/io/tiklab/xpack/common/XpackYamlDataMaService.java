@@ -22,10 +22,6 @@ public interface XpackYamlDataMaService {
      */
     String schemaName();
 
-    /**
-     * 仓库备份地址
-     */
-    String backupAddress();
 
     /**
      * 仓库地址

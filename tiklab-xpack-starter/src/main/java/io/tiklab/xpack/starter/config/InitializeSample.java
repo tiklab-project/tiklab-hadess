@@ -23,10 +23,10 @@ public class InitializeSample implements ApplicationListener<ContextRefreshedEve
         // 获取应用上下文
         ApplicationContext context = event.getApplicationContext();
 
-        // 判断是否为根上下文
+     /*   // 判断是否为根上下文
         if (context.getParent() == null) {
             // 在这里执行需要最后加载的操作，例如创建和初始化特定Bean
             sampleService.createSampleData();
-        }
+        }*/
     }
 }
