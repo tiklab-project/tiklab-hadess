@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.thoughtware</groupId>
+        <artifactId>thoughtware-hadess</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>thoughtware-hadess-api</artifactId>
+    <name>${project.artifactId}</name>
+    <version>1.0.1-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-core</artifactId>
+            <version>${thoughtware-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-postin-annotation</artifactId>
+            <version>${thoughtware-postin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-user-api</artifactId>
+            <version>${thoughtware-user.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>*.properties</exclude>
+                        <exclude>*.xml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

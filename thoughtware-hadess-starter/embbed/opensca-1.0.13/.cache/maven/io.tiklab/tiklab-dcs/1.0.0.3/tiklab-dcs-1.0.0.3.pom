@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
+        <version>1.0.0.3</version>
+    </parent>
+    <artifactId>tiklab-dcs</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0.3</version>
+    <name>${project.artifactId}</name>
+    <properties>
+        <tiklab-core.version>1.0.0.3</tiklab-core.version>
+        <tiklab-toolkit.version>1.0.0.3</tiklab-toolkit.version>
+        <tiklab-rpc.version>1.0.0.3</tiklab-rpc.version>
+    </properties>
+    <description>TikLab is a devops tool suite.</description>
+    <url>https://tiklab.io</url>
+    <licenses>
+        <license>
+            <name>Private License</name>
+            <url>http://tiklab.net/product/eas</url>
+            <distribution>internal</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>tiklab.io</id>
+            <name>The TikLab Project Contributors</name>
+            <email>tiklab@tiklab.net</email>
+            <url>https://tiklab.io/</url>
+            <organization>The TikLab Project</organization>
+            <organizationUrl>https://tiklab.io/</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/tiklab/tiklab.git/tiklab-all</connection>
+        <developerConnection>scm:git:ssh://git@github.com/tiklab/tiklab.git/tiklab-all</developerConnection>
+        <tag>tiklab-4.1.82.Final</tag>
+        <url>https://github.com/tiklab/tiklab/tiklab-all</url>
+    </scm>
+
+    <modules>
+        <module>tiklab-dcs-common</module>
+        <module>tiklab-dcs-client</module>
+        <module>tiklab-dcs-server</module>
+        <module>tiklab-dcs-spring-boot-starter</module>
+        <module>tiklab-dcs-starter</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-homes</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>tiklab-cms</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>tiklab-cms-api</module>
+        <module>tiklab-cms-server</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-member-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-dfs-common</artifactId>
+            <version>${tiklab-dfs.version}</version>
+        </dependency>
+    </dependencies>
+</project>
+

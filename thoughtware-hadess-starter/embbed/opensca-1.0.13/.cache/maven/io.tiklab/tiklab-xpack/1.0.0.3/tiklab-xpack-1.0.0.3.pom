@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--suppress MavenModelInspection, MavenModelInspection -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
+        <version>1.0.0.3</version>
+
+    </parent>
+    <groupId>io.tiklab</groupId>
+    <artifactId>tiklab-xpack</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+    <version>1.0.0.3</version>
+
+    <modules>
+        <module>tiklab-xpack-api</module>
+        <module>tiklab-xpack-server</module>
+        <module>tiklab-xpack-starter</module>
+    </modules>
+
+    <properties>
+        <tiklab-core.version>1.0.0.3</tiklab-core.version>
+        <tiklab-codegen.version>1.0.0.3</tiklab-codegen.version>
+        <tiklab-toolkit.version>1.0.0.3</tiklab-toolkit.version>
+        <tiklab-privilege.version>1.0.0.3</tiklab-privilege.version>
+        <tiklab-licence.version>1.0.0.3</tiklab-licence.version>
+        <tiklab-plugin.version>1.0.0.3</tiklab-plugin.version>
+        <tiklab-gateway.version>1.0.0.3</tiklab-gateway.version>
+        <tiklab-rpc.version>1.0.0.3</tiklab-rpc.version>
+        <tiklab-dss.version>1.0.0.3</tiklab-dss.version>
+        <tiklab-dfs.version>1.0.0.3</tiklab-dfs.version>
+        <tiklab-dcs.version>1.0.0.3</tiklab-dcs.version>
+        <tiklab-integration.version>1.0.0.3</tiklab-integration.version>
+        <tiklab-todotask.version>1.0.0.3</tiklab-todotask.version>
+
+        <!--tiklab-->
+        <tiklab-join.version>1.0.0.3</tiklab-join.version>
+        <tiklab-user.version>1.0.0.3</tiklab-user.version>
+        <tiklab-postin.version>1.0.0.3</tiklab-postin.version>
+        <tiklab-security.version>1.0.0.3</tiklab-security.version>
+        <tiklab-message.version>1.0.0.3</tiklab-message.version>
+        <tiklab-dal.version>1.0.0.3</tiklab-dal.version>
+        <tiklab-eam.version>1.0.0.3</tiklab-eam.version>
+        <tiklab-postin.version>1.0.0.3</tiklab-postin.version>
+        <tiklab-upgrade.version>1.0.0.3</tiklab-upgrade.version>
+        <tiklab-postgresql.version>1.0.0.3</tiklab-postgresql.version>
+        <tiklab-jdk.version>1.0.0.3</tiklab-jdk.version>
+        <!--other-->
+        <jdbc-mapper.version>1.2.2</jdbc-mapper.version>
+        <commons-net.version>3.5</commons-net.version>
+        <webhook-sdk.version>1.0.7</webhook-sdk.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+
+
+    <profiles>
+        <profile>
+            <id>deploy-xpack</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>xpack</id>
+                    <url>http://172.13.1.24:8080/repository/maven-snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>xpack</id>
+                    <url>http://172.13.1.24:8080/repository/maven-releases</url>
+                </repository>
+            </distributionManagement>
+            <properties>
+                <profile.assembly.package.suffix>deploy-xpack</profile.assembly.package.suffix>
+            </properties>
+        </profile>
+    </profiles>
+</project>
+

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
+        <version>1.0.0.3</version>
+    </parent>
+    <artifactId>tiklab-dal</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
+    <version>1.0.0.3</version>
+    <description>TikLab is a devops tool suite.</description>
+    <properties>
+        <tiklab-core.version>1.0.0.3</tiklab-core.version>
+    </properties>
+    <url>https://tiklab.io</url>
+    <licenses>
+        <license>
+            <name>Private License</name>
+            <url>http://tiklab.net/product/eas</url>
+            <distribution>internal</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>tiklab.io</id>
+            <name>The TikLab Project Contributors</name>
+            <email>tiklab@tiklab.net</email>
+            <url>https://tiklab.io/</url>
+            <organization>The TikLab Project</organization>
+            <organizationUrl>https://tiklab.io/</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/tiklab/tiklab.git/tiklab-all</connection>
+        <developerConnection>scm:git:ssh://git@github.com/tiklab/tiklab.git/tiklab-all</developerConnection>
+        <tag>tiklab-4.1.82.Final</tag>
+        <url>https://github.com/tiklab/tiklab/tiklab-all</url>
+    </scm>
+
+    <modules>
+        <module>tiklab-dal-datasource</module>
+        <module>tiklab-dal-jdbc</module>
+        <module>tiklab-dal-jpa</module>
+        <module>tiklab-dal-dsm</module>
+        <module>tiklab-dal-spring-boot-starter</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <skipSource>true</skipSource>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -6,54 +6,54 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.tiklab</groupId>
-        <artifactId>tiklab-dependencies</artifactId>
+        <groupId>io.thoughtware</groupId>
+        <artifactId>thoughtware-dependencies</artifactId>
         <version>1.0.0</version>
 
     </parent>
-    <groupId>io.tiklab</groupId>
-    <artifactId>tiklab-xpack</artifactId>
+    <groupId>io.thoughtware</groupId>
+    <artifactId>thoughtware-hadess</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <version>1.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>tiklab-xpack-api</module>
-        <module>tiklab-xpack-server</module>
-        <module>tiklab-xpack-starter</module>
+        <module>thoughtware-hadess-api</module>
+        <module>thoughtware-hadess-server</module>
+        <module>thoughtware-hadess-starter</module>
     </modules>
 
     <properties>
-        <tiklab-core.version>1.0.0</tiklab-core.version>
-        <tiklab-codegen.version>1.0.0</tiklab-codegen.version>
-        <tiklab-toolkit.version>1.0.0</tiklab-toolkit.version>
-        <tiklab-plugin.version>1.0.1-SNAPSHOT</tiklab-plugin.version>
-        <tiklab-gateway.version>1.0.1-SNAPSHOT</tiklab-gateway.version>
-        <tiklab-rpc.version>1.0.0</tiklab-rpc.version>
-        <tiklab-dss.version>1.0.0</tiklab-dss.version>
-        <tiklab-dfs.version>1.0.0</tiklab-dfs.version>
-        <tiklab-dcs.version>1.0.0</tiklab-dcs.version>
-        <tiklab-integration.version>1.0.0</tiklab-integration.version>
-        <tiklab-dal.version>1.0.0</tiklab-dal.version>
-        <tiklab-join.version>1.0.0</tiklab-join.version>
-        <tiklab-openapi-version>1.0.0-SNAPSHOT</tiklab-openapi-version>
+        <thoughtware-core.version>1.0.0</thoughtware-core.version>
+        <thoughtware-codegen.version>1.0.0</thoughtware-codegen.version>
+        <thoughtware-toolkit.version>1.0.0</thoughtware-toolkit.version>
+        <thoughtware-plugin.version>1.0.1-SNAPSHOT</thoughtware-plugin.version>
+        <thoughtware-gateway.version>1.0.1-SNAPSHOT</thoughtware-gateway.version>
+        <thoughtware-rpc.version>1.0.0</thoughtware-rpc.version>
+        <thoughtware-dss.version>1.0.0</thoughtware-dss.version>
+        <thoughtware-dfs.version>1.0.0</thoughtware-dfs.version>
+        <thoughtware-dcs.version>1.0.0</thoughtware-dcs.version>
+        <thoughtware-integration.version>1.0.0</thoughtware-integration.version>
+        <thoughtware-dal.version>1.0.0</thoughtware-dal.version>
+        <thoughtware-join.version>1.0.0</thoughtware-join.version>
+        <thoughtware-openapi-version>1.0.0-SNAPSHOT</thoughtware-openapi-version>
 
         <!--平台组件-->
-        <tiklab-privilege.version>1.0.1-SNAPSHOT</tiklab-privilege.version>
-        <tiklab-licence.version>1.0.1-SNAPSHOT</tiklab-licence.version>
-        <tiklab-user.version>1.0.1-SNAPSHOT</tiklab-user.version>
-        <tiklab-security.version>1.0.1-SNAPSHOT</tiklab-security.version>
-        <tiklab-message.version>1.0.1-SNAPSHOT</tiklab-message.version>
-        <tiklab-todotask.version>1.0.1-SNAPSHOT</tiklab-todotask.version>
-        <tiklab-eam.version>1.0.1-SNAPSHOT</tiklab-eam.version>
-        <tiklab-postgresql.version>1.0.1-SNAPSHOT</tiklab-postgresql.version>
+        <thoughtware-privilege.version>1.0.1-SNAPSHOT</thoughtware-privilege.version>
+        <thoughtware-licence.version>1.0.1-SNAPSHOT</thoughtware-licence.version>
+        <thoughtware-user.version>1.0.1-SNAPSHOT</thoughtware-user.version>
+        <thoughtware-security.version>1.0.1-SNAPSHOT</thoughtware-security.version>
+        <thoughtware-message.version>1.0.1-SNAPSHOT</thoughtware-message.version>
+        <thoughtware-todotask.version>1.0.1-SNAPSHOT</thoughtware-todotask.version>
+        <thoughtware-eam.version>1.0.1-SNAPSHOT</thoughtware-eam.version>
+        <thoughtware-postgresql.version>1.0.1-SNAPSHOT</thoughtware-postgresql.version>
 
-        <!--tiklab-->
-        <tiklab-postin-doclet-version>1.0.1-SNAPSHOT</tiklab-postin-doclet-version>
-        <tiklab-postin.version>1.0.0</tiklab-postin.version>
-        <tiklab-upgrade.version>1.0.0</tiklab-upgrade.version>
-        <tiklab-jdk.version>1.0.0</tiklab-jdk.version>
-        <tiklab-opensca.version>1.0.0</tiklab-opensca.version>
+        <!--thoughtware-->
+        <thoughtware-postin-doclet-version>1.0.1-SNAPSHOT</thoughtware-postin-doclet-version>
+        <thoughtware-postin.version>1.0.1-SNAPSHOT</thoughtware-postin.version>
+        <thoughtware-upgrade.version>1.0.0</thoughtware-upgrade.version>
+        <thoughtware-jdk.version>1.0.0</thoughtware-jdk.version>
+        <thoughtware-opensca.version>1.0.0</thoughtware-opensca.version>
         <!--other-->
         <jdbc-mapper.version>1.2.2</jdbc-mapper.version>
         <commons-net.version>3.5</commons-net.version>
@@ -71,19 +71,36 @@
 
     <profiles>
         <profile>
-            <id>deploy-xpack</id>
+            <id>deploy-hadess</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>xpack</id>
-                    <url>http://192.168.10.17:8080/repository/maven-snapshots</url>
+                    <id>hadess</id>
+                    <url>http://192.168.10.17:8081/repository/maven-snapshot</url>
                 </snapshotRepository>
                 <repository>
-                    <id>xpack</id>
-                    <url>http://192.168.10.17:8080/repository/maven-release</url>
+                    <id>hadess</id>
+                    <url>http://192.168.10.17:8081/repository/maven-release</url>
                 </repository>
             </distributionManagement>
             <properties>
-                <profile.assembly.package.suffix>deploy-xpack</profile.assembly.package.suffix>
+                <profile.assembly.package.suffix>deploy-hadess</profile.assembly.package.suffix>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>deploy-nexus</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>nexus-public</id>
+                    <url>http://172.13.1.11:8081/repository/maven-snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>nexus-public</id>
+                    <url>http://172.13.1.11:8081/repository/maven-releases/</url>
+                </repository>
+            </distributionManagement>
+            <properties>
+                <profile.assembly.package.suffix>deploy-hadess</profile.assembly.package.suffix>
             </properties>
         </profile>
     </profiles>

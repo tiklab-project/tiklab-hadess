@@ -1,0 +1,1605 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!--
+
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements. See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership.
+        The ASF licenses this file to You under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with
+        the License. You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>23</version>
+    </parent>
+
+    <groupId>org.apache.sshd</groupId>
+    <artifactId>sshd</artifactId>
+    <version>2.9.2</version>
+    <name>Apache Mina SSHD</name>
+    <packaging>pom</packaging>
+    <inceptionYear>2008</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0 License</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <mailingLists>
+        <mailingList>
+            <name>Users mailing list</name>
+            <subscribe>users-subscribe@mina.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@mina.apache.org</unsubscribe>
+            <post>users@mina.apache.org</post>
+            <archive>https://mail-archives.apache.org/mod_mbox/mina-users/</archive>
+        </mailingList>
+        <mailingList>
+            <name>MINA Development mailing list</name>
+            <subscribe>dev-subscribe@mina.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@mina.apache.org</unsubscribe>
+            <post>dev@mina.apache.org</post>
+            <archive>https://mail-archives.apache.org/mod_mbox/mina-dev/</archive>
+            <otherArchives>
+                <otherArchive>https://www.nabble.com/Apache-MINA-f16868.html</otherArchive>
+            </otherArchives>
+        </mailingList>
+        <mailingList>
+            <name>MINA Commit mailing list</name>
+            <subscribe>commits-subscribe@mina.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@mina.apache.org</unsubscribe>
+            <archive>https://mail-archives.apache.org/mod_mbox/mina-commits/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://issues.apache.org/jira/browse/SSHD</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/mina-sshd.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mina-sshd.git</developerConnection>
+        <url>https://github.com/apache/mina-sshd/tree/${project.scm.tag}</url>
+        <tag>sshd-2.9.2</tag>
+    </scm>
+
+    <properties>
+        <projectRoot>${project.basedir}</projectRoot>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputTimestamp>2022-11-09T13:31:49Z</project.build.outputTimestamp>
+
+        <!-- NOTE: actual value updated by gmavenplus-plugin on initialization phase -->
+        <!-- workspace.root.dir>${project.basedir}</workspace.root.dir -->
+
+        <java.major.version>1</java.major.version>
+        <java.minor.version>8</java.minor.version>
+        <java.sdk.version>8</java.sdk.version>
+        <sniffer.signatures.version>1.0</sniffer.signatures.version>
+        <javac.source>${java.major.version}.${java.minor.version}</javac.source>
+        <project.build.java.source>${javac.source}</project.build.java.source>
+        <maven.compiler.source>${javac.source}</maven.compiler.source>
+        <ant.version>1.10.12</ant.version>
+        <ant.build.javac.source>${javac.source}</ant.build.javac.source>
+        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
+
+        <javac.target>${javac.source}</javac.target>
+        <required.java.version>[${javac.target},)</required.java.version>
+        <project.build.java.target>${javac.target}</project.build.java.target>
+        <maven.compiler.target>${javac.target}</maven.compiler.target>
+        <ant.build.javac.target>${javac.target}</ant.build.javac.target>
+
+        <min.required.maven.version>3.5.0</min.required.maven.version>
+        <groovy.version>3.0.11</groovy.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <logback.version>1.2.11</logback.version>
+        <spring.version>5.3.20</spring.version>
+            <!-- NOTE: upgrading to 6.x requires Java 11 -->
+        <jgit.version>5.13.0.202109080827-r</jgit.version>
+        <junit.version>4.13.2</junit.version>
+        <bytebuddy.version>1.12.6</bytebuddy.version>
+        <testcontainers.version>1.16.2</testcontainers.version>
+        <grpc.version>1.27.2</grpc.version> <!-- Used only in tests -->
+        <!-- addresses multi transitive versions of jna under org.testcontainers:testcontainers:1.15.3 -->
+        <jna.version>5.8.0</jna.version>
+
+        <surefire.plugin.version>3.0.0-M7</surefire.plugin.version>
+        <maven.archiver.version>3.5.1</maven.archiver.version>
+        <scm.plugin.version>1.12.0</scm.plugin.version>
+        <plexus.archiver.version>4.2.6</plexus.archiver.version>
+        <!-- See https://pmd.github.io/ for available latest version -->
+        <pmd.version>6.47.0</pmd.version>
+
+        <sshd.tests.timeout.factor>1.0</sshd.tests.timeout.factor>
+        <sshd.tests.rerun.count>2</sshd.tests.rerun.count>
+
+        <dependency.download.silent>true</dependency.download.silent>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <required.java.version>[1.8,1.9)</required.java.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>ci</id>
+            <properties>
+                <sshd.tests.timeout.factor>4.0</sshd.tests.timeout.factor>
+                <sshd.tests.rerun.count>4</sshd.tests.rerun.count>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>quick</id>
+            <properties>
+                <skipTests>true</skipTests>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>findbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <fork>false</fork>
+                            <includeTests>true</includeTests>
+                            <includeFilterFile>${workspace.root.dir}${file.separator}sshd-findbugs.xml</includeFilterFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>run-findbugs</id>
+                                <!-- Note: phase must be AFTER detection of workspace root dir -->
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+                <!-- mvn -Powasp verify
+
+                    NOTE: recommend also
+
+                    * Activating 'quick' profile
+                    * Skip PMD, checkstyle, formatting, assembly, etc.
+
+                mvn -Powasp,quick -Danimal.sniffer.skip=true -Drat.skip=true -Dpmd.skip=true -Dcheckstyle.skip=true -Dassembly.skipAssembly=true -Dformatter.skip=true -Dimpsort.skip=true verify
+
+                -->
+            <id>owasp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>7.1.1</version>
+                            <!-- see https://jeremylong.github.io/DependencyCheck/dependency-check-maven/configuration.html -->
+                        <configuration>
+                                <!-- see https://github.com/jeremylong/DependencyCheck/issues/1394 -->
+                            <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
+                            <suppressionFiles>
+                                 <suppressionFile>${workspace.root.dir}${file.separator}sshd-owasp-suppressions.xml</suppressionFile>
+                            </suppressionFiles>
+                                <!-- Not much we can do about system scope - e.g, JDK 'tools.jar' (nor do we use it) -->
+                            <skipSystemScope>true</skipSystemScope>
+                                <!-- We do not disseminate the test code nor do we expect it to be used in production sites -->
+                            <skipTestScope>true</skipTestScope>
+                                <!-- We currently don't have any .NET assemblies -->
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                            <nuspecAnalyzerEnabled>false</nuspecAnalyzerEnabled>
+                                <!-- We take care of such checks manually/periodically -->
+                            <versionCheckEnabled>false</versionCheckEnabled>
+                        </configuration>
+                        <executions>
+                           <execution>
+                                <id>run-owasp-dependency-check</id>
+                                <!-- Note: phase must be AFTER detection of workspace root dir -->
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>javac-errorprone</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerId>javac-with-errorprone</compilerId>
+                            <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                            <showWarnings>true</showWarnings>
+                        </configuration>
+                        <dependencies>
+    	                    <dependency>
+            	                <groupId>org.codehaus.plexus</groupId>
+                                <artifactId>plexus-compiler-javac-errorprone</artifactId>
+            	                <version>2.8.1</version>
+            		        </dependency>
+                		      <!-- override plexus-compiler-javac-errorprone's dependency on Error Prone with the latest version -->
+                           <dependency>
+                                <groupId>com.google.errorprone</groupId>
+                                <artifactId>error_prone_core</artifactId>
+                	            <version>2.0.15</version>
+                            </dependency>
+            		    </dependencies>
+                    </plugin>
+                 </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>javac-jdk9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <release>${java.sdk.version}</release>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>only-eclipse</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!--This plugin's configuration is used to store Eclipse
+                            m2e settings only and overcome integration problems.
+                            It has no influence on the Maven build itself. -->
+                        <plugin>
+                            <groupId>org.eclipse.m2e</groupId>
+                            <artifactId>lifecycle-mapping</artifactId>
+                            <version>1.0.0</version>
+                            <configuration>
+                                <lifecycleMappingMetadata>
+                                    <pluginExecutions>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-dependency-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>copy</goal>
+                                                    <goal>copy-dependencies</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.gmavenplus</groupId>
+                                                <artifactId>gmavenplus-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>compile</goal>
+                                                    <goal>execute</goal>
+                                                    <goal>testCompile</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.rat</groupId>
+                                                <artifactId>apache-rat-plugin</artifactId>
+                                                <versionRange>[0.1,)</versionRange>
+                                                <goals>
+                                                    <goal>check</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-checkstyle-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>check</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-pmd-plugin</artifactId>
+                                                <versionRange>[3.9.0,)</versionRange>
+                                                <goals>
+                                                    <goal>check</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.felix</groupId>
+                                                <artifactId>maven-bundle-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>manifest</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute />
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-antrun-plugin</artifactId>
+                                                <versionRange>[1.8,)</versionRange>
+                                                <goals>
+                                                    <goal>run</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute />
+                                            </action>
+                                        </pluginExecution>
+                                    </pluginExecutions>
+                                </lifecycleMappingMetadata>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-ant</artifactId>
+                <version>${groovy.version}</version>
+                <exclusions>
+                    <exclusion> <!-- replaced by ant-junit4 -->
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.mina</groupId>
+                <artifactId>mina-core</artifactId>
+                <version>2.0.23</version>
+            </dependency>
+            <dependency>
+                <groupId>tomcat</groupId>
+                <artifactId>tomcat-apr</artifactId>
+                <version>5.5.23</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.i2p.crypto</groupId>
+                <artifactId>eddsa</artifactId>
+                <version>0.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpg-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcutil-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>0.1.55</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jzlib</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+
+                <!-- Transitive dependencies by various 3rd party packages -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                        <!-- We use jcl-over-slf4j -->
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-jcl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>4.2.0</version>
+            </dependency>
+
+                <!-- Referenced indirectly by Bytebuddy -->
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+
+                <!-- Used by mockito -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${bytebuddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.jpam</groupId>
+                <artifactId>jpam</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+                <exclusions>
+                    <exclusion>    <!-- we are using jcl-over-slf4j -->
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+                <exclusions>
+                    <exclusion>    <!-- we are using jcl-over-slf4j -->
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.15</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.ethz.ganymed</groupId>
+                <artifactId>ganymed-ssh2</artifactId>
+                <version>262</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
+                <version>${jgit.version}</version>
+                    <!-- Do not include ourselves -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.sshd</groupId>
+                        <artifactId>sshd-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.sshd</groupId>
+                        <artifactId>sshd-sftp</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit.pgm</artifactId>
+                <version>${jgit.version}</version>
+                    <!-- We provide our own slf4j logging - needed for tests only -->
+                <exclusions>
+                    <exclusion>
+                      <groupId>org.slf4j</groupId>
+                      <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                      <groupId>log4j</groupId>
+                      <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.not-yet-commons-ssl</artifactId>
+                <version>0.3.11_1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+        <!-- Common dependencies for all projects -->
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+            <!-- Just in case any of our dependencies uses JCL -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+
+            <!-- Test dependencies -->
+       <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.13</version>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <excludes>
+                            <exclude>.asf.yaml</exclude>
+                            <exclude>*.md</exclude>
+                            <exclude>docs/**</exclude>
+                            <exclude>sshd-sources/**</exclude>
+                            <exclude>src/test/resources/**</exclude>
+                            <exclude>**/stty-output-*.txt</exclude>
+                            <exclude>**/target/**</exclude>
+                            <!-- formatter plugin cache folder -->
+                            <exclude>**/.cache/**</exclude>
+                            <exclude>*checkstyle*</exclude>
+                            <exclude>*findbugs*</exclude>
+                            <exclude>*suppressions*</exclude>
+                            <exclude>**/big-msg.txt</exclude>
+                            <!-- Special files imported from another project that we want to keep as-is -->
+                            <exclude>**/BCrypt.java</exclude>
+                            <exclude>LICENSE*</exclude>
+                            <exclude>NOTICE*</exclude>
+                            <exclude>security.txt</exclude>
+                                <!-- IDE files -->
+                            <exclude>*pmd*</exclude>
+                            <exclude>*.ser</exclude>
+                            <exclude>*.iml</exclude>
+                            <exclude>.metadata/**</exclude>
+                            <exclude>.recommenders/**</exclude>
+                            <exclude>RemoteSystemsTempFiles/**</exclude>
+                            <exclude>**/licenses/*.txt</exclude>
+                            <exclude>.project</exclude>
+                            <exclude>.classpath</exclude>
+                            <exclude>.springBeans</exclude>
+                            <exclude>.pydevproject</exclude>
+                            <exclude>*.pyc</exclude>
+                            <exclude>.settings/**</exclude>
+                            <exclude>.repository/**</exclude>
+                            <exclude>.gitignore</exclude>
+                            <exclude>.gitattributes</exclude>
+                            <exclude>.git/**</exclude>
+                            <exclude>.attach_pid*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>animal-sniffer-maven-plugin</artifactId>
+                    <version>1.20</version>
+                    <configuration>
+                        <signature>
+                            <groupId>org.codehaus.mojo.signature</groupId>
+                            <artifactId>java${java.major.version}${java.minor.version}</artifactId>
+                            <version>${sniffer.signatures.version}</version>
+                        </signature>
+                    </configuration>
+                        <!-- make sure the signatures artifact is downloaded -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.mojo.signature</groupId>
+                            <artifactId>java${java.major.version}${java.minor.version}</artifactId>
+                            <version>${sniffer.signatures.version}</version>
+                            <type>pom</type>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>${scm.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-api</artifactId>
+                            <version>${scm.plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>${scm.plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-svn-commons</artifactId>
+                            <version>${scm.plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-svnexe</artifactId>
+                            <version>${scm.plugin.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M4</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven</groupId>
+                            <artifactId>maven-archiver</artifactId>
+                            <version>${maven.archiver.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-archiver</artifactId>
+                            <version>${plexus.archiver.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                            <!-- see https://maven.apache.org/plugins/maven-resources-plugin/examples/filtering-properties-files.html -->
+                        <propertiesEncoding>ISO-8859-1</propertiesEncoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.3.1</version>
+                    <configuration>
+                        <additionalOptions>-Xdoclint:-missing</additionalOptions>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <quiet>true</quiet>
+                        <links>
+                            <link>http://docs.oracle.com/javase/${java.sdk.version}/docs/api</link>
+                        </links>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven</groupId>
+                            <artifactId>maven-archiver</artifactId>
+                            <version>${maven.archiver.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-archiver</artifactId>
+                            <version>${plexus.archiver.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>1.13.1</version>
+                    <dependencies>
+                          <!-- referenced indirectly by groovy-ant -->
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-launcher</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>    <!-- replace ant-junit artifact -->
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-junit4</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-antlr</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>junit</groupId>
+                            <artifactId>junit</artifactId>
+                            <version>${junit.version}</version>
+                        </dependency>
+
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-ant</artifactId>
+                            <version>${groovy.version}</version>
+                            <exclusions>
+                                <exclusion> <!-- replaced by ant-junit4 -->
+                                    <groupId>org.apache.ant</groupId>
+                                    <artifactId>ant-junit</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <resourceExcludes>**/*.properties</resourceExcludes>
+                    </configuration>
+                    <dependencies>
+                            <!-- see http://checkstyle.sourceforge.net/ for latest version -->
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                                <!-- Version 10+ requires Java 11 -->
+                            <version>9.3</version>
+                            <exclusions>
+                                <!-- MCHECKSTYLE-156 -->
+                                <exclusion>
+                                    <groupId>com.sun</groupId>
+                                    <artifactId>tools</artifactId>
+                                </exclusion>
+                                <exclusion>
+                                    <groupId>commons-logging</groupId>
+                                    <artifactId>commons-logging</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                            <!-- Use same version as us -->
+                        <dependency>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                            <version>${slf4j.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>jcl-over-slf4j</artifactId>
+                            <version>${slf4j.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-log4j12</artifactId>
+                            <version>${slf4j.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.5</version>
+                        <!-- see https://www.petrikainulainen.net/programming/maven/findbugs-maven-plugin-tutorial/ -->
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <xmlOutput>true</xmlOutput>
+                        <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.code.findbugs</groupId>
+                            <artifactId>findbugs</artifactId>
+                            <version>3.0.1</version>
+                        </dependency>
+                            <!-- Use same version as we do -->
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>    <!-- replace ant-junit artifact -->
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-junit4</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-antlr</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-launcher</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                            <!-- Use same version as we do -->
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-xml</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-groovydoc</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-templates</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-ant</artifactId>
+                            <version>${groovy.version}</version>
+                            <exclusions>
+                                <exclusion> <!-- replaced by ant-junit4 -->
+                                    <groupId>org.apache.ant</groupId>
+                                    <artifactId>ant-junit</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                   <groupId>org.apache.maven.plugins</groupId>
+                   <artifactId>maven-pmd-plugin</artifactId>
+                   <version>3.17.0</version>
+                   <configuration>
+                       <targetJdk>${javac.target}</targetJdk>
+                       <printFailingErrors>true</printFailingErrors>
+                       <skipPmdError>false</skipPmdError>
+                       <analysisCache>true</analysisCache> <!-- enable incremental analysis -->
+                       <showPmdLog>false</showPmdLog>
+                       <excludeRoots>
+                           <excludeRoot>target/generated-sources/java</excludeRoot>
+                       </excludeRoots>
+                       <excludes>
+                            <!-- Imported file that we want to preserve as-is -->
+                            <exclude>**/BCrypt.java</exclude>
+                       </excludes>
+                   </configuration>
+                   <dependencies>
+                       <dependency>
+                          <groupId>net.sourceforge.pmd</groupId>
+                          <artifactId>pmd-core</artifactId>
+                          <version>${pmd.version}</version>
+                       </dependency>
+                       <dependency>
+                          <groupId>net.sourceforge.pmd</groupId>
+                          <artifactId>pmd-java</artifactId>
+                          <version>${pmd.version}</version>
+                       </dependency>
+                       <dependency>
+                          <groupId>net.sourceforge.pmd</groupId>
+                          <artifactId>pmd-javascript</artifactId>
+                          <version>${pmd.version}</version>
+                       </dependency>
+                       <dependency>
+                          <groupId>net.sourceforge.pmd</groupId>
+                          <artifactId>pmd-jsp</artifactId>
+                          <version>${pmd.version}</version>
+                       </dependency>
+                   </dependencies>
+               </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-archiver</artifactId>
+                            <version>${plexus.archiver.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant</artifactId>
+                            <version>${ant.version}</version>
+                        </dependency>
+                        <!--Artificial dependency for tools.jar in case we invoke javac or javah -->
+                        <!--
+                        <dependency>
+                            <groupId>com.sun</groupId>
+                            <artifactId>tools</artifactId>
+                            <version>${java.version}</version>
+                            <scope>system</scope>
+                            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                        </dependency>
+                        -->
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>2.16.0</version>
+                    <configuration>
+                        <skipXmlFormatting>true</skipXmlFormatting>
+                        <skipHtmlFormatting>true</skipHtmlFormatting>
+                        <skipJsonFormatting>true</skipJsonFormatting>
+                        <cachedir>${project.build.outputDirectory}${file.separator}.cache</cachedir>
+                        <configFile>${workspace.root.dir}${file.separator}sshd-eclipse-formatter-config.xml</configFile>
+                        <lineEnding>LF</lineEnding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code</groupId>
+                    <artifactId>impsort-maven-plugin</artifactId>
+                    <version>1.6.2</version>
+                    <configuration>
+                        <lineEnding>LF</lineEnding>
+                        <groups>java.,javax.,org.w3c.,org.xml.,junit.</groups>
+                        <removeUnused>true</removeUnused>
+                        <staticAfter>true</staticAfter>
+                        <staticGroups>java.,javax.,org.w3c.,org.xml.,junit.</staticGroups>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <!-- Works only for Maven 3.x -->
+                    <execution>
+                        <id>detect-workspace-root-dir</id>
+                        <!-- NOTE: phase must be BEFORE checkstyle plugin one -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script>
+                                    <![CDATA[
+                                        for (java.io.File file = new java.io.File(new java.net.URI('${project.baseUri}')); file != null; file = file.getParentFile()) {
+                                            if (!file.isDirectory()) {
+                                                continue
+                                            }
+
+                                            java.io.File testFile = new java.io.File(file, 'LICENSE.txt')
+                                            if (testFile.canRead()) {
+                                                project.properties['workspace.root.dir'] = file.getAbsolutePath()
+                                                // System.out.println("Workspace root dir: " + project.properties['workspace.root.dir'])
+                                                return
+                                            }
+                                        }
+
+                                        System.err.println("Failed to detect workspace root dir")
+                                    ]]>
+                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>format</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>${workspace.root.dir}${file.separator}sshd-checkstyle.xml</configLocation>
+                    <headerLocation>${workspace.root.dir}${file.separator}java-checkstyle-license-header.txt</headerLocation>
+                        <!-- '{samedir}' is an Eclipse built in environment variable initialized with the value of the external checkstyle configuration file -->
+                        <!-- See See https://checkstyle.org/eclipse-cs/#!/properties -->
+                    <propertyExpansion>samedir=${workspace.root.dir}</propertyExpansion>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <!-- Note: phase must be AFTER detection of workspace root dir -->
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+               <!-- to disable - mvn [commands...] -Dpmd.skip -->
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-pmd-plugin</artifactId>
+               <configuration>
+                   <rulesets>
+                       <ruleset>${workspace.root.dir}${file.separator}sshd-pmd-ruleset.xml</ruleset>
+                   </rulesets>
+                   <includeTests>true</includeTests>
+               </configuration>
+               <executions>
+                   <execution>
+                       <id>pmd-checker</id>
+                       <!-- Note: phase must be AFTER detection of workspace root dir -->
+                       <phase>process-test-classes</phase>
+                       <goals>
+                           <goal>check</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check-java-api</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-version</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${min.required.maven.version}</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${required.java.version}</version>
+                                </requireJavaVersion>
+                                <requireReleaseDeps>
+                                    <onlyWhenRelease>true</onlyWhenRelease>
+                                    <message>No Snapshot Dependencies Allowed</message>
+                                </requireReleaseDeps>
+                                <dependencyConvergence />
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                        <!-- Delete temporary serialized key files generated during tests run -->
+                    <execution>
+                        <id>auto-clean-key-files</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${projects.basedir}</directory>
+                                    <includes>
+                                        <include>*.ser</include>
+                                        <include>*.pem</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${javac.source}</source>
+                    <target>${javac.target}</target>
+                    <compilerArgument>-g</compilerArgument>
+                        <!-- see http://www.javaworld.com/article/2073587/javac-s(dashdash)xlint-options.html -->
+                    <compilerArgument>-Xlint:-serial</compilerArgument>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-sources</id>
+                        <phase>install</phase>
+                        <goals>    <!-- automatically download the dependency sources - useful for debugging -->
+                            <goal>sources</goal>
+                        </goals>
+                        <configuration>
+                                <!-- no need to download our own sources - especially snapshot -->
+                            <excludeGroupIds>org.apache.sshd</excludeGroupIds>
+                            <markersDirectory>${settings.localRepository}/org/apache/sshd/dependency-maven-plugin-markers</markersDirectory>
+                            <silent>${dependency.download.silent}</silent>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-javadoc</id>
+                        <phase>install</phase>
+                        <goals>    <!-- automatically download the dependency javadoc - useful for debugging -->
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                                <!-- no need to download our own documentation - especially snapshot -->
+                            <excludeGroupIds>org.apache.sshd</excludeGroupIds>
+                            <markersDirectory>${settings.localRepository}/org/apache/sshd/dependency-maven-plugin-markers</markersDirectory>
+                            <classifier>javadoc</classifier>
+                            <silent>${dependency.download.silent}</silent>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                            </resourceBundles>
+                            <supplementalModels>
+                                <supplementalModel>${workspace.root.dir}${file.separator}assembly${file.separator}src${file.separator}main${file.separator}legal${file.separator}notices.xml</supplementalModel>
+                            </supplementalModels>
+                            <properties>
+                                <projectName>Apache MINA SSHD</projectName>
+                                <addLicense>true</addLicense>
+                                <addArtifact>true</addArtifact>
+                            </properties>
+                            <outputTimestamp>${project.build.outputTimestamp}</outputTimestamp> <!-- 01/01/2020 -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check-apache-license-header</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+                <!-- NOTE: do not upgrade maven or plexus-archiver plugin
+                    dependency for this plugin in order to avoid
+
+                        Execution unix-bin of goal org.apache.maven.plugins:maven-assembly-plugin:3.1.0:single failed:
+                            An API incompatibility was encountered while executing org.apache.maven.plugins:maven-assembly-plugin:3.1.0:single:
+                                java.lang.AbstractMethodError:
+                                    org.apache.maven.plugins.assembly.archive.archiver.PrefixedFileSet.getFileMappers()
+                                        [Lorg/codehaus/plexus/components/io/filemappers/FileMapper;
+               -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>source-release-assembly</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.3</version>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>versions</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>cleanVersions</goal>
+                        </goals>
+                        <configuration>
+                            <versions>
+                                <sshd.osgi.version.clean>${project.version}</sshd.osgi.version.clean>
+                            </versions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>org.apache.sshd*;version="[$(version;==;${sshd.osgi.version.clean}),$(version;=+;${sshd.osgi.version.clean}))",*</Import-Package>
+                                <Export-Package>*;-noimport:=true</Export-Package>
+                            </instructions>
+                            <noWarningProjectTypes>pom</noWarningProjectTypes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <!-- NOTE: do not upgrade maven-archiver plugin
+                    dependency for this plugin in order to avoid
+
+                    Execution bundle-manifest of goal org.apache.felix:maven-bundle-plugin:4.0.0:manifest failed:
+                        An API incompatibility was encountered while executing org.apache.felix:maven-bundle-plugin:4.0.0:manifest:
+                            java.lang.NoSuchMethodError:
+                                org.apache.maven.archiver.MavenArchiver.getManifest(
+                                    Lorg/apache/maven/project/MavenProject;
+                                    Lorg/apache/maven/archiver/MavenArchiveConfiguration;)
+                                        Lorg/codehaus/plexus/archiver/jar/Manifest;
+               -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-archiver</artifactId>
+                        <version>${maven.archiver.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-archiver</artifactId>
+                        <version>${plexus.archiver.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <runOrder>alphabetical</runOrder>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                        <!-- avoid inherent multi-threaded tests -->
+                    <perCoreThreadCount>false</perCoreThreadCount>
+                    <threadCount>1</threadCount>
+                    <systemPropertyVariables>
+                        <!-- java.io.tmpdir>${project.build.directory}${file.separator}temp</java.io.tmpdir -->
+                        <java.awt.headless>true</java.awt.headless>
+                        <org.slf4j.simpleLogger.logFile>System.out</org.slf4j.simpleLogger.logFile>
+                        <org.apache.sshd.test.timeout.factor>${sshd.tests.timeout.factor}</org.apache.sshd.test.timeout.factor>
+                        <logback.configurationFile>${workspace.root.folder}${file.separator}sshd-common${file.separator}src${file.separator}test${file.separator}resources${file.separator}logback-test.xml</logback.configurationFile>
+                    </systemPropertyVariables>
+                    <trimStackTrace>false</trimStackTrace>
+                    <!-- lets re-run the failed test one more time, just to be sure -->
+                    <rerunFailingTestsCount>${sshd.tests.rerun.count}</rerunFailingTestsCount>
+                </configuration>
+                <dependencies>
+                    <!-- make sure using OUR version -->
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>${junit.version}</version>
+                    </dependency>
+
+                    <!-- need to include it to ensure grouping detection -->
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.plugin.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Automatically remove artifacts from local repository on clean -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>remove-previous-artifact</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>remove-project-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <removeAll>false</removeAll>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>dummy</id>
+            <name>Dummy to avoid accidental deploys</name>
+            <url />
+        </repository>
+    </distributionManagement>
+
+    <reporting>
+       <plugins>
+           <plugin>    <!-- used by PMD to create a source XREF -->
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jxr-plugin</artifactId>
+               <version>3.1.1</version>
+           </plugin>
+       </plugins>
+    </reporting>
+
+    <modules>
+        <module>sshd-common</module>
+        <module>sshd-putty</module>
+        <module>sshd-openpgp</module>
+        <module>sshd-core</module>
+        <module>sshd-mina</module>
+        <module>sshd-netty</module>
+        <module>sshd-scp</module>
+        <module>sshd-sftp</module>
+        <module>sshd-ldap</module>
+        <module>sshd-git</module>
+        <module>sshd-contrib</module>
+        <module>sshd-spring-sftp</module>
+        <module>sshd-cli</module>
+        <module>sshd-osgi</module>
+        <module>assembly</module>
+    </modules>
+</project>

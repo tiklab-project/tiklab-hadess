@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>tiklab-homes</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+    <version>1.0.0</version>
+
+    <modules>
+        <module>tiklab-homes-starter</module>
+        <module>tiklab-cms</module>
+        <module>tiklab-doc</module>
+        <module>tiklab-download</module>
+        <module>tiklab-iam</module>
+        <module>tiklab-member</module>
+        <module>tiklab-product</module>
+        <module>tiklab-promotion</module>
+        <module>tiklab-sns</module>
+        <module>tiklab-ssm</module>
+        <module>tiklab-statistics</module>
+        <module>tiklab-subscribe</module>
+        <module>tiklab-tenant</module>
+        <module>tiklab-safety</module>
+    </modules>
+
+
+    <properties>
+
+        <!-- tiklab  -->
+        <tiklab-dal.version>1.0.0</tiklab-dal.version>
+        <tiklab-core.version>1.0.0</tiklab-core.version>
+        <tiklab-toolkit.version>1.0.0</tiklab-toolkit.version>
+        <tiklab-dfs.version>1.0.0</tiklab-dfs.version>
+        <tiklab-dss.version>1.0.0</tiklab-dss.version>
+        <tiklab-dcs.version>1.0.0</tiklab-dcs.version>
+        <tiklab-codegen.version>1.0.0</tiklab-codegen.version>
+        <tiklab-gateway.version>1.0.0</tiklab-gateway.version>
+        <tiklab-rpc.version>1.0.0</tiklab-rpc.version>
+        <tenant-cloud.version>1.0.0</tenant-cloud.version>
+
+        <!-- 平台 -->
+        <tiklab-user.version>1.0.0</tiklab-user.version>
+        <tiklab-message.version>1.0.0</tiklab-message.version>
+        <tiklab-privilege.version>1.0.0</tiklab-privilege.version>
+        <tiklab-security.version>1.0.0</tiklab-security.version>
+        <tiklab-licence.version>1.0.0</tiklab-licence.version>
+
+        <!--local-version-->
+        <tiklab-cms.version>1.0.0</tiklab-cms.version>
+        <tiklab-doc.version>1.0.0</tiklab-doc.version>
+        <tiklab-download.version>1.0.0</tiklab-download.version>
+        <tiklab-iam.version>1.0.0</tiklab-iam.version>
+        <tiklab-member.version>1.0.0</tiklab-member.version>
+        <tiklab-product.version>1.0.0</tiklab-product.version>
+        <tiklab-promotion.version>1.0.0</tiklab-promotion.version>
+        <tiklab-safety.version>1.0.0</tiklab-safety.version>
+        <tiklab-sns.version>1.0.0</tiklab-sns.version>
+        <tiklab-ssm.version>1.0.0</tiklab-ssm.version>
+        <tiklab-statistics.version>1.0.0</tiklab-statistics.version>
+        <tiklab-subscribe.version>1.0.0</tiklab-subscribe.version>
+        <tiklab-tenant.version>1.0.1-SNAPSHOT</tiklab-tenant.version>
+
+        <!-- other  -->
+        <commons-net.version>3.5</commons-net.version>
+        <ddsharesdk>1.2.1</ddsharesdk>
+        <dingtalk.version>1.2.98</dingtalk.version>
+        <IJPay-All>2.7.0</IJPay-All>
+        <xk-time>2.1.0</xk-time>
+        <alipay-sdk-java>4.22.37.ALL</alipay-sdk-java>
+        <bcprov-jdk15on>1.68</bcprov-jdk15on>
+        <json>20090211</json>
+        <jsch>0.1.55</jsch>
+        <okhttp>3.12.13</okhttp>
+        <jsch.version>0.2.7</jsch.version>
+        <commons-compress>1.21</commons-compress>
+
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <!--tiklab-->
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-core</artifactId>
+                <version>${tiklab-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-toolkit-spring-boot-starter</artifactId>
+                <version>${tiklab-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-dal-spring-boot-starter</artifactId>
+                <version>${tiklab-dal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-dss-spring-boot-starter</artifactId>
+                <version>${tiklab-dss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-dfs-spring-boot-starter</artifactId>
+                <version>${tiklab-dfs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-dcs-spring-boot-starter</artifactId>
+                <version>${tiklab-dcs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.tiklab</groupId>
+                <artifactId>tiklab-codegen-core</artifactId>
+                <version>${tiklab-codegen.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

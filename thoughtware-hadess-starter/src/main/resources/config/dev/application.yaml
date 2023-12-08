@@ -1,0 +1,114 @@
+#application config
+app:
+  name: thoughtware-hadess
+  path: ${APP_HOME}
+spring:
+  profiles:
+    active: dev
+
+#web config
+server:
+  port: 8080
+
+#dal config
+
+#dal config for mysql jdbc
+jdbc:
+  driverClassName: org.postgresql.Driver
+  url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.11.1.10/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
+  username: postgres
+  password: darth2020
+
+
+postgresql:
+  embbed:
+    enable: false
+  database: tiklab_xpack
+  type: local
+
+#eas config
+darth:
+  embbed:
+    enable: true
+
+DATA_HOME: ${user.home}/tiklab/${app.name}
+
+base:
+  url: http://192.168.10.23:3000
+
+
+#dfs config
+dfs:
+  server:
+    enabled: false
+    mode: server
+    port: 4000
+    datapath: ${DATA_HOME}/files
+  client:
+    url: 127.0.0.1:4000
+    bucket: ${app.name}
+
+#dcs config
+dcs:
+  server:
+    enabled: true
+    port: 5001
+    datapath: ${DATA_HOME}/data
+  client:
+    url: 127.0.0.1:5001
+    group: g1
+    database: dcs1
+    expire: 6000
+
+#dcs config
+dss:
+  server:
+    enabled: false
+    mode: server
+    port: 6000
+    datapath: ${DATA_HOME}/index
+  client:
+    url: 127.0.0.1:6000
+    bucket: ${app.name}
+
+
+#plugin config
+plugin.path: ${APP_HOME}/plugin
+
+#rpc
+homes:
+  address: http://192.168.10.7:8080
+
+
+#licences config
+licences:
+  path: ${DATA_HOME}/data/dfs/default
+
+#file
+file:
+  path: http://file.dev.tiklab.net
+
+
+
+repository:
+  address: ${DATA_HOME}/repository
+
+
+
+backups:
+  time: 0 0 2 * * ?
+  dir: ${DATA_HOME}
+  xpack:
+    dir: /Users/limingliang/tiklab/tiklab-xpack/repository
+  pgsql:
+    dir: /Users/limingliang/postgreSQL/bin
+
+
+
+
+openscan_mvn:
+  repo: http://172.13.1.24:8080/repository/maven-public
+  user: admin
+  password: 123456

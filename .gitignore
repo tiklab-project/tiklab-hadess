@@ -9,3 +9,6 @@ logs/
 plugin/
 APP_HOME_IS_UNDEFINED/
 DATA_HOME_IS_UNDEFINED/
+
+thoughtware-hadess-starter/embbed
+thoughtware-hadess-starter/plugin

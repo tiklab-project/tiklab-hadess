@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-dependencies</artifactId>
+        <version>1.0.0.3</version>
+    </parent>
+
+    <artifactId>tiklab-eam</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <modules>
+        <module>tiklab-eam-api</module>
+        <module>tiklab-eam-server</module>
+        <module>tiklab-eam-client</module>
+        <module>tiklab-eam-spring-boot-starter</module>
+        <module>tiklab-eam-starter</module>
+    </modules>
+
+
+    <properties>
+        <tiklab-eam.version>${version}</tiklab-eam.version>
+        <!--tiklab-->
+        <tiklab-user.version>1.0.0-SNAPSHOT</tiklab-user.version>
+        <tiklab-dal.version>1.0.0.3</tiklab-dal.version>
+        <tiklab-core.version>1.0.0.3</tiklab-core.version>
+        <tiklab-toolkit.version>1.0.0.3</tiklab-toolkit.version>
+        <tiklab-rpc.version>1.0.0.3</tiklab-rpc.version>
+        <tiklab-dss.version>1.0.0.3</tiklab-dss.version>
+        <tiklab-dcs.version>1.0.0.3</tiklab-dcs.version>
+        <tiklab-dfs.version>1.0.0.3</tiklab-dfs.version>
+        <tiklab-codegen.version>1.0.0.3</tiklab-codegen.version>
+        <tiklab-gateway.version>1.0.0.3</tiklab-gateway.version>
+        <tiklab-plugin.version>1.0.0.3</tiklab-plugin.version>
+
+        <tiklab-privilege.version>1.0.0.5</tiklab-privilege.version>
+        <!--other-->
+        <guava.version>18.0</guava.version>
+        <commons-lang3.version>3.10</commons-lang3.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
