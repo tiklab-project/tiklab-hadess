@@ -35,12 +35,12 @@ postgresql:
 eas:
   embbed:
     enable: false
-  address: http://gittok-ce.demo.thoughtware.cn
+  address: http://eas-ce.demo.thoughtware.cn
 
 DATA_HOME: /opt/tiklab/thoughtware_hadess
 
 base:
-  url: http://gittok-ce.demo.thoughtware.cn
+  url: http://eas-ce.demo.thoughtware.cn
 
 #dfs config
 dfs:
