@@ -2,10 +2,11 @@
 app:
   name: thoughtware-hadess
   path: ${APP_HOME}
-spring:
-  profiles:
-    active: demo
+  version: ce
 
+spring:
+  config:
+    import: optional:classpath:/config/${env:dev}/application.yaml
 #web config
 server:
   port: 8080
@@ -15,30 +16,31 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5432/thoughtware_hadess?stringtype=unspecified
   username: postgres
   password: darth2020
+
 
 postgresql:
   embbed:
     enable: true
-  database: xpack
+  database: thoughtware_hadess
   db:
     port: 5432
     username: postgres
     password: darth2020
     address: ${DATA_HOME}/postgresql
 
+#eas config
 eas:
   embbed:
     enable: false
-  address: http://eas-ce.demo.tiklab.net
+  address: http://gittok-ce.demo.thoughtware.cn
 
-
-DATA_HOME: /opt/tiklab/xpack
+DATA_HOME: /opt/tiklab/thoughtware_hadess
 
 base:
-  url: http://eas-ce.demo.tiklab.net
+  url: http://gittok-ce.demo.thoughtware.cn
 
 #dfs config
 dfs:
@@ -55,13 +57,12 @@ dfs:
 dcs:
   server:
     enabled: false
-    port: 5020
+    mode: server
+    port: 5000
     datapath: ${DATA_HOME}/caches
   client:
-    url: 127.0.0.1:5020
-    group: g1
-    database: dcs1
-    expire: 7200
+    url: 127.0.0.1:5000
+    bucket: ${app.name}
 
 #dcs config
 dss:
@@ -74,12 +75,14 @@ dss:
     url: 127.0.0.1:6000
     bucket: ${app.name}
 
+
 #plugin config
 plugin.path: ${APP_HOME}/plugin
 
-#rpc
+
 homes:
-  address: http://172.11.1.11:8080
+  address: http://homes.thoughtware.cn
+
 
 #licences config
 licences:
@@ -87,18 +90,18 @@ licences:
 
 #file
 file:
-  path: http://file.dev.tiklab.net
+  path: http://file.thoughtware.net
 
 repository:
   address: ${DATA_HOME}/repository
 
 
+
 backups:
   time: 0 0 2 * * ?
-  dir: /data
+  dir: /data/backup
   xpack:
     dir: ${DATA_HOME}/repository
-
 
 openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public
