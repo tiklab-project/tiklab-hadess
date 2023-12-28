@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------------------------------------
 DIRS=$(dirname "$PWD")
 
-APP_MAIN="io.tiklab.xpack.starter.XpackApplication"
+APP_MAIN="io.thoughtware.hadess.starter.HadessApplication"
 JDK_VERSION=jdk-16.0.2
 if [ -d "${DIRS}/embbed/${JDK_VERSION}" ]; then
     echo "使用内嵌jdk"

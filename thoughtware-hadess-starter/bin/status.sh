@@ -4,7 +4,7 @@ if [ ! -n "$JAVA_HOME" ]; then
 fi
 
 #APP_MAIN=${application.main.class}
-APP_MAIN=" io.tiklab.xpack.starter.XpackApplication"
+APP_MAIN=" io.thoughtware.hadess.starter.HadessApplication"
 
 PID=0
 getPID(){
