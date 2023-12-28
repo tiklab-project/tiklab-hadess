@@ -22,6 +22,8 @@ CREATE TABLE pack_repository(
      storage_id varchar (12),
      description varchar(160),
      create_user varchar (12),
+     category integer,
+     color  integer,
      create_time timestamp,
      update_time timestamp
 );
@@ -83,6 +85,7 @@ CREATE TABLE pack_library(
     library_type varchar (32) NOT NULL,
     repository_id varchar (12) NOT NULL,
     new_version varchar (64),
+    size     bigint,
     create_time timestamp,
     update_time timestamp
 );
@@ -126,6 +129,7 @@ CREATE TABLE pack_library_maven(
    library_id varchar(12) NOT NULL,
    group_id varchar (128) NOT NULL,
    artifact_id varchar (128) NOT NULL,
+   repository_id varchar(12),
    create_time  timestamp
 );
 -- ---------------------------
@@ -147,5 +151,6 @@ CREATE TABLE pack_push_library(
   library_id varchar (12) NOT NULL,
   last_push_time timestamp,
   last_push_result varchar(12),
+  exec_state     varchar(12),
   user_id varchar (12)
 );

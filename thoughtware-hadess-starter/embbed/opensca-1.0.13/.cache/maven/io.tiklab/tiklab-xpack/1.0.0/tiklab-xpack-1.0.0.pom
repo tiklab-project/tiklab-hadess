@@ -75,11 +75,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>xpack</id>
-                    <url>http://192.168.10.17:8080/repository/maven-snapshots</url>
+                    <url>http://192.168.10.9:8080/repository/maven-snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>xpack</id>
-                    <url>http://192.168.10.17:8080/repository/maven-release</url>
+                    <url>http://192.168.10.9:8080/repository/maven-release</url>
                 </repository>
             </distributionManagement>
             <properties>

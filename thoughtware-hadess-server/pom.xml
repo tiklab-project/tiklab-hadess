@@ -48,35 +48,10 @@
         </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-user-spring-boot-starter</artifactId>
-            <version>${thoughtware-user.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-eam-spring-boot-starter</artifactId>
             <version>${thoughtware-eam.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-dfs-spring-boot-starter</artifactId>
-            <version>${thoughtware-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-dcs-spring-boot-starter</artifactId>
-            <version>${thoughtware-dcs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-dss-spring-boot-starter</artifactId>
-            <version>${thoughtware-dss.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-message-spring-boot-starter</artifactId>
-            <version>${thoughtware-message.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-hadess-api</artifactId>

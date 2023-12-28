@@ -1,10 +1,10 @@
 package io.thoughtware.hadess.scan.service;
 
 import io.thoughtware.hadess.scan.model.*;
-import io.thoughtware.beans.BeanMapper;
+import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
-import io.thoughtware.join.JoinTemplate;
+import io.thoughtware.toolkit.join.JoinTemplate;
 import io.thoughtware.hadess.scan.dao.ScanLibraryDao;
 import io.thoughtware.hadess.scan.entity.ScanLibraryEntity;
 import io.thoughtware.hadess.scan.model.*;

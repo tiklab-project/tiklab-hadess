@@ -2,10 +2,10 @@ package io.thoughtware.hadess.scan.service;
 
 
 import io.thoughtware.core.page.Pagination;
-import io.thoughtware.join.annotation.FindAll;
-import io.thoughtware.join.annotation.FindList;
-import io.thoughtware.join.annotation.FindOne;
-import io.thoughtware.join.annotation.JoinProvider;
+import io.thoughtware.toolkit.join.annotation.FindAll;
+import io.thoughtware.toolkit.join.annotation.FindList;
+import io.thoughtware.toolkit.join.annotation.FindOne;
+import io.thoughtware.toolkit.join.annotation.JoinProvider;
 import io.thoughtware.hadess.scan.model.ScanRecord;
 import io.thoughtware.hadess.scan.model.ScanRecordQuery;
 
@@ -106,6 +106,8 @@ public interface ScanRecordService {
      * @return
      */
     List<ScanRecord> findScanRecordByPlay(ScanRecordQuery scanRecordQuery);
+
+
 
     /**
      * 通过group查询扫描结果

@@ -1,7 +1,7 @@
 package io.thoughtware.hadess.scan.model;
 
-import io.thoughtware.beans.annotation.Mapper;
-import io.thoughtware.join.annotation.Join;
+import io.thoughtware.toolkit.beans.annotation.Mapper;
+import io.thoughtware.toolkit.join.annotation.Join;
 import io.thoughtware.postin.annotation.ApiModel;
 import io.thoughtware.postin.annotation.ApiProperty;
 

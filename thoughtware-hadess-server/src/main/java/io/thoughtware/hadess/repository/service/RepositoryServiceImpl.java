@@ -1,7 +1,5 @@
 package io.thoughtware.hadess.repository.service;
-import io.thoughtware.hadess.common.RepositoryUtil;
-import io.thoughtware.hadess.common.UuidGenerator;
-import io.thoughtware.hadess.common.XpackYamlDataMaService;
+import io.thoughtware.hadess.common.*;
 import io.thoughtware.hadess.library.dao.LibraryDao;
 import io.thoughtware.hadess.library.entity.LibraryEntity;
 import io.thoughtware.hadess.library.model.LibraryFile;
@@ -11,11 +9,11 @@ import io.thoughtware.hadess.library.service.LibraryMavenService;
 import io.thoughtware.hadess.library.service.LibraryService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.repository.model.*;
-import io.thoughtware.beans.BeanMapper;
+import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
 import io.thoughtware.eam.common.context.LoginContext;
-import io.thoughtware.join.JoinTemplate;
+import io.thoughtware.toolkit.join.JoinTemplate;
 import io.thoughtware.privilege.dmRole.service.DmRoleService;
 import io.thoughtware.rpc.annotation.Exporter;
 import io.thoughtware.hadess.repository.dao.RepositoryDao;
@@ -83,6 +81,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     LibraryDao libraryDao;
 
+    @Autowired
+    HadessMessageService hadessMessageService;
+
     @Value("${server.port:8080}")
     private String port;
 
@@ -111,18 +112,28 @@ public class RepositoryServiceImpl implements RepositoryService {
         }else {
             dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),"hadess");
         }
+
+        //发送消息
+        initRepositoryMap(repositoryEntity,"create",null);
         return repositoryId;
     }
 
 
     @Override
     public void updateRepository(@NotNull @Valid Repository repository) {
+        RepositoryEntity repositoryEn = repositoryDao.findRepository(repository.getId());
+
         RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
         if (StringUtils.isNotEmpty(repository.getType())){
             String type = repository.getType().toLowerCase();
             repositoryEntity.setType(type);
         }
         repositoryDao.updateRepository(repositoryEntity);
+
+        //发送消息
+        if (!repositoryEn.getName().equals(repository.getName())){
+            initRepositoryMap(repositoryEn,"update",repository.getName());
+        }
     }
 
     @Override
@@ -148,6 +159,7 @@ public class RepositoryServiceImpl implements RepositoryService {
             libraryMavenService.deleteLibraryMavenByCondition("repositoryId",id);
         }
 
+
         //删除文件
         try {
             String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
@@ -155,6 +167,8 @@ public class RepositoryServiceImpl implements RepositoryService {
         }catch (Exception e){
             logger.info("删除制品库时删除文件失败:"+e.getMessage());
         }
+        RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
+        initRepositoryMap(repositoryEntity,"delete",null);
     }
 
     @Override
@@ -289,28 +303,6 @@ public class RepositoryServiceImpl implements RepositoryService {
         return localAndRemoteRepository;
     }
 
-    @Override
-    public void test01(String repositoryId) {
-        List<LibraryFile> fileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setRepositoryId(repositoryId));
-        if (CollectionUtils.isNotEmpty(fileList)){
-            for (LibraryFile libraryFile:fileList){
-                String fileUrl = libraryFile.getFileUrl();
-                String substring = fileUrl.substring(0, fileUrl.indexOf("/"));
-             /*   if (substring.equals(repositoryId)){
-                    System.out.println("删除路径:"+fileUrl);
-                    libraryFileService.deleteLibraryFile(libraryFile.getId());
-                }*/
-                if (!substring.equals(repositoryId)){
-                    System.out.println("原id:"+substring+"修改的id:"+repositoryId);
-                    String replace = fileUrl.replaceAll(substring, repositoryId);
-                    System.out.println("替换后:"+replace);
-                    libraryFile.setFileUrl(replace);
-                    libraryFileService.updateLibraryFile(libraryFile);
-                }
-            }
-        }
-    }
-
 
     public void findLibrary(List<Repository> repositoryList){
         if (CollectionUtils.isNotEmpty(repositoryList)) {
@@ -426,5 +418,38 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
 
+    /**
+     *操作制品库发送消息
+     * @param oldRepository 操作的制品库
+     * @param type  操作类型
+     * @param  updateName 更新名字
+     */
+    public void initRepositoryMap(RepositoryEntity oldRepository, String type, String updateName){
 
+        HashMap<String, Object> map = hadessMessageService.initMap();
+
+        map.put("repositoryId",oldRepository.getId());
+        map.put("action",oldRepository.getName());
+        if (("delete").equals(type)){
+            map.put("message", "删除了制品库"+oldRepository.getName());
+            map.put("link", HadessFinal.LOG_RPY_DELETE);
+            hadessMessageService.settingMessage(map,HadessFinal.LOG_TYPE_DELETE);
+            hadessMessageService.settingLog(map,HadessFinal.LOG_TYPE_DELETE,"repository");
+        }
+
+        if (("update").equals(type)){
+            map.put("message", oldRepository.getName()+"更改为"+updateName);
+            map.put("link",HadessFinal.LOG_RPY_UPDATE);
+
+            hadessMessageService.settingMessage(map,HadessFinal.LOG_TYPE_UPDATE);
+            hadessMessageService.settingLog(map,HadessFinal.LOG_TYPE_UPDATE,"repository");
+        }
+
+        if (("create").equals(type)){
+            map.put("message", "创建了制品库"+oldRepository.getName());
+            map.put("link",HadessFinal.LOG_RPY_CREATE);
+            hadessMessageService.settingMessage(map,HadessFinal.LOG_TYPE_CREATE);
+            hadessMessageService.settingLog(map,HadessFinal.LOG_TYPE_CREATE,"repository");
+        }
+    }
 }

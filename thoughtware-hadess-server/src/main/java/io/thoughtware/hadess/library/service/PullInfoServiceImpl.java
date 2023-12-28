@@ -4,10 +4,10 @@ import io.thoughtware.hadess.library.dao.PullInfoDao;
 import io.thoughtware.hadess.library.entity.PullInfoEntity;
 import io.thoughtware.hadess.library.model.PullInfo;
 import io.thoughtware.hadess.library.model.PullInfoQuery;
-import io.thoughtware.beans.BeanMapper;
+import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
-import io.thoughtware.join.JoinTemplate;
+import io.thoughtware.toolkit.join.JoinTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -37,6 +37,7 @@
         <thoughtware-dal.version>1.0.0</thoughtware-dal.version>
         <thoughtware-join.version>1.0.0</thoughtware-join.version>
         <thoughtware-openapi-version>1.0.0-SNAPSHOT</thoughtware-openapi-version>
+        <thoughtware-dsm.version>1.0.0</thoughtware-dsm.version>
 
         <!--平台组件-->
         <thoughtware-privilege.version>1.0.1-SNAPSHOT</thoughtware-privilege.version>
@@ -75,11 +76,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>hadess</id>
-                    <url>http://192.168.10.17:8081/repository/maven-snapshot</url>
+                    <url>http://192.168.10.9:8081/repository/maven-snapshot</url>
                 </snapshotRepository>
                 <repository>
                     <id>hadess</id>
-                    <url>http://192.168.10.17:8081/repository/maven-release</url>
+                    <url>http://192.168.10.9:8081/repository/maven-release</url>
                 </repository>
             </distributionManagement>
             <properties>
@@ -90,14 +91,16 @@
         <profile>
             <id>deploy-nexus</id>
             <distributionManagement>
-                <snapshotRepository>
-                    <id>nexus-public</id>
-                    <url>http://172.13.1.11:8081/repository/maven-snapshots/</url>
-                </snapshotRepository>
                 <repository>
-                    <id>nexus-public</id>
-                    <url>http://172.13.1.11:8081/repository/maven-releases/</url>
+                    <id>nexus-releases</id>
+                    <name>nexus releases</name>
+                    <url>http://e.hadess.thoughtware.cn/repository/maven-releases/</url>
                 </repository>
+                <snapshotRepository>
+                    <id>nexus-snapshots</id>
+                    <name>nexus snapshots</name>
+                    <url>http://e.hadess.thoughtware.cn/repository/maven-snapshots/</url>
+                </snapshotRepository>
             </distributionManagement>
             <properties>
                 <profile.assembly.package.suffix>deploy-hadess</profile.assembly.package.suffix>

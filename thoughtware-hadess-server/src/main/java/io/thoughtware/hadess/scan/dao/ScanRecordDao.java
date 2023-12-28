@@ -96,6 +96,7 @@ public class ScanRecordDao {
                 .eq("scanLibraryId",scanRecordQuery.getScanLibraryId())
                 .eq("scanPlayId",scanRecordQuery.getScanPlayId())
                 .eq("scanGroup",scanRecordQuery.getScanGroup())
+                .eq("recordType",scanRecordQuery.getRecordType())
                 .orders(scanRecordQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,ScanRecordEntity.class);

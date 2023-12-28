@@ -80,8 +80,24 @@
         </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-dfs-spring-boot-starter</artifactId>
+            <version>${thoughtware-dfs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-dcs-spring-boot-starter</artifactId>
+            <version>${thoughtware-dcs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-dss-spring-boot-starter</artifactId>
             <version>${thoughtware-dss.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-message-spring-boot-starter</artifactId>
+            <version>${thoughtware-message.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!--other-->
@@ -102,7 +118,11 @@
             <artifactId>thoughtware-openapi-spring-boot-starter</artifactId>
             <version>${thoughtware-openapi-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-dsm-spring-boot-starter</artifactId>
+            <version>${thoughtware-dsm.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-security-spring-boot-starter</artifactId>

@@ -1,6 +1,7 @@
 package io.thoughtware.hadess.scan.controller;
 
 import io.thoughtware.core.Result;
+import io.thoughtware.hadess.scan.model.ScanRecord;
 import io.thoughtware.postin.annotation.Api;
 import io.thoughtware.postin.annotation.ApiMethod;
 import io.thoughtware.postin.annotation.ApiParam;
@@ -32,10 +33,12 @@ public class ScanController {
     @RequestMapping(path="/findExecResult",method = RequestMethod.POST)
     @ApiMethod(name = "findExecResult",desc = "查询扫描结果")
     @ApiParam(name = "scanPlayId",desc = "扫描计划的id",required = true)
-    public Result<ScanQueue> findExecResult(@NotNull String scanPlayId){
+    public Result<ScanRecord> findExecResult(@NotNull String scanPlayId){
 
-        ScanQueue execResult = scanService.findExecResult(scanPlayId);
-        return Result.ok(execResult);
+        //ScanQueue execResult = scanService.findExecResult(scanPlayId);
+
+        ScanRecord execState = scanService.findExecState(scanPlayId);
+        return Result.ok(execState);
     }
 
 }

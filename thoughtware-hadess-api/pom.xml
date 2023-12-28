@@ -30,6 +30,21 @@
             <version>${thoughtware-user.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-security-api</artifactId>
+            <version>${thoughtware-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-message-api</artifactId>
+            <version>${thoughtware-message.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-licence-api</artifactId>
+            <version>${thoughtware-licence.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

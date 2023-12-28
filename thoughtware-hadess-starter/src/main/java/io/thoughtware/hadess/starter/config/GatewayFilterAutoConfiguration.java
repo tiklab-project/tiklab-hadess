@@ -116,7 +116,7 @@ public class GatewayFilterAutoConfiguration {
 
 
     //路由转发配置
-    @Value("${darth.address:null}")
+    @Value("${eas.address:null}")
     String authUrl;
 
 

@@ -1,6 +1,11 @@
 package io.thoughtware.hadess.library.controller;
 
+import io.thoughtware.hadess.common.RepositoryUtil;
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class test {
@@ -58,6 +63,19 @@ public class test {
         // 生成0到9之间的随机数
         int randomNum = random.nextInt(5);
         System.out.println("生成数："+randomNum);
+
+
+        String repositoryAddress = "/Users/limingliang/tiklab/thoughtware-gittork/repository";
+        File file = new File(repositoryAddress);
+
+
+        long logBytes = FileUtils.sizeOfDirectory(file);
+        System.out.println("logBytes"+logBytes);
+
+
+        String size = RepositoryUtil.countStorageSize(logBytes);
+        System.out.println("123"+size);
     }
+
 
 }

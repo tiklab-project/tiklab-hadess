@@ -18,6 +18,8 @@ jdbc:
   username: postgres
   password: darth2020
 
+base:
+  url: http://e.hadess.thoughtware.cn
 
 postgresql:
   embbed:

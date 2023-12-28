@@ -1,25 +1,26 @@
 package io.thoughtware.hadess.scan.service;
 
-import io.thoughtware.beans.BeanMapper;
+import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
 import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
 import io.thoughtware.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
-import io.thoughtware.join.JoinTemplate;
+import io.thoughtware.hadess.scan.model.*;
+import io.thoughtware.toolkit.join.JoinTemplate;
 import io.thoughtware.hadess.scan.dao.ScanPlayDao;
 import io.thoughtware.hadess.scan.entity.ScanPlayEntity;
-import io.thoughtware.hadess.scan.model.ScanLibrary;
-import io.thoughtware.hadess.scan.model.ScanLibraryQuery;
-import io.thoughtware.hadess.scan.model.ScanPlay;
-import io.thoughtware.hadess.scan.model.ScanPlayQuery;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * ScanPlayServiceImpl-扫描结果
@@ -35,6 +36,8 @@ public class ScanPlayServiceImpl implements ScanPlayService {
 
     @Autowired
     ScanLibraryService scanLibraryService;
+    @Autowired
+    ScanRecordService scanRecordService;
 
     @Override
     public String createScanPlay(@NotNull @Valid ScanPlay scanPlay) {
@@ -121,6 +124,25 @@ public class ScanPlayServiceImpl implements ScanPlayService {
                 List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery().setScanPlayId(scanPlay.getId()));
                 int size = CollectionUtils.isNotEmpty(scanLibraryList) ? scanLibraryList.size() : 0;
                 scanPlay.setLibraryNum(size);
+
+                List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanPlayId(scanPlay.getId()));
+
+                if (CollectionUtils.isNotEmpty(scanRecordList)){
+                    List<ScanRecord> scanRecords = scanRecordList.stream().sorted(Comparator.comparing(ScanRecord::getCreateTime).reversed()).collect(Collectors.toList());
+                    ScanRecord scanRecord = scanRecords.get(0);
+                    if(!ObjectUtils.isEmpty(scanRecord.getScanUser())){
+                        String userName = StringUtils.isNotEmpty(scanRecord.getScanUser().getNickname()) ? scanRecord.getScanUser().getNickname() :
+                                scanRecord.getScanUser().getName();
+                        scanPlay.setUserName(userName);
+                    }
+                    scanPlay.setResult(scanRecord.getScanResult());
+                    scanPlay.setNewScanTime(scanRecord.getCreateTime());
+                    scanPlay.setScanGroup(scanRecord.getScanGroup());
+                    scanPlay.setScanState("true");
+                    scanPlay.setNewScanRecordId(scanRecord.getId());
+                }else {
+                    scanPlay.setScanState("false");  //没有扫描
+                }
             }
         }
 

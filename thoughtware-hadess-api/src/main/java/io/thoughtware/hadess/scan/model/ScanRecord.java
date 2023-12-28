@@ -2,14 +2,15 @@ package io.thoughtware.hadess.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.thoughtware.hadess.library.model.Library;
-import io.thoughtware.beans.annotation.Mapper;
-import io.thoughtware.beans.annotation.Mapping;
-import io.thoughtware.beans.annotation.Mappings;
+import io.thoughtware.toolkit.beans.annotation.Mapper;
+import io.thoughtware.toolkit.beans.annotation.Mapping;
+import io.thoughtware.toolkit.beans.annotation.Mappings;
 import io.thoughtware.core.BaseModel;
-import io.thoughtware.join.annotation.Join;
-import io.thoughtware.join.annotation.JoinQuery;
+import io.thoughtware.toolkit.join.annotation.Join;
+import io.thoughtware.toolkit.join.annotation.JoinQuery;
 import io.thoughtware.postin.annotation.ApiModel;
 import io.thoughtware.postin.annotation.ApiProperty;
+import io.thoughtware.user.user.model.User;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,15 +26,22 @@ public class ScanRecord extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @ApiProperty(name="scanLibraryId",desc="扫描制品Id",required = true)
+    @ApiProperty(name="scanLibraryId",desc="扫描制品Id")
     private String scanLibraryId;
 
-    @ApiProperty(name="library",desc="制品",required = true)
+    @ApiProperty(name="library",desc="制品")
     @Mappings({
             @Mapping(source = "library.id",target = "libraryId")
     })
     @JoinQuery(key = "id")
     private Library library;
+
+    @ApiProperty(name="scanUser",desc="扫描用户")
+    @Mappings({
+            @Mapping(source = "scanUser.id",target = "scanUserId")
+    })
+    @JoinQuery(key = "id")
+    private User scanUser;
 
     @ApiProperty(name="libraryVersion",desc="制品版本")
     private String libraryVersion;
@@ -62,6 +70,20 @@ public class ScanRecord extends BaseModel {
 
     @ApiProperty(name="scanTimeLong",desc="扫描时常")
     private String scanTimeLong;
+
+    @ApiProperty(name="recordType",desc="扫描类型 general、each")
+    private String recordType;
+
+
+
+    @ApiProperty(name="log",desc="日志")
+    private String log;
+
+    @ApiProperty(name="scanWay",desc="扫描方式  手动：hand")
+    private String scanWay;
+
+    @ApiProperty(name="scanResult",desc="扫描结果 success、fail")
+    private String scanResult;
 
     @ApiProperty(name="创建时间",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
@@ -195,5 +217,45 @@ public class ScanRecord extends BaseModel {
 
     public void setScanRelyList(List<ScanRely> scanRelyList) {
         this.scanRelyList = scanRelyList;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
+
+    public String getScanWay() {
+        return scanWay;
+    }
+
+    public void setScanWay(String scanWay) {
+        this.scanWay = scanWay;
+    }
+
+    public String getScanResult() {
+        return scanResult;
+    }
+
+    public void setScanResult(String scanResult) {
+        this.scanResult = scanResult;
+    }
+
+    public User getScanUser() {
+        return scanUser;
+    }
+
+    public void setScanUser(User scanUser) {
+        this.scanUser = scanUser;
+    }
+
+    public String getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(String recordType) {
+        this.recordType = recordType;
     }
 }

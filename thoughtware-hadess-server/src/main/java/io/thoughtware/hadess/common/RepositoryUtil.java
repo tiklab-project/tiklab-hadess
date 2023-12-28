@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -434,4 +436,56 @@ public class RepositoryUtil {
         return ip;
     }
 
+
+    /**
+     *通过字节计算大小
+     * @param sizeByte 大小 单位字节
+     * @return
+     */
+    public static String countStorageSize(long sizeByte){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        if (sizeByte==0L){
+            return sizeByte+".00";
+        }
+        double num =(double) sizeByte / 1024;
+        if (sizeByte<1048576){
+            String KbNum = decimalFormat.format(num);
+            return KbNum+"Kb";
+        }
+        //小于1G
+        if (num<1048576){
+            double l = (double) sizeByte / (1024 * 1024);
+            String MB = decimalFormat.format(l);
+            return MB+"MB";
+        }
+        //大于1G
+        if (num>=1048576){
+            double gbNum =(double) sizeByte / 1024/1024/1024;
+            String GB = decimalFormat.format(gbNum);
+            return GB+"GB";
+        }
+        return null;
+    }
+
+    /*
+     * 获取磁盘空间大小
+     * */
+    public static float findDiskSize(String dir){
+        File folder = new File(dir);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        while (folder.getParentFile() != null) {
+            folder = folder.getParentFile();
+        }
+        String rootPath = folder.getPath();
+        File root = new File(rootPath);
+        long diskSpace =  root.getTotalSpace();
+        float l = (float)diskSpace / (1024 * 1024 * 1024);
+        // 使用 BigDecimal 控制小数位数
+        BigDecimal decimalL = new BigDecimal(Float.toString(l));
+        decimalL = decimalL.setScale(2, RoundingMode.HALF_UP);
+
+        return decimalL.floatValue();
+    }
 }

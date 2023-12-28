@@ -61,6 +61,24 @@ public class ScanRecordEntity extends BaseModel {
     private String scanTimeLong;
 
 
+    //日志
+    @Column(name = "log",length = 32)
+    private String log;
+
+    //扫描方式
+    @Column(name = "scan_way",length = 32)
+    private String scanWay;
+    //扫描结果
+    @Column(name = "scan_result",length = 32)
+    private String scanResult;
+
+    @Column(name = "scan_user_id")
+    private String scanUserId;
+
+    @Column(name = "record_type")
+    private String recordType;
+
+
     @Column(name = "create_time")
     private Timestamp createTime;
 
@@ -161,5 +179,43 @@ public class ScanRecordEntity extends BaseModel {
         this.scanGroup = scanGroup;
     }
 
+    public String getLog() {
+        return log;
+    }
 
+    public void setLog(String log) {
+        this.log = log;
+    }
+
+    public String getScanWay() {
+        return scanWay;
+    }
+
+    public void setScanWay(String scanWay) {
+        this.scanWay = scanWay;
+    }
+
+    public String getScanResult() {
+        return scanResult;
+    }
+
+    public void setScanResult(String scanResult) {
+        this.scanResult = scanResult;
+    }
+
+    public String getScanUserId() {
+        return scanUserId;
+    }
+
+    public void setScanUserId(String scanUserId) {
+        this.scanUserId = scanUserId;
+    }
+
+    public String getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(String recordType) {
+        this.recordType = recordType;
+    }
 }

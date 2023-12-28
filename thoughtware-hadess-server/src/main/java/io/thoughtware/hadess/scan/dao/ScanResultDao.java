@@ -64,7 +64,7 @@ public class ScanResultDao {
      * @param recordIds
      */
     public void deleteScanResultByRecordIds(StringBuilder recordIds) {
-        String sql="DELETE FROM pack_scan_hole WHERE scan_record_id IN ("+recordIds+")";
+        String sql="DELETE FROM pack_scan_result WHERE scan_record_id IN ("+recordIds+")";
         JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
         jdbcTemplate.execute(sql);
     }

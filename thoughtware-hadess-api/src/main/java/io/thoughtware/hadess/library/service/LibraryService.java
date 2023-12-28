@@ -3,10 +3,10 @@ package io.thoughtware.hadess.library.service;
 
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.core.page.Pagination;
-import io.thoughtware.join.annotation.FindAll;
-import io.thoughtware.join.annotation.FindList;
-import io.thoughtware.join.annotation.FindOne;
-import io.thoughtware.join.annotation.JoinProvider;
+import io.thoughtware.toolkit.join.annotation.FindAll;
+import io.thoughtware.toolkit.join.annotation.FindList;
+import io.thoughtware.toolkit.join.annotation.FindOne;
+import io.thoughtware.toolkit.join.annotation.JoinProvider;
 import io.thoughtware.hadess.library.model.Library;
 import io.thoughtware.hadess.library.model.LibraryFile;
 import io.thoughtware.hadess.library.model.LibraryQuery;

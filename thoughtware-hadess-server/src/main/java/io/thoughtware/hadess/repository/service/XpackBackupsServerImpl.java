@@ -5,7 +5,7 @@ import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.repository.model.ExecLog;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.model.XpackBackups;
-import io.thoughtware.beans.BeanMapper;
+import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.context.AppHomeContext;
 import io.thoughtware.core.exception.ApplicationException;
 import io.thoughtware.core.exception.SystemException;
