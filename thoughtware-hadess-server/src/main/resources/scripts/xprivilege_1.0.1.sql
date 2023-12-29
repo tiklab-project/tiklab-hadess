@@ -18,9 +18,9 @@ INSERT INTO pcs_mec_message_type (id, name, description, bgroup) VALUES ('HDS_DE
 -- ---------------------------
 -- 发送消息途径
 -- ----------------------------
-INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_CREATE', 'HDS_CREATE', 1, 'hadess', 'dingding,email,qywechat,site');
-INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_UPDATE', 'HDS_UPDATE', 1, 'hadess', 'dingding,email,qywechat,site');
-INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_DELETE', 'HDS_DELETE', 1, 'hadess', 'site,email,qywechat');
+INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_CREATE', 'HDS_CREATE', 1, 'hadess', 'site');
+INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_UPDATE', 'HDS_UPDATE', 1, 'hadess', 'site');
+INSERT INTO pcs_mec_message_notice (id, message_type_id, type, bgroup, message_send_type_id) VALUES ('HDS_DELETE', 'HDS_DELETE', 1, 'hadess', 'site');
 
 
 
