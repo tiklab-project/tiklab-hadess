@@ -14,7 +14,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5432/thoughtware_hadess?stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -24,7 +24,7 @@ base:
 postgresql:
   embbed:
     enable: true
-  database: xpack
+  database: thoughtware_hadess
   db:
     port: 5432
     username: postgres
