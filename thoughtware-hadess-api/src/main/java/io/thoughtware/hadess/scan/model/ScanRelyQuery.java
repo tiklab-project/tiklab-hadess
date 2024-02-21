@@ -24,6 +24,10 @@ public class ScanRelyQuery {
         @ApiProperty(name ="scanRecordId",desc = "扫描记录id")
         private String scanRecordId;
 
+        @ApiProperty(name ="generalRecordId",desc = "扫描记录总记录id")
+        private String generalRecordId;
+
+
         @ApiProperty(name ="relyOneId",desc = "第一层依赖id")
         private String relyOneId;
 
@@ -77,6 +81,15 @@ public class ScanRelyQuery {
 
         public ScanRelyQuery setScanRecordId(String scanRecordId) {
             this.scanRecordId = scanRecordId;
+            return this;
+        }
+
+        public String getGeneralRecordId() {
+            return generalRecordId;
+        }
+
+        public ScanRelyQuery setGeneralRecordId(String generalRecordId) {
+            this.generalRecordId = generalRecordId;
             return this;
         }
 }

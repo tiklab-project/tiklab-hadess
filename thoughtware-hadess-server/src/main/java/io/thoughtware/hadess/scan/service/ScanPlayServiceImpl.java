@@ -85,7 +85,7 @@ public class ScanPlayServiceImpl implements ScanPlayService {
     @Override
     public ScanPlay findScanPlay(@NotNull String id) {
         ScanPlay scanPlay = findOne(id);
-
+        addScanRecord(scanPlay);
         joinTemplate.joinQuery(scanPlay);
 
         return scanPlay;
@@ -125,29 +125,39 @@ public class ScanPlayServiceImpl implements ScanPlayService {
                 int size = CollectionUtils.isNotEmpty(scanLibraryList) ? scanLibraryList.size() : 0;
                 scanPlay.setLibraryNum(size);
 
-                List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanPlayId(scanPlay.getId()));
-
-                if (CollectionUtils.isNotEmpty(scanRecordList)){
-                    List<ScanRecord> scanRecords = scanRecordList.stream().sorted(Comparator.comparing(ScanRecord::getCreateTime).reversed()).collect(Collectors.toList());
-                    ScanRecord scanRecord = scanRecords.get(0);
-                    if(!ObjectUtils.isEmpty(scanRecord.getScanUser())){
-                        String userName = StringUtils.isNotEmpty(scanRecord.getScanUser().getNickname()) ? scanRecord.getScanUser().getNickname() :
-                                scanRecord.getScanUser().getName();
-                        scanPlay.setUserName(userName);
-                    }
-                    scanPlay.setResult(scanRecord.getScanResult());
-                    scanPlay.setNewScanTime(scanRecord.getCreateTime());
-                    scanPlay.setScanGroup(scanRecord.getScanGroup());
-                    scanPlay.setScanState("true");
-                    scanPlay.setNewScanRecordId(scanRecord.getId());
-                }else {
-                    scanPlay.setScanState("false");  //没有扫描
-                }
+                addScanRecord(scanPlay);
             }
         }
 
         joinTemplate.joinQuery(scanPlayList);
 
         return PaginationBuilder.build(pagination,scanPlayList);
+    }
+
+    /**
+     * 添加扫描记录
+     * @param scanPlay
+     * @return
+     */
+    public void addScanRecord(ScanPlay scanPlay){
+        List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanPlayId(scanPlay.getId()));
+
+        if (CollectionUtils.isNotEmpty(scanRecordList)){
+            List<ScanRecord> scanRecords = scanRecordList.stream().sorted(Comparator.comparing(ScanRecord::getCreateTime).reversed()).collect(Collectors.toList());
+            ScanRecord scanRecord = scanRecords.get(0);
+            if(!ObjectUtils.isEmpty(scanRecord.getScanUser())){
+                String userName = StringUtils.isNotEmpty(scanRecord.getScanUser().getNickname()) ? scanRecord.getScanUser().getNickname() :
+                        scanRecord.getScanUser().getName();
+                scanPlay.setUserName(userName);
+            }
+            scanPlay.setResult(scanRecord.getScanResult());
+            scanPlay.setNewScanTime(scanRecord.getCreateTime());
+            scanPlay.setScanGroup(scanRecord.getScanGroup());
+            scanPlay.setScanState("true");
+            scanPlay.setNewScanRecordId(scanRecord.getId());
+        }else {
+            scanPlay.setScanState("false");  //没有扫描
+        }
+
     }
 }

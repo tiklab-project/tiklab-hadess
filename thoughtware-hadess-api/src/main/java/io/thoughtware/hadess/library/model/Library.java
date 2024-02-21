@@ -58,8 +58,17 @@ public class Library extends BaseModel {
 
     /*---------其他字段----------*/
 
-    @ApiProperty(name="repositorySize",desc="制品大小")
-    private java.lang.String repositorySize;
+    @ApiProperty(name="versionId",desc="展示版本的id")
+    private java.lang.String versionId;
+
+    @ApiProperty(name="showVersion",desc="展示的版本")
+    private java.lang.String showVersion;
+
+    @ApiProperty(name="versionSize",desc="制品版本大小")
+    private java.lang.String versionSize;
+
+    @ApiProperty(name="repositoryName",desc="展示制品库名字")
+    private java.lang.String repositoryName;
 
     @ApiProperty(name="groupId",desc="maven制品-groupId")
     private java.lang.String groupId;
@@ -229,12 +238,13 @@ public class Library extends BaseModel {
         this.size = size;
     }
 
-    public String getRepositorySize() {
-        return repositorySize;
+
+    public String getVersionSize() {
+        return versionSize;
     }
 
-    public void setRepositorySize(String repositorySize) {
-        this.repositorySize = repositorySize;
+    public void setVersionSize(String versionSize) {
+        this.versionSize = versionSize;
     }
 
     public String getVersion() {
@@ -251,5 +261,29 @@ public class Library extends BaseModel {
 
     public void setOldVersion(String oldVersion) {
         this.oldVersion = oldVersion;
+    }
+
+    public String getShowVersion() {
+        return showVersion;
+    }
+
+    public void setShowVersion(String showVersion) {
+        this.showVersion = showVersion;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+
+    public String getRepositoryName() {
+        return repositoryName;
+    }
+
+    public void setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
     }
 }

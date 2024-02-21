@@ -17,4 +17,16 @@ public class HadessFinal {
     //仓库修改
     public static final String LOG_RPY_UPDATE = "/repository/${repositoryId}/setting/repositoryInfo";
 
+
+    /**
+     * DEFAULT
+     */
+    public static final String DEFAULT = "default";
+
+
+    //npm中央仓库账号
+    public static final String NPM_CENTER_ACCOUNT = "tiklab";
+
+    //npm中央仓库密码
+    public static final String NPM_CENTER_PASSWORD = "Darth2020...";
 }

@@ -60,6 +60,13 @@ public class ScanLibrary extends BaseModel {
     @ApiProperty(name="scanRecord",desc="scanRecord")
     private ScanRecord scanRecord;
 
+    @ApiProperty(name="scanRecordId",desc="scanRecordId")
+    private String scanRecordId;
+
+    @ApiProperty(name="scanTime",desc="扫描时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
+    private Timestamp scanTime;
+
 
     @ApiProperty(name="scanResult",desc="扫描结果 success、false")
     private String  scanResult;
@@ -145,5 +152,21 @@ public class ScanLibrary extends BaseModel {
 
     public void setRelyNum(Integer relyNum) {
         this.relyNum = relyNum;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
+    }
+
+    public Timestamp getScanTime() {
+        return scanTime;
+    }
+
+    public void setScanTime(Timestamp scanTime) {
+        this.scanTime = scanTime;
     }
 }

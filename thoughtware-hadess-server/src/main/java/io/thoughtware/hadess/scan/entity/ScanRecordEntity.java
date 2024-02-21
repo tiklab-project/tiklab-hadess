@@ -30,6 +30,8 @@ public class ScanRecordEntity extends BaseModel {
     @Column(name = "scan_play_id",length = 12)
     private String scanPlayId;
 
+
+
     //扫描group
     @Column(name = "scan_group",length = 12)
     private String scanGroup;
@@ -218,4 +220,5 @@ public class ScanRecordEntity extends BaseModel {
     public void setRecordType(String recordType) {
         this.recordType = recordType;
     }
+
 }

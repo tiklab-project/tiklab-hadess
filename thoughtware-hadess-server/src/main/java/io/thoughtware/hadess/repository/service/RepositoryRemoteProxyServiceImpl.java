@@ -1,5 +1,10 @@
 package io.thoughtware.hadess.repository.service;
 
+import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
+import io.thoughtware.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.thoughtware.hadess.repository.entity.RemoteProxyEntity;
+import io.thoughtware.hadess.repository.model.RemoteProxy;
+import io.thoughtware.hadess.repository.model.RemoteProxyQuery;
 import io.thoughtware.hadess.repository.model.RepositoryRemoteProxy;
 import io.thoughtware.hadess.repository.model.RepositoryRemoteProxyQuery;
 import io.thoughtware.hadess.repository.dao.RepositoryRemoteProxyDao;
@@ -17,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * RepositoryRemoteProxyServiceImpl-远程库代理信息
@@ -30,24 +36,48 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
     @Autowired
     JoinTemplate joinTemplate;
 
+    @Autowired
+    RemoteProxyServiceImpl remoteProxyService;
+
     @Override
     public String createRepositoryRemoteProxy(@NotNull @Valid RepositoryRemoteProxy repositoryRemoteProxy) {
         RepositoryRemoteProxyEntity repositoryRemoteProxyEntity = BeanMapper.map(repositoryRemoteProxy, RepositoryRemoteProxyEntity.class);
         repositoryRemoteProxyEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        repositoryRemoteProxyEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+
+        //更新
+        if (("update").equals(repositoryRemoteProxy.getExecType())){
+            DeleteCondition deleteCondition = DeleteBuilders.createDelete(RepositoryRemoteProxyEntity.class)
+                    .eq("repositoryId", repositoryRemoteProxy.getRepository().getId())
+                    .get();
+            repositoryRemoteProxyDao.deleteRepositoryRemoteProxy(deleteCondition);
+            List<String> remoteProxyIds = repositoryRemoteProxy.getRemoteProxyIds();
+            for (String proxyId:remoteProxyIds){
+                repositoryRemoteProxyEntity.setRemoteProxyId(proxyId);
+                repositoryRemoteProxyDao.createRepositoryRemoteProxy(repositoryRemoteProxyEntity);
+            }
+            return null;
+        }
+
         return repositoryRemoteProxyDao.createRepositoryRemoteProxy(repositoryRemoteProxyEntity);
     }
 
     @Override
     public void updateRepositoryRemoteProxy(@NotNull @Valid RepositoryRemoteProxy repositoryRemoteProxy) {
         RepositoryRemoteProxyEntity repositoryRemoteProxyEntity = BeanMapper.map(repositoryRemoteProxy, RepositoryRemoteProxyEntity.class);
-        repositoryRemoteProxyEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         repositoryRemoteProxyDao.updateRepositoryRemoteProxy(repositoryRemoteProxyEntity);
     }
 
     @Override
     public void deleteRepositoryRemoteProxy(@NotNull String id) {
         repositoryRemoteProxyDao.deleteRepositoryRemoteProxy(id);
+    }
+
+    @Override
+    public void deleteRepositoryRemoteProxy(String type, String value) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(RepositoryRemoteProxyEntity.class)
+                .eq(type, value)
+                .get();
+        repositoryRemoteProxyDao.deleteRepositoryRemoteProxy(deleteCondition);
     }
 
     @Override
@@ -110,16 +140,31 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
 
     @Override
     public List<String> findAgencyUrl(String repositoryName) {
-        return repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+        List<String> agencyUrl = repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+
+        List<RemoteProxy> list = remoteProxyService.findList(agencyUrl);
+        List<String> stringList = list.stream().map(RemoteProxy::getAgencyUrl).collect(Collectors.toList());
+        // List<RepositoryRemoteProxy> repositoryRemoteProxyList = this.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryId));
+
+        //List<String> stringList = repositoryRemoteProxyList.stream().map(a->a.getRemoteProxy().getAgencyUrl()).collect(Collectors.toList());
+
+        return stringList;
     }
 
     @Override
     public RepositoryRemoteProxy findAgencyByRpyIdAndPath(String[] repositoryIds,String path) {
-        List<RepositoryRemoteProxyEntity> agencyByRpyIdAndPath = repositoryRemoteProxyDao.findAgencyByRpyIdAndPath(repositoryIds, path);
-        List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(agencyByRpyIdAndPath,RepositoryRemoteProxy.class);
-       if (CollectionUtils.isNotEmpty(repositoryRemoteProxyList)){
-           return repositoryRemoteProxyList.get(0);
-       }
+        List<RemoteProxy> remoteProxyList = remoteProxyService.findRemoteProxyList(new RemoteProxyQuery().setAgencyUrl(path));
+        if (CollectionUtils.isNotEmpty(remoteProxyList)){
+            String id = remoteProxyList.get(0).getId();
+            List<RepositoryRemoteProxyEntity> agencyByRpyIdAndPath = repositoryRemoteProxyDao.findAgencyByRpyIdAndPath(repositoryIds, id);
+            List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(agencyByRpyIdAndPath,RepositoryRemoteProxy.class);
+            if (CollectionUtils.isNotEmpty(repositoryRemoteProxyList)){
+                RepositoryRemoteProxy repositoryRemoteProxy = repositoryRemoteProxyList.get(0);
+                joinTemplate.joinQuery(repositoryRemoteProxyList);
+                return repositoryRemoteProxy;
+            }
+        }
+
         return null;
     }
 }

@@ -109,9 +109,15 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     public ScanRecord findScanRecord(@NotNull String id) {
         ScanRecord scanRecord = findOne(id);
         joinTemplate.joinQuery(scanRecord);
+        List<ScanRely> scanRelyList=null;
+        if (!ObjectUtils.isEmpty(scanRecord)){
+            if (("general").equals(scanRecord.getRecordType())){
+                scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setGeneralRecordId(id));
+            }else {
+                scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanRecordId(id));
+            }
+        }
 
-        //List<ScanResult> scanResultList = scanResultService.findScanResultList(new ScanResultQuery().setScanRecordId(id));
-        List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanRecordId(id));
         if (CollectionUtils.isNotEmpty(scanRelyList)){
             scanRecord.setRelyNum(scanRelyList.size());
         }
@@ -217,6 +223,7 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     public List<ScanRecord> findHaveHoleRelyTreeList(String scanGroup) {
         List<ScanRecord> scanRecordList = scanRecordService.findScanRecordList(new ScanRecordQuery().setScanGroup(scanGroup));
         if (CollectionUtils.isNotEmpty(scanRecordList)){
+            scanRecordList=scanRecordList.stream().filter(a->!("general").equals(a.getRecordType())).collect(Collectors.toList());
             List<ScanRely> relyList=null;
 
             List<String> groups = scanRecordList.stream().map(ScanRecord::getId).collect(Collectors.toList());

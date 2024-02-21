@@ -1,6 +1,7 @@
 package io.thoughtware.hadess.scan.dao;
 
 import io.thoughtware.hadess.scan.entity.ScanRelyEntity;
+import io.thoughtware.hadess.scan.model.ScanRely;
 import io.thoughtware.hadess.scan.model.ScanRelyQuery;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.dal.jdbc.JdbcTemplate;
@@ -105,6 +106,7 @@ public class ScanRelyDao {
                 .eq("scanLibraryId",scanRelyQuery.getScanLibraryId())
                 .eq("relyOneId",scanRelyQuery.getRelyOneId())
                 .eq("scanRecordId",scanRelyQuery.getScanRecordId())
+                .eq("generalRecordId", scanRelyQuery.getGeneralRecordId())
                 .orders(scanRelyQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,ScanRelyEntity.class);
@@ -120,6 +122,7 @@ public class ScanRelyDao {
                 .eq("scanLibraryId",scanRelyQuery.getScanLibraryId())
                 .eq("relyOneId",scanRelyQuery.getRelyOneId())
                 .eq("scanRecordId",scanRelyQuery.getScanRecordId())
+                .eq("generalRecordId", scanRelyQuery.getGeneralRecordId())
                 .orders(scanRelyQuery.getOrderParams())
                 .pagination(scanRelyQuery.getPageParam())
                 .get();

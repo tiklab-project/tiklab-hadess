@@ -51,6 +51,10 @@ public class LibraryFile extends BaseModel {
     @ApiProperty(name="fileSize",desc="文件大小",required = true)
     private java.lang.String fileSize;
 
+    @ApiProperty(name="size",desc="文件大小")
+    private java.lang.Long size;
+
+
     @NotNull
     @ApiProperty(name="fileName",desc="文件名称",required = true)
     private java.lang.String fileName;
@@ -159,5 +163,13 @@ public class LibraryFile extends BaseModel {
 
     public void setSnapshotVersion(String snapshotVersion) {
         this.snapshotVersion = snapshotVersion;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 }

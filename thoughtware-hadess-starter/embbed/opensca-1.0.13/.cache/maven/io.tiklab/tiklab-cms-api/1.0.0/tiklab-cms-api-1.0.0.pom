@@ -9,6 +9,7 @@
         <artifactId>tiklab-cms</artifactId>
         <version>1.0.0</version>
     </parent>
+
     <artifactId>tiklab-cms-api</artifactId>
     <name>${project.artifactId}</name>
 
@@ -30,7 +31,7 @@
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-product-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${tiklab-product.version}</version>
         </dependency>
     </dependencies>
 

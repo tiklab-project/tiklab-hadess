@@ -91,11 +91,16 @@ public class ScanRecord extends BaseModel {
 
 
 
-    /*--------依赖数量----------*/
+    /*--------其他字段----------*/
     @ApiProperty(name="relyNum",desc="依赖数量")
     private Integer relyNum;
 
-    /*--- 其他字段---*/
+
+
+    @ApiProperty(name="relyNum",desc="总扫描记录id")
+    private String generaRecordId;
+
+
 
     private List<ScanRely> scanRelyList;
 
@@ -258,4 +263,13 @@ public class ScanRecord extends BaseModel {
     public void setRecordType(String recordType) {
         this.recordType = recordType;
     }
+
+    public String getGeneraRecordId() {
+        return generaRecordId;
+    }
+
+    public void setGeneraRecordId(String generaRecordId) {
+        this.generaRecordId = generaRecordId;
+    }
+
 }

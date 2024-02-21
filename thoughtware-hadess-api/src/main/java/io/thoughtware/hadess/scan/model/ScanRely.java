@@ -38,6 +38,10 @@ public class ScanRely extends BaseModel {
     @ApiProperty(name="scanRecordId",desc="扫描结果的id")
     private String scanRecordId;
 
+    @ApiProperty(name="generalRecordId",desc="扫描结果汇总的id")
+    private String generalRecordId;
+
+
     @ApiProperty(name="relyName",desc="依赖名字")
     private String relyName;
 
@@ -70,9 +74,9 @@ public class ScanRely extends BaseModel {
     @ApiProperty(name="holeCount",desc="漏洞数量")
     private Integer holeCount;
 
-    @ApiProperty(name="创建时间",desc="creatTime")
+    @ApiProperty(name="创建时间",desc="createTime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
-    private Timestamp creatTime;
+    private Timestamp createTime;
 
     /*--- 其他字段---*/
 
@@ -153,12 +157,12 @@ public class ScanRely extends BaseModel {
         this.relyLicenses = relyLicenses;
     }
 
-    public Timestamp getCreatTime() {
-        return creatTime;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setCreatTime(Timestamp creatTime) {
-        this.creatTime = creatTime;
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
     public String getRelyParentId() {
@@ -207,5 +211,13 @@ public class ScanRely extends BaseModel {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getGeneralRecordId() {
+        return generalRecordId;
+    }
+
+    public void setGeneralRecordId(String generalRecordId) {
+        this.generalRecordId = generalRecordId;
     }
 }

@@ -29,6 +29,9 @@ public class LibraryVersionEntity extends BaseModel {
     @Column(name = "library_type",length = 32,notNull = true)
     private String libraryType;
 
+    @Column(name = "size")
+    private Integer size;
+
     //版本
     @Column(name = "version",length = 32,notNull = true)
     private String version;
@@ -143,5 +146,14 @@ public class LibraryVersionEntity extends BaseModel {
 
     public void setContentJson(String contentJson) {
         this.contentJson = contentJson;
+    }
+
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

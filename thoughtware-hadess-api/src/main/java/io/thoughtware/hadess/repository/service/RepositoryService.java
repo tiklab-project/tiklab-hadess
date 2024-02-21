@@ -38,7 +38,7 @@ public interface RepositoryService {
     */
     void deleteRepository(@NotNull String id);
 
-
+     Repository findOneRepository(String id);
 
     @FindOne
     Repository findOne(@NotNull String id);

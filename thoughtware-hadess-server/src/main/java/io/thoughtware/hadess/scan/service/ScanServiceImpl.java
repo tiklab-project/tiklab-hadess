@@ -90,6 +90,7 @@ public class ScanServiceImpl implements ScanService {
 
     @Override
     public String execScan(String scanPlayId) {
+
         long starTime = System.currentTimeMillis();
 
         //执行开始时间
@@ -129,9 +130,7 @@ public class ScanServiceImpl implements ScanService {
                 try {
                     //拼接日志
                     joinScanLog(scanPlayId, "获取扫描环境");
-
-                    String openscaPath = new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/opensca-1.0.13";
-                    //String openscaPath = AppHomeContext.getAppHome() + "/embbed/opensca-1.0.13";
+                    String openscaPath = xpackYamlDataMaService.getOpenScanUrl();
                     logger.info("openscan执行路径:"+openscaPath);
                     String[] changeDirCommand = { "cd", openscaPath };
                     // 创建 ProcessBuilder 对象并设置工作目录
@@ -196,7 +195,7 @@ public class ScanServiceImpl implements ScanService {
 
                                     //拼接日志
                                     joinScanLog(scanPlayId, "扫描制品成功:"+scanLibrary.getLibrary().getName());
-                                    initScanRecordState(scanRecord,"success");
+                                    //initScanRecordState(scanRecord,"success");
 
                                     logger.info("扫描成功");
                                     //读取扫描的文件
@@ -204,7 +203,7 @@ public class ScanServiceImpl implements ScanService {
                                     JSONObject allData =(JSONObject) JSONObject.parse(resultData);
                                     Object children = allData.get("children");
                                     List<JSONObject> childrenList = (List<JSONObject>) children;
-                                    //创建扫描依赖和漏洞
+                                    //创建扫描依赖
                                     createScanRely( childrenList,scanRecord,null,null);
 
                                     //主制品漏洞
@@ -230,7 +229,7 @@ public class ScanServiceImpl implements ScanService {
                                     scanLibrary.setScanResult("false");
 
 
-                                    //当个制品扫描失败
+                                    //单个制品扫描失败
                                     initScanRecordState(scanRecord,"fail");
                                     updateScanRecord(scanRecord);
                                     //更新总的扫描记录
@@ -379,11 +378,11 @@ public class ScanServiceImpl implements ScanService {
             Map<String, Integer> holeMap = scanHoleNum.get(scanRecord.getScanPlayId());
             if (!ObjectUtils.isEmpty(holeMap)){
                 scanRecord.setHoleSeverity(holeMap.get("severityHole"));
-                scanRecord.setHoleHigh(holeMap.get("highHoleNum"));
-                scanRecord.setHoleMiddle(holeMap.get("middleHoleNum"));
-                scanRecord.setHoleLow(holeMap.get("lowHoleNum"));
+                scanRecord.setHoleHigh(holeMap.get("highHole"));
+                scanRecord.setHoleMiddle(holeMap.get("middleHole"));
+                scanRecord.setHoleLow(holeMap.get("lowHole"));
             }
-            joinScanLog(scanRecord.getScanPlayId(), "扫描完成");
+            joinScanLog(scanRecord.getScanPlayId(), "解析成功,扫描完成");
         }
 
         scanRecordService.updateScanRecord(scanRecord);
@@ -397,9 +396,7 @@ public class ScanServiceImpl implements ScanService {
      */
     public String[] scanType(LibraryFile libraryFile,String scanFilePath){
         //本地漏洞库
-        String leakCvePath = new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/cve.json";
-        //String leakCvePath = AppHomeContext.getAppHome() + "/embbed/cve.json";
-
+        String leakCvePath = xpackYamlDataMaService.getLocalHoleUrl();
         //扫描设置
         List<ScanSet> scanSetList = scanSetService.findAllScanSet();
         ScanSet scanSet = scanSetList.get(0);
@@ -502,6 +499,7 @@ public class ScanServiceImpl implements ScanService {
                 scanLibrary.setId(scanLibraryId);
                 scanRely.setScanLibrary(scanLibrary);
                 scanRely.setScanRecordId(scanRecord.getId());
+                scanRely.setGeneralRecordId(scanRecord.getGeneraRecordId());
                 //licenses
                 List<JSONObject> licenses = (List<JSONObject>) data.get("licenses");
                 if (CollectionUtils.isNotEmpty(licenses)){
@@ -621,7 +619,7 @@ public class ScanServiceImpl implements ScanService {
         //创建总的扫描记录
         String scanRecordId = scanRecordService.createScanRecord(scanRecord);
         scanRecord.setId(scanRecordId);
-
+        scanRecord.setGeneraRecordId(scanRecordId);
         return scanRecord;
     }
 

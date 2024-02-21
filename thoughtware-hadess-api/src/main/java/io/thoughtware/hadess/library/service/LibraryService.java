@@ -107,11 +107,17 @@ public interface LibraryService {
      * 通过制品名字查询制品和类型查询
      * @param name 制品名字
      * @param type 制品类型  maven、npm
-     * @param version  版本, Release 、Snapshot
      * @return
      */
     Library findLibraryByNameAndType(String name,String type);
 
+    /**
+     * 通过制品名字、类型、制品ids查询
+     * @param name 制品名字
+     * @param type 制品类型  maven、npm
+     * @return
+     */
+    List<Library> findLibraryByCondition(String name,String type,String[] rpyIds);
 
 
     /**

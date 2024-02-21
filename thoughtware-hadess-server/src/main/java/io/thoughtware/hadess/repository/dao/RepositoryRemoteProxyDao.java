@@ -1,6 +1,7 @@
 package io.thoughtware.hadess.repository.dao;
 
 import io.thoughtware.hadess.repository.entity.RepositoryRemoteProxyEntity;
+import io.thoughtware.hadess.repository.model.RepositoryRemoteProxy;
 import io.thoughtware.hadess.repository.model.RepositoryRemoteProxyQuery;
 import io.thoughtware.dal.jdbc.JdbcTemplate;
 import io.thoughtware.core.page.Pagination;
@@ -93,6 +94,7 @@ public class RepositoryRemoteProxyDao{
     public List<RepositoryRemoteProxyEntity> findRepositoryRemoteProxyList(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .eq("repositoryId",repositoryRemoteProxyQuery.getRepositoryId())
+                .eq("remoteProxyId", repositoryRemoteProxyQuery.getRemoteProxyId())
                 .orders(repositoryRemoteProxyQuery.getOrderParams())
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
@@ -106,6 +108,7 @@ public class RepositoryRemoteProxyDao{
     public Pagination<RepositoryRemoteProxyEntity> findRepositoryRemoteProxyPage(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .eq("repositoryId",repositoryRemoteProxyQuery.getRepositoryId())
+                .eq("remoteProxyId", repositoryRemoteProxyQuery.getRemoteProxyId())
                 .orders(repositoryRemoteProxyQuery.getOrderParams())
                 .pagination(repositoryRemoteProxyQuery.getPageParam())
                 .get();
@@ -113,7 +116,7 @@ public class RepositoryRemoteProxyDao{
     }
 
     public List<String> findAgencyUrl(String repositoryName){
-        String sql="SELECT pr.agency_url from pack_repository_remote_proxy pr " +
+        String sql="SELECT pr.remote_proxy_id from pack_repository_remote_proxy pr " +
                 " LEFT JOIN pack_repository_group_items gr ON gr.repository_id=pr.repository_id  " +
                 "LEFT JOIN pack_repository re ON gr.repository_group_id=re.id" +
                 " WHERE re.name='"+repositoryName +"'";
@@ -123,10 +126,10 @@ public class RepositoryRemoteProxyDao{
         return agencyUrlList;
     }
 
-    public List<RepositoryRemoteProxyEntity> findAgencyByRpyIdAndPath(String[] repositoryIds, String agencyUrl) {
+    public List<RepositoryRemoteProxyEntity> findAgencyByRpyIdAndPath(String[] repositoryIds, String agencyId) {
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .in("repositoryId",repositoryIds)
-                .eq("agencyUrl",agencyUrl)
+                .eq("remoteProxyId",agencyId)
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
     }

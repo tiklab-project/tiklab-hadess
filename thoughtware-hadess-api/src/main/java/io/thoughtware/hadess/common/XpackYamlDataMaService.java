@@ -52,5 +52,15 @@ public interface XpackYamlDataMaService {
     /**
      * 获取上传的制品的路径
      */
-     String getUploadRepositoryUrl(String contextPath);
+     String getUploadRepositoryUrl(String requestURL);
+
+    /**
+     * 获取openscan执行路径
+     */
+    String getOpenScanUrl();
+
+    /**
+     * 获取openscan的本地漏洞路径
+     */
+    String getLocalHoleUrl();
 }

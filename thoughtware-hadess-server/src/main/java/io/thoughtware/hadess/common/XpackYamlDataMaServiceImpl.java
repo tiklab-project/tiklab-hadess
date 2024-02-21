@@ -1,6 +1,7 @@
 package io.thoughtware.hadess.common;
 
 import io.thoughtware.core.context.AppHomeContext;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,10 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
 
     @Value("${DATA_HOME}")
     String DATA_HOME;
+
+
+    @Value("${spring.profiles.active:null}")
+    String environment;
 
 
     @Override
@@ -80,8 +85,27 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
        // return "/Users/limingliang/postgreSQL/bin";
     }
 
-    public String getUploadRepositoryUrl(String contextPath){
-        return contextPath.substring(contextPath.indexOf("/", 1) + 1);
+    public String getUploadRepositoryUrl(String requestURL){
+        return StringUtils.substringAfter(requestURL,"/repository/");
+
+    }
+
+    @Override
+    public String getOpenScanUrl() {
+        if (("dev").equals(environment)){
+           return AppHomeContext.getAppHome() + "/embbed/opensca-1.0.13";
+        }else {
+            return  new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/opensca-1.0.13";
+        }
+    }
+
+    @Override
+    public String getLocalHoleUrl() {
+        if (("dev").equals(environment)){
+            return AppHomeContext.getAppHome() + "/embbed/cve.json";
+        }else {
+            return  new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/cve.json";
+        }
     }
 
 

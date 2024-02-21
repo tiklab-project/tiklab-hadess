@@ -59,14 +59,11 @@
         <jdbc-mapper.version>1.2.2</jdbc-mapper.version>
         <commons-net.version>3.5</commons-net.version>
         <webhook-sdk.version>1.0.7</webhook-sdk.version>
+        <quartz.version>2.3.2</quartz.version>
+        <quartz-spring-boot.version>3.1.1</quartz-spring-boot.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
 
-
-        </dependencies>
-    </dependencyManagement>
 
 
 
@@ -75,12 +72,12 @@
             <id>deploy-hadess</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>hadess</id>
-                    <url>http://192.168.10.9:8081/repository/maven-snapshot</url>
+                    <id>hadess-cloud</id>
+                    <url>http://192.168.10.9:8082/repository/ncv08azq/maven-snapshot</url>
                 </snapshotRepository>
                 <repository>
-                    <id>hadess</id>
-                    <url>http://192.168.10.9:8081/repository/maven-release</url>
+                    <id>hadess-cloud</id>
+                    <url>http://192.168.10.9:8082/repository/ncv08azq/maven-release</url>
                 </repository>
             </distributionManagement>
             <properties>
@@ -89,21 +86,19 @@
         </profile>
 
         <profile>
-            <id>deploy-nexus</id>
+            <id>deploy-xpack</id>
             <distributionManagement>
-                <repository>
-                    <id>nexus-releases</id>
-                    <name>nexus releases</name>
-                    <url>http://e.hadess.thoughtware.cn/repository/maven-releases/</url>
-                </repository>
                 <snapshotRepository>
-                    <id>nexus-snapshots</id>
-                    <name>nexus snapshots</name>
-                    <url>http://e.hadess.thoughtware.cn/repository/maven-snapshots/</url>
+                    <id>xpack</id>
+                    <url>http://192.168.10.9:8080/repository/maven-snapshots</url>
                 </snapshotRepository>
+                <repository>
+                    <id>xpack</id>
+                    <url>http://192.168.10.9:8080/repository/maven-releases</url>
+                </repository>
             </distributionManagement>
             <properties>
-                <profile.assembly.package.suffix>deploy-hadess</profile.assembly.package.suffix>
+                <profile.assembly.package.suffix>deploy-xpack</profile.assembly.package.suffix>
             </properties>
         </profile>
     </profiles>

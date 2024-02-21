@@ -10,6 +10,9 @@ import io.thoughtware.postin.annotation.ApiModel;
 import io.thoughtware.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * RepositoryRemoteProxy-远程库代理信息模型
@@ -30,24 +33,26 @@ public class RepositoryRemoteProxy extends BaseModel {
     @JoinQuery(key = "id")
     private Repository repository;
 
-    @NotNull
-    @ApiProperty(name="agencyUrl",desc="代理地址",required = true)
-    private java.lang.String agencyUrl;
 
-    @ApiProperty(name="agencyName",desc="代理名称")
-    private java.lang.String agencyName;
+    @ApiProperty(name="remoteProxy",desc="代理")
+    @Mappings({
+            @Mapping(source = "remoteProxy.id",target = "remoteProxyId")
+    })
+    @JoinQuery(key = "id")
+    private RemoteProxy remoteProxy;
 
-    @ApiProperty(name="userName",desc="账号、用户")
-    private java.lang.String userName;
-
-    @ApiProperty(name="password",desc="密码")
-    private java.lang.String password;
 
     @ApiProperty(name="createTime",desc="创建时间")
     private java.sql.Timestamp createTime;
 
-    @ApiProperty(name="updateTime",desc="更新时间")
-    private java.sql.Timestamp updateTime;
+
+    /*----其他字段------*/
+
+    @ApiProperty(name="execType",desc="执行类型 add、update")
+    private java.lang.String  execType;
+
+    @ApiProperty(name="remoteProxyIds",desc="remoteProxyIds")
+    private List<String>  remoteProxyIds;
 
     public java.lang.String getId() {
         return id;
@@ -65,46 +70,36 @@ public class RepositoryRemoteProxy extends BaseModel {
         this.repository = repository;
     }
 
-    public java.lang.String getAgencyUrl() {
-        return agencyUrl;
+
+    public RemoteProxy getRemoteProxy() {
+        return remoteProxy;
     }
 
-    public void setAgencyUrl(java.lang.String agencyUrl) {
-        this.agencyUrl = agencyUrl;
-    }
-    public java.lang.String getAgencyName() {
-        return agencyName;
+    public void setRemoteProxy(RemoteProxy remoteProxy) {
+        this.remoteProxy = remoteProxy;
     }
 
-    public void setAgencyName(java.lang.String agencyName) {
-        this.agencyName = agencyName;
-    }
-    public java.lang.String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(java.lang.String userName) {
-        this.userName = userName;
-    }
-    public java.lang.String getPassword() {
-        return password;
-    }
-
-    public void setPassword(java.lang.String password) {
-        this.password = password;
-    }
-    public java.sql.Timestamp getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(java.sql.Timestamp createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
-    public java.sql.Timestamp getUpdateTime() {
-        return updateTime;
+
+    public String getExecType() {
+        return execType;
     }
 
-    public void setUpdateTime(java.sql.Timestamp updateTime) {
-        this.updateTime = updateTime;
+    public void setExecType(String execType) {
+        this.execType = execType;
+    }
+
+    public List getRemoteProxyIds() {
+        return remoteProxyIds;
+    }
+
+    public void setRemoteProxyIds(List remoteProxyIds) {
+        this.remoteProxyIds = remoteProxyIds;
     }
 }

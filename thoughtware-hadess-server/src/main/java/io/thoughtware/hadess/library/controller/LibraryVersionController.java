@@ -51,23 +51,24 @@ public class LibraryVersionController {
         return Result.ok();
     }
 
-    @RequestMapping(path="/deleteLibraryVersion",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibraryVersion",desc = "删除制品版本")
+    @RequestMapping(path="/deleteVersion",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteVersion",desc = "删除制品版本")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<Void> deleteLibraryVersion(@NotNull String id){
+    public Result<Void> deleteVersion(@NotNull String id){
         libraryVersionService.deleteLibraryVersion(id);
 
         return Result.ok();
     }
 
-    @RequestMapping(path="/deleteVersionAndLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteVersionAndLibrary",desc = "唯一版本删除相关联的制品")
+    @RequestMapping(path="/deleteLibraryVersion",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteLibraryVersion",desc = "删除制品版本")
     @ApiParam(name = "id",desc = "id",required = true)
-    public Result<Void> deleteVersionAndLibrary(@NotNull String id){
-        libraryVersionService.deleteVersionAndLibrary(id);
+    public Result<Void> deleteLibraryVersion(@NotNull String versionId,@NotNull String libraryId){
+        libraryVersionService.deleteLibraryVersion(versionId,libraryId);
 
         return Result.ok();
     }
+
 
     @RequestMapping(path="/findLibraryVersion",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryVersion",desc = "通过id查询制品版本")

@@ -15,8 +15,8 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  #url: jdbc:postgresql://172.10.1.10:5432/thoughtware_hadess?currentSchema=public&stringtype=unspecified
-  url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
+  url: jdbc:postgresql://172.10.1.10:5432/thoughtware_hadess?currentSchema=public&stringtype=unspecified
+  #url: jdbc:postgresql://172.10.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
   #url: jdbc:postgresql://172.11.1.10:5432/tiklab_xpack?currentSchema=public&stringtype=unspecified
   #url: jdbc:postgresql://172.13.1.24:5432/xpack_ee?currentSchema=public&stringtype=unspecified
   username: postgres

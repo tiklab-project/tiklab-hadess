@@ -3,7 +3,7 @@ package io.thoughtware.hadess.upload.controller;
 import io.thoughtware.core.Result;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.repository.service.RepositoryService;
-import io.thoughtware.hadess.upload.GenericUploadService;
+import io.thoughtware.hadess.upload.service.GenericUploadService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

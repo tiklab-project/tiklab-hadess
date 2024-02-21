@@ -10,6 +10,7 @@ import io.thoughtware.postin.annotation.ApiModel;
 import io.thoughtware.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  *  @pi.model: io.thoughtware.xpack.repository.model.Repository
@@ -171,6 +172,10 @@ public class Repository extends BaseModel {
     @ApiProperty(name="versionType",desc="版本控制")
     private String  versionType;
 
+
+    @ApiProperty(name="proxyDataList",desc="代理数据")
+    private List<Object> proxyDataList;
+
     public java.lang.String getId() {
         return id;
     }
@@ -293,5 +298,13 @@ public class Repository extends BaseModel {
 
     public void setColor(Integer color) {
         this.color = color;
+    }
+
+    public List<Object> getProxyDataList() {
+        return proxyDataList;
+    }
+
+    public void setProxyDataList(List<Object> proxyDataList) {
+        this.proxyDataList = proxyDataList;
     }
 }

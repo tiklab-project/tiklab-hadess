@@ -1,4 +1,5 @@
 package io.thoughtware.hadess.repository.service;
+import com.alibaba.fastjson.JSON;
 import io.thoughtware.hadess.common.*;
 import io.thoughtware.hadess.library.dao.LibraryDao;
 import io.thoughtware.hadess.library.entity.LibraryEntity;
@@ -84,6 +85,12 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     HadessMessageService hadessMessageService;
 
+    @Autowired
+    RepositoryRemoteProxyService remoteProxyService;
+
+    @Autowired
+    RemoteProxyService proxyService;
+
     @Value("${server.port:8080}")
     private String port;
 
@@ -100,8 +107,30 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         String repositoryId = getRandom(repository.getRepositoryType());
         repositoryEntity.setId(repositoryId);
-
         repositoryDao.createRepository(repositoryEntity);
+
+        repository.setId(repositoryId);
+        //创建为远程库，且代理地址不为空
+        if (repository.getRepositoryType().equals("remote")&&!ObjectUtils.isEmpty(repository.getProxyDataList())){
+            List<Object> proxyDataList = repository.getProxyDataList();
+            for (Object proxyObject:proxyDataList){
+                String object = JSON.toJSONString(proxyObject);
+                RemoteProxy remoteProxy = JSON.parseObject(object, RemoteProxy.class);
+
+                //添加的自定义代理源 先创建自定义的代理源到代理源管理表
+                if (StringUtils.isEmpty(remoteProxy.getId())){
+                    String remoteProxyId = proxyService.createRemoteProxy(remoteProxy);
+                    remoteProxy.setId(remoteProxyId);
+                }
+
+                RepositoryRemoteProxy repositoryRemoteProxy = new RepositoryRemoteProxy();
+                repositoryRemoteProxy.setRepository(repository);
+                repositoryRemoteProxy.setRemoteProxy(remoteProxy);
+                remoteProxyService.createRepositoryRemoteProxy(repositoryRemoteProxy);
+            }
+        }
+
+        //创建服务器中的仓库文件夹
         String repositoryFile = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
         File file = new File(repositoryFile);
         if (!file.exists()){
@@ -113,8 +142,12 @@ public class RepositoryServiceImpl implements RepositoryService {
             dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),"hadess");
         }
 
-        //发送消息
-        initRepositoryMap(repositoryEntity,"create",null);
+        //初始化的演示仓库不发送消息
+        if (repository.getCategory()!=1){
+            //发送消息
+            initRepositoryMap(repositoryEntity,"create",null);
+        }
+
         return repositoryId;
     }
 
@@ -130,6 +163,29 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
         repositoryDao.updateRepository(repositoryEntity);
 
+        //为远程库，且代理地址不为空
+        if (repository.getRepositoryType().equals("remote")&&!ObjectUtils.isEmpty(repository.getProxyDataList())){
+            //直接清除之前的记录
+            remoteProxyService.deleteRepositoryRemoteProxy("repositoryId",repository.getId());
+
+            List<Object> proxyDataList = repository.getProxyDataList();
+            for (Object proxyObject:proxyDataList){
+                String object = JSON.toJSONString(proxyObject);
+                RemoteProxy remoteProxy = JSON.parseObject(object, RemoteProxy.class);
+
+                //添加的自定义代理源 先创建自定义的代理源到代理源管理表
+                if (StringUtils.isEmpty(remoteProxy.getId())){
+                    String remoteProxyId = proxyService.createRemoteProxy(remoteProxy);
+                    remoteProxy.setId(remoteProxyId);
+                }
+
+                RepositoryRemoteProxy repositoryRemoteProxy = new RepositoryRemoteProxy();
+                repositoryRemoteProxy.setRepository(repository);
+                repositoryRemoteProxy.setRemoteProxy(remoteProxy);
+                remoteProxyService.createRepositoryRemoteProxy(repositoryRemoteProxy);
+            }
+        }
+
         //发送消息
         if (!repositoryEn.getName().equals(repository.getName())){
             initRepositoryMap(repositoryEn,"update",repository.getName());
@@ -144,32 +200,54 @@ public class RepositoryServiceImpl implements RepositoryService {
         }else {
             groupItemsService.deleteGroupItemByCondition("repositoryId",id);
         }
-        
         repositoryDao.deleteRepository(id);
+        repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
 
-        libraryService.deleteLibraryByRepository(id);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(new Runnable(){
+            @Override
+            public void run() {
+                libraryService.deleteLibraryByRepository(id);
 
-        libraryVersionService.deleteVersionByCondition("repositoryId",id);
+                libraryVersionService.deleteVersionByCondition("repositoryId",id);
 
-        libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
-
-
-        if (("maven").equals(repository.getType())){
-            repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
-            libraryMavenService.deleteLibraryMavenByCondition("repositoryId",id);
-        }
+                libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
 
 
-        //删除文件
-        try {
-            String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
-            FileUtils.deleteDirectory(new File(folderPath));
-        }catch (Exception e){
-            logger.info("删除制品库时删除文件失败:"+e.getMessage());
-        }
-        RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
-        initRepositoryMap(repositoryEntity,"delete",null);
+                if (("maven").equals(repository.getType())){
+
+                    libraryMavenService.deleteLibraryMavenByCondition("repositoryId",id);
+                }
+
+                //远程库
+                if (("remote").equals(repository.getRepositoryType())){
+                    remoteProxyService.deleteRepositoryRemoteProxy("repositoryId",id);
+                }
+
+
+                //删除文件
+                try {
+                    String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
+                    FileUtils.deleteDirectory(new File(folderPath));
+                }catch (Exception e){
+                    logger.info("删除制品库时删除文件失败:"+e.getMessage());
+                }
+                RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
+                initRepositoryMap(repositoryEntity,"delete",null);
+            }});
     }
+
+
+    @Override
+    public Repository findOneRepository(String id) {
+        RepositoryEntity repositoryEntity = repositoryDao.findRepository(id);
+
+        Repository repository = BeanMapper.map(repositoryEntity, Repository.class);
+
+
+        return repository;
+    }
+
 
     @Override
     public Repository findOne(String id) {

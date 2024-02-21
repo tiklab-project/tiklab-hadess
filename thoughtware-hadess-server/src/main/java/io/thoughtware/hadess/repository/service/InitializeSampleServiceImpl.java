@@ -93,7 +93,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
 
         }catch (Exception e) {
 
-            throw new SystemException(e.getMessage());
+            throw new SystemException(e);
         }
     }
 

@@ -15,7 +15,6 @@ import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
-import io.thoughtware.hadess.upload.NpmUploadService;
 import io.thoughtware.hadess.repository.model.*;
 import io.thoughtware.hadess.repository.service.RepositoryGroupService;
 import io.thoughtware.hadess.repository.service.RepositoryRemoteProxyService;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,7 +112,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             JSONArray jsonArray = (JSONArray) maintainers;
             Object UserData = jsonArray.get(0);
             if (ObjectUtils.isEmpty(UserData)){
-                return 401;
+                return HttpServletResponse.SC_UNAUTHORIZED;
             }
 
             //判断登录信息 是否正确
@@ -121,16 +121,36 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
             List<User> userList = userCheckService.npmUserCheckByName(name);
             if (CollectionUtils.isEmpty(userList)){
-                return 401;
+                return HttpServletResponse.SC_UNAUTHORIZED;
             }
 
-            return npmSubmitData(contextPath,jsonObjectData);
-        }catch (IOException e){
-            throw new SystemException(e);
+            return npmSubmitData(contextPath,jsonObjectData,name);
+        }catch (Exception e){
+            logger.info("提交npm失败："+e.getMessage());
+            return HttpServletResponse.SC_BAD_REQUEST;
+          //  throw new SystemException(e.getMessage());
         }
     }
+
     @Override
-    public Map<String,Object> npmPullTgzData(String contextPath) {
+    public Map<String,String> npmPullJson(Repository repository, String requestFullURL) {
+        String contextPath = yamlDataMaService.getUploadRepositoryUrl(requestFullURL);
+        logger.info("npm拉取(json)-请求地址："+contextPath);
+        String libraryVersion = findLibraryVersion(contextPath,null);
+        //本地制品库制品文件不存在 走代理
+        if (StringUtils.isEmpty(libraryVersion)){
+            logger.info("npm拉取02(json)-进入代理通道");
+            return callAgencyNpm(contextPath);
+        }
+        logger.info("npm拉取02(json)-本地服务器拉取");
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("code","200");
+        resultMap.put("data",libraryVersion);
+        return resultMap;
+    }
+    @Override
+    public Map<String,Object> npmPullTgzData(Repository repository,String requestFullURL) {
+        String contextPath = yamlDataMaService.getUploadRepositoryUrl(requestFullURL);
         logger.info("npm拉取01(tgz)-请求地址："+contextPath);
         String url = StringUtils.substringBeforeLast(contextPath, "/-/");
         String repositoryName = url.substring(url.indexOf("/") + 1);
@@ -167,29 +187,16 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
 
 
-    @Override
-    public Map<String,String> npmPull(String contextPath) {
-        logger.info("npm拉取01(json)-请求地址："+contextPath);
-        String libraryVersion = findLibraryVersion(contextPath,null);
-        //本地制品库制品文件不存在 走代理
-        if (StringUtils.isEmpty(libraryVersion)){
-            logger.info("npm拉取02(json)-进入代理通道");
-            return callAgencyNpm(contextPath);
-        }
-        logger.info("npm拉取02(json)-本地服务器拉取");
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("code","200");
-        resultMap.put("data",libraryVersion);
-        return resultMap;
-    }
+
 
     /**
      *  npm上传-文件的处理（存制品到数据库）
      * @param contextPath: 客户端请求路径
      * @param allData:   上传的文件
+     * @param  userName
      * @return
      */
-    public Integer npmSubmitData(String contextPath,JSONObject allData) throws IOException {
+    public Integer npmSubmitData(String contextPath,JSONObject allData,String userName) throws IOException {
 
         //tga的内容
         JSONObject tgaData =(JSONObject) allData.get("_attachments");
@@ -250,11 +257,12 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryVersion.setLibrary(library);
             libraryVersion.setRepository(repositoryList.get(0));
             libraryVersion.setHash(dist);
+            libraryVersion.setSize(Long.valueOf(length));
             libraryVersion.setVersion(version);
             libraryVersion.setLibraryType("npm");
             libraryVersion.setPullUser("");
 
-            String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion);
+            String libraryVersionId =libraryVersionService.libraryVersionSplice(libraryVersion,tgzName);
 
 
             //创建制品文件
@@ -266,9 +274,9 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
-            return 200;
+            return HttpServletResponse.SC_OK;
         }else {
-          return 404;
+          return HttpServletResponse.SC_NOT_FOUND;
         }
     }
 
@@ -356,9 +364,9 @@ public class NpmUploadServiceImpl implements NpmUploadService {
            return resultMap;
         }else {
             Map<String,String> map = execCallAgency(remoteProxy, 0, contextPath);
-            if (map.get("code").equals("200")){
+           /* if (map.get("code").equals("200")){
                 pullCreateLibrary(contextPath,map);
-            }
+            }*/
              return map;
         }
     }
@@ -381,7 +389,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             if (contextPath.contains("/-/")){
                 ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
                 byte[] entityBody = entity.getBody();
-                resultMap.put("200",entityBody);
+                resultMap.put("code",entityBody);
                 resultMap.put("agencyUrl",agencyUrl);
                 logger.info("npm拉取(tgz)-代理拉取状态："+entity.getStatusCode());
                 return resultMap;

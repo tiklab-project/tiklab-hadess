@@ -65,6 +65,7 @@ public class ScanPlay extends BaseModel {
     private String result;
 
     @ApiProperty(name="newScanTime",desc="最新扫描时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Timestamp newScanTime;
 
     @ApiProperty(name="scanGroup",desc="扫描记录code")

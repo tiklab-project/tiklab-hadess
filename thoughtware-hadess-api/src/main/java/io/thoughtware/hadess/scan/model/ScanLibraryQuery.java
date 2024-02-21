@@ -27,6 +27,9 @@ public class ScanLibraryQuery {
         @ApiProperty(name ="scanPlayId",desc = "扫描计划id")
         private String scanPlayId;
 
+        @ApiProperty(name ="generalRecordId",desc = "扫描记录总记录id")
+        private String generalRecordId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -67,6 +70,15 @@ public class ScanLibraryQuery {
 
         public ScanLibraryQuery setScanPlayId(String scanPlayId) {
             this.scanPlayId = scanPlayId;
+            return this;
+        }
+
+        public String getGeneralRecordId() {
+            return generalRecordId;
+        }
+
+        public ScanLibraryQuery setGeneralRecordId(String generalRecordId) {
+            this.generalRecordId = generalRecordId;
             return this;
         }
 }

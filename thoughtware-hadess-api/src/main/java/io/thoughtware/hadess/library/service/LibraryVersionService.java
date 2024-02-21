@@ -32,11 +32,19 @@ public interface LibraryVersionService {
     */
     void updateLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion);
 
+
     /**
     * 删除
     * @param id
     */
     void deleteLibraryVersion(@NotNull String id);
+
+    /**
+     * 带制品id 删除  先查询该版本是否为最后一个版本、最后一个版本把该制品也删除掉
+     * @param id
+     */
+    void deleteLibraryVersion(@NotNull String id,String libraryId);
+
     @FindOne
     LibraryVersion findOne(@NotNull String id);
     @FindList
@@ -89,16 +97,11 @@ public interface LibraryVersionService {
     /**
      *  制品版本创建、修改
      * @param libraryVersion    制品版本数据
+     * @param  fileName 制品文件名字
      * @return
      */
-     String libraryVersionSplice( LibraryVersion libraryVersion);
+     String libraryVersionSplice( LibraryVersion libraryVersion,String fileName);
 
-    /**
-     *  删除唯一版本 并删除相关联的制品
-     * @param id    版本id
-     * @return
-     */
-    void deleteVersionAndLibrary(String id);
 
     /**
      * 通过条件删除版本
@@ -128,4 +131,10 @@ public interface LibraryVersionService {
     Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery);
 
      String librarySize( String libraryVersionId);
+
+    /**
+     * 通过制品ids 查询
+     * @param libraryIds
+     */
+    List<LibraryVersion> findVersionByLibraryIds(String[] libraryIds);
 }

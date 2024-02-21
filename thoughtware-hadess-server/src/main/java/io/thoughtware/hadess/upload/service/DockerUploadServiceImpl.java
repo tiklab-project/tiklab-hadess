@@ -5,13 +5,11 @@ import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.eam.passport.user.service.UserPassportService;
 import io.thoughtware.hadess.common.RepositoryUtil;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
-import io.thoughtware.hadess.upload.DockerUploadService;
 import io.thoughtware.hadess.common.UserCheckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -255,7 +253,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             String userData = new String(decode, "UTF-8");
             String[] split = userData.split(":");
             libraryVersion.setPusher(split[0]);
-            String libraryVersionId = versionService.libraryVersionSplice(libraryVersion);
+            String libraryVersionId = versionService.libraryVersionSplice(libraryVersion,fileName);
 
             //创建描述文件
             String fileUrl = repository.getId() + "/" + libraryName + "/manifests/" + fileName;
@@ -266,6 +264,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             libraryFile.setLibrary(library);
             libraryFile.setFileName(fileName);
             libraryFile.setFileSize(size);
+            libraryFile.setSize(fileLength);
             libraryFile.setRepository(repository);
 
             libraryFile.setFileUrl(fileUrl);

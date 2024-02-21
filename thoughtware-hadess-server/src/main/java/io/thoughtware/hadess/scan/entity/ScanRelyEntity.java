@@ -26,6 +26,10 @@ public class ScanRelyEntity extends BaseModel {
     @Column(name = "scan_record_id",length = 12)
     private String scanRecordId;
 
+    //扫描计划总的id
+    @Column(name = "general_record_id",length = 12)
+    private String generalRecordId;
+
     //依赖名字
     @Column(name = "rely_name",length = 64)
     private String relyName;
@@ -182,5 +186,13 @@ public class ScanRelyEntity extends BaseModel {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getGeneralRecordId() {
+        return generalRecordId;
+    }
+
+    public void setGeneralRecordId(String generalRecordId) {
+        this.generalRecordId = generalRecordId;
     }
 }

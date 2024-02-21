@@ -54,12 +54,15 @@ public class LibraryVersion extends BaseModel {
     private java.lang.String hash;
 
 
-    @ApiProperty(name="User",desc="推送人",required = true)
+    @ApiProperty(name="pusher",desc="推送人",required = true)
     private String pusher;
 
 
     @ApiProperty(name="contentJson",desc="内容json  mpm用")
     private java.lang.String contentJson;
+
+    @ApiProperty(name="size",desc="版本大小")
+    private java.lang.Long size;
 
     @ApiProperty(name="pushTime",desc="推送时间")
     @JsonFormat(pattern = "yyyy-MM-dd ",timezone = "GMT+8")
@@ -81,8 +84,8 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="artifactId",desc="artifactId")
     private java.lang.String artifactId;
 
-    @ApiProperty(name="size",desc="size 大小")
-    private java.lang.String size;
+    @ApiProperty(name="showSize",desc="计算后界面展示的大小")
+    private java.lang.String showSize;
 
     @ApiProperty(name="pullUser",desc="最近拉取人")
     private java.lang.String pullUser;
@@ -92,6 +95,9 @@ public class LibraryVersion extends BaseModel {
 
     @ApiProperty(name="pullNum",desc="拉取次数")
     private java.lang.Integer pullNum;
+
+
+
 
     public java.lang.String getId() {
         return id;
@@ -195,12 +201,13 @@ public class LibraryVersion extends BaseModel {
         this.contentJson = contentJson;
     }
 
-    public String getSize() {
-        return size;
+
+    public String getShowSize() {
+        return showSize;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setShowSize(String showSize) {
+        this.showSize = showSize;
     }
 
     public String getPullUser() {
@@ -225,5 +232,13 @@ public class LibraryVersion extends BaseModel {
 
     public void setPullNum(Integer pullNum) {
         this.pullNum = pullNum;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 }

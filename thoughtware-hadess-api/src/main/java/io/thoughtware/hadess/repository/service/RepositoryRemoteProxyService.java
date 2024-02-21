@@ -33,6 +33,13 @@ public interface RepositoryRemoteProxyService {
     */
     void deleteRepositoryRemoteProxy(@NotNull String id);
 
+    /**
+     * 删除
+     * @param type
+     * @param value
+     */
+    void deleteRepositoryRemoteProxy(String type,String value);
+
     RepositoryRemoteProxy findOne(@NotNull String id);
 
     List<RepositoryRemoteProxy> findList(List<String> idList);
@@ -68,10 +75,12 @@ public interface RepositoryRemoteProxyService {
 
     /**
      * 通过制品库名字查询代理地址
-     * @param repositoryName 制品库名字
+     * @param repositoryId repositoryId
      * @return
      */
-    List<String> findAgencyUrl(String repositoryName);
+    List<String> findAgencyUrl(String repositoryId);
+
+
 
 
     /**

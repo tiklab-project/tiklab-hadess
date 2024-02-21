@@ -6,7 +6,7 @@ import io.thoughtware.core.exception.SystemException;
 import io.thoughtware.postin.annotation.ApiMethod;
 import io.thoughtware.postin.annotation.ApiParam;
 import io.thoughtware.hadess.library.model.LibraryFileHand;
-import io.thoughtware.hadess.upload.HandUploadService;
+import io.thoughtware.hadess.upload.service.HandUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

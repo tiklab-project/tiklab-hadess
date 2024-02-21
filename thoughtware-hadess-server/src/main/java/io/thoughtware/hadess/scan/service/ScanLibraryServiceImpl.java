@@ -137,14 +137,15 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
             scanLibraryList = scanLibraryList.stream().sorted(Comparator.comparing(ScanLibrary::getCreateTime))
                     .sorted(Comparator.comparing(ScanLibrary::getScanState)).collect(Collectors.toList());
 
+            List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setGeneralRecordId(scanLibraryQuery.getGeneralRecordId()));
+
             for (ScanLibrary scanLibrary:scanLibraryList){
-                ScanRecord newScanRecord = scanRecordService.findNewScanRecord(scanLibrary.getId());
-                if (!ObjectUtils.isEmpty(newScanRecord)){
-                    scanLibrary.setScanRecord(newScanRecord);
-                    List<ScanRely> scanRelyList = scanRelyService.findScanRelyList(new ScanRelyQuery().setScanRecordId(scanLibrary.getScanRecord().getId()));
-                    if (CollectionUtils.isNotEmpty(scanRelyList)){
-                        scanLibrary.setRelyNum(scanRelyList.size());
-                    }
+
+                List<ScanRely> scanRelies = scanRelyList.stream().filter(a -> scanLibrary.getId().equals(a.getScanLibrary().getId())).collect(Collectors.toList());
+                if (!ObjectUtils.isEmpty(scanRelies)){
+                    scanLibrary.setRelyNum(scanRelies.size());
+                    scanLibrary.setScanRecordId(scanRelies.get(0).getScanRecordId());
+                    scanLibrary.setScanTime(scanRelies.get(0).getCreateTime());
                 }
             }
         }

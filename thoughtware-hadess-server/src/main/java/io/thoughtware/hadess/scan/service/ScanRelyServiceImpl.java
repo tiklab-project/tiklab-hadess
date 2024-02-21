@@ -44,7 +44,7 @@ public class ScanRelyServiceImpl implements ScanRelyService {
     @Override
     public String createScanRely(@NotNull @Valid ScanRely scanRely) {
         ScanRelyEntity scanRelyEntity = BeanMapper.map(scanRely, ScanRelyEntity.class);
-
+        scanRelyEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return scanRelyDao.createScanRely(scanRelyEntity);
     }
 

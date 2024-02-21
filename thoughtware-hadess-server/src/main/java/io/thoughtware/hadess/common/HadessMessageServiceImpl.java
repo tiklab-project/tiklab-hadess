@@ -9,10 +9,12 @@ import io.thoughtware.security.logging.model.LoggingType;
 import io.thoughtware.security.logging.service.LoggingByTempService;
 import io.thoughtware.user.user.model.User;
 import io.thoughtware.user.user.service.UserService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -82,7 +84,12 @@ public class HadessMessageServiceImpl implements HadessMessageService{
         HashMap<String,Object> map = new HashMap<>();
         String userId = LoginContext.getLoginId();
         User user = userService.findOne(userId);
-        String userName = StringUtils.isNotEmpty(user.getNickname()) ? user.getNickname() : user.getName();
+        String userName;
+        if (ObjectUtils.isEmpty(user)){
+            userName="admin";
+        }else {
+            userName = StringUtils.isNotEmpty(user.getNickname()) ? user.getNickname() : user.getName();
+        }
 
         map.put("userName", userName);
         map.put("data",RepositoryUtil.date(1,new Date()));

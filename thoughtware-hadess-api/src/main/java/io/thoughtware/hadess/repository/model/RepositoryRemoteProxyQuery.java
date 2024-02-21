@@ -22,6 +22,9 @@ public class RepositoryRemoteProxyQuery implements Serializable {
         @ApiProperty(name ="repositoryId",desc = "制品库id")
         private String repositoryId;
 
+        @ApiProperty(name ="remoteProxyId",desc = "代理地址id")
+        private String remoteProxyId;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -44,6 +47,15 @@ public class RepositoryRemoteProxyQuery implements Serializable {
 
         public RepositoryRemoteProxyQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public String getRemoteProxyId() {
+            return remoteProxyId;
+        }
+
+        public RepositoryRemoteProxyQuery setRemoteProxyId(String remoteProxyId) {
+            this.remoteProxyId = remoteProxyId;
             return this;
         }
 }

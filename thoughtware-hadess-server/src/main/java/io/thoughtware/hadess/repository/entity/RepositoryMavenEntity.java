@@ -25,6 +25,10 @@ public class RepositoryMavenEntity extends BaseModel {
     @Column(name = "repository_id",length = 12)
     private String repositoryId;
 
+    //是否覆盖
+    @Column(name = "cover_state")
+    private Integer coverState;
+
 
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -59,5 +63,13 @@ public class RepositoryMavenEntity extends BaseModel {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getCoverState() {
+        return coverState;
+    }
+
+    public void setCoverState(Integer coverState) {
+        this.coverState = coverState;
     }
 }

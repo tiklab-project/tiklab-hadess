@@ -21,28 +21,16 @@ public class RepositoryRemoteProxyEntity extends BaseModel {
     @Column(name = "repository_id",length = 12,notNull = true)
     private String repositoryId;
 
-    //代理地址
-    @Column(name = "agency_url",length = 324,notNull = true)
-    private String agencyUrl;
 
-    //代理名称
-    @Column(name = "agency_name",length = 32)
-    private String agencyName;
+    //代理Id
+    @Column(name = "remote_proxy_id",length = 12,notNull = true)
+    private String remoteProxyId;
 
-    //账号、用户
-    @Column(name = "user_name",length = 16)
-    private String userName;
-
-    //密码
-    @Column(name = "password",length = 32)
-    private String password;
 
 
     @Column(name = "create_time")
     private Timestamp createTime;
 
-    @Column(name = "update_time")
-    private Timestamp updateTime;
 
     public String getId() {
         return id;
@@ -60,37 +48,7 @@ public class RepositoryRemoteProxyEntity extends BaseModel {
         this.repositoryId = repositoryId;
     }
 
-    public String getAgencyUrl() {
-        return agencyUrl;
-    }
 
-    public void setAgencyUrl(String agencyUrl) {
-        this.agencyUrl = agencyUrl;
-    }
-
-    public String getAgencyName() {
-        return agencyName;
-    }
-
-    public void setAgencyName(String agencyName) {
-        this.agencyName = agencyName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public Timestamp getCreateTime() {
         return createTime;
@@ -100,11 +58,12 @@ public class RepositoryRemoteProxyEntity extends BaseModel {
         this.createTime = createTime;
     }
 
-    public Timestamp getUpdateTime() {
-        return updateTime;
+
+    public String getRemoteProxyId() {
+        return remoteProxyId;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
+    public void setRemoteProxyId(String remoteProxyId) {
+        this.remoteProxyId = remoteProxyId;
     }
 }

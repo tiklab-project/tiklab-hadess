@@ -142,4 +142,17 @@ public class LibraryVersionDao{
         }
         return libraryVersionEntity;
     }
+
+
+    /**
+     * 通过制品ids 查询
+     * @param libraryIds 制品ids
+     */
+    public List<LibraryVersionEntity> findVersionByLibraryIds(String[] libraryIds) {
+        QueryCondition condition = QueryBuilders.createQuery(LibraryVersionEntity.class)
+                .in("libraryId", libraryIds)
+                .get();
+
+        return jpaTemplate.findList(condition,LibraryVersionEntity.class)    ;
+    }
 }

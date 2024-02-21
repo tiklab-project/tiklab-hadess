@@ -7,7 +7,6 @@ import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.library.model.LibraryFileHand;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
-import io.thoughtware.hadess.upload.HandUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,7 @@ public class HandUploadServiceImpl implements HandUploadService {
     public byte[] fileRead(String requestURI) {
 
         try {
-            String rpyAddress=xpakYamlDataMaService.repositoryAddress();
-            //截取文件
-            String fileUrl = getFileUrl(requestURI);
-            File file = new File(rpyAddress+fileUrl);
+            File file = getFileUrl(requestURI);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -167,11 +163,13 @@ public class HandUploadServiceImpl implements HandUploadService {
         return result;
     }
 
-    public String getFileUrl(String requestURI){
+    public File getFileUrl(String requestURI){
         String[] split = requestURI.split("/");
         Integer indexes = split[1].length() + split[2].length() + 2;
         String url = requestURI.substring(indexes);
-        return url;
+
+        File file = new File(xpakYamlDataMaService.repositoryAddress()+url);
+        return file;
     }
 
     /**

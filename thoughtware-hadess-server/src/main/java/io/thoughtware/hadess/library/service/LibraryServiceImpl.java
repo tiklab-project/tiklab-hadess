@@ -6,6 +6,9 @@ import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.library.dao.LibraryDao;
 import io.thoughtware.hadess.library.entity.LibraryEntity;
 import io.thoughtware.hadess.library.model.*;
+import io.thoughtware.hadess.pushcentral.model.PushLibrary;
+import io.thoughtware.hadess.pushcentral.model.PushLibraryQuery;
+import io.thoughtware.hadess.pushcentral.service.PushLibraryService;
 import io.thoughtware.hadess.repository.model.*;
 import io.thoughtware.hadess.repository.service.RepositoryGroupService;
 import io.thoughtware.hadess.repository.service.RepositoryMavenService;
@@ -15,13 +18,11 @@ import io.thoughtware.hadess.scan.model.ScanLibraryQuery;
 import io.thoughtware.hadess.scan.service.ScanLibraryService;
 import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
 import io.thoughtware.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
-import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
 import io.thoughtware.toolkit.join.JoinTemplate;
 
-import io.thoughtware.hadess.repository.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -266,6 +267,15 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
+    public List<Library> findLibraryByCondition(String name, String type, String[] rpyIds) {
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByCondition(name,type,rpyIds);
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+        joinTemplate.joinQuery(libraryList);
+
+        return libraryList;
+    }
+
+    @Override
     public Library findMvnLibraryByGroupId(Repository repository, String name, String groupId, String type) {
 
         List<LibraryMaven> libraryMavens = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery()
@@ -283,8 +293,9 @@ public class LibraryServiceImpl implements LibraryService {
                 RepositoryMaven repositoryMaven = repositoryMavenService.findRepositoryMavenByRpyIds(rpyIds, type);
 
                 if (!ObjectUtils.isEmpty(repositoryMaven)){
-                    List<LibraryMaven> collected = libraryMavens.stream().filter(a -> (repositoryMaven.getRepository().getId()).equals(a.getLibrary().getRepository().getId()))
-                            .collect(Collectors.toList());
+                    List<LibraryMaven> collected = libraryMavens.stream().filter(a -> !ObjectUtils.isEmpty(a.getLibrary().getRepository())&&
+                                    (repositoryMaven.getRepository().getId()).equals(a.getLibrary().getRepository().getId()))
+                                    .collect(Collectors.toList());
                     if (CollectionUtils.isNotEmpty(collected)){
                         return collected.get(0).getLibrary();
                     }
@@ -331,7 +342,7 @@ public class LibraryServiceImpl implements LibraryService {
             for (Library library:mavenLibraryList.getDataList()){
                 if (!ObjectUtils.isEmpty(library.getSize())){
                     String size = RepositoryUtil.formatSize(library.getSize());
-                    library.setRepositorySize(size);
+                    library.setVersionSize(size);
                 }
             }
         }
@@ -341,21 +352,17 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public Pagination<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
-        Pagination<LibraryEntity> pagination =libraryDao.findLibraryListByCondition(libraryQuery);
+        Pagination<Library> libraryList = libraryDao.findLibraryListByCondition(libraryQuery);
 
-        List<Library> libraryList = BeanMapper.mapList(pagination.getDataList(),Library.class);
-
-        joinTemplate.joinQuery(libraryList);
-
-        if (CollectionUtils.isNotEmpty(libraryList)){
-            for (Library library:libraryList){
+        if (CollectionUtils.isNotEmpty(libraryList.getDataList())){
+            for (Library library:libraryList.getDataList()){
                 if (!ObjectUtils.isEmpty(library.getSize())){
                     String size = RepositoryUtil.formatSize(library.getSize());
-                    library.setRepositorySize(size);
+                    library.setVersionSize(size);
                 }
             }
         }
-        return PaginationBuilder.build(pagination,libraryList);
+        return libraryList;
     }
 
     @Override
@@ -474,158 +481,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 
 
-    @Override
-    public void updateFile() {
-        List<Repository> repositoryList = repositoryService.findRepositoryList(new RepositoryQuery().setType("maven"));
-
-        for (Repository repository:repositoryList){
-            if (repository.getRepositoryType().equals("group")){
-                continue;
-            }
-            //远程库
-            if (repository.getRepositoryType().equals("remote")){
-                //continue;
-                remoteTest(repository);
-            }
-
-            List<RepositoryMaven> mavenList = repositoryMavenService.findRepositoryMavenList(new RepositoryMavenQuery().setRepositoryId(repository.getId()));
-            ExecutorService executorService = Executors.newCachedThreadPool();
-
-            executorService.submit(new Runnable(){
-                @Override
-                public void run() {
-                    List<LibraryEntity> libraryListNo = libraryDao.findLibraryListNo(new LibraryQuery().setRepositoryId(repository.getId()));
-                    if (CollectionUtils.isNotEmpty(libraryListNo)){
-                        for (LibraryEntity library:libraryListNo){
-                            String generateMath = getFolderLayer(repository.getId());
-                            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()));
-                            String metadata=null;
-                            String fileUr;
-                            String newPath=null;
-                            for (LibraryFile libraryFile:libraryFileList){
-
-                                String fileUrl = libraryFile.getFileUrl();
-                                String repositroyId = fileUrl.substring(0, fileUrl.indexOf("/"));
-                                String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-
-                                String repositoryAddress = yamlDataMaService.repositoryAddress();
-                                String oldPath = repositoryAddress + "/" + libraryFile.getFileUrl();
 
 
-                                if (mavenList.get(0).getVersion().equals("Snapshot")){
-                                    String version = libraryFile.getLibraryVersion().getVersion();
-                                    newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath + "/" +version;
-
-                                    fileUr = repositroyId + "/" + generateMath + "/" +version+"/"+ fileName;
-                                    String substring = oldPath.substring(0, oldPath.lastIndexOf("/"));
-
-                                    metadata = substring.substring(0, substring.lastIndexOf("/"));
-                                }else {
-                                    newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath ;
-                                    fileUr = repositroyId + "/" + generateMath + "/" + fileName;
-
-                                    metadata = oldPath.substring(0, oldPath.lastIndexOf("/"));
-
-                                }
-
-                                File file = new File(newPath);
-                                if (!file.exists()){
-                                    file.mkdirs();
-                                }
-                                libraryFile.setFileUrl(fileUr);
-                                libraryFileService.updateLibraryFile(libraryFile);
-                                move(oldPath,newPath);
-
-                            }
-                            String metadata1 = metadata + "/" + "maven-metadata.xml";
-
-                            String metadata2 = metadata + "/" + "maven-metadata.xml.md5";
-                            String metadata3 = metadata + "/" + "maven-metadata.xml.sha1";
-                            if (mavenList.get(0).getVersion().equals("Release")){
-                                move(metadata1,newPath);
-                                move(metadata2,newPath);
-                                move(metadata3,newPath);
-                            }else {
-                                String substring = newPath.substring(0, newPath.lastIndexOf("/"));
-                                move(metadata1,substring);
-                                move(metadata2,substring);
-                                move(metadata3,substring);
-                            }
-                            try {
-                                FileUtils.deleteDirectory(new File(metadata));
-                                System.out.println("文件夹删除成功！");
-                            } catch (IOException e) {
-                                System.out.println("文件夹删除失败：" + e.getMessage());
-                            }
-                        }
-                    }
-                }});
-
-        }
-    }
-
-
-    public void remoteTest(Repository repository){
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new Runnable(){
-            @Override
-            public void run() {
-                     List<LibraryEntity> libraryListNo = libraryDao.findLibraryListNo(new LibraryQuery().setRepositoryId(repository.getId()));
-
-
-                if (CollectionUtils.isNotEmpty(libraryListNo)){
-                    for (LibraryEntity library:libraryListNo){
-                        String generateMath = getFolderLayer(repository.getId());
-                        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId()));
-                        String metadata=null;
-                        String fileUr;
-                        String newPath=null;
-                        for (LibraryFile libraryFile:libraryFileList){
-                            String fileUrl = libraryFile.getFileUrl();
-
-
-                            String repositroyId = fileUrl.substring(0, fileUrl.indexOf("/"));
-                            String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-
-                            String repositoryAddress = yamlDataMaService.repositoryAddress();
-                            String oldPath = repositoryAddress + "/" + libraryFile.getFileUrl();
-
-
-                            newPath = repositoryAddress + "/" + repositroyId + "/" + generateMath ;
-                            fileUr = repositroyId + "/" + generateMath + "/" + fileName;
-
-                            metadata = oldPath.substring(0, oldPath.lastIndexOf("/"));
-
-                            File file = new File(newPath);
-                            if (!file.exists()){
-                                file.mkdirs();
-                            }
-                            libraryFile.setFileUrl(fileUr);
-                            libraryFileService.updateLibraryFile(libraryFile);
-                            move(oldPath,newPath);
-
-                        }
-
-
-                        String metadata1 = metadata + "/" + "maven-metadata.xml";
-                        String metadata2 = metadata + "/" + "maven-metadata.xml.md5";
-                        String metadata3 = metadata + "/" + "maven-metadata.xml.sha1";
-
-                        move(metadata1,newPath);
-                        move(metadata2,newPath);
-                        move(metadata3,newPath);
-
-                        try {
-                            FileUtils.deleteDirectory(new File(metadata));
-                            System.out.println("文件夹删除成功！");
-                        } catch (IOException e) {
-                            System.out.println("文件夹删除失败：" + e.getMessage());
-                        }
-                    }}
-            }});
-
-
-    }
 
 
     public void move(String oldPath,String newPath){
@@ -670,6 +527,75 @@ public class LibraryServiceImpl implements LibraryService {
         return lowerCase;
     }
 
+
+
+    @Override
+    public void updateFile() {
+        List<LibraryVersion> allLibraryVersion = libraryVersionService.findAllLibraryVersion();
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(new Runnable(){
+            @Override
+            public void run() {
+                logger.info("执行修改制品版本大小");
+                List<LibraryVersion> LibraryVersion = allLibraryVersion.stream().filter(a -> a.getSize()==0).collect(Collectors.toList());
+                if (CollectionUtils.isNotEmpty(LibraryVersion)){
+                    logger.info("执行数量："+LibraryVersion.size());
+                    for (LibraryVersion libraryVersion:LibraryVersion){
+                        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
+                        if (CollectionUtils.isNotEmpty(libraryFileList)){
+                            List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
+
+
+                            libraryVersion.setSize( formatSizeSum(sizeList));
+                            logger.info("修改制品："+libraryFileList.get(0).getLibrary().getName()+" 版本："+libraryVersion.getVersion());
+                            libraryVersionService.updateLibraryVersion(libraryVersion);
+                        }
+                    }
+                }
+
+            }});
+
+
+    }
+
+    /**
+     * 计算和
+     * @param sizeList
+     */
+    public Long  formatSizeSum(List<String> sizeList) {
+        Double allSize=0.0;
+        for (String size:sizeList){
+            if (size.endsWith("KB")){
+                String substring = size.substring(0, size.indexOf("KB"));
+                allSize=allSize+(Double.valueOf(substring)*1024);
+                continue;
+            }
+            if (size.endsWith("MB")){
+                String substring = size.substring(0, size.indexOf("MB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024);
+                continue;
+            }
+            if (size.endsWith("GB")){
+                String substring = size.substring(0, size.indexOf("GB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024*1024);
+                continue;
+            }
+            if (size.endsWith("TB")){
+                String substring = size.substring(0, size.indexOf("TB"));
+                allSize=allSize+(Double.valueOf(substring)*1024*1024*1024*1024);
+                continue;
+            }
+            if (size.endsWith("B")){
+                String substring = size.substring(0, size.indexOf("B"));
+                allSize=allSize+Double.valueOf(substring);
+            }
+
+
+        }
+
+        return Math.round(allSize);
+    }
 
 }
 

@@ -5,7 +5,7 @@ import io.thoughtware.postin.annotation.ApiMethod;
 import io.thoughtware.hadess.common.RepositoryUtil;
 import io.thoughtware.hadess.common.UuidGenerator;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.upload.DockerUploadService;
+import io.thoughtware.hadess.upload.service.DockerUploadService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

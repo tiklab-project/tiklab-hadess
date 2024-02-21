@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import io.thoughtware.core.Result;
 import io.thoughtware.core.exception.SystemException;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.upload.MavenUploadService;
-import io.thoughtware.hadess.upload.NpmUploadService;
+import io.thoughtware.hadess.upload.service.MavenUploadService;
+import io.thoughtware.hadess.upload.service.NpmUploadService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +53,7 @@ public  class LibraryUploadController extends HttpServlet {
         String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
         String repositoryName=repositoryPath.substring(0,repositoryPath.indexOf("/", 1));
 
-        StringBuffer requestURL = request.getRequestURL();
+
         if (StringUtils.isNotEmpty(repositoryName)){
             Repository repository = repositoryService.findRepositoryByName(repositoryName);
             if (ObjectUtils.isEmpty(repository)){
@@ -65,7 +65,7 @@ public  class LibraryUploadController extends HttpServlet {
                 maven(request,response,repositoryPath);
             }
             if (("npm").equals(type)){
-                npm(request,response,repositoryPath);
+                npm(request,response,repository,repositoryPath);
             }
         }
     }
@@ -125,49 +125,53 @@ public  class LibraryUploadController extends HttpServlet {
         }catch (Exception e){
             throw new SystemException(e);
         }
-
     }
 
     /**
      * npm
      */
-    public void npm(HttpServletRequest request,HttpServletResponse response,String repositoryPath){
+    public void npm(HttpServletRequest request,HttpServletResponse response,Repository repository,String repositoryPath){
         logger.info("开始执行npm："+repositoryPath);
         String referer = request.getHeader("referer");
+
+
+        //请求全路径
+        String requestFullURL = request.getRequestURL().toString();
+
         if (StringUtils.isNotEmpty(referer)){
             try {
-
                 //npm publish （提交）
                 if (referer.contains("publish")){
                     InputStream inputStream = request.getInputStream();
                     Integer resultCode = downloadNpmService.npmSubmit(repositoryPath, inputStream);
+
                     response.setStatus(resultCode);
                 }
                 //npm install （拉取）
                 if (referer.contains("install")){
                     if (!repositoryPath.endsWith(".tgz")){
                         //第一次交互
-                        Map<String,String> data = downloadNpmService.npmPull(repositoryPath);
+                        Map<String,String> data = downloadNpmService.npmPullJson(repository,requestFullURL);
                         if ("200".equals(data.get("code"))){
                             response.setContentType("application/json;charset=utf-8");
-                            Object o = JSON.toJSON(data.get("data"));
-                            response.setStatus(200);
+                            response.setStatus(HttpServletResponse.SC_OK);
                             response.getWriter().print(data.get("data"));
                         }
                         if ("404".equals(data.get("code"))){
-                            response.setStatus(404);
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         }
                     }else {
                         //第二次交互以.tgz结尾
-                        Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(repositoryPath);
-                        if ("200".equals(resultMap.get("code"))){
+                        Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(repository,requestFullURL);
+                        Integer code = Integer.valueOf(resultMap.get("code").toString());
+                        if (code==200){
                             ServletOutputStream outputStream = response.getOutputStream();
                             outputStream.write((byte[])resultMap.get("data"));
                         }
-                        if ("404".equals(resultMap.get("code"))){
-                            response.setStatus(404);
+                        if (code==404){
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         }
-                        if ("500".equals(resultMap.get("code"))){
+                        if (code==500){
                             response.setStatus(500);
                         }
                     }
@@ -180,9 +184,9 @@ public  class LibraryUploadController extends HttpServlet {
                     String jsonString = JSON.toJSONString(map);
                     boolean success = (boolean) map.get("success");
                     if (success){
-                        response.setStatus(201);
+                        response.setStatus(HttpServletResponse.SC_CREATED);
                     }else {
-                        response.setStatus(401);
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
                     response.getWriter().print(jsonString);
                 }

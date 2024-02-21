@@ -35,6 +35,9 @@ public class RepositoryMaven extends BaseModel {
     @ApiProperty(name="version",desc="maven 仓库版本 Release、Snapshot、Mixed")
     private String version;
 
+    @ApiProperty(name="coverState",desc="是否覆盖 0不覆盖、 1 覆盖")
+    private Integer coverState=1;
+
     @ApiProperty(name="createTime",desc="创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
@@ -69,5 +72,13 @@ public class RepositoryMaven extends BaseModel {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getCoverState() {
+        return coverState;
+    }
+
+    public void setCoverState(Integer coverState) {
+        this.coverState = coverState;
     }
 }

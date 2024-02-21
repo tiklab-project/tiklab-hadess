@@ -51,16 +51,16 @@
             <version>${thoughtware-rpc.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-install-starter</artifactId>
+            <version>${thoughtware-upgrade.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-security-spring-boot-starter</artifactId>
             <version>${thoughtware-security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.thoughtware</groupId>
-            <artifactId>thoughtware-todotask-spring-boot-starter</artifactId>
-            <version>${thoughtware-todotask.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>

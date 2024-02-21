@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class RepositoryMavenServiceImpl implements RepositoryMavenService {
     @Override
     public String createRepositoryMaven(@NotNull @Valid RepositoryMaven repositoryMaven) {
         RepositoryMavenEntity repositoryMavenEntity = BeanMapper.map(repositoryMaven, RepositoryMavenEntity.class);
-
+        repositoryMavenEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return repositoryMavenDao.createRepositoryMaven(repositoryMavenEntity);
     }
 

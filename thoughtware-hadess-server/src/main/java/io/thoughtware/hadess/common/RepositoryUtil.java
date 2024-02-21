@@ -1,7 +1,9 @@
 package io.thoughtware.hadess.common;
 
 import com.alibaba.fastjson.JSONObject;
+import io.thoughtware.core.Result;
 import io.thoughtware.core.context.AppHomeContext;
+import io.thoughtware.core.exception.ApplicationException;
 import io.thoughtware.core.exception.SystemException;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -20,7 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -359,6 +363,18 @@ public class RepositoryUtil {
         }
     }
 
+    /**
+     * 返回今天星期几
+     * @return 1: 周一 7:周天
+     */
+    public static int week() {
+        Calendar calendar=Calendar.getInstance();
+        int i = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (i == 0){
+            return 7;
+        }
+        return i;
+    }
 
     /**
      * SHA256 加密
@@ -487,5 +503,42 @@ public class RepositoryUtil {
         decimalL = decimalL.setScale(2, RoundingMode.HALF_UP);
 
         return decimalL.floatValue();
+    }
+
+
+    /**
+     * 字符串转换成时间
+     * @param time 时间字符串
+     * @return 时间
+     */
+    public static Date StringChengeDate(String time){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date targetTime;
+        try {
+            targetTime = sdf.parse(time);
+        } catch (ParseException e) {
+            throw new ApplicationException("时间转换失败，不是yyyy-MM-dd HH:mm:ss格式:"+time);
+        }
+        return targetTime;
+    }
+
+    /**
+     *  读取文件信息
+     *  @param file     文件
+     * @return
+     */
+    public static byte[] readFileData(File file) throws IOException {
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+        int buf_size = 1024;
+        byte[] buffer = new byte[buf_size];
+        int len = 0;
+        while (-1 != (len = in.read(buffer, 0, buf_size))) {
+            bos.write(buffer, 0, len);
+        }
+        byte[] bytes = bos.toByteArray();
+        return bytes;
+
     }
 }

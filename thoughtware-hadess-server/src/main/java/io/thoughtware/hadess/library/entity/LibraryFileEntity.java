@@ -33,6 +33,10 @@ public class LibraryFileEntity extends BaseModel {
     @Column(name = "file_size",length = 32,notNull = true)
     private String fileSize;
 
+    //文件大小
+    @Column(name = "size")
+    private Integer size;
+
     //文件名称
     @Column(name = "file_name",length = 256,notNull = true)
     private String fileName;
@@ -133,5 +137,13 @@ public class LibraryFileEntity extends BaseModel {
 
     public void setSnapshotVersion(String snapshotVersion) {
         this.snapshotVersion = snapshotVersion;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

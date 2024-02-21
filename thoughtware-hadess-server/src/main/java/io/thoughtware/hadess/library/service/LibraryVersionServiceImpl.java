@@ -16,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -65,6 +66,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryVersionDao.updateLibraryVersion(libraryVersionEntity);
     }
 
+
+
     @Override
     public void deleteLibraryVersion(@NotNull String id) {
         libraryVersionDao.deleteLibraryVersion(id);
@@ -72,7 +75,19 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
     }
 
+    @Override
+    public void deleteLibraryVersion(String id, String libraryId) {
+        List<LibraryVersionEntity> libraryVersionList = libraryVersionDao.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryId));
+        //只有一个版本或者没有版本直接删除整个制品
+        if (CollectionUtils.isEmpty(libraryVersionList)||libraryVersionList.size()==1){
+            libraryService.deleteLibrary(libraryId);
+        }
 
+        //存在多个版本 只删除当前版本
+        if (libraryVersionList.size()>1){
+            this.deleteLibraryVersion(id);
+        }
+    }
 
     @Override
     public LibraryVersion findOne(String id) {
@@ -112,7 +127,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         }
         //制品的大小
         String librarySize = librarySize(libraryVersion.getId());
-        libraryVersion.setSize(librarySize);
+        libraryVersion.setShowSize(librarySize);
 
         joinTemplate.joinQuery(libraryVersion);
 
@@ -179,7 +194,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             for (LibraryVersion libraryVersion:libraryVersionList){
                 //制品的大小
                 String librarySize = librarySize(libraryVersion.getId());
-                libraryVersion.setSize(librarySize);
+                libraryVersion.setShowSize(librarySize);
             }
         }
         return PaginationBuilder.build(pagination,libraryVersionList);
@@ -202,19 +217,39 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
      * @param libraryVersion    libraryVersion
      * @return
      */
-    public String libraryVersionSplice( LibraryVersion libraryVersion){
+    public String libraryVersionSplice( LibraryVersion libraryVersion,String fileName){
 
         libraryVersion.setPushTime(new Timestamp(System.currentTimeMillis()));
         String libraryVersionId=null;
 
+        // 通过仓库id、制品id、版本查询制品版本数据
         List<LibraryVersion> libraryVersionList = this.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryVersion.getLibrary().getId()).
                 setRepositoryId(libraryVersion.getRepository().getId()).setVersion(libraryVersion.getVersion()));
+
+        //版本存在就更新、不存在直接创建
         if (CollectionUtils.isNotEmpty(libraryVersionList)){
-            libraryVersionId = libraryVersionList.get(0).getId();
+            LibraryVersion version = libraryVersionList.get(0);
+            libraryVersionId = version.getId();
+            Long versionSize = version.getSize();
+
             if (StringUtils.isEmpty(libraryVersion.getHash())){
-                libraryVersion.setHash(libraryVersionList.get(0).getHash());
+                libraryVersion.setHash(version.getHash());
             }
             libraryVersion.setId(libraryVersionId);
+
+            //通过制品id、版本id、文件名字查询制品文件信息
+            List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryVersion.getLibrary().getId()).setLibraryVersionId(version.getId())
+                    .setFileName(fileName));
+
+            //制品文件不为空的上传是执行的替换操作，版本的大小需要减去原制品文件大小
+            if (CollectionUtils.isNotEmpty(libraryFileList)){
+                Long size = libraryFileList.get(0).getSize();
+                 versionSize = version.getSize() >= size ? version.getSize() - size : version.getSize();
+            }
+            //加上最新文件的大小
+             versionSize = versionSize + libraryVersion.getSize();
+            libraryVersion.setSize(versionSize);
+
             this.updateLibraryVersion(libraryVersion);
         }else {
             libraryVersionId = this.createLibraryVersion(libraryVersion);
@@ -226,21 +261,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         return libraryVersionId;
     }
 
-    @Override
-    public void deleteVersionAndLibrary(String id) {
-        LibraryVersion libraryVersion = this.findLibraryVersion(id);
-
-        //删除该版本下面的制品文件
-        libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
-
-        //删除该版本对应的制品
-        libraryService.deleteLibrary(libraryVersion.getLibrary().getId());
-
-        if ("maven".equals(libraryVersion.getLibrary().getLibraryType())){
-            libraryMavenService.deleteLibraryMavenByCondition("libraryId",libraryVersion.getLibrary().getId());
-        }
-        this.deleteLibraryVersion(id);
-    }
 
     @Override
     public void deleteVersionByCondition(String field, String value) {
@@ -282,5 +302,12 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
         }
         return librarySize;
+    }
+
+    @Override
+    public List<LibraryVersion> findVersionByLibraryIds(String[] libraryIds) {
+        List<LibraryVersionEntity>  libraryVersionEntities = libraryVersionDao.findVersionByLibraryIds(libraryIds);
+        List<LibraryVersion> libraryVersions = BeanMapper.mapList(libraryVersionEntities, LibraryVersion.class);
+        return libraryVersions;
     }
 }

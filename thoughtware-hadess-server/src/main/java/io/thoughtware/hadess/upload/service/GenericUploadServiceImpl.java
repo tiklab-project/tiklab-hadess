@@ -9,13 +9,11 @@ import io.thoughtware.eam.passport.user.service.UserPassportService;
 import io.thoughtware.rpc.annotation.Exporter;
 import io.thoughtware.hadess.common.RepositoryUtil;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
-import io.thoughtware.hadess.upload.GenericUploadService;
 import io.thoughtware.hadess.common.UserCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,17 +180,18 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         libraryVersion.setVersion(version);
         libraryVersion.setRepository(repository);
         libraryVersion.setLibraryType("generic");
-        String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion);
+        String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion,fileName);
 
         //创建制品文件
         LibraryFile libraryFile = new LibraryFile();
         libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
+
         libraryFile.setFileName(fileName);
         libraryFile.setFileUrl(versionPath+"/"+fileName);
         libraryFile.setRelativePath(name+"/"+version+"/"+fileName);
         libraryFile.setFileSize(size);
-
+        libraryFile.setSize(Long.valueOf(FileLength));
         libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
         return "{code:200,msg:upload上传成功}";
     }
