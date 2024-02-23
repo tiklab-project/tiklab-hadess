@@ -29,18 +29,27 @@ public class PushOperationController {
 
     @RequestMapping(path = "/executePushGroup",method = RequestMethod.POST)
     @ApiMethod(name = "findPushLibraryPage",desc = "推送制品组")
-    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
+    @ApiParam(name = "pushOperationQuery",desc = "pushOperationQuery",required = true)
     public Result<String> pushGroup(@RequestBody @Valid @NotNull PushOperationQuery pushOperationQuery){
         String state = pushOperationService.pushGroup(pushOperationQuery);
 
         return Result.ok(state);
     }
 
+    @RequestMapping(path = "/executePushLibrary",method = RequestMethod.POST)
+    @ApiMethod(name = "findPushLibraryPage",desc = "推送制品")
+    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
+    public Result<String> pushLibrary(@RequestBody @Valid @NotNull PushOperationQuery pushOperationQuery){
+        String state = pushOperationService.pushLibrary(pushOperationQuery);
+
+        return Result.ok(state);
+    }
+
     @RequestMapping(path = "/getPushResult",method = RequestMethod.POST)
     @ApiMethod(name = "findPushLibraryPage",desc = "推送制品组")
-    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
-    public Result<PushOperation> getPushResult(@NotNull String pushGroupId){
-        PushOperation pushOperation = pushOperationService.getPushResult(pushGroupId);
+    @ApiParam(name = "key",desc = "获取推送结果的key",required = true)
+    public Result<PushOperation> getPushResult(@NotNull String key){
+        PushOperation pushOperation = pushOperationService.getPushResult(key);
 
         return Result.ok(pushOperation);
     }

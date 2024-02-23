@@ -102,6 +102,7 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
         //修改执行状态
         updateLibraryExecState(pushLibrary,"exec",pushLibrary.getLastPushResult());
 
+
         //查询gpg 是否安装
            /* ProcessBuilder builder = new ProcessBuilder("which", "gpg");
             Integer code = exec(builder, "gpgIsInstall",libraryId);
@@ -301,7 +302,7 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
                     /**
                      *  删除解压后的文件
                      */
-                    FileUtils.deleteDirectory(new File(extractPath));
+                  //  FileUtils.deleteDirectory(new File(extractPath));
                 }else {
                     updateLibraryExecState(pushLibrary,"end","fail");
                     this.updatePushLibrary(pushLibrary,"fail");
@@ -422,4 +423,7 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
             libraryListMap.remove(pushLibrary.getRepositoryId());
         }
     }
+
+
+
 }

@@ -29,4 +29,9 @@ public class HadessFinal {
 
     //npm中央仓库密码
     public static final String NPM_CENTER_PASSWORD = "Darth2020...";
+
+    //maven中央快照版本地址
+    public static final String MAVEN_CENTER_SAN_PATH = "https://s01.oss.sonatype.org/content/repositories/snapshots";
+    //maven中央正式版本地址
+    public static final String MAVEN_CENTER_REL_PATH = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
 }

@@ -7,11 +7,9 @@ import io.thoughtware.eam.common.context.LoginContext;
 import io.thoughtware.hadess.common.HadessFinal;
 import io.thoughtware.hadess.common.RepositoryUtil;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.library.model.LibraryFile;
-import io.thoughtware.hadess.library.model.LibraryFileQuery;
-import io.thoughtware.hadess.library.model.LibraryVersion;
-import io.thoughtware.hadess.library.model.LibraryVersionQuery;
+import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.hadess.library.service.LibraryFileService;
+import io.thoughtware.hadess.library.service.LibraryMavenService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.pushcentral.model.*;
 import io.thoughtware.hadess.scan.model.ScanRecord;
@@ -28,10 +26,7 @@ import java.io.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -57,6 +52,9 @@ public class PushOperationServiceImpl implements PushOperationService{
     @Autowired
     XpackYamlDataMaService xpakYamlDataMaService;
 
+    @Autowired
+    LibraryMavenService libraryMavenService;
+
 
     //推送日志
     public static Map<String , String> pushResultLog = new HashMap<>();
@@ -80,24 +78,76 @@ public class PushOperationServiceImpl implements PushOperationService{
             @Override
             public void run() {
                 String jsonString = JSON.toJSONString(pushOperationQuery.getPushGroupIds());
-
                 JSONArray objects = JSON.parseArray(jsonString);
-                for (Object value:objects){
-                    //    String pushGroupId = JSON.toJSONString(value);
-                    String pushGroupId = value.toString();
+
+                for (int i = 0; i < objects.size(); i++){
+                    String pushGroupId = objects.get(i).toString();
                     //查询推送组下面的制品
                     List<PushLibrary> pushLibraryList = pushLibraryService.findPushLibraryList(new PushLibraryQuery().setPushGroupId(pushGroupId));
+
+                    PushGroup pushGroup = pushGroupService.findPushGroup(pushGroupId);
                     if (CollectionUtils.isNotEmpty(pushLibraryList)){
+                        joinScanLog(loginId,"开始推送组"+pushGroup.getGroupName());
                         String libraryType = pushLibraryList.get(0).getLibrary().getLibraryType();
                         if (("maven").equals(libraryType)){
-                            mavenPush(pushLibraryList);
+                            mavenPush(pushLibraryList,pushOperation,loginId);
                         }
-                        if (("npm").equals(libraryType)){
 
+                        if (("npm").equals(libraryType)){
                             npmPush(pushLibraryList,pushOperation,loginId);
                             //推送成功
                             initPushState(pushOperation,"success");
                         }
+                    }
+                    //推送组里面推送制品为空
+                    if (i+1==objects.size()&&CollectionUtils.isEmpty(pushLibraryList)){
+                        logger.info("仓库组"+pushGroup.getGroupName()+"没有推送制品");
+                        joinScanLog(loginId,"仓库组"+pushGroup.getGroupName()+"没有推送制品");
+                        initPushState(pushOperation,"fail");
+                    }
+                }
+            }});
+
+        return "ok";
+    }
+
+    @Override
+    public String pushLibrary(PushOperationQuery pushOperationQuery) {
+        String loginId = LoginContext.getLoginId();
+        pushResultMap.remove(loginId);
+        pushResultLog.remove(loginId);
+
+        //初始化推送结果
+        PushOperation pushOperation = new PushOperation();
+        pushOperation.setStartTime(new Timestamp(System.currentTimeMillis()));
+        pushOperation.setResultKey(loginId);
+        initPushState(pushOperation,"run");
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(new Runnable(){
+            @Override
+            public void run() {
+                String jsonString = JSON.toJSONString(pushOperationQuery.getPushLibraryIds());
+
+                JSONArray jsonArray = JSON.parseArray(jsonString);
+
+                //将jsonArray 转为list
+                List<String> stringList = new ArrayList<>();
+                for (Object value:jsonArray){
+                    stringList.add(value.toString());
+                }
+                //查询将要推送的制品
+                List<PushLibrary> pushLibraryList = pushLibraryService.findList(stringList);
+                if (CollectionUtils.isNotEmpty(pushLibraryList)){
+                    String libraryType = pushLibraryList.get(0).getLibrary().getLibraryType();
+                    if (("maven").equals(libraryType)){
+                        mavenPush(pushLibraryList,pushOperation,loginId);
+                        //推送成功
+                        initPushState(pushOperation,"success");
+                    }
+                    if (("npm").equals(libraryType)){
+                        npmPush(pushLibraryList,pushOperation,loginId);
+                        //推送成功
+                        initPushState(pushOperation,"success");
                     }
                 }
             }});
@@ -124,9 +174,131 @@ public class PushOperationServiceImpl implements PushOperationService{
      * maven类型推送
      * @param pushLibraryList
      */
-    public void mavenPush(List<PushLibrary> pushLibraryList){
+    public void mavenPush(List<PushLibrary> pushLibraryList,PushOperation pushOperation,String key) {
 
+
+        for (PushLibrary pushLibrary : pushLibraryList) {
+            try {
+                logger.info("开始推送制品"+pushLibrary.getLibrary().getName());
+                joinScanLog(key, "开始推送制品" + pushLibrary.getLibrary().getName());
+                String libraryId = pushLibrary.getLibrary().getId();
+                List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryId));
+                if (CollectionUtils.isNotEmpty(libraryFileList)) {
+                    //查询pom 并排序
+                    List<LibraryFile> libraryPomFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(".pom"))
+                            .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                    LibraryFile libraryFile = libraryPomFiles.get(0);
+                    List<LibraryMaven> mavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryFile.getLibrary().getId()));
+                    LibraryMaven libraryMaven = mavenList.get(0);
+
+                    String version = libraryFile.getLibraryVersion().getVersion();
+
+                    //推送jar
+                    List<LibraryFile> libraryJarFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(version + ".jar"))
+                            .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(libraryJarFiles)) {
+                        LibraryFile libraryJarFile = libraryJarFiles.get(0);
+                        mavenExec(libraryMaven, libraryJarFile, key, "jar");
+                    }
+
+                    //推送zip
+                    List<LibraryFile> libraryZipFiles = libraryFileList.stream().filter(a -> a.getFileName().endsWith(".zip"))
+                            .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(libraryZipFiles)) {
+                        LibraryFile libraryZipFile = libraryZipFiles.get(0);
+                        mavenExec(libraryMaven, libraryZipFile, key, "zip");
+                    }
+
+                    //推送pom
+                    Integer integer = mavenExec(libraryMaven, libraryFile, key, "pom");
+                    if (integer == 0) {
+                        updatePushLibrary(pushLibrary, "succeed");
+                    } else {
+                        joinFailResult(pushLibrary,pushOperation,key,"推送pom失败");
+                    }
+                }else {
+                    joinFailResult(pushLibrary,pushOperation,key,"没有制品文件");
+                }
+            } catch (Exception e) {
+                joinFailResult(pushLibrary,pushOperation,key,e.getMessage());
+            }
+        }
     }
+
+
+    /**
+     * maven  zhix
+     * @param key  key
+     */
+    public Integer mavenExec( LibraryMaven libraryMaven, LibraryFile libraryFile,String key,String type) throws Exception {
+        String durl;
+        String libraryAddress = xpakYamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
+        if (StringUtils.isNotEmpty(libraryFile.getSnapshotVersion())){
+            durl="https://s01.oss.sonatype.org/content/repositories/snapshots";
+        }else {
+            durl="https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
+        }
+
+        // String type = libraryFile.getFileName().endsWith("jar") ? "jar" : "pom";
+
+        String name = libraryFile.getFileName().substring(0, libraryFile.getFileName().lastIndexOf("."));
+
+        String url="/Users/limingliang/source";
+        String oldFile=url+"/test-sources.jar";
+        String source=url+"/"+name+"-sources.jar";
+        String javaDoc=url+"/"+name+"-javadoc.jar";
+        RepositoryUtil.copyFile(oldFile,source);
+        RepositoryUtil.copyFile(oldFile,javaDoc);
+        ProcessBuilder builder;
+        if (("jar").equals(type)){
+            //执行
+            builder = new ProcessBuilder(
+                    "mvn",
+                    "gpg:sign-and-deploy-file",
+                    "-Dgpg.executable=/opt/homebrew/bin/gpg",
+                    "-Durl="+durl,
+                    "-DrepositoryId=sonatype-snapshots",
+                    "-DgroupId="+libraryMaven.getGroupId(),
+                    "-DartifactId="+libraryMaven.getArtifactId(),
+                    "-Dversion="+libraryFile.getLibraryVersion().getVersion(),
+                    "-Dpackaging="+type,
+                    "-Dfile="+libraryAddress,
+                    "-Dsources="+source,
+                    "-Djavadoc="+javaDoc,
+                    "-Dlicense.skipCheck"
+            );
+        }else {
+            //执行
+            builder = new ProcessBuilder(
+                    "mvn",
+                    "gpg:sign-and-deploy-file",
+                    "-Dgpg.executable=/opt/homebrew/bin/gpg",
+                    "-Durl="+durl,
+                    "-DrepositoryId=sonatype-snapshots",
+                    "-DgroupId="+libraryMaven.getGroupId(),
+                    "-DartifactId="+libraryMaven.getArtifactId(),
+                    "-Dversion="+libraryFile.getLibraryVersion().getVersion(),
+                    "-Dpackaging="+type,
+                    "-Dfile="+libraryAddress,
+                    "-Dlicense.skipCheck");
+        };
+
+        builder.command();
+       // Integer exitCode = exec(builder, "push","");
+        builder.command();
+        Process process = builder.start();
+        //执行日志
+        readFile(key,process);
+        int exitCode = process.waitFor();
+        if (exitCode!=0){
+            FileUtils.deleteQuietly(new File(source));
+            FileUtils.deleteQuietly(new File(javaDoc));
+        }
+        FileUtils.deleteQuietly(new File(source));
+        FileUtils.deleteQuietly(new File(javaDoc));
+        return exitCode;
+    }
+
 
     /**
      * npm类型推送
@@ -134,7 +306,6 @@ public class PushOperationServiceImpl implements PushOperationService{
      * @param  key 推送制品组id
      */
     public void npmPush(List<PushLibrary> pushLibraryList,PushOperation pushOperation,String key){
-
 
         for (PushLibrary pushLibrary:pushLibraryList){
             joinScanLog(key,"开始推送制品"+pushLibrary.getLibrary().getName());
@@ -178,26 +349,32 @@ public class PushOperationServiceImpl implements PushOperationService{
 
                     extractPath = extractPath + "package";
 
-                    logger.info(""+pushLibrary.getLibrary().getName()+"成功");
+                    logger.info("解压制品"+pushLibrary.getLibrary().getName()+"成功");
                     joinScanLog(key,"解压制品"+pushLibrary.getLibrary().getName()+"成功");
+
                     String[] changeDirCommand = { "cd", extractPath };
                     // 创建 ProcessBuilder 对象并设置工作目录
                     ProcessBuilder cdProcessBuilder = new ProcessBuilder(changeDirCommand);
                     cdProcessBuilder.directory(new File(extractPath));
+
                     // 启动进程并等待执行完成
                     Process cdProcess = cdProcessBuilder.start();
                     int cdExitCode = cdProcess.waitFor();
 
                     if (cdExitCode == 0) {
+                        logger.info("进入推送工作目录"+extractPath);
+                        joinScanLog(key,"进入推送工作目录"+extractPath);
                         RepositoryUtil.modifyPackageJson(extractPath,"https://registry.npmjs.org");
-                        String username = "tiklab";
-                        String password = "Darth2020...";
+
 
                         //连接npm 中央仓库
                         joinScanLog(key,"推送制品"+pushLibrary.getLibrary().getName()+"到中央仓库");
                         String npmCommand = "npm publish";
+                        String username = "tiklab";
+                        String password = "Darth2020...";
                         String registryUrl = "https://registry.npmjs.org/";
-                        ProcessBuilder processBuilder = new ProcessBuilder(npmCommand);
+                        ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", npmCommand);
+                        processBuilder.directory(new File(extractPath));
 
                         // 设置环境变量传递用户信息
                         processBuilder.environment().put("NPM_USERNAME", username);
@@ -207,8 +384,8 @@ public class PushOperationServiceImpl implements PushOperationService{
                         //执行日志
                         readFile(key,npmProcess);
                         int npmCode = npmProcess.waitFor();
-                        // Integer npmCode = exec(processBuilder, "pushNpmCommand", key);
                         if (npmCode==0){
+
                             logger.info("推送制品"+pushLibrary.getLibrary().getName()+"成功");
                             joinScanLog(key,"推送制品"+pushLibrary.getLibrary().getName()+"结果：success");
                             this.updatePushLibrary(pushLibrary,"success");
@@ -221,9 +398,8 @@ public class PushOperationServiceImpl implements PushOperationService{
                         /*
                          * 删除解压后的文件
                          * */
-                        FileUtils.deleteDirectory(new File(extractPath+"/package"));
+                        FileUtils.deleteDirectory(new File(extractPath));
                     }
-
 
                 }else {
                     logger.info("解压："+filePath+"失败");
@@ -269,7 +445,6 @@ public class PushOperationServiceImpl implements PushOperationService{
         while ((line = reader.readLine()) != null) {
             logger.info("执行命令日志:"+line);
             joinScanLog(key,line);
-
         }
 
         InputStream errorStream = process.getErrorStream();
@@ -314,12 +489,25 @@ public class PushOperationServiceImpl implements PushOperationService{
     }
 
     /**
+     *  拼接失败的错误信息
+     * @param  key key
+     *  @param pushLibrary pushLibrary
+     */
+    public void joinFailResult(PushLibrary pushLibrary,PushOperation pushOperation,
+                               String key,String massage){
+        logger.info("推送制品"+pushLibrary.getLibrary().getName()+"失败："+massage);
+        joinScanLog(key,"推送制品"+pushLibrary.getLibrary().getName()+"失败:"+massage);
+        initPushState(pushOperation,"fail");
+        this.updatePushLibrary(pushLibrary,"fail");
+    }
+
+    /**
      * 执行 命令
      * @param builder
      * @param  type
      * @return
      */
-    public Integer exec( ProcessBuilder builder,String type,String key) throws IOException, InterruptedException {
+    public Integer exec( ProcessBuilder builder,String type,String libraryId) throws IOException, InterruptedException {
         Process process = builder.start();
 
         // 获取命令行输出
@@ -331,7 +519,6 @@ public class PushOperationServiceImpl implements PushOperationService{
         StringBuilder excOutput = new StringBuilder();
         while ((line = reader.readLine()) != null) {
             logger.info(type+"执行命令日志01:"+line);
-            joinScanLog(key,line);
             excOutput.append(line);
         }
 
@@ -340,10 +527,8 @@ public class PushOperationServiceImpl implements PushOperationService{
         BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
         String errorLine;
         while ((errorLine = errorReader.readLine()) != null) {
-            logger.info("执行命令日志02:"+errorLine);
-            joinScanLog(key,errorLine);
-            excOutput.append(line);
-
+            logger.info(type+"执行命令日志:"+errorLine);
+            output.append(errorLine);
         }
         // 等待命令执行完成
         int exitCode = process.waitFor();
@@ -357,6 +542,7 @@ public class PushOperationServiceImpl implements PushOperationService{
                 return 1;
             }
         }
+
 
         return exitCode;
     }

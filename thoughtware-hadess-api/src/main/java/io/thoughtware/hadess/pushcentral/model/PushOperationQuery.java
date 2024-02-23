@@ -9,8 +9,9 @@ public class PushOperationQuery {
     @ApiProperty(name ="pushGroupIds",desc = "推送组ids")
     private Object pushGroupIds;
 
-    @ApiProperty(name ="pushGroupIds",desc = "推送组ids")
-//    private Type pushGroupIds;
+    @ApiProperty(name ="pushLibraryIds",desc = "推送制品ids")
+    private Object pushLibraryIds;
+
 
     public Object getPushGroupIds() {
         return pushGroupIds;
@@ -19,4 +20,13 @@ public class PushOperationQuery {
     public void setPushGroupIds(Object pushGroupIds) {
         this.pushGroupIds = pushGroupIds;
     }
+
+    public Object getPushLibraryIds() {
+        return pushLibraryIds;
+    }
+
+    public void setPushLibraryIds(Object pushLibraryIds) {
+        this.pushLibraryIds = pushLibraryIds;
+    }
+
 }

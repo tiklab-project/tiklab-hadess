@@ -104,6 +104,8 @@ public class PushLibraryServiceImpl implements PushLibraryService {
         List<PushLibraryEntity> pushLibraryEntityList =  pushLibraryDao.findPushLibraryList(idList);
 
         List<PushLibrary> pushLibraryList =  BeanMapper.mapList(pushLibraryEntityList,PushLibrary.class);
+
+        joinTemplate.joinQuery(pushLibraryList);
         return pushLibraryList;
     }
 

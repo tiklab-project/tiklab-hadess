@@ -13,8 +13,16 @@ public interface PushOperationService {
     String pushGroup(PushOperationQuery pushOperationQuery);
 
     /**
-     * 获取推送结果
-     * @param pushGroupId
+     * 推送制品
+     * @param pushOperationQuery
      */
-    PushOperation getPushResult(String pushGroupId);
+    String pushLibrary(PushOperationQuery pushOperationQuery);
+
+    /**
+     * 获取推送结果
+     * @param key 获取结果的key
+     */
+    PushOperation getPushResult(String key);
+
+
 }
