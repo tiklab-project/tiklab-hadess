@@ -34,7 +34,7 @@ eas:
   embbed:
     enable: true
 
-DATA_HOME: /opt/tiklab/xpack
+DATA_HOME: /opt/tiklab/hadess
 
 base:
   url: http://eas-ce.test.tiklab.net
