@@ -92,11 +92,8 @@ public class PushOperationServiceImpl implements PushOperationService{
                         if (("maven").equals(libraryType)){
                             mavenPush(pushLibraryList,pushOperation,loginId);
                         }
-
                         if (("npm").equals(libraryType)){
                             npmPush(pushLibraryList,pushOperation,loginId);
-                            //推送成功
-                            initPushState(pushOperation,"success");
                         }
                     }
                     //推送组里面推送制品为空
@@ -106,6 +103,8 @@ public class PushOperationServiceImpl implements PushOperationService{
                         initPushState(pushOperation,"fail");
                     }
                 }
+                //推送成功
+                initPushState(pushOperation,"success");
             }});
 
         return "ok";
@@ -175,7 +174,6 @@ public class PushOperationServiceImpl implements PushOperationService{
      * @param pushLibraryList
      */
     public void mavenPush(List<PushLibrary> pushLibraryList,PushOperation pushOperation,String key) {
-
 
         for (PushLibrary pushLibrary : pushLibraryList) {
             try {

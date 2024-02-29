@@ -25,7 +25,6 @@ public interface NpmUploadService {
      * 第一次请求是不带版本的、
      * @param repository 请求的制品库
      * @param requestFullURL 请求全路径
-     * @return
      */
     Map<String,String> npmPullJson(Repository repository, String requestFullURL);
 

@@ -127,13 +127,6 @@ public class LibraryController {
     }
 
 
-    @RequestMapping(path = "/updateFile",method = RequestMethod.POST)
-    @ApiMethod(name = "updateFile",desc = "查询未添加到扫描列表的制品")
-    public Result<Void> updateFile(){
-      libraryService.updateFile();
-        return Result.ok();
-    }
-
 
 }
 

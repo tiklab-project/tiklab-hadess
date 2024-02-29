@@ -182,7 +182,7 @@ public  class LibraryUploadController extends HttpServlet {
                     BufferedReader reader = request.getReader();
                     Map map = downloadNpmService.npmLogin(reader);
                     String jsonString = JSON.toJSONString(map);
-                    boolean success = (boolean) map.get("success");
+                    boolean success = (boolean) map.get("result");
                     if (success){
                         response.setStatus(HttpServletResponse.SC_CREATED);
                     }else {

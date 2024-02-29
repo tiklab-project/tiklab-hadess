@@ -529,36 +529,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 
 
-    @Override
-    public void updateFile() {
-        List<LibraryVersion> allLibraryVersion = libraryVersionService.findAllLibraryVersion();
-
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new Runnable(){
-            @Override
-            public void run() {
-                logger.info("执行修改制品版本大小");
-                List<LibraryVersion> LibraryVersion = allLibraryVersion.stream().filter(a -> a.getSize()==0).collect(Collectors.toList());
-                if (CollectionUtils.isNotEmpty(LibraryVersion)){
-                    logger.info("执行数量："+LibraryVersion.size());
-                    for (LibraryVersion libraryVersion:LibraryVersion){
-                        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
-                        if (CollectionUtils.isNotEmpty(libraryFileList)){
-                            List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
-
-
-                            libraryVersion.setSize( formatSizeSum(sizeList));
-                            logger.info("修改制品："+libraryFileList.get(0).getLibrary().getName()+" 版本："+libraryVersion.getVersion());
-                            libraryVersionService.updateLibraryVersion(libraryVersion);
-                        }
-                    }
-                }
-
-            }});
-
-
-    }
-
     /**
      * 计算和
      * @param sizeList

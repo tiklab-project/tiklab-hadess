@@ -1,7 +1,7 @@
-INSERT INTO pcs_prc_role VALUES ('1', '管理员角色', NULL, 'system', '1', 0, 1, 1);
+INSERT INTO pcs_prc_role VALUES ('1', '管理员角色', NULL, 'system', '1', 1, 0, 1);
 INSERT INTO pcs_prc_role VALUES ('2', '普通角色', NULL, 'system', '1', 0, 1, 1);
-INSERT INTO pcs_prc_role VALUES ('3', '项目管理员', NULL, 'system', '2', 1, 0, 2);
-INSERT INTO pcs_prc_role VALUES ('4', '项目普通角色', NULL, 'system', '2', 0, 1, 2);
+INSERT INTO pcs_prc_role VALUES ('3', '项目管理员', NULL, 'project', '2', 1, 0, 2);
+INSERT INTO pcs_prc_role VALUES ('4', '项目成员', NULL, 'project', '2', 0, 1, 2);
 
 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('permission','权限', 'xpack_permission',null ,1, 1);

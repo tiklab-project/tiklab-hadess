@@ -174,7 +174,6 @@ public interface LibraryService {
      */
     List<Library> findNotScanLibraryList(LibraryQuery libraryQuery);
 
-    void updateFile();
 
 
     /**
