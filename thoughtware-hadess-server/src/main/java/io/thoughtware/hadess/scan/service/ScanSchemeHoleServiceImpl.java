@@ -10,6 +10,7 @@ import io.thoughtware.hadess.scan.dao.ScanSchemeHoleDao;
 import io.thoughtware.hadess.scan.entity.ScanSchemeHoleEntity;
 import io.thoughtware.hadess.scan.model.ScanSchemeHole;
 import io.thoughtware.hadess.scan.model.ScanSchemeHoleQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,17 @@ public class ScanSchemeHoleServiceImpl implements ScanSchemeHoleService {
     public String createScanSchemeHole(@NotNull @Valid ScanSchemeHole scanSchemeHole) {
         ScanSchemeHoleEntity scanSchemeHoleEntity = BeanMapper.map(scanSchemeHole, ScanSchemeHoleEntity.class);
         scanSchemeHoleEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        return scanSchemeHoleDao.createScanSchemeHole(scanSchemeHoleEntity);
+
+        List<String> scanHoleIdList = scanSchemeHole.getScanHoleIdList();
+        if (CollectionUtils.isNotEmpty(scanHoleIdList)){
+            for (String scanHoleId:scanHoleIdList){
+                scanSchemeHoleEntity.setScanHoleId(scanHoleId);
+                scanSchemeHoleDao.createScanSchemeHole(scanSchemeHoleEntity);
+            }
+            return "OK";
+        }else {
+            return scanSchemeHoleDao.createScanSchemeHole(scanSchemeHoleEntity);
+        }
     }
 
     @Override
@@ -49,6 +60,15 @@ public class ScanSchemeHoleServiceImpl implements ScanSchemeHoleService {
     @Override
     public void deleteScanSchemeHole(@NotNull String id) {
         scanSchemeHoleDao.deleteScanSchemeHole(id);
+    }
+
+    @Override
+    public void deleteScanSchemeHole(String holeId, String schemeId) {
+        DeleteCondition deleteCondition = DeleteBuilders.createDelete(ScanSchemeHoleEntity.class)
+                .eq("scanSchemeId", schemeId)
+                .eq("scanHoleId",holeId)
+                .get();
+        scanSchemeHoleDao.deleteScanSchemeHole(deleteCondition);
     }
 
     @Override

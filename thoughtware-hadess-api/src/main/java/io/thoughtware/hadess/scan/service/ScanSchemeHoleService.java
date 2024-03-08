@@ -39,6 +39,13 @@ public interface ScanSchemeHoleService {
     void deleteScanSchemeHole(@NotNull String id);
 
     /**
+     * 根据漏洞ID 和方案id 删除
+     * @param holeId
+     * @param schemeId
+     */
+    void deleteScanSchemeHole(@NotNull String holeId,@NotNull String schemeId);
+
+    /**
      * 条件删除扫描结果
      * @param  key  删除条件字段
      * @param value

@@ -27,6 +27,15 @@ public interface LibraryVersionService {
     String createLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion);
 
     /**
+     *  制品版本创建、修改
+     * @param libraryVersion    制品版本数据
+     * @param  fileName 制品文件名字
+     * @return
+     */
+    String createLibraryVersionSplice( LibraryVersion libraryVersion,String fileName);
+
+
+    /**
     * 更新
     * @param libraryVersion
     */
@@ -94,13 +103,6 @@ public interface LibraryVersionService {
      */
     LibraryVersion findLibraryNewVersion(LibraryVersionQuery libraryVersionQuery);
 
-    /**
-     *  制品版本创建、修改
-     * @param libraryVersion    制品版本数据
-     * @param  fileName 制品文件名字
-     * @return
-     */
-     String libraryVersionSplice( LibraryVersion libraryVersion,String fileName);
 
 
     /**

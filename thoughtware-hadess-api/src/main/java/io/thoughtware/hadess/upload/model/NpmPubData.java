@@ -4,6 +4,8 @@ import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.postin.annotation.ApiModel;
 import io.thoughtware.postin.annotation.ApiProperty;
 
+import java.util.List;
+
 @ApiModel
 public class NpmPubData {
 
@@ -26,6 +28,12 @@ public class NpmPubData {
     @ApiProperty(name="storagePath",desc="文件存储位置")
     private String storagePath;
 
+    @ApiProperty(name="relativePath",desc="文件存储相对路径")
+    private String relativePath;
+
+    @ApiProperty(name="fileSize",desc="文件大小")
+    private Long fileSize;
+
     @ApiProperty(name="hash",desc="hash")
     private String hash;
 
@@ -40,6 +48,9 @@ public class NpmPubData {
 
     @ApiProperty(name="requestFullURL",desc="请求全路径")
     private String requestFullURL;
+
+    @ApiProperty(name="repositoryList",desc="仓库list")
+    private List<Repository> repositoryList;
 
     public String getFileName() {
         return fileName;
@@ -127,5 +138,29 @@ public class NpmPubData {
 
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    public List<Repository> getRepositoryList() {
+        return repositoryList;
+    }
+
+    public void setRepositoryList(List<Repository> repositoryList) {
+        this.repositoryList = repositoryList;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
     }
 }

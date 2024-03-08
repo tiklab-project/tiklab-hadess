@@ -59,6 +59,12 @@ public class PushGroupServiceImpl implements PushGroupService {
     @Override
     public void deletePushGroup(@NotNull String id) {
         pushGroupDao.deletePushGroup(id);
+
+        Thread thread = new Thread() {
+            public void run() {
+                pushLibraryService.deleteVersionByCondition("pushGroupId",id);
+            }};
+        thread.start();
     }
 
     @Override
@@ -67,6 +73,8 @@ public class PushGroupServiceImpl implements PushGroupService {
                 .eq(field, value)
                 .get();
         pushGroupDao.deletePushGroup(deleteCondition);
+
+
     }
 
     @Override

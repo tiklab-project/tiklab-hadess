@@ -38,8 +38,9 @@ public class TimeTaskQuery {
         return scanPlayId;
     }
 
-    public void setScanPlayId(String scanPlayId) {
+    public TimeTaskQuery setScanPlayId(String scanPlayId) {
         this.scanPlayId = scanPlayId;
+        return this;
     }
 
 }

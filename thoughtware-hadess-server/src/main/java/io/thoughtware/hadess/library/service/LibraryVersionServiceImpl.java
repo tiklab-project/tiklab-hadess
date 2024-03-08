@@ -6,7 +6,6 @@ import io.thoughtware.hadess.library.entity.LibraryVersionEntity;
 import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
 import io.thoughtware.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
-import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
@@ -14,6 +13,8 @@ import io.thoughtware.toolkit.join.JoinTemplate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -21,8 +22,11 @@ import org.springframework.util.ObjectUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +35,7 @@ import java.util.stream.Stream;
 */
 @Service
 public class LibraryVersionServiceImpl implements LibraryVersionService {
+    private static Logger logger = LoggerFactory.getLogger(LibraryVersionServiceImpl.class);
 
     @Autowired
     LibraryVersionDao libraryVersionDao;
@@ -94,7 +99,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         LibraryVersionEntity libraryVersionEntity = libraryVersionDao.findLibraryVersion(id);
 
         LibraryVersion libraryVersion = BeanMapper.map(libraryVersionEntity, LibraryVersion.class);
-
 
 
         return libraryVersion;
@@ -186,16 +190,33 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Override
     public Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery) {
+        logger.info("时间1:"+System.currentTimeMillis());
         Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
         List<LibraryVersion> libraryVersionList=null;
+        logger.info("时间2:"+System.currentTimeMillis());
         if (CollectionUtils.isNotEmpty(pagination.getDataList())){
              libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
             joinTemplate.joinQuery(libraryVersionList);
+
+            //当版本为快照版本时候获取快照时间戳数据
+            List<LibraryFile> libraryFileList=null;
+            List<LibraryVersion> versions = libraryVersionList.stream().filter(a -> a.getVersion().toUpperCase().endsWith("SNAPSHOT")).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(versions)){
+                libraryFileList = libraryFileService.findLibraryFileList(libraryVersionList.get(0).getLibrary().getId());
+            }
+            logger.info("时间3:"+System.currentTimeMillis());
             for (LibraryVersion libraryVersion:libraryVersionList){
                 //制品的大小
                 String librarySize = librarySize(libraryVersion.getId());
                 libraryVersion.setShowSize(librarySize);
+
+
+                //查询快照版本的时间戳版本
+                if (libraryVersion.getVersion().toUpperCase().endsWith("SNAPSHOT")){
+                    snapshotData(libraryFileList,libraryVersion);
+                }
             }
+            logger.info("时间4:"+System.currentTimeMillis());
         }
         return PaginationBuilder.build(pagination,libraryVersionList);
     }
@@ -217,7 +238,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
      * @param libraryVersion    libraryVersion
      * @return
      */
-    public String libraryVersionSplice( LibraryVersion libraryVersion,String fileName){
+    public String createLibraryVersionSplice( LibraryVersion libraryVersion,String fileName){
 
         libraryVersion.setPushTime(new Timestamp(System.currentTimeMillis()));
         String libraryVersionId=null;
@@ -246,8 +267,12 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                 Long size = libraryFileList.get(0).getSize();
                  versionSize = version.getSize() >= size ? version.getSize() - size : version.getSize();
             }
-            //加上最新文件的大小
-             versionSize = versionSize + libraryVersion.getSize();
+
+            //npm 创建
+            if(!("npm").equals(libraryVersion.getLibraryType())){
+                //加上最新文件的大小
+                versionSize = versionSize + libraryVersion.getSize();
+            }
             libraryVersion.setSize(versionSize);
 
             this.updateLibraryVersion(libraryVersion);
@@ -309,5 +334,43 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         List<LibraryVersionEntity>  libraryVersionEntities = libraryVersionDao.findVersionByLibraryIds(libraryIds);
         List<LibraryVersion> libraryVersions = BeanMapper.mapList(libraryVersionEntities, LibraryVersion.class);
         return libraryVersions;
+    }
+
+    /**
+     * 获取快照数据
+     * @param libraryFileList
+     */
+    public void snapshotData( List<LibraryFile> libraryFileList,LibraryVersion libraryVersion){
+        if (CollectionUtils.isNotEmpty(libraryFileList)){
+            List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getLibraryVersion().getId().equals(libraryVersion.getId())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(libraryFiles)){
+                //根据快照时间戳版本分组
+                Map<String, List<LibraryFile>> stringListMap = libraryFiles.stream().filter(a->StringUtils.isNotEmpty(a.getSnapshotVersion()))
+                        .sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.groupingBy(LibraryFile::getSnapshotVersion));
+                Set<String> strings = stringListMap.keySet();
+                List<Object> arrayList = new ArrayList<>();
+                for (String version:strings){
+                    List<LibraryFile> files = stringListMap.get(version);
+
+                    long time = files.get(0).getCreateTime().getTime();
+                    LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault());
+
+                    // 格式化为日期字符串
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    String formattedDateTime = dateTime.format(formatter);
+
+                    long summed = files.stream().mapToLong(LibraryFile::getSize).sum();
+
+                    Map<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("version",version);
+                    hashMap.put("showSize",RepositoryUtil.formatSize(summed));
+                    hashMap.put("pusher",libraryVersion.getPusher());
+                    hashMap.put("updateTime",formattedDateTime);
+                    hashMap.put("type","child");
+                    arrayList.add(hashMap);
+                    libraryVersion.setChildren(arrayList);
+                }
+            }
+        }
     }
 }

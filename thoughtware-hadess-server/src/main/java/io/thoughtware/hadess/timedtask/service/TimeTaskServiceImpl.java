@@ -120,6 +120,7 @@ public class TimeTaskServiceImpl implements TimeTaskService {
     public void deleteTimeTask(@NotNull String id) {
         timeTaskDao.deleteTimeTask(id);
 
+        //删除定时任务实例
         taskInstanceService.deleteTimeTaskInstance("timeTaskId",id);
     }
 
@@ -180,6 +181,15 @@ public class TimeTaskServiceImpl implements TimeTaskService {
                 timeTask.setExecTime(timeTaskInstanceList.get(0).getExecTime());
             }
         }
+        return timeTaskList;
+    }
+
+    @Override
+    public List<TimeTask> findTimeTaskList(String scanPlayId) {
+        List<TimeTaskEntity> timeTaskEntityList = timeTaskDao.findTimeTaskList(new TimeTaskQuery().setScanPlayId(scanPlayId));
+
+        List<TimeTask> timeTaskList = BeanMapper.mapList(timeTaskEntityList,TimeTask.class);
+
         return timeTaskList;
     }
 

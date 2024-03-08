@@ -179,8 +179,9 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         libraryVersion.setLibrary(library);
         libraryVersion.setVersion(version);
         libraryVersion.setRepository(repository);
+        libraryVersion.setSize(Long.valueOf(FileLength));
         libraryVersion.setLibraryType("generic");
-        String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion,fileName);
+        String libraryVersionId = libraryVersionService.createLibraryVersionSplice(libraryVersion,fileName);
 
         //创建制品文件
         LibraryFile libraryFile = new LibraryFile();

@@ -50,22 +50,18 @@ public class HadessSqlLoad {
                 "todotask_1.0.2",
         });
         dsmConfig.newVersion("1.0.3", new String[]{
-                "xpack_1.0.3",
                 "message_1.0.3",
                 "oplog_1.0.3",
         });
         dsmConfig.newVersion("1.0.4", new String[]{
-                "xpack_1.0.4",
                 "message_1.0.4",
                 "oplog_1.0.4"
         });
         dsmConfig.newVersion("1.0.5", new String[]{
                 "message_1.0.5",
-                "xpack_1.0.5",
         });
         dsmConfig.newVersion("1.0.6", new String[]{
                 "message_1.0.6",
-                "xpack_1.0.6",
         });
         return dsmConfig;
     }

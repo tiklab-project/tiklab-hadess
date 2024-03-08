@@ -1,5 +1,8 @@
 package io.thoughtware.hadess.scan.service;
 
+import io.thoughtware.hadess.timedtask.model.TimeTask;
+import io.thoughtware.hadess.timedtask.model.TimeTaskQuery;
+import io.thoughtware.hadess.timedtask.service.TimeTaskService;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
@@ -11,6 +14,7 @@ import io.thoughtware.hadess.scan.dao.ScanPlayDao;
 import io.thoughtware.hadess.scan.entity.ScanPlayEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.Pack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -36,8 +40,13 @@ public class ScanPlayServiceImpl implements ScanPlayService {
 
     @Autowired
     ScanLibraryService scanLibraryService;
+
     @Autowired
     ScanRecordService scanRecordService;
+
+    @Autowired
+    TimeTaskService timeTaskService;
+
 
     @Override
     public String createScanPlay(@NotNull @Valid ScanPlay scanPlay) {
@@ -56,6 +65,14 @@ public class ScanPlayServiceImpl implements ScanPlayService {
     @Override
     public void deleteScanPlay(@NotNull String id) {
         scanPlayDao.deleteScanPlay(id);
+
+        //开启新线程删除关联数据
+        Thread thread = new Thread() {
+            public void run() {
+                deleteSubData(id);
+            }
+        };
+        thread.start();
     }
 
     @Override
@@ -64,6 +81,16 @@ public class ScanPlayServiceImpl implements ScanPlayService {
                 .eq(key, value)
                 .get();
         scanPlayDao.deleteScanPlay(deleteCondition);
+
+        //删除制品库时 删除制品库下面的扫描相关数据
+        if (("repositoryId").equals(key)){
+            List<ScanPlay> scanPlayList = this.findScanPlayList(new ScanPlayQuery().setRepositoryId(value));
+            if (CollectionUtils.isNotEmpty(scanPlayList)){
+               for (ScanPlay scanPlay:scanPlayList){
+                   deleteSubData(scanPlay.getId());
+               }
+            }
+        }
     }
 
     @Override
@@ -158,6 +185,28 @@ public class ScanPlayServiceImpl implements ScanPlayService {
         }else {
             scanPlay.setScanState("false");  //没有扫描
         }
+    }
 
+    /**
+     * 删除扫描子数据
+     * @param scanPlayId 扫描计划的id
+     * @return
+     */
+    public void deleteSubData(String scanPlayId){
+        //删除扫描计划下面的制品和扫描结果
+        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery().setScanPlayId(scanPlayId));
+        if (CollectionUtils.isNotEmpty(scanLibraryList)){
+            for (ScanLibrary scanLibrary:scanLibraryList){
+                scanLibraryService.deleteScanLibrary(scanLibrary.getId());
+            }
+        }
+
+        //删除扫描计划下面的定时任务
+        List<TimeTask> timeTaskList = timeTaskService.findTimeTaskList(scanPlayId);
+        if (CollectionUtils.isNotEmpty(timeTaskList)){
+            for (TimeTask timeTask:timeTaskList){
+                timeTaskService.deleteTimeTask(timeTask.getId());
+            }
+        }
     }
 }

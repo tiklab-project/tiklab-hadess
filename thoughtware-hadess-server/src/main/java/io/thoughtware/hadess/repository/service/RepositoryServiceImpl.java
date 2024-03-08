@@ -9,7 +9,12 @@ import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryMavenService;
 import io.thoughtware.hadess.library.service.LibraryService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
+import io.thoughtware.hadess.pushcentral.service.PushGroupService;
+import io.thoughtware.hadess.pushcentral.service.PushLibraryServiceImpl;
 import io.thoughtware.hadess.repository.model.*;
+import io.thoughtware.hadess.scan.service.ScanLibraryService;
+import io.thoughtware.hadess.scan.service.ScanPlayService;
+import io.thoughtware.hadess.scan.service.ScanPlayServiceImpl;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
@@ -90,6 +95,16 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
     RemoteProxyService proxyService;
+
+    @Autowired
+    ScanPlayService scanPlayService;
+
+    @Autowired
+    PushGroupService pushGroupService;
+
+    @Autowired
+    PushLibraryServiceImpl pushLibraryService;
+
 
     @Value("${server.port:8080}")
     private String port;
@@ -195,46 +210,62 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Override
     public void deleteRepository(@NotNull String id) {
         Repository repository = this.findRepository(id);
-        if (("group").equals(repository.getRepositoryType())){
-            groupItemsService.deleteGroupItemByCondition("repositoryGroupId",id);
-        }else {
-            groupItemsService.deleteGroupItemByCondition("repositoryId",id);
-        }
+
         repositoryDao.deleteRepository(id);
-        repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
 
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new Runnable(){
-            @Override
+        //开启新线程删除关联数据
+        Thread thread = new Thread() {
             public void run() {
+                //删除制品
                 libraryService.deleteLibraryByRepository(id);
-
                 libraryVersionService.deleteVersionByCondition("repositoryId",id);
-
                 libraryFileService.deleteLibraryFileByCondition("repositoryId",id);
 
-
+                //仓库为maven 删除maven制品单独的数据
                 if (("maven").equals(repository.getType())){
-
                     libraryMavenService.deleteLibraryMavenByCondition("repositoryId",id);
+                    repositoryMavenService.deleteRepositoryMavenByCondition("repositoryId",id);
                 }
 
-                //远程库
+                //仓库为远程库 删除关联的代理地址
                 if (("remote").equals(repository.getRepositoryType())){
                     remoteProxyService.deleteRepositoryRemoteProxy("repositoryId",id);
                 }
 
+                //删除组合库关联数据
+                if (("group").equals(repository.getRepositoryType())){
+                    groupItemsService.deleteGroupItemByCondition("repositoryGroupId",id);
+                }else {
+                    groupItemsService.deleteGroupItemByCondition("repositoryId",id);
+                }
 
-                //删除文件
+                //仓库为组合库 删除关联的制品库
+                if (("remote").equals(repository.getRepositoryType())){
+                    remoteProxyService.deleteRepositoryRemoteProxy("repositoryId",id);
+                }
+
+                //删除服务器中制品仓库
                 try {
                     String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
                     FileUtils.deleteDirectory(new File(folderPath));
                 }catch (Exception e){
-                    logger.info("删除制品库时删除文件失败:"+e.getMessage());
+                    logger.info("删除制品库:"+id+"失败:"+e.getMessage());
                 }
+
+                //删除制品下面的扫描计划
+                scanPlayService.deleteScanPlayByCondition("repositoryId",id);
+
+                //删除推送
+                pushGroupService.deleteVersionByCondition("repositoryId",id);
+                pushLibraryService.deleteVersionByCondition("repositoryId",id);
+
+
+                //删除制品库后发送消息
                 RepositoryEntity repositoryEntity = BeanMapper.map(repository, RepositoryEntity.class);
                 initRepositoryMap(repositoryEntity,"delete",null);
-            }});
+            }
+        };
+        thread.start();
     }
 
 
@@ -317,8 +348,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public List<Repository> findRepositoryListByType(String type) {
-        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery().setRepositoryType(type));
+    public List<Repository> findPublicRepositoryList(String type,String repositoryType) {
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery()
+                .setRepositoryType(repositoryType).setType(type));
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
         return repositoryList;
     }

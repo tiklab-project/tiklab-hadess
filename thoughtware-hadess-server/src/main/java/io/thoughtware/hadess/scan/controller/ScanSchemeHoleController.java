@@ -61,6 +61,15 @@ public class ScanSchemeHoleController {
         return Result.ok();
     }
 
+    @RequestMapping(path="/deleteScanSchemeHoleByCond",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteScanSchemeHoleByCond",desc = "根据漏洞ID 和方案id 删除")
+    @ApiParam(name = "holeId",desc = "漏洞ID 方案id",required = true)
+    public Result<Void> deleteScanSchemeHoleByCond(@NotNull String holeId,@NotNull String schemeId){
+        scanSchemeHoleService.deleteScanSchemeHole(holeId,schemeId);
+
+        return Result.ok();
+    }
+
     @RequestMapping(path="/findScanSchemeHole",method = RequestMethod.POST)
     @ApiMethod(name = "findScanSchemeHole",desc = "通过id查询扫描方案漏洞关系")
     @ApiParam(name = "id",desc = "id",required = true)

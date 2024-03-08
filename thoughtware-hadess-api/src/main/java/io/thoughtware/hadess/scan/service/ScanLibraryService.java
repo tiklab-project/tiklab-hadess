@@ -38,6 +38,7 @@ public interface ScanLibraryService {
     */
     void deleteScanLibrary(@NotNull String id);
 
+
     @FindOne
     ScanLibrary findOne(@NotNull String id);
 

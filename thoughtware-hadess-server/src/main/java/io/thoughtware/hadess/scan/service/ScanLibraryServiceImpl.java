@@ -58,6 +58,7 @@ public class ScanLibraryServiceImpl implements ScanLibraryService {
     public void deleteScanLibrary(@NotNull String id) {
         scanRecordService.deleteScanRecordByCondition("scanLibraryId",id);
 
+        //扫描依赖
         scanRelyService.deleteScanRelyByCondition("scanLibraryId",id);
 
         scanResultService.deleteScanResultByCondition("scanLibraryId",id);

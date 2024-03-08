@@ -167,4 +167,13 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
 
         return null;
     }
+
+    @Override
+    public List<RepositoryRemoteProxy> findAgencyByRpyIds(String[] repositoryIds) {
+        List<RepositoryRemoteProxyEntity> agencyList = repositoryRemoteProxyDao.findAgencyByRpyIds(repositoryIds);
+
+        List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(agencyList,RepositoryRemoteProxy.class);
+        joinTemplate.joinQuery(repositoryRemoteProxyList);
+        return repositoryRemoteProxyList;
+    }
 }

@@ -50,7 +50,7 @@ public  class LibraryUploadController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String contextPath = request.getRequestURI();
-        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"repository");
         String repositoryName=repositoryPath.substring(0,repositoryPath.indexOf("/", 1));
 
 
@@ -151,28 +151,28 @@ public  class LibraryUploadController extends HttpServlet {
                 if (referer.contains("install")){
                     if (!repositoryPath.endsWith(".tgz")){
                         //第一次交互
-                        Map<String,String> data = downloadNpmService.npmPullJson(repository,requestFullURL);
-                        if ("200".equals(data.get("code"))){
+                        Result<String> result = downloadNpmService.npmPullJson(repository, requestFullURL);
+                        if (result.getCode()==200){
                             response.setContentType("application/json;charset=utf-8");
                             response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().print(data.get("data"));
-                        }
-                        if ("404".equals(data.get("code"))){
-                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            response.getWriter().print(result.getData());
+                        }else {
+                            response.setStatus(result.getCode());
+                            response.getWriter().print(result.getMsg());
                         }
                     }else {
                         //第二次交互以.tgz结尾
-                        Map<String,Object> resultMap = downloadNpmService.npmPullTgzData(repository,requestFullURL);
-                        Integer code = Integer.valueOf(resultMap.get("code").toString());
-                        if (code==200){
+                        Result<byte[]> result = downloadNpmService.npmPullTgzData(repository, requestFullURL);
+                        if (result.getCode()==200) {
+                            response.setStatus(200, result.getMsg());
+                            byte[] data = result.getData();
+
                             ServletOutputStream outputStream = response.getOutputStream();
-                            outputStream.write((byte[])resultMap.get("data"));
-                        }
-                        if (code==404){
-                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        }
-                        if (code==500){
-                            response.setStatus(500);
+
+                            outputStream.write(data);
+                        }else {
+                            response.setStatus(result.getCode());
+                            response.getWriter().print(result.getMsg());
                         }
                     }
                 }

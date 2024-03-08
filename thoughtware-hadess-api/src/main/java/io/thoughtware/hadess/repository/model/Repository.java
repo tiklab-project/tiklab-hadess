@@ -85,7 +85,7 @@ public class Repository extends BaseModel {
      * @pi.desc: 1 、演示 ；2、正式仓库
      * @pi.value: category
      */
-    @ApiProperty(name="category",desc="1 、演示 ；2、正式仓库")
+    @ApiProperty(name="category",desc="1 、演示 ；2、正式仓库;3、公共库")
     private Integer category;
 
     /**

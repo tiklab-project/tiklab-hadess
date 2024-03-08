@@ -39,7 +39,7 @@ public class GenericUploadController  extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String contextPath = request.getRequestURI();
-        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath);
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"generic");
 
         response.setCharacterEncoding("UTF-8");
         //版本

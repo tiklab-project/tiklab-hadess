@@ -550,7 +550,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
             libraryVersion.setHash(gainFileData(new File(filePath)));
         }
         libraryVersion.setPusher(dataMap.get("userName"));
-        String libraryVersionId = libraryVersionService.libraryVersionSplice(libraryVersion,dataMap.get("fileName"));
+        String libraryVersionId = libraryVersionService.createLibraryVersionSplice(libraryVersion,dataMap.get("fileName"));
         libraryVersion.setId(libraryVersionId);
 
 

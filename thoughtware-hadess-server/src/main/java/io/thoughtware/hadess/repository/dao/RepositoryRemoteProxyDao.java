@@ -133,4 +133,11 @@ public class RepositoryRemoteProxyDao{
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
     }
+
+    public List<RepositoryRemoteProxyEntity> findAgencyByRpyIds(String[] repositoryIds) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
+                .in("repositoryId",repositoryIds)
+                .get();
+        return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
+    }
 }

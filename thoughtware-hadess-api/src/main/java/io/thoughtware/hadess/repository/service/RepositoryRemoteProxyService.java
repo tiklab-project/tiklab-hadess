@@ -90,4 +90,11 @@ public interface RepositoryRemoteProxyService {
      */
     RepositoryRemoteProxy findAgencyByRpyIdAndPath(String[] repositoryIds,String agencyUrl);
 
+
+    /**
+     * 通过制品库Ids查询代理地址
+     * @param repositoryIds repositoryIds
+     * @return
+     */
+    List<RepositoryRemoteProxy> findAgencyByRpyIds(String[] repositoryIds);
 }

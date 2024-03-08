@@ -8,6 +8,7 @@ import io.thoughtware.postin.annotation.ApiProperty;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 @ApiModel
 @Join
@@ -27,6 +28,10 @@ public class ScanSchemeHole implements Serializable {
     @ApiProperty(name="createTime",desc="创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Timestamp createTime;
+
+    /*-------其他字段---------*/
+    @ApiProperty(name="scanHoleIdList",desc="扫描漏洞id")
+    private List<String> scanHoleIdList;
 
 
     public String getId() {
@@ -59,5 +64,13 @@ public class ScanSchemeHole implements Serializable {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public List<String> getScanHoleIdList() {
+        return scanHoleIdList;
+    }
+
+    public void setScanHoleIdList(List<String> scanHoleIdList) {
+        this.scanHoleIdList = scanHoleIdList;
     }
 }

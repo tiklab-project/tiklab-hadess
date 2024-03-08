@@ -65,6 +65,13 @@ public interface LibraryFileService {
     List<LibraryFile> findLibraryFileList(LibraryFileQuery libraryFileQuery);
 
     /**
+     * 通过制品id 查询
+     * @param libraryId  制品id
+     * @return
+     */
+    List<LibraryFile> findLibraryFileList(String libraryId);
+
+    /**
     * 按分页查询
     * @param libraryFileQuery
     * @return

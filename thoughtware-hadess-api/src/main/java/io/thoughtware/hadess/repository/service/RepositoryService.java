@@ -69,11 +69,12 @@ public interface RepositoryService {
 
 
     /**
-     * 通过仓库type查询列表
-     * @param type
+     * 查询公共库
+     * @param type 制品库类型 npm、maven
+     * @param  repositoryType 制品库种类 远程库、本地库
      * @return
      */
-    List<Repository> findRepositoryListByType(String type);
+    List<Repository> findPublicRepositoryList(String type,String repositoryType);
 
     /**
      * 根据仓库名字查询

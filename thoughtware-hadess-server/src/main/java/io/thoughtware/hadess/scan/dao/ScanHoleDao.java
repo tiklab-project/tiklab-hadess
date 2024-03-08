@@ -1,5 +1,6 @@
 package io.thoughtware.hadess.scan.dao;
 
+import io.thoughtware.core.order.Order;
 import io.thoughtware.hadess.scan.entity.ScanHoleEntity;
 import io.thoughtware.hadess.scan.model.ScanHoleQuery;
 import io.thoughtware.core.page.Pagination;
@@ -7,6 +8,7 @@ import io.thoughtware.dal.jpa.JpaTemplate;
 import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
 import io.thoughtware.dal.jpa.criterial.condition.QueryCondition;
 import io.thoughtware.dal.jpa.criterial.conditionbuilder.QueryBuilders;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,10 +106,17 @@ public class ScanHoleDao {
      * @return Pagination <ScanHoleEntity>
      */
     public Pagination<ScanHoleEntity> findScanHolePage(ScanHoleQuery scanHoleQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
-                .eq("holeLevel",scanHoleQuery.getHoleLevel())
-                .eq("language",scanHoleQuery.getLanguage())
-                .orders(scanHoleQuery.getOrderParams())
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(ScanHoleEntity.class)
+                .eq("language", scanHoleQuery.getLanguage())
+                .like("holeName",scanHoleQuery.getHoleName());
+
+
+        if (CollectionUtils.isNotEmpty(scanHoleQuery.getHoleLevelList())){
+            queryBuilders.in("holeLevel",scanHoleQuery.getHoleLevelList().toArray(new Integer[]{scanHoleQuery.getHoleLevelList().size()}));
+        }else {
+            queryBuilders.eq("holeLevel", scanHoleQuery.getHoleLevel());
+        }
+        QueryCondition queryCondition = queryBuilders.orders(scanHoleQuery.getOrderParams())
                 .pagination(scanHoleQuery.getPageParam())
                 .get();
         return jpaTemplate.findPage(queryCondition,ScanHoleEntity.class);
@@ -118,10 +127,35 @@ public class ScanHoleDao {
      * @param holeIds
      * @return Pagination <ScanHoleEntity>
      */
-    public List<ScanHoleEntity> findScanHoleByIds(String[] holeIds) {
+    public List<ScanHoleEntity> findScanHoleByIds(String[] holeIds, List<Order> orderParams ) {
         QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
                 .in("id",holeIds)
+                .orders(orderParams)
                 .get();
         return jpaTemplate.findList(queryCondition,ScanHoleEntity.class);
+    }
+
+    /**
+     * 条件分页查询漏洞
+     * @param holeIds
+     * @return Pagination <ScanHoleEntity>
+     */
+    public Pagination<ScanHoleEntity> findNotInScanHoleList(ScanHoleQuery scanHoleQuery,String[] holeIds) {
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(ScanHoleEntity.class)
+                .eq("language", scanHoleQuery.getLanguage())
+                .notIn("id",holeIds)
+                .like("holeName",scanHoleQuery.getHoleName());
+
+
+        if (CollectionUtils.isNotEmpty(scanHoleQuery.getHoleLevelList())){
+            queryBuilders.in("holeLevel",scanHoleQuery.getHoleLevelList().toArray(new Integer[]{scanHoleQuery.getHoleLevelList().size()}));
+        }else {
+            queryBuilders.eq("holeLevel", scanHoleQuery.getHoleLevel());
+        }
+        QueryCondition queryCondition = queryBuilders
+                .orders(scanHoleQuery.getOrderParams())
+                .pagination(scanHoleQuery.getPageParam())
+                .get();
+        return jpaTemplate.findPage(queryCondition,ScanHoleEntity.class);
     }
 }

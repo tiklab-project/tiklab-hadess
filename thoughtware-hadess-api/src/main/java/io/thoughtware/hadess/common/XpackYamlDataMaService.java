@@ -51,8 +51,10 @@ public interface XpackYamlDataMaService {
 
     /**
      * 获取上传的制品的路径
+     * @param requestURL 请求路径
+     * @param type 客户端请求的地址前缀 repository、xpack、 generic
      */
-     String getUploadRepositoryUrl(String requestURL);
+     String getUploadRepositoryUrl(String requestURL,String type);
 
     /**
      * 获取openscan执行路径

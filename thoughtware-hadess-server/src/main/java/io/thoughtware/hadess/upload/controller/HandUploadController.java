@@ -38,7 +38,7 @@ public class HandUploadController {
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
 
-        String path = yamlDataMaService.getUploadRepositoryUrl(contextPath);
+        String path = yamlDataMaService.getUploadRepositoryUrl(contextPath,"xpack");
         String repositoryPath=path.substring(path.indexOf("/")+1);
         String method = request.getMethod();
 

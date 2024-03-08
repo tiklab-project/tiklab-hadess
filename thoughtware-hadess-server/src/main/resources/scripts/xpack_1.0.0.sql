@@ -101,6 +101,7 @@ CREATE TABLE pack_library_version(
      hash varchar (64),
      pusher varchar(128),
      content_json TEXT,
+     size  bigint,
      push_time timestamp,
      create_time timestamp,
      update_time timestamp
@@ -142,6 +143,18 @@ CREATE TABLE pack_pull_info(
    user_id varchar (12) NOT NULL,
    pull_create timestamp
 );
+
+
+-- ---------------------------
+-- 推送中央仓库组
+-- ----------------------------
+create table pack_push_group(
+     id      varchar(12) PRIMARY KEY,
+     group_name   varchar(64) NOT NULL,
+     repository_id varchar(12) NOT NULL,
+     create_time  timestamp
+);
+
 -- ---------------------------
 -- 推送制品列表
 -- ----------------------------
@@ -152,5 +165,7 @@ CREATE TABLE pack_push_library(
   last_push_time timestamp,
   last_push_result varchar(12),
   exec_state     varchar(12),
+  push_group_id  varchar(12),
+  library_version  varchar(64),
   user_id varchar (12)
 );

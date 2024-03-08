@@ -18,6 +18,8 @@ import io.thoughtware.toolkit.join.JoinTemplate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,7 @@ import java.util.stream.Stream;
 */
 @Service
 public class LibraryFileServiceImpl implements LibraryFileService {
-
+    private static Logger logger = LoggerFactory.getLogger(LibraryFileServiceImpl.class);
     @Autowired
     LibraryFileDao libraryFileDao;
 
@@ -143,6 +145,15 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
+    public List<LibraryFile> findLibraryFileList(String libraryId) {
+        List<LibraryFileEntity> libraryFileEntityList = libraryFileDao.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryId));
+
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntityList,LibraryFile.class);
+
+        return libraryFileList;
+    }
+
+    @Override
     public Pagination<LibraryFile> findLibraryFilePage(LibraryFileQuery libraryFileQuery) {
         Pagination<LibraryFileEntity>  pagination = libraryFileDao.findLibraryFilePage(libraryFileQuery);
 
@@ -165,24 +176,15 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
     @Override
     public List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery) {
-        LibraryVersion libraryVersion=null;
-        if (StringUtils.isEmpty(libraryFileQuery.getLibraryVersionId())){
-            List<LibraryVersion> libraryVersionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryFileQuery.getLibraryId()));
-
-            libraryVersion = libraryVersionList.get(0);
-        }else {
-            libraryVersion = libraryVersionService.findLibraryVersion(libraryFileQuery.getLibraryVersionId());
-        }
-
+        LibraryVersion libraryVersion = libraryVersionService.findOne(libraryFileQuery.getLibraryVersionId());
         List<LibraryFile> libraryFileList = findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
        //快照版本
-        if (libraryVersion.getVersion().endsWith("SNAPSHOT")){
+        if (libraryVersion.getVersion().toUpperCase().endsWith("SNAPSHOT")){
             List<LibraryFile> collected = libraryFileList.stream().filter(b -> !b.getFileUrl().contains("maven-metadata.xml")).collect(Collectors.toList());
             List<LibraryFile> libraryFiles = collected.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
             String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
-             libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+            libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
         }
-
         //处理docker 特殊情况
         if (CollectionUtils.isNotEmpty(libraryFileList)){
             LibraryFile libraryFile = libraryFileList.get(0);
@@ -196,7 +198,6 @@ public class LibraryFileServiceImpl implements LibraryFileService {
                         .collect(Collectors.toList());
             }
         }
-
 
         return libraryFileList;
     }

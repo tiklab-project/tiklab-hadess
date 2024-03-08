@@ -117,10 +117,10 @@ public class LibraryVersionDao{
                 .eq("libraryId", libraryVersionQuery.getLibraryId())
                 .orders(libraryVersionQuery.getOrderParams())
                 .pagination(libraryVersionQuery.getPageParam());
-        if (StringUtils.isNotEmpty(libraryVersionQuery.getCurrentVersionId())){
+       /* if (StringUtils.isNotEmpty(libraryVersionQuery.getCurrentVersionId())){
             String[] versionIds = {libraryVersionQuery.getCurrentVersionId()};
             pagination=pagination.notIn("id",versionIds);
-        }
+        }*/
         QueryCondition queryCondition = pagination.get();
 
 

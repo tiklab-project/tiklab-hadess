@@ -253,7 +253,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             String userData = new String(decode, "UTF-8");
             String[] split = userData.split(":");
             libraryVersion.setPusher(split[0]);
-            String libraryVersionId = versionService.libraryVersionSplice(libraryVersion,fileName);
+            String libraryVersionId = versionService.createLibraryVersionSplice(libraryVersion,fileName);
 
             //创建描述文件
             String fileUrl = repository.getId() + "/" + libraryName + "/manifests/" + fileName;

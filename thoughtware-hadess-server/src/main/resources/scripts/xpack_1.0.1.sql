@@ -25,6 +25,11 @@ create table pack_scan_record(
      scan_time_long varchar(32),
      scan_play_id   varchar(12),
      scan_group     varchar(12),
+     scan_user_id   varchar(12),
+     record_type varchar(12),
+     scan_way varchar(12),
+     scan_result varchar(12),
+     log text,
      create_time  timestamp
 );
 
@@ -54,6 +59,7 @@ create table pack_scan_rely(
        rely_one_id varchar(12),
        hole_count integer,
        rely_licenses varchar(64),
+       general_record_id varchar(12),
        create_time timestamp
 );
 
@@ -121,16 +127,44 @@ create table pack_scan_hole(
        id          varchar(12) PRIMARY KEY,
        vendor  varchar (64) NOT NULL,
        product varchar(32),
-       version varchar(64),
+       version varchar(528),
        language    varchar(12),
        hole_name varchar(528),
-       hole_number  varchar(64),
+       hole_number  varchar(528),
        hole_level    integer,
        create_time  timestamp,
        suggestion     text,
        describe       text
 );
 
+-- ---------------------------
+-- 定时任务
+-- ----------------------------
+create table pack_time_task(
+       id            varchar(12) PRIMARY KEY,
+       scan_play_id       varchar (12),
+       task_name          varchar(524),
+       task_type     varchar(32),
+       task_way      int,
+       exec_state     int,
+       create_time   timestamp,
+       update_time  timestamp
+);
+
+-- ---------------------------
+-- 定时任务 的实例
+-- ----------------------------
+create table pack_time_task_instance(
+    id          varchar(12) PRIMARY KEY,
+    time_task_id varchar (12),
+    exec_object_id varchar(12),
+    task_way      int,
+    cron varchar(255) ,
+    week_day int,
+    exec_state     varchar(32),
+    exec_time  varchar(12),
+    create_time  timestamp
+);
 
 INSERT INTO pack_scan_set (id, address, token) VALUES ('0230645439', 'https://opensca.xmirror.cn','08af1529-8095-4901-8727-d674971ded79');
 

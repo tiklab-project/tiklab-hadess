@@ -1,5 +1,7 @@
 package io.thoughtware.hadess.scan.service;
 
+import io.thoughtware.core.order.Order;
+import io.thoughtware.core.order.OrderBuilders;
 import io.thoughtware.hadess.scan.model.*;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Page;
@@ -118,6 +120,17 @@ public class ScanHoleServiceImpl implements ScanHoleService {
 
     @Override
     public Pagination<ScanHole> findScanHolePage(ScanHoleQuery scanHoleQuery) {
+        //升序
+        if (("asc").equals(scanHoleQuery.getSort())){
+            List<Order> holeLevel = OrderBuilders.instance().asc("holeLevel").get();
+            scanHoleQuery.setOrderParams(holeLevel);
+        }
+        //降序
+        if (("desc").equals(scanHoleQuery.getSort())){
+            List<Order> orderParams = OrderBuilders.instance().desc("holeLevel").get();
+            scanHoleQuery.setOrderParams(orderParams);
+        }
+
         Pagination<ScanHoleEntity>  pagination = scanHoleDao.findScanHolePage(scanHoleQuery);
 
         List<ScanHole> scanHoleList = BeanMapper.mapList(pagination.getDataList(),ScanHole.class);
@@ -137,7 +150,9 @@ public class ScanHoleServiceImpl implements ScanHoleService {
             String[] strings = new String[stringList.size()];
             String[] holeIds = stringList.toArray(strings);
 
-            List<ScanHoleEntity> scanHoleEntity = scanHoleDao.findScanHoleByIds(holeIds);
+            List<Order> orderParams = scanHoleQuery.getOrderParams();
+
+            List<ScanHoleEntity> scanHoleEntity = scanHoleDao.findScanHoleByIds(holeIds,orderParams);
             List<ScanHole> scanHoleList = BeanMapper.mapList(scanHoleEntity,ScanHole.class);
             pagination.setDataList(scanHoleList);
             pagination.setTotalPage(scanSchemeHolePage.getTotalPage());
@@ -148,14 +163,25 @@ public class ScanHoleServiceImpl implements ScanHoleService {
 
     @Override
     public Pagination<ScanHole> findNotScanHolePage(ScanHoleQuery scanHoleQuery) {
-        ScanScheme scanScheme = scanSchemeService.findScanScheme(scanHoleQuery.getScanSchemeId());
-        if (ObjectUtils.isEmpty(scanScheme)){
-            return null;
-        }
+
         //制品方案下面的漏洞
         List<ScanSchemeHole> schemeHoleList = schemeHoleService.findScanSchemeHoleList(new ScanSchemeHoleQuery().setScanSchemeId(scanHoleQuery.getScanSchemeId()));
 
-        return null;
+        Pagination<ScanHoleEntity> pagination;
+        if (CollectionUtils.isNotEmpty(schemeHoleList)){
+            List<String> scanHoleIdList = schemeHoleList.stream().map(ScanSchemeHole::getScanHoleId).collect(Collectors.toList());
+
+            String[] array = scanHoleIdList.toArray(new String[scanHoleIdList.size()]);
+            pagination = scanHoleDao.findNotInScanHoleList(scanHoleQuery, array);
+
+        }else {
+            pagination =  scanHoleDao.findScanHolePage(scanHoleQuery);
+        }
+        List<ScanHole> scanHoleList = BeanMapper.mapList(pagination.getDataList(),ScanHole.class);
+
+        joinTemplate.joinQuery(scanHoleList);
+
+        return PaginationBuilder.build(pagination,scanHoleList);
     }
 
 

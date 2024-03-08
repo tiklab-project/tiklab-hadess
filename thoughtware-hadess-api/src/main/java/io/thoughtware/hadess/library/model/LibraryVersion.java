@@ -14,6 +14,7 @@ import io.thoughtware.postin.annotation.ApiProperty;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * LibraryVersion-制品版本模型
@@ -96,8 +97,10 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="pullNum",desc="拉取次数")
     private java.lang.Integer pullNum;
 
+    @ApiProperty(name="whether",desc="是否当前 1 当前")
+    private java.lang.Integer whether;
 
-
+    private List children;
 
     public java.lang.String getId() {
         return id;
@@ -240,5 +243,21 @@ public class LibraryVersion extends BaseModel {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public List getChildren() {
+        return children;
+    }
+
+    public void setChildren(List children) {
+        this.children = children;
+    }
+
+    public Integer getWhether() {
+        return whether;
+    }
+
+    public void setWhether(Integer whether) {
+        this.whether = whether;
     }
 }
