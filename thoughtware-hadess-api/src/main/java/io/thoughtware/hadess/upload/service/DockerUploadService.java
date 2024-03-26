@@ -1,5 +1,7 @@
 package io.thoughtware.hadess.upload.service;
 
+import io.thoughtware.core.Result;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -16,13 +18,19 @@ public interface DockerUploadService {
      * 推送-校验Sha256
      * @param repositoryPath 路径
      */
-    Map<String, String> v2Sha256Check(String repositoryPath) throws Exception;
+    Result v2Sha256Check(String repositoryPath) throws Exception;
 
     /**
      * 推送-文件上传
      * @param inputStream 文件流
      */
-    void uploadData(InputStream inputStream,String repositoryPath) throws IOException;
+    Result uploadData(InputStream inputStream, String repositoryPath) throws IOException;
+
+    /**
+     * 推送-创建会话
+     * @param repositoryPath repositoryPath
+     */
+    Result createSession(String repositoryPath);
 
     /**
      * 推送-创建文件
@@ -49,4 +57,6 @@ public interface DockerUploadService {
      * @param repositoryPath
      */
     Map<String, String> readMirroringData(String repositoryPath) throws IOException;
+
+
 }

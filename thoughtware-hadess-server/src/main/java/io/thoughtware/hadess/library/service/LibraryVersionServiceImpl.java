@@ -77,12 +77,20 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public void deleteLibraryVersion(@NotNull String id) {
         libraryVersionDao.deleteLibraryVersion(id);
 
-        libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
+        Thread thread = new Thread() {
+            public void run() {
+                //删除文件
+                libraryFileService.deleteLibraryFileByCondition("libraryVersionId",id);
+            }
+        };
+        thread.start();
     }
 
     @Override
     public void deleteLibraryVersion(String id, String libraryId) {
         List<LibraryVersionEntity> libraryVersionList = libraryVersionDao.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryId));
+
+
         //只有一个版本或者没有版本直接删除整个制品
         if (CollectionUtils.isEmpty(libraryVersionList)||libraryVersionList.size()==1){
             libraryService.deleteLibrary(libraryId);
@@ -236,6 +244,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     /**
      *  制品版本创建、修改
      * @param libraryVersion    libraryVersion
+     * @param fileName 文件名称
      * @return
      */
     public String createLibraryVersionSplice( LibraryVersion libraryVersion,String fileName){
@@ -268,7 +277,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                  versionSize = version.getSize() >= size ? version.getSize() - size : version.getSize();
             }
 
-            //npm 创建
+            //maven 快照版本每次提交都会创建新的文件
             if(!("npm").equals(libraryVersion.getLibraryType())){
                 //加上最新文件的大小
                 versionSize = versionSize + libraryVersion.getSize();
@@ -277,6 +286,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
             this.updateLibraryVersion(libraryVersion);
         }else {
+
+            //创建版本
             libraryVersionId = this.createLibraryVersion(libraryVersion);
 
             //更新最新版本

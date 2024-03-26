@@ -183,13 +183,5 @@ public class RepositoryController {
         return Result.ok(repositoryList);
     }
 
-    @RequestMapping(path="/updateRep",method = RequestMethod.POST)
-    @ApiMethod(name = "updateRep",desc = "查询用户是否有当前项目权限")
-    public Result<String> updateRep( ){
-
-        repositoryService.updateRep();
-
-        return Result.ok();
-    }
 
 }

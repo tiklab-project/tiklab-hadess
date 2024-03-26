@@ -115,13 +115,22 @@ public class RepositoryDao{
      * @return Pagination <RepositoryEntity>
      */
     public Pagination<RepositoryEntity> findRepositoryPage(RepositoryQuery repositoryQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryEntity.class)
-                .eq("repositoryType",repositoryQuery.getRepositoryType())
-                .eq("type",repositoryQuery.getType())
-                .eq("name",repositoryQuery.getName())
-                .orders(repositoryQuery.getOrderParams())
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(RepositoryEntity.class)
+                .eq("repositoryType", repositoryQuery.getRepositoryType())
+                .eq("type", repositoryQuery.getType())
+                .eq("category", repositoryQuery.getCategory());
+
+        //模糊查询
+        if (("like").equals(repositoryQuery.getFindType())){
+            queryBuilders.like("name",repositoryQuery.getName());
+        }else {
+            queryBuilders.eq("name",repositoryQuery.getName());
+        }
+
+        QueryCondition queryCondition = queryBuilders.orders(repositoryQuery.getOrderParams())
                 .pagination(repositoryQuery.getPageParam())
                 .get();
+
         return jpaTemplate.findPage(queryCondition,RepositoryEntity.class);
     }
 }

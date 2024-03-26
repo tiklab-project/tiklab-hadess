@@ -150,9 +150,8 @@ public class ScanHoleServiceImpl implements ScanHoleService {
             String[] strings = new String[stringList.size()];
             String[] holeIds = stringList.toArray(strings);
 
-            List<Order> orderParams = scanHoleQuery.getOrderParams();
-
-            List<ScanHoleEntity> scanHoleEntity = scanHoleDao.findScanHoleByIds(holeIds,orderParams);
+            //通过漏洞ids 条件查询
+            List<ScanHoleEntity> scanHoleEntity = scanHoleDao.findScanHoleByIds(holeIds,scanHoleQuery);
             List<ScanHole> scanHoleList = BeanMapper.mapList(scanHoleEntity,ScanHole.class);
             pagination.setDataList(scanHoleList);
             pagination.setTotalPage(scanSchemeHolePage.getTotalPage());

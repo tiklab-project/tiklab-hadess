@@ -38,6 +38,8 @@ public class ScanHoleQuery {
     @ApiProperty(name="sort",desc="排序 desc、asc")
     private String sort;
 
+
+
     public List<Order> getOrderParams() {
         return orderParams;
     }

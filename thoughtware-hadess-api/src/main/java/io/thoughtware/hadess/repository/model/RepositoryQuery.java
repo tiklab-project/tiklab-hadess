@@ -14,7 +14,7 @@ import java.util.List;
 public class RepositoryQuery implements Serializable {
 
         @ApiProperty(name ="orderParams",desc = "排序参数")
-        private List<Order> orderParams = OrderBuilders.instance().asc("createTime").get();
+        private List<Order> orderParams = OrderBuilders.instance().desc("createTime").get();
 
 
         @ApiProperty(name ="pageParam",desc = "分页参数")
@@ -31,6 +31,9 @@ public class RepositoryQuery implements Serializable {
 
         @ApiProperty(name ="category",desc = "1演示、2正式")
         private Integer category;
+
+        @ApiProperty(name ="findType",desc = "查询类型 like:模糊查询 precise：精准的")
+        private String findType;
 
 
         public List<Order> getOrderParams() {
@@ -84,4 +87,12 @@ public class RepositoryQuery implements Serializable {
             this.category = category;
             return this;
         }
+
+    public String getFindType() {
+        return findType;
+    }
+
+    public void setFindType(String findType) {
+        this.findType = findType;
+    }
 }

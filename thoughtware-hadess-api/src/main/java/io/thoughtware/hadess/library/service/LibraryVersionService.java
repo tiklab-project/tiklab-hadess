@@ -54,6 +54,13 @@ public interface LibraryVersionService {
      */
     void deleteLibraryVersion(@NotNull String id,String libraryId);
 
+    /**
+     * 通过条件删除版本
+     * @param field  删除条件字段
+     * @param value 删除字段值
+     */
+    void deleteVersionByCondition(String field,String value);
+
     @FindOne
     LibraryVersion findOne(@NotNull String id);
     @FindList
@@ -103,14 +110,6 @@ public interface LibraryVersionService {
      */
     LibraryVersion findLibraryNewVersion(LibraryVersionQuery libraryVersionQuery);
 
-
-
-    /**
-     * 通过条件删除版本
-     * @param field  删除条件字段
-     * @param value 删除字段值
-     */
-    void deleteVersionByCondition(String field,String value);
 
     /**
      * 通过版本好和制品名字查询

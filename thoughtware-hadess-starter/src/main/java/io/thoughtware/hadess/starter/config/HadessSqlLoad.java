@@ -48,6 +48,7 @@ public class HadessSqlLoad {
                 "message_1.0.2",
                 "oplog_1.0.2",
                 "todotask_1.0.2",
+                "apply-auth_1.0.2",
         });
         dsmConfig.newVersion("1.0.3", new String[]{
                 "message_1.0.3",

@@ -1,5 +1,6 @@
 package io.thoughtware.hadess.upload.controller;
 
+import io.thoughtware.core.Result;
 import io.thoughtware.postin.annotation.Api;
 import io.thoughtware.postin.annotation.ApiMethod;
 import io.thoughtware.hadess.common.RepositoryUtil;
@@ -108,59 +109,76 @@ public class DockerUploadController {
                     response.getWriter().close();
                 }
             }else {
-                Map<String, String> resultMap = dockerUploadService.v2Sha256Check(repositoryPath);
-                if (("200").equals(resultMap.get("code"))){
+                Result result = dockerUploadService.v2Sha256Check(repositoryPath);
+                if (result.getCode()==0){
                     String substring = contextPath.substring(contextPath.indexOf("/") + 1);
-                    String fileLength = resultMap.get("data");
                     // 设置响应的状态码和内容类型
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setHeader("Docker-Content-Digest",substring);
-                    response.setHeader("Content-Length",fileLength);
+                    response.setHeader("Content-Length",result.getData().toString());
                     response.setContentType("application/json");
                     response.getWriter().close();
                 }else {
                     // 设置响应的状态码和内容类型
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    response.setContentType("application/json");
+                    response.setStatus(result.getCode());
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("text/plain");
                     // 将 JSON 响应写入响应输出流
-                    response.getWriter().write(resultMap.get("data"));
+                    response.getWriter().write(result.getMsg());
                 }
             }
         }
 
         //docker 创建上传会话
         if (("POST").equals(method)){
+            Result result = dockerUploadService.createSession(repositoryPath);
+            if (result.getCode()==0){
+                String num8 = UuidGenerator.gen(8);
+                String lowerCaseNum = num8.toLowerCase();
 
-            String num8 = UuidGenerator.gen(8);
-            String lowerCaseNum = num8.toLowerCase();
+                String num4 = UuidGenerator.gen(4);
+                String lowerCase = num4.toLowerCase();
 
-            String num4 = UuidGenerator.gen(4);
-            String lowerCase = num4.toLowerCase();
-
-            String uploadID = UuidGenerator.gen(8) + "-" + UuidGenerator.gen(4) + "-" + lowerCase + "-" + lowerCaseNum;
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            response.setHeader("Location", contextPath + uploadID);
-            response.setHeader("Docker-Upload-UUID", uploadID);
-            response.setHeader("Range", "0-0");
-            response.getWriter().close();
+                String uploadID = UuidGenerator.gen(8) + "-" + UuidGenerator.gen(4) + "-" + lowerCase + "-" + lowerCaseNum;
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                response.setHeader("Location", contextPath + uploadID);
+                response.setHeader("Docker-Upload-UUID", uploadID);
+                response.setHeader("Range", "0-0");
+                response.getWriter().close();
+            }else {
+                // 设置响应的状态码和内容类型
+                response.setStatus(result.getCode());
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/plain");
+                // 将 JSON 响应写入响应输出流
+                response.getWriter().write(result.getMsg());
+            }
         }
 
         //docker 上传镜像层数据
         if (("PATCH").equals(method)){
             String uploadID = contextPath.substring(contextPath.lastIndexOf("/") + 1);
 
-           dockerUploadService.uploadData(request.getInputStream(), repositoryPath);
+            Result result = dockerUploadService.uploadData(request.getInputStream(), repositoryPath);
+            if (result.getCode()==0){
+                String length = request.getHeader("content-length");
 
-            String length = request.getHeader("content-length");
-
-            //镜像文件大小区间
-            int i = Integer.valueOf(length) - 1;
-            String range="0-"+i;
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            response.setHeader("Location", contextPath);
-            response.setHeader("Docker-Upload-UUID", uploadID);
-            response.setHeader("Range", range);
-            response.getWriter().close();
+                //镜像文件大小区间
+                int i = Integer.valueOf(length) - 1;
+                String range="0-"+i;
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                response.setHeader("Location", contextPath);
+                response.setHeader("Docker-Upload-UUID", uploadID);
+                response.setHeader("Range", range);
+                response.getWriter().close();
+            }else {
+                // 设置响应的状态码和内容类型
+                response.setStatus(result.getCode());
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/plain");
+                // 将 JSON 响应写入响应输出流
+                response.getWriter().write(result.getMsg());
+            }
         }
         //docker 上传镜像层数据校验
         if (("PUT").equals(method)){

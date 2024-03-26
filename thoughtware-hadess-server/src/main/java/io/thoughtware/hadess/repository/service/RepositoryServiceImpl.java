@@ -334,6 +334,10 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public List<Repository> findRepositoryList(RepositoryQuery repositoryQuery) {
+        //查询所有类型库
+        if (("all").equals(repositoryQuery.getRepositoryType())){
+            repositoryQuery.setRepositoryType(null);
+        }
         List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(repositoryQuery);
 
         List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
@@ -367,6 +371,18 @@ public class RepositoryServiceImpl implements RepositoryService {
         return repository;
     }
 
+    @Override
+    public Repository findRepository(String repositoryName, String type) {
+        Repository repository=null;
+
+        List<RepositoryEntity> repositoryEntityList = repositoryDao.findRepositoryList(new RepositoryQuery().setName(repositoryName).setType(type));
+        List<Repository> repositoryList = BeanMapper.mapList(repositoryEntityList,Repository.class);
+        if (CollectionUtils.isNotEmpty(repositoryList)){
+            repository = repositoryList.get(0);
+        }
+        return repository;
+    }
+
 
     @Override
     public List<Repository> findLocalAndRemoteRepository(String type) {
@@ -383,11 +399,18 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public Pagination<Repository> findRepositoryPage(RepositoryQuery repositoryQuery) {
+        //查询所有类型库
+        if (("all").equals(repositoryQuery.getRepositoryType())){
+            repositoryQuery.setRepositoryType(null);
+        }
+
         Pagination<RepositoryEntity>  pagination = repositoryDao.findRepositoryPage(repositoryQuery);
 
         List<Repository> repositoryList = BeanMapper.mapList(pagination.getDataList(),Repository.class);
 
         joinTemplate.joinQuery(repositoryList);
+
+        findLibrary(repositoryList);
 
         return PaginationBuilder.build(pagination,repositoryList);
     }
@@ -414,6 +437,11 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
 
+    /**
+     * 查询制品库下面制品数量
+     * @param repositoryList 制品库
+     * @return
+     */
     public void findLibrary(List<Repository> repositoryList){
         if (CollectionUtils.isNotEmpty(repositoryList)) {
             for (Repository repository : repositoryList) {
@@ -488,43 +516,6 @@ public class RepositoryServiceImpl implements RepositoryService {
             getRandom(repositoryType);
         }
         return math;
-    }
-
-    public void updateRep(){
-
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new Runnable(){
-            @Override
-            public void run() {
-                List<LibraryEntity> allLibrary = libraryDao.findAllLibrary();
-
-                for (LibraryEntity libraryEntity:allLibrary){
-                   Long size=0L;
-                    List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryEntity.getId()));
-                    if(CollectionUtils.isNotEmpty(libraryFileList)){
-                        List<LibraryFile> libraryFiles = libraryFileList.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
-                        if (CollectionUtils.isNotEmpty(libraryFiles)){
-                            LibraryFile libraryFile = libraryFiles.get(0);
-                            String id = libraryFile.getLibraryVersion().getId();
-
-                            List<LibraryFile> libraryFiles1 = libraryFiles.stream().filter(a -> (id).equals(a.getLibraryVersion().getId())).collect(Collectors.toList());
-                            long length=size;
-                            for (LibraryFile libraryFile1:libraryFiles1){
-                                String filePath = yamlDataMaService.repositoryAddress() + "/" + libraryFile1.getFileUrl();
-                                File file = new File(filePath);
-                                if (file.exists()){
-                                    length += file.length();
-                                }
-                            }
-
-                            libraryEntity.setSize(Math.toIntExact(length));
-                            libraryDao.updateLibrary(libraryEntity);
-
-                            logger.info("修改成功："+libraryEntity.getName());
-                        }
-                    }
-                }
-            }});
     }
 
 

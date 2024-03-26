@@ -117,7 +117,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         try {
             //通过制品库名字查询制品库
-            Repository repository = repositoryService.findRepositoryByName(repositoryName);
+            Repository repository = repositoryService.findRepository(repositoryName,"maven");
             if (!ObjectUtils.isEmpty(repository)){
 
                 // maven上传 需要对maven-metadata 进行拉取校验

@@ -1,15 +1,14 @@
-package io.thoughtware.hadess.upload.controller;
+/*
+package io.thoughtware.hadess.upload.upold;
 
 import com.alibaba.fastjson.JSON;
 import io.thoughtware.core.Result;
 import io.thoughtware.core.exception.SystemException;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
-import io.thoughtware.hadess.upload.model.LibraryUploadData;
-import io.thoughtware.hadess.upload.model.LibraryUploadResult;
-import io.thoughtware.hadess.upload.service.MavenUploadService;
-import io.thoughtware.hadess.upload.service.NpmUploadService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
+import io.thoughtware.hadess.upload.service.MavenUploadService;
+import io.thoughtware.hadess.upload.service.NpmUploadService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +22,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.Map;
+
+*/
 /*
 * maven、npm 制品上传拉取
-* */
+* *//*
+
 @WebServlet(name = "xpackServlet",urlPatterns = {"/repository/*"},
         initParams = {
         @WebInitParam(name = "base-path", value = "//"),
@@ -72,15 +76,12 @@ public  class LibraryUploadController extends HttpServlet {
         }
     }
 
-/*    @Override
+ */
+/*   @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
-    }*/
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
     }
+*//*
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -88,12 +89,13 @@ public  class LibraryUploadController extends HttpServlet {
     }
 
 
-    /**
+    */
+/**
      * maven
-     */
+     *//*
+
     public void maven(HttpServletRequest request,HttpServletResponse response,String repositoryPath){
         logger.info("开始执行maven："+repositoryPath);
-
         String method = request.getMethod();
         //用户信息
         String authorization = request.getHeader("Authorization");
@@ -135,56 +137,78 @@ public  class LibraryUploadController extends HttpServlet {
         }
     }
 
-    /**
+    */
+/**
      * npm
-     */
+     *//*
+
     public void npm(HttpServletRequest request,HttpServletResponse response,Repository repository,String repositoryPath){
         logger.info("开始执行npm："+repositoryPath);
-        try {
-            String method = request.getMethod();
+        String referer = request.getHeader("referer");
 
-            //请求全路径
-            String absolutePath = request.getRequestURL().toString();
-            //请求方式yarn、npm
-            String agent = request.getHeader("user-agent");
-            //提交的用户认证信息
-            String authorization = request.getHeader("authorization");
 
-            //npm 请求的方式
-            String referer = request.getHeader("referer");
+        //请求全路径
+        String requestFullURL = request.getRequestURL().toString();
 
-            LibraryUploadData uploadData = new LibraryUploadData();
-            if (StringUtils.isNotEmpty(referer)&&referer.contains("adduser")) {
-                //npm 登陆信息
-                uploadData.setUserReader(request.getReader());
-            }else {
-                //npm 推送文件信息
-                uploadData.setInputStream(request.getInputStream());
+        if (StringUtils.isNotEmpty(referer)){
+            try {
+                //npm publish （提交）
+                if (referer.contains("publish")){
+                    InputStream inputStream = request.getInputStream();
+                    Integer resultCode = downloadNpmService.npmSubmit(repositoryPath, inputStream);
+
+                    response.setStatus(resultCode);
+                }
+                //npm install （拉取）
+                if (referer.contains("install")){
+                    if (!repositoryPath.endsWith(".tgz")){
+                        //第一次交互
+                        Result<String> result = downloadNpmService.npmPullJson(repository, requestFullURL);
+                        if (result.getCode()==200){
+                            response.setContentType("application/json;charset=utf-8");
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().print(result.getData());
+                        }else {
+                            response.setStatus(result.getCode());
+                            response.getWriter().print(result.getMsg());
+                        }
+                    }else {
+                        //第二次交互以.tgz结尾
+                        Result<byte[]> result = downloadNpmService.npmPullTgzData(repository, requestFullURL);
+                        if (result.getCode()==200) {
+                            response.setStatus(200, result.getMsg());
+                            byte[] data = result.getData();
+
+                            ServletOutputStream outputStream = response.getOutputStream();
+
+                            outputStream.write(data);
+                        }else {
+                            response.setStatus(result.getCode());
+                            response.getWriter().print(result.getMsg());
+                        }
+                    }
+                }
+
+                //登陆
+                if (referer.contains("adduser")){
+                    BufferedReader reader = request.getReader();
+                    Map map = downloadNpmService.npmLogin(reader);
+                    String jsonString = JSON.toJSONString(map);
+                    boolean success = (boolean) map.get("result");
+                    if (success){
+                        response.setStatus(HttpServletResponse.SC_CREATED);
+                    }else {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
+                    response.getWriter().print(jsonString);
+                }
+
+            } catch (IOException e) {
+                throw new SystemException(e);
             }
-            uploadData.setMethod(method);
-            uploadData.setAgentType(agent);
-            uploadData.setAuthorization(authorization);
-            uploadData.setRelativePath(repositoryPath);
-            uploadData.setAbsolutePath(absolutePath);
-            uploadData.setReferer(referer);
-            uploadData.setRepository(repository);
-
-            //发送请求
-            LibraryUploadResult uploadResult = downloadNpmService.uploadEntrance(uploadData);
-            response.setStatus(uploadResult.getStatus());
-            if (StringUtils.isNotEmpty(uploadResult.getContentType())&&("string").equals(uploadResult.getResultType())){
-                response.setContentType(uploadResult.getContentType());
-                response.getWriter().print(uploadResult.getData());
-            }
-
-            //拉取返回byte 类型格式
-            if (("byte").equals(uploadResult.getResultType())){
-                byte[] data = uploadResult.getDetails();
-                ServletOutputStream outputStream = response.getOutputStream();
-                outputStream.write(data);
-            }
-        }catch (Exception e){
-            throw new SystemException(e);
         }
     }
+
+
 }
+*/

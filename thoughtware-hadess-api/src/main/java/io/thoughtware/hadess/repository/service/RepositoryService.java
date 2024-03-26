@@ -84,6 +84,13 @@ public interface RepositoryService {
     Repository findRepositoryByName(String repositoryName);
 
 
+    /**
+     * 条件查询仓库
+     * @param repositoryName 仓库名字
+     * @param  type 仓库类型 maven、npm、docker
+     * @return
+     */
+    Repository findRepository(String repositoryName,String type);
 
     /**
      * 查询本地和远程库
@@ -115,9 +122,4 @@ public interface RepositoryService {
     List<Repository> findUnRelevanceRepository(String repositoryType,String repositoryGroupId);
 
 
-
-
-
-
-     void updateRep();
 }

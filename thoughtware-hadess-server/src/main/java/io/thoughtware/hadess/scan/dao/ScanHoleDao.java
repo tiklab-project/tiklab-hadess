@@ -127,11 +127,20 @@ public class ScanHoleDao {
      * @param holeIds
      * @return Pagination <ScanHoleEntity>
      */
-    public List<ScanHoleEntity> findScanHoleByIds(String[] holeIds, List<Order> orderParams ) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(ScanHoleEntity.class)
-                .in("id",holeIds)
-                .orders(orderParams)
+    public List<ScanHoleEntity> findScanHoleByIds(String[] holeIds,ScanHoleQuery scanHoleQuery ) {
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(ScanHoleEntity.class)
+                .in("id", holeIds)
+                .like("holeName",scanHoleQuery.getHoleName());
+
+        if (CollectionUtils.isNotEmpty(scanHoleQuery.getHoleLevelList())){
+            queryBuilders.in("holeLevel",scanHoleQuery.getHoleLevelList().toArray(new Integer[]{scanHoleQuery.getHoleLevelList().size()}));
+        }else {
+            queryBuilders.eq("holeLevel", scanHoleQuery.getHoleLevel());
+        }
+
+        QueryCondition queryCondition = queryBuilders.orders(scanHoleQuery.getOrderParams())
                 .get();
+
         return jpaTemplate.findList(queryCondition,ScanHoleEntity.class);
     }
 

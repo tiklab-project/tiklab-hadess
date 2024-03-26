@@ -1,6 +1,7 @@
 package io.thoughtware.hadess.upload.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.thoughtware.core.Result;
 import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.eam.passport.user.service.UserPassportService;
 import io.thoughtware.hadess.common.RepositoryUtil;
@@ -11,6 +12,7 @@ import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
 import io.thoughtware.hadess.common.UserCheckService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -62,48 +64,36 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> v2Sha256Check(String repositoryPath) throws Exception {
-        Map<String, String> resultMap = new HashMap<>();
+    public Result v2Sha256Check(String repositoryPath) throws Exception {
         String sha256 = repositoryPath.substring(repositoryPath.indexOf("sha256:") );
-        // 创建错误响应的 JSON 对象
-        Map<String, Object> errorResponse = new HashMap<>();
-
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
 
         //仓库名称
         String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
 
         if (ObjectUtils.isEmpty(repository)){
-            errorResponse.put("errors", createErrorObject("制品库不存在", sha256));
+            return Result.error(404,"can not find repository,制品库"+repositoryName+"没有找到，请输入正确的制品库");
         }
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setFileName(sha256).setRepositoryId(repository.getId()));
-        if (!CollectionUtils.isEmpty(libraryFileList)){
-            String fileUrl = libraryFileList.get(0).getFileUrl();
-            //sha256的文件位置
-            String AllFilePath = repositoryAddress + "/" + fileUrl;
-            File blobsFile = new File(AllFilePath);
-            if (blobsFile.exists()){
-                //创建文件
-                long fileLength = blobsFile.length();
-                resultMap.put("code","200");
-                resultMap.put("data",String.valueOf(fileLength));
-               return  resultMap;
-            }
+        if (CollectionUtils.isEmpty(libraryFileList)){
+            return Result.error(404,"制品不存在:"+sha256);
         }
-
-        errorResponse.put("errors", createErrorObject("blob unknown to registry", sha256));
-        // 将错误响应转换为 JSON 字符串
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-        resultMap.put("code","400");
-        resultMap.put("data",jsonResponse);
-        return resultMap;
+        String fileUrl = libraryFileList.get(0).getFileUrl();
+        //sha256的文件位置
+        String AllFilePath = repositoryAddress + "/" + fileUrl;
+        File blobsFile = new File(AllFilePath);
+        if (blobsFile.exists()){
+            //创建文件
+            long fileLength = blobsFile.length();
+            return Result.ok(String.valueOf(fileLength));
+        }
+        return Result.error(400,"文件不存在："+sha256);
     }
 
     @Override
-    public void uploadData(InputStream inputStream,String repositoryPath) throws IOException {
+    public Result uploadData(InputStream inputStream, String repositoryPath) throws IOException {
 
         String fileName = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
@@ -111,8 +101,10 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //制品库名称
         String repositoryName = repositoryPath.substring(0, repositoryPath.indexOf("/"));
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
-
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
+        if (ObjectUtils.isEmpty(repository)){
+            return Result.error(404,"can not find repository,制品库"+repositoryName+"没有找到，请输入正确的制品库");
+        }
         //制品名称
         String libraryName =getLibraryName(repositoryPath,"/blobs");
 
@@ -149,6 +141,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         libraryFile.setLibrary(library);
         libraryFile.setFileName(fileName);
         libraryFile.setFileSize(size);
+        libraryFile.setSize(fileLength);
         libraryFile.setRepository(repository);
 
         String fileUrl = repository.getId() + "/" + libraryName + "/" + "blobs/" + fileName;
@@ -156,8 +149,19 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         libraryFile.setRelativePath("blobs/" + fileName);
         libraryFileService.libraryFileSplice(libraryFile,null);
 
-        blobsDataSize.put(fileName,String.valueOf(fileLength));
 
+        blobsDataSize.put(fileName,String.valueOf(fileLength));
+        return Result.ok();
+    }
+
+    @Override
+    public Result createSession(String repositoryPath) {
+        String repositoryName = StringUtils.substringBefore(repositoryPath, "/");
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
+        if (ObjectUtils.isEmpty(repository)){
+            return Result.error(404,"can not find repository，制品库"+repositoryName+"没有找到，请输入正确的制品库");
+        }
+        return Result.ok();
     }
 
     @Override
@@ -170,7 +174,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //制品库名称
         String repositoryName = repositoryPath.substring(0, repositoryPath.indexOf("/"));
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
 
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
@@ -213,14 +217,14 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //制品名称
         String libraryName =getLibraryName(repositoryPath,"/manifests");
 
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
 
         String repositoryAddress = yamlDataMaService.repositoryAddress();
 
         //tags 文件夹路径
         String tagFolder = repositoryAddress + "/" + repository.getId() + "/" + libraryName + "/tags";
         //写入数据
-        writeFileData(inputStream,tagFolder,version);
+        Long aLong = writeFileData(inputStream, tagFolder, version);
 
         File TagFile = new File(tagFolder + "/" + version);
         String readFile = readFile(TagFile);
@@ -245,6 +249,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             libraryVersion.setRepository(repository);
             libraryVersion.setVersion(version);
             libraryVersion.setLibraryType("docker");
+            libraryVersion.setSize(aLong);
 
             //用户信息
             String basic = authorization.replace("Basic", "").trim();
@@ -268,9 +273,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             libraryFile.setRepository(repository);
 
             libraryFile.setFileUrl(fileUrl);
-            libraryFile.setRelativePath("manifests/" + fileName);
+            libraryFile.setRelativePath("tag/" + fileName);
             libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
-
         }
 
         return readFile ;
@@ -287,7 +291,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //制品名称
         String libraryName = getLibraryName(repositoryPath,"/manifests");
 
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
         if (ObjectUtils.isEmpty(repository)){
             return putMapData("400","制品库不存在");
         }
@@ -312,7 +316,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //仓库名称
         String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
+        Repository repository = repositoryService.findRepository(repositoryName,"docker");
 
         String substring =repositoryPath.substring(repositoryPath.indexOf("/"));
 
@@ -361,7 +365,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
      * 写入文件数据
      * @param inputStream 文件流
      */
-    public void writeFileData(InputStream inputStream,String folderPath,String fileName) throws IOException {
+    public Long writeFileData(InputStream inputStream,String folderPath,String fileName) throws IOException {
         File TagFolderFile = new File(folderPath);
         if (!TagFolderFile.exists()){
             TagFolderFile.mkdirs();
@@ -382,6 +386,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             outputStream.write(buffer, 0, bytesRead);
         }
         outputStream.flush();
+
+        return TagFile.length();
     }
 
 

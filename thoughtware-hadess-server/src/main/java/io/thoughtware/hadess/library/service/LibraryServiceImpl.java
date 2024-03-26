@@ -146,32 +146,34 @@ public class LibraryServiceImpl implements LibraryService {
         if ("maven".equals(library.getLibraryType())){
             libraryMavenService.deleteLibraryMavenByCondition("libraryId",id);
         }
-
-        String substring=null;
-        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(id));
-        if (CollectionUtils.isNotEmpty(libraryFileList)){
-            String fileUrl = libraryFileList.get(0).getFileUrl();
-            substring = fileUrl.substring(0, fileUrl.indexOf("/", fileUrl.indexOf("/") + 1));
-
-        }
-
-        libraryVersionService.deleteVersionByCondition("libraryId",id);
-
-        libraryFileService.deleteLibraryFileByCondition("libraryId",id);
-
-        pushLibraryService.deleteVersionByCondition("libraryId",id);
-
+        
         libraryDao.deleteLibrary(id);
 
-        //删除文件
-        if (substring!=null){
-            try {
-                String folderPath = yamlDataMaService.repositoryAddress() + "/" + substring;
-                FileUtils.deleteDirectory(new File(folderPath));
-            }catch (Exception e){
-                logger.info("删除制品时删除文件失败:"+e.getMessage());
-            }
-        }
+        Thread thread = new Thread() {
+            public void run() {
+                String substring=null;
+                List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(id));
+                if (CollectionUtils.isNotEmpty(libraryFileList)){
+                    String fileUrl = libraryFileList.get(0).getFileUrl();
+                    substring = fileUrl.substring(0, fileUrl.indexOf("/", fileUrl.indexOf("/") + 1));
+
+                }
+                libraryVersionService.deleteVersionByCondition("libraryId",id);
+
+                libraryFileService.deleteLibraryFileByCondition("libraryId",id);
+
+                pushLibraryService.deleteVersionByCondition("libraryId",id);
+                //删除文件
+                if (substring!=null){
+                    try {
+                        String folderPath = yamlDataMaService.repositoryAddress() + "/" + substring;
+                        FileUtils.deleteDirectory(new File(folderPath));
+                    }catch (Exception e){
+                        logger.info("删除制品时删除文件失败:"+e.getMessage());
+                    }
+                }
+            }};
+        thread.start();
     }
 
     @Override

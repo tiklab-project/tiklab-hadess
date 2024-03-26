@@ -84,6 +84,21 @@ public class LibraryFileServiceImpl implements LibraryFileService {
                 libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setRepositoryId(value));
         }
         if (CollectionUtils.isNotEmpty(libraryFileList)){
+            String type = libraryFileList.get(0).getRepository().getType();
+            //制品为docker 特殊处理
+            if (("docker").equals(type)){
+                //通过制品库id 和文件名称查询
+                List<LibraryFile> FileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryFileList.get(0).getLibrary().getId())
+                        .setFileName(libraryFileList.get(0).getFileName()));
+                if (FileList.size()>1){
+                    DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
+                            .eq(field,value)
+                            .get();
+                    libraryFileDao.deleteLibraryFile(libraryFile);
+                    return;
+                }
+            }
+
             //删除文件
             for (LibraryFile libraryFile:libraryFileList){
                 File file = new File(xpakYamlDataMaService.repositoryAddress()+"/"+libraryFile.getFileUrl());

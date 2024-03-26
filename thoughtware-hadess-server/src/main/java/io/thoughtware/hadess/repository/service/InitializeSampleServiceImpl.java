@@ -135,6 +135,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         libraryVersion.setRepository(repository);
         libraryVersion.setLibrary(library);
         libraryVersion.setLibraryType(type);
+        libraryVersion.setSize(6144L);
 
         libraryVersion.setVersion(version);
         libraryVersion.setHash("32bd90901dda737da18c5ccbd6de20b0fff4cbe6");
@@ -155,6 +156,8 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
         libraryFile.setLibraryVersion(libraryVersion);
+        libraryFile.setSize(6144L);
+        libraryFile.setFileSize("96KB");
         if ("npm".equals(type)){
             libraryFile.setFileName("npm-sample.tgz");
             //文件大小
@@ -163,6 +166,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
             double i =(double)length / 1000;
             long round = Math.round(i);
             libraryFile.setFileUrl(repositoryId+"/npm-sample/"+"npm-sample.tgz");
+            libraryFile.setSize(length);
             createLibraryFile(libraryFile,"npm-sample.tgz",round);
         }
 
@@ -177,6 +181,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
                 libraryFile.setFileName(name);
                 String relativePath="sample/tiklab/tiklab-sample-server/1.0.0-SNAPSHOT/20230801.091147-1/"+name;
                 libraryFile.setFileUrl(repositoryId+"/"+relativePath);
+                libraryFile.setSize(122880L);
                 createLibraryFile(libraryFile,relativePath,120);
             }
 
