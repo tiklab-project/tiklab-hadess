@@ -131,6 +131,12 @@
             <artifactId>quartz-jobs</artifactId>
             <version>${quartz.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.thoughtware</groupId>
+            <artifactId>thoughtware-plugin-manager</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 

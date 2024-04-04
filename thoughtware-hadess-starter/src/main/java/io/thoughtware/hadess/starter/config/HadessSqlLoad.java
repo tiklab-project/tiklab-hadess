@@ -64,6 +64,9 @@ public class HadessSqlLoad {
         dsmConfig.newVersion("1.0.6", new String[]{
                 "message_1.0.6",
         });
+        dsmConfig.newVersion("1.0.7", new String[]{
+                "message_1.0.7"
+        });
         return dsmConfig;
     }
 }
