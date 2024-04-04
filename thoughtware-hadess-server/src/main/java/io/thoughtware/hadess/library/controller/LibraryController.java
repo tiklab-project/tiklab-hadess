@@ -42,7 +42,6 @@ public class LibraryController {
         return Result.ok(id);
     }
 
-
     @RequestMapping(path="/updateLibrary",method = RequestMethod.POST)
     @ApiMethod(name = "updateLibrary",desc = "更新制品库")
     @ApiParam(name = "library",desc = "library",required = true)
