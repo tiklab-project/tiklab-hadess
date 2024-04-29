@@ -11,6 +11,53 @@ if [ -d ${JAR_DIR} ] ; then
   exit 1
 fi
 
+echo "The system starts upgrading and stops running!"
+
+cd ${DIR}/bin && sh shutdown.sh
+
 cd ${JAVA_HOME}/bin && ./java -jar -Dfiledir="${DIR}" "${JAR_DIR}"
 
-echo "System update completed."
+
+
+#Remote_File_Name=`find ${DIR} -name "tiklab-*.tar.gz" -print`
+
+#Remote_File_Name=$(cat ${DIR}/fileName.txt)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,7 +4,7 @@ if [ ! -n "$JAVA_HOME" ]; then
 fi
 
 #APP_MAIN=${application.main.class}
-APP_MAIN=" io.thoughtware.hadess.starter.HadessApplication"
+APP_MAIN="io.thoughtware.hadess.starter.HadessApplication"
 
 PID=0
 getPID(){

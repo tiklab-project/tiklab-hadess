@@ -1,7 +1,9 @@
 #application config
 app:
+  name: thoughtware-hadess-ee
   path: ${APP_HOME}
-  name: tiklab-xpack
+  version: ee
+
 spring:
   config:
     import: optional:classpath:/config/${env:dev}/application.yaml
@@ -14,7 +16,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/xpack?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5441/hadess_ce?stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -22,9 +24,9 @@ jdbc:
 postgresql:
   embbed:
     enable: true
-  database: xpack
+  database: hadess_ce
   db:
-    port: 5432
+    port: 5441
     username: postgres
     password: darth2020
     address: ${DATA_HOME}/postgresql
@@ -32,53 +34,54 @@ postgresql:
 #eas config
 eas:
   embbed:
-    enable: false
-  address: http://e.eas.tiklab.net
+    enable: true
+base:
+  url: http://192.168.10.9:8080
 
-DATA_HOME: /opt/tiklab/xpack
+DATA_HOME: /opt/thoughtware/hadess
+
 
 #dfs config
 dfs:
   server:
-    enabled: false
+    enabled: true
     mode: server
-    port: 4000
+    port: 4001
     datapath: ${DATA_HOME}/files
   client:
-    url: 127.0.0.1:4000
+    url: 127.0.0.1:4001
     bucket: ${app.name}
 
 #dcs config
 dcs:
   server:
-    enabled: false
+    enabled: true
     mode: server
-    port: 5000
+    port: 5001
     datapath: ${DATA_HOME}/caches
   client:
-    url: 127.0.0.1:5000
+    url: 127.0.0.1:5001
     bucket: ${app.name}
 
 #dcs config
 dss:
   server:
-    enabled: false
+    enabled: true
     mode: server
-    port: 6000
+    port: 6001
     datapath: ${DATA_HOME}/index
   client:
-    url: 127.0.0.1:6000
+    url: 127.0.0.1:6001
     bucket: ${app.name}
-
-datapath: ${DATA_HOME}/caches
 
 
 #plugin config
 plugin.path: ${APP_HOME}/plugin
 
-#rpc
+
 homes:
   address: http://139.196.76.221:8080
+
 
 #licences config
 licences:
@@ -91,3 +94,10 @@ file:
 repository:
   address: ${DATA_HOME}/repository
 
+backups:
+  time: 0 0 2 * * ?
+  dir: ${DATA_HOME}
+  xpack:
+    dir: /Users/limingliang/tiklab/tiklab-xpack-ee/repository
+  pgsql:
+    dir: /Users/limingliang/postgreSQL/bin

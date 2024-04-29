@@ -89,6 +89,9 @@ public class GatewayFilterAutoConfiguration {
                         "/licence/import",
                         "/alterSql/updateId",
 
+                        "/message/messageItem/syncUpdateMessage",
+                        "/message/messageItem/syncDeleteMessage",
+
                 })
                 .ignorePreUrls(new String[]{
                         "/service",

@@ -40,6 +40,9 @@ public class SystemCount {
     @ApiProperty(name="authUserNum",desc="授权人数数量")
     private Integer authUserNum;
 
+    @ApiProperty(name="scanSchemeNum",desc="扫描方案数量")
+    private Integer scanSchemeNum;
+
     @ApiProperty(name="backupsTime",desc="备份时间")
     private String backupsTime;
 
@@ -138,5 +141,13 @@ public class SystemCount {
 
     public void setVersion(Version version) {
         this.version = version;
+    }
+
+    public Integer getScanSchemeNum() {
+        return scanSchemeNum;
+    }
+
+    public void setScanSchemeNum(Integer scanSchemeNum) {
+        this.scanSchemeNum = scanSchemeNum;
     }
 }

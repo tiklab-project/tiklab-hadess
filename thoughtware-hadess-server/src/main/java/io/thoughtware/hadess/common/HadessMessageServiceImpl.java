@@ -4,12 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import io.thoughtware.eam.common.context.LoginContext;
 import io.thoughtware.message.message.model.SendMessageNotice;
 import io.thoughtware.message.message.service.SendMessageNoticeService;
-import io.thoughtware.security.logging.model.Logging;
-import io.thoughtware.security.logging.model.LoggingType;
-import io.thoughtware.security.logging.service.LoggingByTempService;
+import io.thoughtware.security.logging.logging.model.Logging;
+import io.thoughtware.security.logging.logging.model.LoggingType;
+import io.thoughtware.security.logging.logging.service.LoggingByTempService;
 import io.thoughtware.user.user.model.User;
 import io.thoughtware.user.user.service.UserService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,9 +57,9 @@ public class HadessMessageServiceImpl implements HadessMessageService{
     public void settingLog(Map<String, Object> map,String logType,String model) {
         Logging log = new Logging();
         //消息类型
-        LoggingType opLogType = new LoggingType();
-        opLogType.setId(logType);
-        log.setActionType(opLogType);
+        LoggingType loggingType = new LoggingType();
+        loggingType.setId(logType);
+        log.setActionType(loggingType);
         log.setModule(model);
 
 

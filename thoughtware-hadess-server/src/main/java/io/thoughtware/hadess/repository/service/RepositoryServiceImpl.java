@@ -152,9 +152,9 @@ public class RepositoryServiceImpl implements RepositoryService {
             file.mkdirs();
         }
         if (ObjectUtils.isEmpty(repository.getCreateUser())){
-            dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), "hadess");
+            dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), 2);
         }else {
-            dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),"hadess");
+            dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),2);
         }
 
         //初始化的演示仓库不发送消息
