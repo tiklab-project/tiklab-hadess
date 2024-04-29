@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir=""
-version=""
+file=""
 
 #解析参数
 echo "Parse startup parameters"
@@ -11,8 +11,8 @@ for arg in "$@"; do
       dir=$2
       shift 2
       ;;
-    -v)
-      version=$2
+    -f)
+      file=$2
       shift 2
       ;;
   esac
@@ -24,7 +24,7 @@ valid_parameters(){
     echo "Apply address Cannot be empty"
     exit 1
   fi
-  if [ -z "${version}" ]; then
+  if [ -z "${file}" ]; then
       echo "Data version Name Cannot be empty"
       exit 1
   fi
@@ -32,21 +32,18 @@ valid_parameters(){
 
 #解压文件
 tar_xvf(){
-  echo "tar file ${dir}/${version}.tar.gz"
-  tar -xvf /${dir}/${version}.tar.gz -C /${dir}
+  echo "tar file ${file}"
+  tar -xzvf "${file}" -C "${dir}"
 }
 
-#移动文件
-move_file(){
-  echo "mv ${dir}/${version}"
-  mv /${dir}/${version}/* /${dir}
-  rm -rf /${dir}/${version}
+mv_file(){
+  echo "mv file ${dir}/tmp ${dir}"
+  mv ${dir}/tmp/* ${dir}
 }
 
 copy(){
   valid_parameters
   tar_xvf
-  move_file
 }
 
 copy

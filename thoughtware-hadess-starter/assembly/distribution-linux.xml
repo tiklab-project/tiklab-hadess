@@ -30,13 +30,34 @@
             <outputDirectory>/conf</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${basedir}</directory>
+            <includes>
+                <include>Dockerfile</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}</directory>
+            <includes>
+                <include>version</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/bin</directory>
             <fileMode>755</fileMode>
+            <includes>
+                <include>*_linux.sh</include>
+            </includes>
+            <outputDirectory>/bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/backups</directory>
+            <fileMode>755</fileMode>
             <excludes>
-                <exclude>*.classpath</exclude>
                 <exclude>*.bat</exclude>
             </excludes>
-            <outputDirectory>/bin</outputDirectory>
+            <outputDirectory>/backups</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${basedir}/plugin</directory>
@@ -48,19 +69,10 @@
             <fileMode>755</fileMode>
             <outputDirectory>/embbed</outputDirectory>
         </fileSet>
-
         <fileSet>
             <directory>${basedir}/file</directory>
             <fileMode>755</fileMode>
             <outputDirectory>/file</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${basedir}</directory>
-            <includes>
-                <include>version</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
         </fileSet>
     </fileSets>
 

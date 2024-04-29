@@ -47,13 +47,13 @@
         <thoughtware-message.version>1.0.1-SNAPSHOT</thoughtware-message.version>
         <thoughtware-todotask.version>1.0.1-SNAPSHOT</thoughtware-todotask.version>
         <thoughtware-eam.version>1.0.1-SNAPSHOT</thoughtware-eam.version>
-        <thoughtware-postgresql.version>1.0.1-SNAPSHOT</thoughtware-postgresql.version>
+        <thoughtware-postgresql.version>1.0.2-SNAPSHOT</thoughtware-postgresql.version>
+        <thoughtware-jdk.version>1.0.1-SNAPSHOT</thoughtware-jdk.version>
 
         <!--thoughtware-->
         <thoughtware-postin-doclet-version>1.0.1-SNAPSHOT</thoughtware-postin-doclet-version>
         <thoughtware-postin.version>1.0.1-SNAPSHOT</thoughtware-postin.version>
         <thoughtware-upgrade.version>1.0.0</thoughtware-upgrade.version>
-        <thoughtware-jdk.version>1.0.0</thoughtware-jdk.version>
         <thoughtware-opensca.version>1.0.0</thoughtware-opensca.version>
         <!--other-->
         <jdbc-mapper.version>1.2.2</jdbc-mapper.version>

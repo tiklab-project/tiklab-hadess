@@ -1,9 +1,13 @@
 INSERT INTO pcs_prc_role VALUES ('1', '管理员角色', NULL, 'system', '1', 1, 0, 1);
 INSERT INTO pcs_prc_role VALUES ('2', '普通角色', NULL, 'system', '1', 0, 1, 1);
-INSERT INTO pcs_prc_role VALUES ('3', '项目管理员', NULL, 'project', '2', 1, 0, 2);
-INSERT INTO pcs_prc_role VALUES ('4', '项目成员', NULL, 'project', '2', 0, 1, 2);
+INSERT INTO pcs_prc_role VALUES ('3', '项目管理员', NULL, 'system', '2', 1, 0, 1);
+INSERT INTO pcs_prc_role VALUES ('4', '项目成员', NULL, 'system', '2', 0, 1, 1);
 
 
+
+-- ---------------------------
+-- 权限功能
+-- ----------------------------
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('permission','权限', 'xpack_permission',null ,1, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('messtype','消息通知类型', 'message_type',null ,1, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('messmanage','消息管理', 'message_setting',null ,1, 1);
@@ -16,6 +20,9 @@ INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('projectup','修改项目', 'xpack_update','projectall' ,3, 2);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('xpackbackup','备份与恢复', 'xpack_backup',null ,1, 1);
 
+-- ---------------------------
+-- 管理员权限功能
+-- ----------------------------
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00e50ea15102', '1', 'xpackbackup');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00e840ea5302', '1', 'permission');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('05d66918b2dd', '1', 'messtype');
@@ -48,10 +55,10 @@ INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('89ea961766
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('3078797e7cb5', '1', 'cb954a7c0be3');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('2f947cfb5ba8', '1', 'e8bf9843bc9d');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('74887911132b', '1', '325c2503007f');
+INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00easd115102', '1', 'version');
 
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('732aa5077352', '2', 'version');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('74217ab2e9eb', '2', 'loginexce');
-INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('00easd115102', '1', 'version');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('projectall', '3', 'projectall');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('projectup', '3', 'projectup');
 INSERT INTO pcs_prc_role_function (id, role_id, function_id) VALUES ('projectdele', '3', 'projectdele');

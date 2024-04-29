@@ -1,3 +1,4 @@
+/*
 package io.thoughtware.hadess.scan.util;
 
 
@@ -51,11 +52,13 @@ public class OpenScaConfigFile {
         }
     }
 
-    /**
+    */
+/**
      *  读取file 文件
      *  @param file     文件
      * @return
-     */
+     *//*
+
     public String gainFileData(File file){
         try {
             FileInputStream inputStream = new FileInputStream(file);
@@ -76,11 +79,13 @@ public class OpenScaConfigFile {
     }
 
 
-    /**
+    */
+/**
      *  写入文件
      *  @param file     文件
      * @return
-     */
+     *//*
+
     public void writeFile(File file,String fileData){
         try {
             FileWriter fileWriter = new FileWriter(file);
@@ -91,3 +96,4 @@ public class OpenScaConfigFile {
         }
     }
 }
+*/
