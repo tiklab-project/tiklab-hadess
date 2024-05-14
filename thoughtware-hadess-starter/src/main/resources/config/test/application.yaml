@@ -2,6 +2,8 @@
 app:
   name: thoughtware-hadess
   path: ${APP_HOME}
+  version: ce
+
 spring:
   profiles:
     active: test

@@ -15,6 +15,9 @@ import io.thoughtware.hadess.repository.model.*;
 import io.thoughtware.hadess.scan.service.ScanLibraryService;
 import io.thoughtware.hadess.scan.service.ScanPlayService;
 import io.thoughtware.hadess.scan.service.ScanPlayServiceImpl;
+import io.thoughtware.privilege.role.model.PatchUser;
+import io.thoughtware.privilege.role.model.RoleUser;
+import io.thoughtware.privilege.role.service.RoleUserService;
 import io.thoughtware.toolkit.beans.BeanMapper;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.core.page.PaginationBuilder;
@@ -105,6 +108,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     PushLibraryServiceImpl pushLibraryService;
 
+    @Autowired
+    RoleUserService roleUserService;
 
     @Value("${server.port:8080}")
     private String port;
@@ -151,11 +156,31 @@ public class RepositoryServiceImpl implements RepositoryService {
         if (!file.exists()){
             file.mkdirs();
         }
-        if (ObjectUtils.isEmpty(repository.getCreateUser())){
-            dmRoleService.initDmRoles(repositoryId, LoginContext.getLoginId(), 2);
+
+
+        String userId;
+        //初始化示例仓库用户id 取Repository里面用户
+        if (!ObjectUtils.isEmpty(repository.getCreateUser())&&StringUtils.isNotEmpty(repository.getCreateUser())){
+            userId = repository.getCreateUser();
         }else {
-            dmRoleService.initDmRoles(repositoryId,repository.getCreateUser(),2);
+            userId =LoginContext.getLoginId();
         }
+        List<PatchUser> List = new ArrayList<>();
+        PatchUser patchUser = new PatchUser();
+        RoleUser userRoleAdmin = roleUserService.findUserRoleAdmin();
+        //给系统超级管理员设置成项目超级管理员
+        patchUser.setUserId(userRoleAdmin.getUser().getId());
+        patchUser.setRoleType(2);
+        List.add(patchUser);
+
+        //超级管理员和创建者不同 ，给创建者设置为管理员角色
+        if (!(userId).equals(userRoleAdmin.getUser().getId())){
+            PatchUser patchUser1 = new PatchUser();
+            patchUser1.setUserId(userId);
+            patchUser1.setRoleType(1);
+            List.add(patchUser1);
+        }
+        dmRoleService.initPatchDmRole(repositoryId, List);
 
         //初始化的演示仓库不发送消息
         if (repository.getCategory()!=1){
