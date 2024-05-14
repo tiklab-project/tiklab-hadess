@@ -2,7 +2,7 @@
 app:
   name: thoughtware-hadess-ee
   path: ${APP_HOME}
-  version: ee
+  version: ce
 
 spring:
   config:
