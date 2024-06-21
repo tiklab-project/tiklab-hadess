@@ -18,7 +18,6 @@ INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('38ba18169587','权限', 'hadess_authority',null ,37, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('43622a8ad389','资源监控', 'hadess_resource',null ,38, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('f7249f3f0b63','操作日志', 'hadess_log',null ,35, 1);
-INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('444e5047689c','插件', 'hadess_plugin',null ,31, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('7ee226136c94','代理地址', 'hadess_proxy',null ,50, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('9be10fa48e38','添加代理地址', 'hadess_proxy_add','7ee226136c94' ,51, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('6575d360e072','更新代理地址', 'hadess_proxy_update','7ee226136c94' ,53, 1);
@@ -76,7 +75,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('79e8
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('3243b5800a8e', '111111', 'a2fa3ef2413b');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('86f1ca03cea5', '111111', '484a5c1b9417');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('b5bc59bb0c33', '111111', '8feb1786149e');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('0b333f31e122', '111111', '444e5047689c');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('689d4479f8cb', '111111', 'f7249f3f0b63');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('ca027a22532a', '111111', '38ba18169587');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('ce35f0f82cdb', '111111', '43622a8ad389');
@@ -127,7 +125,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('e8f9
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('6306812b5d37', '1', 'a2fa3ef2413b');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('9cb37d93f0a6', '1', '484a5c1b9417');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('5bb2b8268d93', '1', '8feb1786149e');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4afaf0222b07', '1', '444e5047689c');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('07d06ee4d1c9', '1', 'f7249f3f0b63');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('ded7bac981f8', '1', '38ba18169587');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('123012d0f38e', '1', '43622a8ad389');
@@ -148,7 +145,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('520d
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('c2975abfec86', '2', 'b409dd8f8575');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('6526622645c6', '2', '8d39e613ca39');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4c994dd988e9', '2', 'b70aeb4ccd60');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('94c891935f2b', '2', '444e5047689c');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('34fbb100ca01', '2', 'f7249f3f0b63');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('99968e743b91', '2', '43622a8ad389');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('10das0243225', '2', '5806f877751e');

@@ -44,7 +44,7 @@ DATA_HOME: /opt/thoughtware/hadess
 #dfs config
 dfs:
   server:
-    enabled: true
+    enabled: false
     mode: server
     port: 4001
     datapath: ${DATA_HOME}/files
@@ -61,12 +61,14 @@ dcs:
     datapath: ${DATA_HOME}/caches
   client:
     url: 127.0.0.1:5001
-    bucket: ${app.name}
+    group: g1
+    database: dcs1
+    expire: 7200
 
 #dcs config
 dss:
   server:
-    enabled: true
+    enabled: false
     mode: server
     port: 6001
     datapath: ${DATA_HOME}/index
@@ -85,7 +87,7 @@ homes:
 
 #licences config
 licences:
-  path: ${DATA_HOME}/data/dfs/default
+  path: ${DATA_HOME}/licences
 
 #file
 file:

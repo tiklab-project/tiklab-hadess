@@ -54,13 +54,15 @@ dfs:
 #dcs config
 dcs:
   server:
-    enabled: false
+    enabled: true
     mode: server
     port: 5000
     datapath: ${DATA_HOME}/caches
   client:
     url: 127.0.0.1:5000
-    bucket: ${app.name}
+    group: g1
+    database: dcs1
+    expire: 7200
 
 #dcs config
 dss:
@@ -85,7 +87,7 @@ homes:
 
 #licences config
 licences:
-  path: ${DATA_HOME}/data/dfs/default
+  path: ${DATA_HOME}/licences
 
 #file
 file:

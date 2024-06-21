@@ -46,6 +46,7 @@ public class GatewayFilterAutoConfiguration {
                         ".json",
                         ".xml",
                         ".ftl",
+                        ".txt"
                 })
                 .ignoreUrls(new String[]{
                         "/",
@@ -106,6 +107,7 @@ public class GatewayFilterAutoConfiguration {
                         "/library",
                         "/repository",
                         "/generic",
+                        "/helm",
                         "/pushCenWarehouse",
                         "/libraryFile",
                         "/xpack",

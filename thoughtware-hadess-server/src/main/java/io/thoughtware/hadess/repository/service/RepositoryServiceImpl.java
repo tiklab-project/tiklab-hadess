@@ -2,9 +2,6 @@ package io.thoughtware.hadess.repository.service;
 import com.alibaba.fastjson.JSON;
 import io.thoughtware.hadess.common.*;
 import io.thoughtware.hadess.library.dao.LibraryDao;
-import io.thoughtware.hadess.library.entity.LibraryEntity;
-import io.thoughtware.hadess.library.model.LibraryFile;
-import io.thoughtware.hadess.library.model.LibraryFileQuery;
 import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryMavenService;
 import io.thoughtware.hadess.library.service.LibraryService;
@@ -12,9 +9,6 @@ import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.pushcentral.service.PushGroupService;
 import io.thoughtware.hadess.pushcentral.service.PushLibraryServiceImpl;
 import io.thoughtware.hadess.repository.model.*;
-import io.thoughtware.hadess.scan.service.ScanLibraryService;
-import io.thoughtware.hadess.scan.service.ScanPlayService;
-import io.thoughtware.hadess.scan.service.ScanPlayServiceImpl;
 import io.thoughtware.privilege.role.model.PatchUser;
 import io.thoughtware.privilege.role.model.RoleUser;
 import io.thoughtware.privilege.role.service.RoleUserService;
@@ -27,7 +21,6 @@ import io.thoughtware.privilege.dmRole.service.DmRoleService;
 import io.thoughtware.rpc.annotation.Exporter;
 import io.thoughtware.hadess.repository.dao.RepositoryDao;
 import io.thoughtware.hadess.repository.entity.RepositoryEntity;
-import io.thoughtware.hadess.repository.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -98,9 +91,6 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
     RemoteProxyService proxyService;
-
-    @Autowired
-    ScanPlayService scanPlayService;
 
     @Autowired
     PushGroupService pushGroupService;
@@ -278,7 +268,7 @@ public class RepositoryServiceImpl implements RepositoryService {
                 }
 
                 //删除制品下面的扫描计划
-                scanPlayService.deleteScanPlayByCondition("repositoryId",id);
+              /*  scanPlayService.deleteScanPlayByCondition("repositoryId",id);*/
 
                 //删除推送
                 pushGroupService.deleteVersionByCondition("repositoryId",id);
@@ -338,7 +328,7 @@ public class RepositoryServiceImpl implements RepositoryService {
                 repository.setVersionType(mavenList.get(0).getVersion());
             }
         }
-        if (!ObjectUtils.isEmpty(repository)){
+        if (!ObjectUtils.isEmpty(repository)&&StringUtils.isNotEmpty(repository.getRepositoryUrl())){
             String substring = repository.getRepositoryUrl().substring(0, repository.getRepositoryUrl().indexOf(repository.getName()));
             repository.setPrefixPath(substring);
         }
@@ -497,6 +487,9 @@ public class RepositoryServiceImpl implements RepositoryService {
            }
            if (("npm").equals(repository.getType())||("maven").equals(repository.getType())){
                absoluteAddress="http://" + serverIp + ":" + port + "/repository/"+repository.getRepositoryUrl();
+           }
+           if (("helm").equals(repository.getType())){
+               absoluteAddress="http://" + serverIp + ":" + port + "/helm/"+repository.getRepositoryUrl();
            }
        }
         return absoluteAddress;

@@ -37,12 +37,12 @@
 
 ## 下载安装
 
-1. 从 [releases](https://github.com/XmirrorSecurity/OpenSCA-cli/releases) 下载对应系统架构的可执行文件压缩包
+1. 从 [releases](https://gitee.com/XmirrorSecurity/OpenSCA-cli/releases) 下载对应系统架构的可执行文件压缩包
 
 2. 或者下载源码编译(需要 `go 1.18` 及以上版本)
 
    ```shell
-   git clone https://github.com/XmirrorSecurity/OpenSCA-cli.git opensca
+   git clone https://gitee.com/XmirrorSecurity/OpenSCA-cli.git opensca
    cd opensca
    go work init cli analyzer util
    go build -o opensca-cli cli/main.go

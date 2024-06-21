@@ -177,8 +177,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         String fileName = relativePath.substring(lastIndexOf+1);
         int lastButOneIndex = relativePath.lastIndexOf("/",lastIndexOf-1);
         String libraryPath = relativePath.substring(0, lastButOneIndex);
+
         //制品名称
         String libraryName = libraryPath.substring(libraryPath.lastIndexOf("/") + 1);
+
+        //直接走代理拉取 例如：com/spotify/maven-metadata.xml
+        if(!libraryPath.contains("/")&&relativePath.contains("maven-metadata")){
+            return proxyPull(repository,relativePath);
+        }
 
         String groupId = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
         groupId = groupId.replace("/", ".");

@@ -292,11 +292,11 @@ public class LibraryDao{
     }
 
     /**
-     * 查询未添加到扫描制品列表
+     * 查询不包含的制品
      * @param libraryIds
      * @return List <LibraryEntity>
      */
-    public List<LibraryEntity> findNotScanLibraryList(String[] libraryIds,String repositoryId,String name) {
+    public List<LibraryEntity> findNotInLibraryList(String[] libraryIds,String repositoryId,String name) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
                 .notIn("id",libraryIds)
                 .like("name",name)

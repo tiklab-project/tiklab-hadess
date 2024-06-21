@@ -169,10 +169,11 @@ public interface LibraryService {
 
     /**
      * 查询未添加到扫描列表的制品
-     * @param libraryQuery
-     * @return
+     * @param libraryIds 制品ids
+     * @param repositoryId 制品库id
+     * @param LibraryName 制品名字
      */
-    List<Library> findNotScanLibraryList(LibraryQuery libraryQuery);
+    List<Library> findNotInLibraryList(String[] libraryIds,String repositoryId,String LibraryName);
 
 
 
