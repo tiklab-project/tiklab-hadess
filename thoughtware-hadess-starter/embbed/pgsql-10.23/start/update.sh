@@ -22,12 +22,12 @@ for arg in "$@"; do
       pwd=$2
       shift 2
       ;;
-    -u)
-      username=$2
-      shift 2
-      ;;
     -P)
       port=$2
+      shift 2
+      ;;
+    -u)
+      username=$2
       shift 2
       ;;
   esac
@@ -64,7 +64,7 @@ valid_parameters(){
 #更改仓库密码
 update_password(){
   echo "update data password ${pwd}"
-  output=$(sudo -u ${username} ${dir}/bin/psql -p ${port}  -c "ALTER USER ${username} WITH PASSWORD '${pwd}'")
+  output=$( ${dir}/bin/psql -p ${port} -d postgres -c "ALTER USER ${username} WITH PASSWORD '${pwd}'")
   if [ $? -eq 0 ]; then
     echo "$output"
   else
@@ -73,10 +73,17 @@ update_password(){
   fi
 }
 
+
+create_user(){
+  echo "create user ${username}"
+  output=$(${dir}/bin/createuser -p ${port} -s postgres)
+}
+
+
 #创建数据库
 create_database(){
   echo "create database ${db}"
-  output=$(sudo -u ${username} ${dir}/bin/psql -p ${port} -c "CREATE DATABASE ${db};")
+  output=$(${dir}/bin/psql -p ${port} -d postgres  -c "CREATE DATABASE ${db};")
   if [ $? -eq 0 ]; then
     echo "$output"
   else
@@ -86,6 +93,7 @@ create_database(){
 }
 
 update(){
+  create_user
   update_password
   create_database
 }

@@ -12,7 +12,6 @@ import io.thoughtware.hadess.library.service.LibraryFileService;
 import io.thoughtware.hadess.library.service.LibraryMavenService;
 import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.pushcentral.model.*;
-import io.thoughtware.hadess.scan.model.ScanRecord;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;

@@ -84,7 +84,7 @@ homes:
 
 #licences config
 licences:
-  path: ${DATA_HOME}/data/dfs/default
+  path: ${DATA_HOME}/licences
 
 
 #file

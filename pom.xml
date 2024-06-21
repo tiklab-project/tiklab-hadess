@@ -53,7 +53,7 @@
         <!--thoughtware-->
         <thoughtware-postin-doclet-version>1.0.1-SNAPSHOT</thoughtware-postin-doclet-version>
         <thoughtware-postin.version>1.0.1-SNAPSHOT</thoughtware-postin.version>
-        <thoughtware-upgrade.version>1.0.0</thoughtware-upgrade.version>
+        <thoughtware-install.version>1.0.1-SNAPSHOT</thoughtware-install.version>
         <thoughtware-opensca.version>1.0.0</thoughtware-opensca.version>
         <!--other-->
         <jdbc-mapper.version>1.2.2</jdbc-mapper.version>

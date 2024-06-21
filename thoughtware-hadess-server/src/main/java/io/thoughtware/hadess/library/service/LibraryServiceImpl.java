@@ -13,9 +13,6 @@ import io.thoughtware.hadess.repository.model.*;
 import io.thoughtware.hadess.repository.service.RepositoryGroupService;
 import io.thoughtware.hadess.repository.service.RepositoryMavenService;
 import io.thoughtware.hadess.repository.service.RepositoryService;
-import io.thoughtware.hadess.scan.model.ScanLibrary;
-import io.thoughtware.hadess.scan.model.ScanLibraryQuery;
-import io.thoughtware.hadess.scan.service.ScanLibraryService;
 import io.thoughtware.dal.jpa.criterial.condition.DeleteCondition;
 import io.thoughtware.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
 import io.thoughtware.toolkit.beans.BeanMapper;
@@ -79,8 +76,6 @@ public class LibraryServiceImpl implements LibraryService {
     @Autowired
     RepositoryMavenService repositoryMavenService;
 
-    @Autowired
-    ScanLibraryService scanLibraryService;
 
     @Value("${repository.test:null}")
     String testLibrary;
@@ -385,20 +380,12 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public List<Library> findNotScanLibraryList(LibraryQuery libraryQuery) {
-        List<ScanLibrary> scanLibraryList = scanLibraryService.findScanLibraryList(new ScanLibraryQuery()
-                .setRepositoryId(libraryQuery.getRepositoryId()).setScanPlayId(libraryQuery.getScanPlayId()));
-        String[] libraryIds=null;
-        if (CollectionUtils.isNotEmpty(scanLibraryList)){
-            List<String> libraryId = scanLibraryList.stream().map(a -> a.getLibrary().getId()).collect(Collectors.toList());
-            String[] strings = new String[libraryId.size()];
-            libraryIds = libraryId.toArray(strings);
-        }
-        List<LibraryEntity> libraryEntityList = libraryDao.findNotScanLibraryList(libraryIds, libraryQuery.getRepositoryId(), libraryQuery.getName());
+    public List<Library> findNotInLibraryList(String[] libraryIds,String repositoryId,String LibraryName) {
+
+        List<LibraryEntity> libraryEntityList = libraryDao.findNotInLibraryList(libraryIds, repositoryId, LibraryName);
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
 
-        List<Library> libraries = libraryList.stream().sorted(Comparator.comparing(Library::getName)).collect(Collectors.toList());
-        return libraries;
+        return libraryList;
     }
 
     @Override

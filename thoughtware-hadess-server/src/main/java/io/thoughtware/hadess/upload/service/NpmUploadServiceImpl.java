@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
@@ -113,6 +114,10 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                     }
                     //提交制品
                     if (uploadData.getReferer().contains("publish")){
+                        //推送制品没有携带用户信息
+                        if(StringUtils.isEmpty(authorization)){
+                            return resultString(401,"携带的用户信息为空",0);
+                        }
                         String userName = getUserName(authorization, "Basic");
                         return npmSubmitData(uploadData, userName);
                     }
@@ -154,13 +159,16 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         JSONObject allData =(JSONObject) JSONObject.parse(result.toString());
         String userName = allData.get("name").toString();
         String password = allData.get("password").toString();
+        logger.info("登陆信息，姓名："+userName+"密码："+password);
         try{
             userCheckService.npmUserCheck(userName, password);
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put("result",true);
             String jsonString = JSON.toJSONString(resultMap);
+            logger.info("登陆成功");
             return resultString(201,jsonString,1);
         }catch (Exception e){
+            logger.info("登陆失败："+e.getMessage());
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put("result",false);
             resultMap.put("error","Bad username or password");

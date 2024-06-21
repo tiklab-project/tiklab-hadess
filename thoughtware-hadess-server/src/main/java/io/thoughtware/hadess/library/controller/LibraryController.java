@@ -118,16 +118,6 @@ public class LibraryController {
         return Result.ok(libraryList);
     }
 
-    @RequestMapping(path = "/findNotScanLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findNotScanLibraryList",desc = "查询未添加到扫描列表的制品")
-    @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
-    public Result<List<Library>> findNotScanLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
-        List<Library> libraryList = libraryService.findNotScanLibraryList(libraryQuery);
-        return Result.ok(libraryList);
-    }
-
-
-
 }
 
 

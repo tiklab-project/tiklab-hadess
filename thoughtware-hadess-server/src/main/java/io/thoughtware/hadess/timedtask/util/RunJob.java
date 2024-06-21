@@ -2,9 +2,7 @@ package io.thoughtware.hadess.timedtask.util;
 
 import io.thoughtware.eam.common.context.LoginContext;
 
-import io.thoughtware.hadess.scan.service.ScanService;
-import io.thoughtware.hadess.timedtask.model.TimeTaskInstance;
-import io.thoughtware.hadess.timedtask.service.TimeTaskInstanceService;
+
 import io.thoughtware.hadess.timedtask.service.TimeTaskService;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -23,7 +21,6 @@ public  class RunJob implements org.quartz.Job {
 
 
     public static  TimeTaskService taskService;
-    public static   ScanService scanService;
 
     public static   JobManager jobManager;
 
@@ -37,10 +34,6 @@ public  class RunJob implements org.quartz.Job {
         this.jobManager = jobManager;
     }
 
-    @Autowired
-    public void setScanService(ScanService scanService) {
-        this.scanService = scanService;
-    }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -55,12 +48,12 @@ public  class RunJob implements org.quartz.Job {
         logger.info("定时任务group:"+group);
 
         String loginId = LoginContext.getLoginId();
-        //执行扫描计划
+        /*//执行扫描计划
         scanService.execScan(execObjectId);
         taskService.updateTimeTask(taskInstanceId);
 
         logger.warn("定时任务触发完成:"+jobName);
-        jobManager.removeJob(group,jobName);
+        jobManager.removeJob(group,jobName);*/
     }
 
 }

@@ -55,7 +55,7 @@
         <dependency>
             <groupId>io.thoughtware</groupId>
             <artifactId>thoughtware-install-starter</artifactId>
-            <version>${thoughtware-upgrade.version}</version>
+            <version>${thoughtware-install.version}</version>
         </dependency>
         <dependency>
             <groupId>io.thoughtware</groupId>
