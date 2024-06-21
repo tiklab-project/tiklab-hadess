@@ -45,16 +45,10 @@ public class HelmUploadController  extends HttpServlet {
         if (StringUtils.isEmpty(authorization)){
             //response.setStatus(401);
             response.setHeader("X-Content-Type-Options", "nosniff");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-            // 设置响应的描述性文本为"Unauthorized"
+            response.setHeader("WWW-Authenticate", "BASIC realm=\"Hadess Repository Manager\"");
+            //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
 
-            //response.setHeader("WWW-Authenticate", "Basic realm=\"MyRealm\"");
-         /*   response.setHeader("Content-Type", "text/plain");
-            PrintWriter writer = response.getWriter();
-            writer.write("Unauthorized");
-            writer.close();*/
             return;
         }
 
