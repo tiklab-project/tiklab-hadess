@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -172,8 +174,11 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
     public List<RepositoryRemoteProxy> findAgencyByRpyIds(String[] repositoryIds) {
         List<RepositoryRemoteProxyEntity> agencyList = repositoryRemoteProxyDao.findAgencyByRpyIds(repositoryIds);
 
-        List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(agencyList,RepositoryRemoteProxy.class);
-        joinTemplate.joinQuery(repositoryRemoteProxyList);
-        return repositoryRemoteProxyList;
+        List<RepositoryRemoteProxy> proxyList = BeanMapper.mapList(agencyList,RepositoryRemoteProxy.class);
+
+        joinTemplate.joinQuery(proxyList);
+
+
+        return proxyList;
     }
 }

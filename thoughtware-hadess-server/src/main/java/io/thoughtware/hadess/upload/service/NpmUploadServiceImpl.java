@@ -267,7 +267,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryFile.setFileUrl(replace+"/"+tgzName);
             libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);
-            libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+            libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
             return resultString(200,null,2);
         }else {
             return  resultString(404,"制品库不存在",0);
@@ -349,7 +349,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                     //转发第三方 路径
                     String decode = URLDecoder.decode(after, "UTF-8");
                     String sendPath = agencyUrl +"/"+decode;
-                    String entityBody = RepositoryUtil.httpGet(sendPath);
+                    String entityBody = RepositoryUtil.httpGet(sendPath,"npm");
                     //替换Tarball （修改第二次请求路径）
                     String json = replaceTarball(entityBody,remoteProxy.getRepository().getName(), npmPubData.getRequestFullURL());
                     return resultString(200,json,1);
@@ -710,7 +710,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
     public void writeFile(String path,String tgzPath,byte[] decodedBytes) throws IOException {
         File folder = new File(path);
 
-        if (!folder.exists() && !folder.isDirectory()) {
+        if (!folder.exists()) {
             folder.mkdirs();
         }
         //创建tga文件
@@ -857,7 +857,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 //转发第三方 路径
                 String decode = URLDecoder.decode(after, "UTF-8");
                 String sendPath = agencyUrl +"/"+decode;
-                String entityBody = RepositoryUtil.httpGet(sendPath);
+                String entityBody = RepositoryUtil.httpGet(sendPath,"npm");
                 //替换Tarball （修改第二次请求路径）
                 String json = replaceTarball(entityBody,remoteProxy.getRepository().getName(), npmPubData.getRequestFullURL());
                 return resultString(200,json,"ok");
@@ -934,7 +934,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         libraryFile.setRepository(repository);
         libraryFile.setRelativePath(fileName);
         libraryFile.setSize(npmPubData.getFileSize());
-        libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
     }
 
     /**

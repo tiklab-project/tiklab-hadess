@@ -230,7 +230,7 @@ public class LibraryDao{
                      "WHERE li.library_type='"+libraryQuery.getLibraryType()+"' ";
 
         }
-      countSql=findCondition(libraryQuery,countSql,"count");
+        countSql=findCondition(libraryQuery,countSql,"count");
         Integer integer = jdbc.queryForObject(countSql, paramMap, Integer.class);
 
         pagination.setTotalRecord(integer);
@@ -451,6 +451,21 @@ public class LibraryDao{
     }
 
     /**
+     * 通过仓库id、制品名字查询
+     * @param repositoryId  仓库id
+     * @param name 制品名字
+     */
+    public List<LibraryEntity> findLibraryList(String repositoryId, String name){
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name",name)
+                .eq("repositoryId", repositoryId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
+
+
+
+    /**
      * 拼接查询最新版本制品的sql
      * @param
      * @return
@@ -463,6 +478,5 @@ public class LibraryDao{
                 "LEFT JOIN pack_library_version ver on re.id=ver.repository_id  GROUP BY ver.library_id ) t2 on li.id=t2.library_id " +
                 "WHERE  ver.create_time= t2.max_create_time and ";
     }
-
 
 }

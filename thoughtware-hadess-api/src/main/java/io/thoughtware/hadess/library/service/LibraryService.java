@@ -1,16 +1,13 @@
 package io.thoughtware.hadess.library.service;
 
 
+import io.thoughtware.hadess.library.model.*;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.core.page.Pagination;
 import io.thoughtware.toolkit.join.annotation.FindAll;
 import io.thoughtware.toolkit.join.annotation.FindList;
 import io.thoughtware.toolkit.join.annotation.FindOne;
 import io.thoughtware.toolkit.join.annotation.JoinProvider;
-import io.thoughtware.hadess.library.model.Library;
-import io.thoughtware.hadess.library.model.LibraryFile;
-import io.thoughtware.hadess.library.model.LibraryQuery;
-import io.thoughtware.hadess.library.model.LibraryVersion;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -196,4 +193,11 @@ public interface LibraryService {
      * @return
      */
     Library createMvnLibrary(Repository repository,String libraryName,String groupId);
+
+    /**
+     * 通过仓库id、制品名字查询制品
+     * @param repositoryId 仓库id
+     * @param name 制品名字 (包名)
+     */
+    List<Library> findLibraryList(String repositoryId, String name);
 }

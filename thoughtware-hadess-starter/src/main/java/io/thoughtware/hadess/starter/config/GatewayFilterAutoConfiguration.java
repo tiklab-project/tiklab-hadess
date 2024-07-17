@@ -108,6 +108,7 @@ public class GatewayFilterAutoConfiguration {
                         "/repository",
                         "/generic",
                         "/helm",
+                        "/go",
                         "/pushCenWarehouse",
                         "/libraryFile",
                         "/xpack",

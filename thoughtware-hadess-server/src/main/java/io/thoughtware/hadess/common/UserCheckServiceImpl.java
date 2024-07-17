@@ -65,7 +65,7 @@ public class UserCheckServiceImpl implements UserCheckService {
     }
 
     @Override
-    public void dockerUserCheck(String userData) {
+    public void basicsUserCheck(String userData) {
         String[] split = userData.split(":");
         String userName = split[0];
         String password = split[1];

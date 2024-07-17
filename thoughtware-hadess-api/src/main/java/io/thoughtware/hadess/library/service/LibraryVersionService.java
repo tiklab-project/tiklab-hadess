@@ -35,6 +35,7 @@ public interface LibraryVersionService {
     String createLibraryVersionSplice( LibraryVersion libraryVersion,String fileName);
 
 
+
     /**
     * 更新
     * @param libraryVersion
@@ -138,4 +139,12 @@ public interface LibraryVersionService {
      * @param libraryIds
      */
     List<LibraryVersion> findVersionByLibraryIds(String[] libraryIds);
+
+
+
+    /**
+     *  编辑制品
+     * @param libraryVersion    制品版本数据
+     */
+    String redactLibraryVersion( LibraryVersion libraryVersion);
 }

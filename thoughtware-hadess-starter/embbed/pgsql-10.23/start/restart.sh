@@ -2,6 +2,8 @@
 
 dir=""
 data=""
+username=""
+port=""
 
 #解析参数
 echo "Parse startup parameters"
@@ -13,6 +15,14 @@ for arg in "$@"; do
       ;;
     -D)
       data=$2
+      shift 2
+      ;;
+    -P)
+      port=$2
+      shift 2
+      ;;
+    -u)
+      username=$2
       shift 2
       ;;
   esac
@@ -29,20 +39,21 @@ valid_parameters(){
       echo "Data data Name Cannot be empty"
       exit 1
   fi
+
+  if [ -z "${username}" ]; then
+      echo "Data username Name Cannot be empty"
+      exit 1
+  fi
 }
 
 #启动
 restart_postgres(){
     echo "restart postgres data:${data}"
-    nohup ${dir}/bin/pg_ctl restart -D ${data} >${dir}/log.log 2>&1 &
+    nohup su -c "${dir}/bin/pg_ctl restart -D ${data}" -s /bin/sh ${username} >${dir}/log.log 2>&1 &
 }
 
-restart(){
-  valid_parameters
-  restart_postgres
-}
-
-restart
+valid_parameters
+restart_postgres
 
 
 

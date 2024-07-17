@@ -10,12 +10,12 @@ import java.util.Map;
 public interface DockerUploadService {
     /**
      * 用户校验
-     * @param userData 用户信息
+     * @param authorization 用户信息
      */
-    int userCheck(String userData);
+    Result<String> userCheck(String authorization);
 
     /**
-     * 推送-校验Sha256
+     * 推送-校验Sha256 。存在则直接返回文件大小
      * @param repositoryPath 路径
      */
     Result v2Sha256Check(String repositoryPath) throws Exception;
@@ -27,7 +27,7 @@ public interface DockerUploadService {
     Result uploadData(InputStream inputStream, String repositoryPath) throws IOException;
 
     /**
-     * 推送-创建会话
+     * 推送-创建会话 判断制品库是否存在
      * @param repositoryPath repositoryPath
      */
     Result createSession(String repositoryPath);
@@ -51,6 +51,12 @@ public interface DockerUploadService {
      * @param repositoryPath
      */
     Map<String, String> pullManifests(String repositoryPath);
+
+    /**
+     * HEAD请求拉取-manifests返回404，执行该get请求校验Manifests数据
+     * @param repositoryPath
+     */
+    String  verifyManifests(String repositoryPath);
 
     /**
      * 拉取-读取manifests、镜像数据

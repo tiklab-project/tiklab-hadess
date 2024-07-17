@@ -27,10 +27,10 @@ public interface UserCheckService {
     List<User> npmUserCheckByName(String userName);
 
     /**
-     * docker用户校验
+     * 基础用户校验 docker、helm
      * @param userData    用户数据
      */
-    void dockerUserCheck(String userData);
+    void basicsUserCheck(String userData);
 
     /**
      * generic 通用类型用户校验

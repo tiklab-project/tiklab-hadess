@@ -179,15 +179,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         return PaginationBuilder.build(pagination,libraryFileList);
     }
 
-    @Override
-    public List<LibraryFile> findLibraryFileByLibraryId(String[] repositoryIds,String fileName) {
-        List<LibraryFileEntity> fileByLibraryId = libraryFileDao.findLibraryFileByLibraryId(repositoryIds,fileName);
-        List<LibraryFile> libraryFileList = BeanMapper.mapList(fileByLibraryId,LibraryFile.class);
 
-
-        joinTemplate.joinQuery(libraryFileList);
-        return libraryFileList;
-    }
 
     @Override
     public List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery) {
@@ -223,7 +215,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
      *  @param versionId   制品版本id
      * @return
      */
-    public void libraryFileSplice(LibraryFile libraryFile,String versionId){
+    public void redactLibraryFile(LibraryFile libraryFile,String versionId){
         LibraryVersion libraryVersion = new LibraryVersion();
         libraryVersion.setId(versionId);
         libraryFile.setLibraryVersion(libraryVersion);
@@ -288,6 +280,15 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         }).collect(Collectors.toList());
         joinTemplate.joinQuery(collected);
         return collected;
+    }
+
+
+    @Override
+    public List<LibraryFile> findLibraryFileList(String[] repositoryIds,String relativePath) {
+        List<LibraryFileEntity> fileByLibraryId = libraryFileDao.findLibraryFileList(repositoryIds,relativePath);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(fileByLibraryId,LibraryFile.class);
+
+        return libraryFileList;
     }
 
     public static <T> java.util.function.Predicate<T> distinctByKey(java.util.function.Function<? super T, ?> keyExtractor) {

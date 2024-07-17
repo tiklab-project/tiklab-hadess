@@ -1,5 +1,6 @@
 package io.thoughtware.hadess.upload.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.thoughtware.core.Result;
 import io.thoughtware.hadess.library.model.*;
@@ -12,7 +13,10 @@ import io.thoughtware.hadess.library.service.LibraryVersionService;
 import io.thoughtware.hadess.repository.model.Repository;
 import io.thoughtware.hadess.repository.service.RepositoryService;
 import io.thoughtware.hadess.common.UserCheckService;
+import io.thoughtware.hadess.upload.model.error.DockerErrorResponse;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,15 +24,12 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class DockerUploadServiceImpl implements DockerUploadService {
-
+    private static Logger logger = LoggerFactory.getLogger(DockerUploadServiceImpl.class);
     @Autowired
     RepositoryService repositoryService;
 
@@ -54,12 +55,23 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
     public static Map<String , InputStream> blobsData = new HashMap<>();
     @Override
-    public int userCheck(String userData) {
+    public Result<String> userCheck(String authorization) {
+
+        //docker第一次访问没有用户信息 为了获取支持的验证机制
+        if (ObjectUtils.isEmpty(authorization)){
+
+            return Result.error(402,"用户信息不存在");
+        }
         try {
-            userCheckService.dockerUserCheck(userData);
-            return 200;
+            String basic = authorization.replace("Basic", "").trim();
+            byte[] decode = Base64.getDecoder().decode(basic);
+            //用户信息
+            String userData = new String(decode, "UTF-8");
+            userCheckService.basicsUserCheck(userData);
+            return Result.ok();
         }catch (Exception e){
-            return 401;
+            logger.info("docker登陆错误："+e.getMessage());
+            return Result.error(401,e.getMessage());
         }
     }
 
@@ -147,7 +159,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         String fileUrl = repository.getId() + "/" + libraryName + "/" + "blobs/" + fileName;
         libraryFile.setFileUrl(fileUrl);
         libraryFile.setRelativePath("blobs/" + fileName);
-        libraryFileService.libraryFileSplice(libraryFile,null);
+        libraryFileService.redactLibraryFile(libraryFile,null);
 
 
         blobsDataSize.put(fileName,String.valueOf(fileLength));
@@ -185,7 +197,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         File oldFile = new File(oldFileName);
         File newFile = new File(newFileName);
 
-        // 使用 renameTo() 方法将文件重命名
+        // 使用 renameTo() 移动文件
         boolean success = oldFile.renameTo(newFile);
 
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setRepositoryId(repository.getId()).setFileName(fileName));
@@ -274,7 +286,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
             libraryFile.setFileUrl(fileUrl);
             libraryFile.setRelativePath("tag/" + fileName);
-            libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+            libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
         }
 
         return readFile ;
@@ -293,17 +305,20 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         Repository repository = repositoryService.findRepository(repositoryName,"docker");
         if (ObjectUtils.isEmpty(repository)){
-            return putMapData("400","制品库不存在");
+            return putMapData("404",
+                    responseError(repositoryName+" 制品库不存在",repositoryName+"/"+libraryName,version));
         }
 
         List<LibraryFile> libraryFile = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, version);
         if (CollectionUtils.isEmpty(libraryFile)){
-             return putMapData("400","文件不存在");
+             return putMapData("404",
+                     responseError(libraryName+" 制品不存在",repositoryName+"/"+libraryName,version));
         }
         //证明数据manifests
         List<LibraryFile> libraryFiles = libraryFile.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(libraryFiles)){
-            return putMapData("400","文件不存在");
+            return putMapData("404",
+                    responseError(repositoryName+" 制品文件不存在",repositoryName+"/"+libraryName,version));
         }
 
         String fileName = libraryFiles.get(0).getFileName();
@@ -311,8 +326,14 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> readMirroringData(String repositoryPath) throws IOException {
+    public String verifyManifests(String repositoryPath) {
 
+
+        return null;
+    }
+
+    @Override
+    public Map<String, String> readMirroringData(String repositoryPath) throws IOException {
 
         //仓库名称
         String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
@@ -413,4 +434,32 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         return libraryName;
     }
 
+    /**
+     * 返回的失败结果
+     * @param massage massage
+     */
+    public String responseError(String massage,String imageName,String version){
+        DockerErrorResponse errorResponse = new DockerErrorResponse();
+
+        DockerErrorResponse.ErrorDetail errorDetail = new DockerErrorResponse.ErrorDetail();
+        errorDetail.setCode("MANIFEST_UNKNOWN");
+        errorDetail.setMessage(massage);
+        DockerErrorResponse.ErrorDetail.DetailItem detailItem = new DockerErrorResponse.ErrorDetail.DetailItem();
+        detailItem.setName(imageName);
+        detailItem.setTag(version);
+
+        errorDetail.setDetail(Arrays.asList(detailItem));
+        errorResponse.setErrors(Arrays.asList(errorDetail));
+
+        //转json字符串
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String s = objectMapper.writeValueAsString(errorResponse);
+            return s;
+        } catch (JsonProcessingException e) {
+            logger.info("转获取img:"+imageName+"失败结果为json失败："+e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+    }
 }

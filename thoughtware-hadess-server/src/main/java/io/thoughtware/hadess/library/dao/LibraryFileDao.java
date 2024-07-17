@@ -131,10 +131,10 @@ public class LibraryFileDao{
         return jpaTemplate.findPage(queryCondition,LibraryFileEntity.class);
     }
 
-    public List<LibraryFileEntity> findLibraryFileByLibraryId(String [] repositoryIds,String fileName){
+    public List<LibraryFileEntity> findLibraryFileList(String [] repositoryIds,String relativePath){
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
                 .in("repositoryId",repositoryIds)
-                .eq("fileName",fileName)
+                .eq("relativePath",relativePath)
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
