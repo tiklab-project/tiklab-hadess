@@ -31,7 +31,7 @@ public class Library extends BaseModel {
     private java.lang.String name;
 
     @NotNull
-    @ApiProperty(name="libraryType",desc="类型 maven、npm",required = true)
+    @ApiProperty(name="libraryType",desc="类型 maven、npm、docker、helm、go",required = true)
     private java.lang.String libraryType;
 
     @NotNull

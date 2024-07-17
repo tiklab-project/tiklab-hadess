@@ -198,10 +198,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Override
     public Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery) {
-        logger.info("时间1:"+System.currentTimeMillis());
         Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
         List<LibraryVersion> libraryVersionList=null;
-        logger.info("时间2:"+System.currentTimeMillis());
         if (CollectionUtils.isNotEmpty(pagination.getDataList())){
              libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
             joinTemplate.joinQuery(libraryVersionList);
@@ -212,7 +210,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             if (CollectionUtils.isNotEmpty(versions)){
                 libraryFileList = libraryFileService.findLibraryFileList(libraryVersionList.get(0).getLibrary().getId());
             }
-            logger.info("时间3:"+System.currentTimeMillis());
             for (LibraryVersion libraryVersion:libraryVersionList){
                 //制品的大小
                 String librarySize = librarySize(libraryVersion.getId());
@@ -224,7 +221,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                     snapshotData(libraryFileList,libraryVersion);
                 }
             }
-            logger.info("时间4:"+System.currentTimeMillis());
         }
         return PaginationBuilder.build(pagination,libraryVersionList);
     }
@@ -295,6 +291,22 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             libraryService.updateLibrary(libraryVersion.getLibrary());
         }
         return libraryVersionId;
+    }
+
+    @Override
+    public String redactLibraryVersion(LibraryVersion version) {
+        List<LibraryVersion> versionList = this.findLibraryVersionList(new LibraryVersionQuery().setVersion(version.getVersion())
+                .setLibraryId(version.getLibrary().getId()));
+
+        String versionId;
+        if (CollectionUtils.isNotEmpty(versionList)){
+            versionId=versionList.get(0).getId();
+            version.setId(versionId);
+            this.updateLibraryVersion(version);
+        }else {
+             versionId = this.createLibraryVersion(version);
+        }
+        return versionId;
     }
 
 

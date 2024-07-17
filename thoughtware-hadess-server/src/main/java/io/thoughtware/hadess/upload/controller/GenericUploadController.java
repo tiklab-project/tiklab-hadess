@@ -3,6 +3,7 @@ package io.thoughtware.hadess.upload.controller;
 import io.thoughtware.core.Result;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.repository.service.RepositoryService;
+import io.thoughtware.hadess.upload.common.response.GenericResponse;
 import io.thoughtware.hadess.upload.service.GenericUploadService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,30 +53,21 @@ public class GenericUploadController  extends HttpServlet {
             response.getWriter().print("{code:401,msg:用户信息不存在}");
             return;
         }
+
         String basic = authorization.replace("Basic", "").trim();
         byte[] decode = Base64.getDecoder().decode(basic);
         String userData = new String(decode, "UTF-8");
 
-
         String methodType = request.getHeader("type");
-
 
         if (StringUtils.isNotEmpty(methodType)&&("download").equals(methodType)){
             //下载
             Result<byte[]> result = genericUploadService.GenericDownload(repositoryPath, userData, version);
-          if (result.getCode()==0){
-              byte[] data = result.getData();
-              ServletOutputStream outputStream = response.getOutputStream();
-              outputStream.write(data);
-          }else {
-              String msg = result.getMsg();
-              response.getWriter().print(msg);
-          }
+            GenericResponse.basicsRep(result,response);
         }else {
             //上传
             InputStream inputStream = request.getInputStream();
             String result=genericUploadService.GenericUpload(inputStream,repositoryPath, userData,version);
-
             response.getWriter().print(result);
         }
     }

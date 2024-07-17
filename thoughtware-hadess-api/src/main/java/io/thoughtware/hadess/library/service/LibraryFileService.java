@@ -78,13 +78,6 @@ public interface LibraryFileService {
     */
     Pagination<LibraryFile> findLibraryFilePage(LibraryFileQuery libraryFileQuery);
 
-    /**
-     * 通过制品库id查询
-     * @param repositoryIds 制品库ids
-     * @param  fileName 文件名称
-     * @return
-     */
-    List<LibraryFile> findLibraryFileByLibraryId(String[] repositoryIds ,String fileName);
 
     /**
      * 查询最新版本的文件列表
@@ -94,12 +87,11 @@ public interface LibraryFileService {
     List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery);
 
     /**
-     * 查询最新版本的文件列表
+     * 编辑制品文件
      * @param libraryFile
      * @param versionId
-     * @return
      */
-     void libraryFileSplice(LibraryFile libraryFile,String versionId);
+     void redactLibraryFile(LibraryFile libraryFile,String versionId);
 
     /**
      * 通过地址like 查询
@@ -122,4 +114,13 @@ public interface LibraryFileService {
      * @return Pagination <LibraryFileEntity>
      */
     List<LibraryFile> dockerFile(LibraryFile libraryFile);
+
+
+    /**
+     * 通过仓库ids、路径查询
+     * @param repositoryIds 制品库ids
+     * @param  relativePath 文件相对的路径
+     */
+    List<LibraryFile> findLibraryFileList(String[] repositoryIds ,String relativePath);
+
 }

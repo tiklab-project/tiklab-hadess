@@ -2,12 +2,12 @@ package io.thoughtware.hadess.upload.controller;
 
 import io.thoughtware.core.Result;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
+import io.thoughtware.hadess.upload.common.response.HelmResponse;
+import io.thoughtware.hadess.upload.model.LibraryHelmClient;
 import io.thoughtware.hadess.upload.service.HelmUploadService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Base64;
-import java.util.Enumeration;
+
 
 @WebServlet(name = "helmServlet",urlPatterns = {"/helm/*"},
         initParams = {
@@ -32,43 +31,64 @@ public class HelmUploadController  extends HttpServlet {
     @Autowired
     HelmUploadService helmUploadService;
 
+
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String contextPath = request.getRequestURI();
-        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"helm");
+        String pathData = yamlDataMaService.getUploadRepositoryUrl(contextPath,"helm");
 
-
-        Enumeration<String> headerNames = request.getHeaderNames();
         //用户信息
         String authorization = request.getHeader("Authorization");
+        String agent = request.getHeader("user-agent");
 
-        if (StringUtils.isEmpty(authorization)){
-            //response.setStatus(401);
-            response.setHeader("X-Content-Type-Options", "nosniff");
-            response.setHeader("WWW-Authenticate", "BASIC realm=\"Hadess Repository Manager\"");
-            //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        //推送
+        if (agent.startsWith("curl")){
+            //推送用户信息认证
+            Result<String> result = helmUploadService.userCheck(authorization);
+            //认证失败返回错误信息
+            if (result.getCode()==401){
+                HelmResponse.helmRep(result,response);
+                return;
+            }
+            //获取请求信息
+            LibraryHelmClient helmClient = HelmResponse.findMultipartFile(request);
+            helmClient.setRepositoryName(pathData);
+            helmClient.setUserName(result.getData());
+            Result<String> uploadResult = helmUploadService.uploadData(helmClient);
+            HelmResponse.helmRep(uploadResult,response);
 
-            return;
+        }else {
+            //连接仓库( helm repo add)、更新仓库（helm repo update） 请求路径后缀为.yaml
+            if (contextPath.endsWith(".yaml")){
+                //连接仓库 用户信息认证
+                Result<byte[]> result = helmUploadService.connectWarehouse(authorization, pathData);
+                HelmResponse.helmRepVerify(result,response);
+            }
+            //拉取helm制品   请求路径 .tgz。
+            if (contextPath.endsWith(".tgz")){
+                //推送用户信息认证
+                Result<String> result = helmUploadService.userCheck(authorization);
+                //认证失败返回错误信息
+                if (result.getCode()==401){
+                    HelmResponse.helmRep(result,response);
+                }
+                Result<byte[]> pullData = helmUploadService.pullData(pathData);
+                ServletOutputStream outputStream = response.getOutputStream();
+                outputStream.write(pullData.getData());
+            }
         }
-
-
-        //解析用户信息
-        String basic = authorization.replace("Basic", "").trim();
-        byte[] decode = Base64.getDecoder().decode(basic);
-        String userData = new String(decode, "UTF-8");
-        int check = helmUploadService.userCheck(userData);
-        if (check==200){
-
-        }
-        response.setStatus(check);
-        response.setHeader("Content-Type", "text/x-yaml");
-        System.out.println("");
     }
 
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
     }
 }

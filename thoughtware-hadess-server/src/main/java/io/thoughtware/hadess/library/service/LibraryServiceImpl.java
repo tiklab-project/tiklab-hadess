@@ -1,7 +1,6 @@
 package io.thoughtware.hadess.library.service;
 
 import io.thoughtware.hadess.common.RepositoryUtil;
-import io.thoughtware.hadess.common.UuidGenerator;
 import io.thoughtware.hadess.common.XpackYamlDataMaService;
 import io.thoughtware.hadess.library.dao.LibraryDao;
 import io.thoughtware.hadess.library.entity.LibraryEntity;
@@ -33,13 +32,8 @@ import org.springframework.util.ObjectUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -329,6 +323,15 @@ public class LibraryServiceImpl implements LibraryService {
         return library;
     }
 
+    @Override
+    public List<Library> findLibraryList(String repositoryId, String name) {
+        List<LibraryEntity> libraryByCond = libraryDao.findLibraryList(repositoryId, name);
+        List<Library> libraryList = BeanMapper.mapList(libraryByCond,Library.class);
+        joinTemplate.joinQuery(libraryList);
+
+        return libraryList;
+    }
+
 
     @Override
     public Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
@@ -467,5 +470,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         return library;
     }
+
+
+
 }
 

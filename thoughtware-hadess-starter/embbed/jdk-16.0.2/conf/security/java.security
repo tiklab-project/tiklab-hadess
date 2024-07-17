@@ -71,8 +71,7 @@ security.provider.8=XMLDSig
 security.provider.9=SunPCSC
 security.provider.10=JdkLDAP
 security.provider.11=JdkSASL
-security.provider.12=Apple
-security.provider.13=SunPKCS11
+security.provider.12=SunPKCS11
 
 #
 # A list of preferred providers for specific algorithms. These providers will

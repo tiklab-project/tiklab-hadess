@@ -1,3 +1,4 @@
+#!/bin/bash
 
 dir=""
 file=""
@@ -10,7 +11,7 @@ for arg in "$@"; do
       dir=$2
       shift 2
       ;;
-     -f)
+    -f)
       file=$2
       shift 2
       ;;
@@ -24,17 +25,21 @@ valid_parameters(){
     exit 1
   fi
   if [ -z "${file}" ]; then
-    echo "TarFile file Cannot be empty"
-    exit 1
+      echo "Data version Name Cannot be empty"
+      exit 1
   fi
 }
 
 #解压文件
 tar_xvf(){
-  echo "tar ${file} --> ${dir}"
-  tar -xvf "${file}" -C "${dir}"
+  echo "tar file ${file}"
+  tar -xzvf "${file}" -C "${dir}"
 }
 
+mv_file(){
+  echo "mv file ${dir}/tmp ${dir}"
+  mv ${dir}/tmp/* ${dir}
+}
 
 copy(){
   valid_parameters

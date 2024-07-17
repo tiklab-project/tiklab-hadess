@@ -81,7 +81,7 @@ CREATE TABLE pack_repository_cluster_cfg(
 -- ----------------------------
 CREATE TABLE pack_library(
     id VARCHAR(12) PRIMARY KEY,
-    name varchar (128) NOT NULL,
+    name varchar (248) NOT NULL,
     library_type varchar (32) NOT NULL,
     repository_id varchar (12) NOT NULL,
     new_version varchar (64),

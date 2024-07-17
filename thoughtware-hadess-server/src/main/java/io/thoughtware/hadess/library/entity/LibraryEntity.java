@@ -18,7 +18,7 @@ public class LibraryEntity extends BaseModel {
     private String id;
 
     //制品名称
-    @Column(name = "name",length = 128,notNull = true)
+    @Column(name = "name",length = 248,notNull = true)
     private String name;
 
     //类型 maven、npm

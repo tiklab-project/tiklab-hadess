@@ -1,5 +1,6 @@
 package io.thoughtware.hadess.repository.service;
 import com.alibaba.fastjson.JSON;
+import io.thoughtware.core.exception.SystemException;
 import io.thoughtware.hadess.common.*;
 import io.thoughtware.hadess.library.dao.LibraryDao;
 import io.thoughtware.hadess.library.service.LibraryFileService;
@@ -29,12 +30,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.FileWriter;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -106,6 +110,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
 
     @Override
+    @Transactional
     public String createRepository(@NotNull @Valid Repository repository) {
 
         RepositoryEntity repositoryEntity = setRepositoryEntity(repository);
@@ -141,12 +146,14 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
 
         //创建服务器中的仓库文件夹
-        String repositoryFile = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
-        File file = new File(repositoryFile);
+        String repositoryBolder = yamlDataMaService.repositoryAddress() + "/" + repositoryId;
+        File file = new File(repositoryBolder);
         if (!file.exists()){
             file.mkdirs();
         }
 
+        //初始化helm制品库的索引文件
+        RepositoryUtil.initHelmIndexFile(repositoryBolder+"/index.yaml");
 
         String userId;
         //初始化示例仓库用户id 取Repository里面用户
@@ -491,6 +498,9 @@ public class RepositoryServiceImpl implements RepositoryService {
            if (("helm").equals(repository.getType())){
                absoluteAddress="http://" + serverIp + ":" + port + "/helm/"+repository.getRepositoryUrl();
            }
+           if (("go").equals(repository.getType())){
+               absoluteAddress="http://" + serverIp + ":" + port + "/go/"+repository.getRepositoryUrl();
+           }
        }
         return absoluteAddress;
     }
@@ -571,4 +581,6 @@ public class RepositoryServiceImpl implements RepositoryService {
             hadessMessageService.settingLog(map,HadessFinal.LOG_TYPE_CREATE,"repository");
         }
     }
+
+
 }

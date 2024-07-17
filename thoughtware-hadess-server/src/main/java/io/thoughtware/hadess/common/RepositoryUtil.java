@@ -5,10 +5,13 @@ import io.thoughtware.core.Result;
 import io.thoughtware.core.context.AppHomeContext;
 import io.thoughtware.core.exception.ApplicationException;
 import io.thoughtware.core.exception.SystemException;
+import io.thoughtware.hadess.upload.common.UploadTool;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
@@ -18,16 +21,17 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -177,22 +181,27 @@ public class RepositoryUtil {
     /**
      * 原生http  get调用
      * @param address 解压路径
+     * @ type 类型
      */
-    public static String httpGet(String address) throws Exception {
+    public static String httpGet(String address,String type) throws Exception {
 
         URL url = new URL(address);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(30000); //设置连接超时时间 单位毫秒
         conn.setRequestMethod("GET");
 
         int responseCode = conn.getResponseCode();
-        System.out.println("Response Code: " + responseCode);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
         StringBuilder response = new StringBuilder();
 
         while ((line = reader.readLine()) != null) {
-            response.append(line);
+            if (("go").equals(type)){
+                response.append(line).append("\n");
+            }else {
+                response.append(line) ;
+            }
         }
         reader.close();
         return response.toString();
@@ -309,7 +318,7 @@ public class RepositoryUtil {
         TarArchiveEntry entry;
         while ((entry = tarArchiveInputStream.getNextTarEntry()) != null) {
             String entryName = entry.getName();
-            File outputFile = new File(outputFolderPath + entryName);
+            File outputFile = new File(outputFolderPath +"/"+ entryName);
 
             if (entry.isDirectory()) {
                 outputFile.mkdirs();
@@ -396,6 +405,36 @@ public class RepositoryUtil {
 
         return hexString.toString();
     }
+
+
+    public static String   getSHA256ByPath(String filePath)  {
+
+        try {
+            MessageDigest digest  = MessageDigest.getInstance("SHA-256");
+            FileInputStream fis = new FileInputStream(filePath);
+            FileChannel channel = fis.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(8192); // 8 KB buffer
+            while (channel.read(buffer) != -1) {
+                buffer.flip();
+                digest.update(buffer);
+                buffer.clear();
+            }
+            byte[] hash = digest.digest();
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException | IOException e) {
+            throw new RuntimeException("sha256加密失败："+e);
+        }
+    }
+
 
     /**
      * 读取信息
@@ -528,7 +567,6 @@ public class RepositoryUtil {
      * @return
      */
     public static byte[] readFileData(File file) throws IOException {
-
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         int buf_size = 1024;
@@ -539,6 +577,27 @@ public class RepositoryUtil {
         }
         byte[] bytes = bos.toByteArray();
         return bytes;
+
+    }
+
+    /**
+     *  初始化helm的索引文件
+     *  @param indexFilePath   索引文件路径
+     */
+    public static void initHelmIndexFile(String indexFilePath)  {
+        File indexPathFile = new File(indexFilePath);
+        if (!indexPathFile.exists()){
+            try {
+                indexPathFile.createNewFile();
+                Map<String, Object> hashMap = new LinkedHashMap<>();
+                hashMap.put("apiVersion","v1");
+                hashMap.put("entries",new LinkedHashMap());
+                hashMap.put("generated", Instant.now().toString());
+                UploadTool.writeYamlFile(hashMap,indexFilePath);
+            } catch (IOException e) {
+                throw new RuntimeException("创建helm索引文件失败："+e);
+            }
+        }
 
     }
 }

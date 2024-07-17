@@ -582,6 +582,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         libraryFile.setFileSize(size);
         libraryFile.setSize(fileSize);
         libraryFile.setRepository(repository);
+
         libraryFile.setFileUrl(dataMap.get("contextPath"));
         if (dataMap.get("version").endsWith("-SNAPSHOT")&&!relativePath.contains("maven-metadata")){
             String timeRub = findSnapshotTime(dataMap);
@@ -591,7 +592,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
         libraryFile.setRelativePath(relativePath);
 
-        libraryFileService.libraryFileSplice(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
 
         logger.info("文件"+dataMap.get("fileName")+"大小："+fileSize);
         //修改制品最新版本的大小
