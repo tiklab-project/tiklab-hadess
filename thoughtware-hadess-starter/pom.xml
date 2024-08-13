@@ -372,7 +372,12 @@
                 <yaml-type>/config/prd</yaml-type>
             </properties>
         </profile>
-
+        <profile>
+            <id>env-pub</id>
+            <properties>
+                <yaml-type>/config/pub</yaml-type>
+            </properties>
+        </profile>
         <!--demo-->
         <profile>
             <id>env-demo</id>
