@@ -49,7 +49,7 @@ dfs:
     port: 4083
     datapath: ${DATA_HOME}/files
   client:
-    url: 127.0.0.1:4000
+    url: 127.0.0.1:4083
     bucket: ${app.name}
 
 #dcs config
@@ -60,7 +60,7 @@ dcs:
     port: 5083
     datapath: ${DATA_HOME}/caches
   client:
-    url: 127.0.0.1:5000
+    url: 127.0.0.1:5083
     group: g1
     database: dcs1
     expire: 7200
@@ -73,7 +73,7 @@ dss:
     port: 6083
     datapath: ${DATA_HOME}/index
   client:
-    url: 127.0.0.1:6000
+    url: 127.0.0.1:6083
     bucket: ${app.name}
 
 
