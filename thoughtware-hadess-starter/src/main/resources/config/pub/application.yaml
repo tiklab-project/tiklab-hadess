@@ -46,7 +46,7 @@ dfs:
   server:
     enabled: false
     mode: server
-    port: 4000
+    port: 4083
     datapath: ${DATA_HOME}/files
   client:
     url: 127.0.0.1:4000
@@ -57,7 +57,7 @@ dcs:
   server:
     enabled: ture
     mode: server
-    port: 5000
+    port: 5083
     datapath: ${DATA_HOME}/caches
   client:
     url: 127.0.0.1:5000
@@ -70,7 +70,7 @@ dss:
   server:
     enabled: false
     mode: server
-    port: 6000
+    port: 6083
     datapath: ${DATA_HOME}/index
   client:
     url: 127.0.0.1:6000
