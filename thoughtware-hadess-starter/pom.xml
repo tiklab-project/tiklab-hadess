@@ -433,7 +433,7 @@
                             <descriptors>
                                 <descriptor>assembly/distribution.xml</descriptor>
                             </descriptors>
-                            <finalName>thoughtware-hadess-1.0.0</finalName>
+                            <finalName>thoughtware-hadess-1.0.0-${timestamp}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                         <phase>package</phase>
