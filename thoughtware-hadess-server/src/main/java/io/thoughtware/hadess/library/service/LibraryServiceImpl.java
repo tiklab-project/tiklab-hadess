@@ -340,8 +340,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         if (CollectionUtils.isNotEmpty(mavenLibraryList.getDataList())){
             for (Library library:mavenLibraryList.getDataList()){
-                if (!ObjectUtils.isEmpty(library.getSize())){
-                    String size = RepositoryUtil.formatSize(library.getSize());
+                if (!ObjectUtils.isEmpty(library.getLibrarySize())){
+                    String size = RepositoryUtil.formatSize(library.getLibrarySize());
                     library.setVersionSize(size);
                 }
             }
@@ -356,8 +356,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         if (CollectionUtils.isNotEmpty(libraryList.getDataList())){
             for (Library library:libraryList.getDataList()){
-                if (!ObjectUtils.isEmpty(library.getSize())){
-                    String size = RepositoryUtil.formatSize(library.getSize());
+                if (!ObjectUtils.isEmpty(library.getLibrarySize())){
+                    String size = RepositoryUtil.formatSize(library.getLibrarySize());
                     library.setVersionSize(size);
                 }
             }

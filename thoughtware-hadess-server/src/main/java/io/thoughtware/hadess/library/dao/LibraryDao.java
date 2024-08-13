@@ -166,7 +166,7 @@ public class LibraryDao{
             /* countSql="SELECT COUNT(DISTINCT li.id) FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
                     "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id WHERE " ;*/
 
-            countSql="SELECT count(1)  FROM  pack_repository re " + jointNewSql();
+            countSql="SELECT count(1)  FROM  pack_repository re " + jointNewSql("count");
 
         }else {
              countSql="SELECT count(1) FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
@@ -185,12 +185,15 @@ public class LibraryDao{
         //查询最新版本或者所有版本
         if (("new").equals(libraryQuery.getVersionType())){
             //根据制品查询出所有版本然后取最新创建的
-            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId, ver.size,ver.update_time,lim.group_id, lim.artifact_id FROM  pack_repository re " +
-                    jointNewSql();
+            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId, ver.size,ver.update_time,lim.group_id, lim.artifact_id,sum(file.size) AS librarysize " +
+                    " FROM  pack_repository re " +
+                    jointNewSql("find");
         }else {
-            sql="SELECT li.* , ver.version as showVersion, ver.id as versionId,ver.size,ver.update_time, lim.group_id, lim.artifact_id FROM  pack_repository re" +
+            sql="SELECT li.* , ver.version as showVersion, ver.id as versionId,ver.update_time, lim.group_id, lim.artifact_id ,sum(file.size) AS librarysize " +
+                    " FROM  pack_repository re" +
                     " LEFT JOIN pack_library li on re.id=li.repository_id " +
-                    "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
+                    " LEFT JOIN pack_library_file file ON li.id=file.library_id "+
+                    " LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
                     "RIGHT JOIN pack_library_version ver ON li.id=ver.library_id " +
                     "WHERE " ;
         }
@@ -221,13 +224,13 @@ public class LibraryDao{
 
         String countSql;
         if (("new").equals(libraryQuery.getVersionType())){
-            countSql="SELECT count(1)  FROM  pack_repository re " + jointNewSql()+ " li.library_type='"+libraryQuery.getLibraryType()+"'";
+            countSql="SELECT count(1)  FROM  pack_repository re " + jointNewSql("count")+ " li.library_type='"+libraryQuery.getLibraryType()+"'";
 
         }else {
              countSql="SELECT count(1) FROM  pack_repository re LEFT JOIN pack_library li on re.id=li.repository_id " +
-                    "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
-                     "RIGHT JOIN pack_library_version ver ON li.id=ver.library_id " +
-                     "WHERE li.library_type='"+libraryQuery.getLibraryType()+"' ";
+                    " LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
+                     " RIGHT JOIN pack_library_version ver ON li.id=ver.library_id " +
+                     " WHERE li.library_type='"+libraryQuery.getLibraryType()+"' ";
 
         }
         countSql=findCondition(libraryQuery,countSql,"count");
@@ -239,13 +242,15 @@ public class LibraryDao{
 
         String sql;
         if (("new").equals(libraryQuery.getVersionType())){
-            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId, ver.size,ver.update_time,lim.group_id, lim.artifact_id,re.name as repositoryName FROM  pack_repository re " +
-                    jointNewSql() +" li.library_type='"+libraryQuery.getLibraryType()+"'";
+            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId,ver.update_time,lim.group_id, lim.artifact_id,re.name as repositoryName ,sum(file.size) AS librarySize" +
+                    " FROM  pack_repository re " + jointNewSql("find") +" li.library_type='"+libraryQuery.getLibraryType()+"'";
         }else {
-            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId, ver.size,ver.update_time,lim.group_id, lim.artifact_id ,re.name as repositoryName FROM  pack_repository re " +
+            sql="SELECT li.* ,ver.version as showVersion , ver.id as versionId,ver.update_time,lim.group_id, lim.artifact_id ,re.name as repositoryName,sum(file.size) AS librarySize" +
+                    " FROM  pack_repository re " +
                     "LEFT JOIN pack_library li on re.id=li.repository_id " +
                     "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
-                    "RIGHT JOIN pack_library_version ver ON li.id=ver.library_id" +
+                    " RIGHT JOIN pack_library_version ver ON li.id=ver.library_id" +
+                    " LEFT JOIN pack_library_file file ON li.id=file.library_id"+
                     " WHERE li.library_type='"+libraryQuery.getLibraryType()+"'";
         }
         sql=findCondition(libraryQuery,sql,"find");
@@ -274,7 +279,7 @@ public class LibraryDao{
 
     public JdbcTemplate getJdbcTemplate() {
         io.thoughtware.dal.jdbc.JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
-        return jpaTemplate.getJdbcTemplate();
+        return jdbcTemplate;
     }
 
     /**
@@ -386,8 +391,11 @@ public class LibraryDao{
             sql = sql + " and li.name like '%" + libraryQuery.getName()+ "%'";
         }
         //查询类型为查询数据且排序有数据
-        if (("find").equals(type)&&StringUtils.isNotEmpty(libraryQuery.getSort())){
-            sql=sql+" ORDER BY ver.size "+  libraryQuery.getSort();
+        if (("find").equals(type)){
+            sql=sql+" GROUP BY re.id,li.id,lim.id,ver.id ";
+            if (StringUtils.isNotEmpty(libraryQuery.getSort())){
+                sql=sql+" ORDER BY librarySize "+  libraryQuery.getSort();
+            }
         }
 
         return sql;
@@ -421,9 +429,17 @@ public class LibraryDao{
         }
 
         //查询类型为查询数据且排序有数据
+        if (("find").equals(type)){
+            sql=sql+" GROUP BY re.id,li.id,lim.id,ver.id ";
+            if (StringUtils.isNotEmpty(libraryQuery.getSort())){
+                sql=sql+" ORDER BY librarySize "+  libraryQuery.getSort();
+            }
+        }
+
+      /*  //查询类型为查询数据且排序有数据
         if (("find").equals(type)&&StringUtils.isNotEmpty(libraryQuery.getSort())){
             sql=sql+" ORDER BY ver.size "+  libraryQuery.getSort();
-        }
+        }*/
         return sql;
     }
 
@@ -470,13 +486,23 @@ public class LibraryDao{
      * @param
      * @return
      */
-    public String jointNewSql(){
-        return " LEFT JOIN pack_library li on re.id=li.repository_id " +
-                "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
-                "LEFT JOIN pack_library_version ver ON li.id=ver.library_id " +
-                "LEFT JOIN  (SELECT ver.library_id,MAX(ver.create_time) AS max_create_time  FROM pack_repository re " +
-                "LEFT JOIN pack_library_version ver on re.id=ver.repository_id  GROUP BY ver.library_id ) t2 on li.id=t2.library_id " +
-                "WHERE  ver.create_time= t2.max_create_time and ";
+    public String jointNewSql(String type){
+        if (type.equals("count") ){
+            return " LEFT JOIN pack_library li on re.id=li.repository_id " +
+                    "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
+                    "LEFT JOIN pack_library_version ver ON li.id=ver.library_id " +
+                    "LEFT JOIN  (SELECT ver.library_id,MAX(ver.create_time) AS max_create_time  FROM pack_repository re " +
+                    "LEFT JOIN pack_library_version ver on re.id=ver.repository_id  GROUP BY ver.library_id ) t2 on li.id=t2.library_id " +
+                    "WHERE  ver.create_time= t2.max_create_time and ";
+        }else {
+            return " LEFT JOIN pack_library li on re.id=li.repository_id " +
+                    "LEFT JOIN pack_library_maven lim ON li.id=lim.library_id " +
+                    "LEFT JOIN pack_library_version ver ON li.id=ver.library_id " +
+                    "LEFT JOIN pack_library_file file ON li.id=file.library_id "+
+                    "LEFT JOIN  (SELECT ver.library_id,MAX(ver.create_time) AS max_create_time  FROM pack_repository re " +
+                    "LEFT JOIN pack_library_version ver on re.id=ver.repository_id  GROUP BY ver.library_id ) t2 on li.id=t2.library_id " +
+                    "WHERE  ver.create_time= t2.max_create_time and ";
+        }
     }
 
 }

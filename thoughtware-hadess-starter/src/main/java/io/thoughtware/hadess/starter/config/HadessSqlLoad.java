@@ -78,6 +78,10 @@ public class HadessSqlLoad {
         dsmConfig.newVersion("1.0.8", new String[]{
                 "message_1.0.8"
         });
+        dsmConfig.newVersion("1.1.1", new String[]{
+             "user_1.1.1"
+        });
+
         return dsmConfig;
     }
 }

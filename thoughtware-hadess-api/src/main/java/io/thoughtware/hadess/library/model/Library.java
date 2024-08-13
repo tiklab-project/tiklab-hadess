@@ -53,10 +53,12 @@ public class Library extends BaseModel {
     @ApiProperty(name="newVersion",desc="最新版本")
     private java.lang.String newVersion;
 
-    @ApiProperty(name="size",desc="最新版本大小")
+    @ApiProperty(name="size",desc="制品大小")
     private java.lang.Long size;
 
     /*---------其他字段----------*/
+    @ApiProperty(name="size",desc="制品大小")
+    private Long librarySize;
 
     @ApiProperty(name="versionId",desc="展示版本的id")
     private java.lang.String versionId;
@@ -285,5 +287,13 @@ public class Library extends BaseModel {
 
     public void setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
+    }
+
+    public Long getLibrarySize() {
+        return librarySize;
+    }
+
+    public void setLibrarySize(Long librarySize) {
+        this.librarySize = librarySize;
     }
 }
