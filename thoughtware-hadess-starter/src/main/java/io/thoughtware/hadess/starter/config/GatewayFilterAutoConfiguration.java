@@ -92,6 +92,7 @@ public class GatewayFilterAutoConfiguration {
 
                         "/message/messageItem/syncUpdateMessage",
                         "/message/messageItem/syncDeleteMessage",
+                        "/permission/findPermissions"
 
                 })
                 .ignorePreUrls(new String[]{
@@ -132,22 +133,7 @@ public class GatewayFilterAutoConfiguration {
     //gateway路由配置
     @Bean
     RouterConfig routerConfig(){
-        String[] s = {
-                "/user",
-                "/eam",
-                "/appLink",
-                "/todo/deletetodo",
-                "/todo/updatetodo",
-                "/todo/detailtodo",
-                "/todo/findtodopage",
-                "/message/message",
-                "/message/messageItem",
-                "/message/messageReceiver",
-                "/oplog/deletelog",
-                "/oplog/updatelog",
-                "/oplog/detaillog",
-                "/oplog/findlogpage",
-        };
+        String[] s = new String[]{};
 
         if (enableEam){
 

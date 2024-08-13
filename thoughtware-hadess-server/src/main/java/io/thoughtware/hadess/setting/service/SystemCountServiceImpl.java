@@ -6,7 +6,6 @@ import io.thoughtware.licence.licence.model.Version;
 import io.thoughtware.licence.licence.service.VersionService;
 import io.thoughtware.message.message.service.MessageNoticeService;
 import io.thoughtware.message.setting.service.MessageSendTypeService;
-import io.thoughtware.plugin.manager.service.PluginManagerService;
 import io.thoughtware.privilege.role.service.RoleService;
 import io.thoughtware.security.backups.service.BackupsDbService;
 import io.thoughtware.user.directory.service.UserDirService;
@@ -43,8 +42,6 @@ public class SystemCountServiceImpl implements SystemCountService{
     @Autowired
     MessageSendTypeService messageSendTypeService;
 
-    @Autowired
-    PluginManagerService pluginManagerService;
 
     @Autowired
     VersionService versionService;
@@ -69,8 +66,6 @@ public class SystemCountServiceImpl implements SystemCountService{
         Integer userDirNumber = userDirService.findUserDirNumber();
         Integer noticeNumber = messageNoticeService.findNoticeNumber("gittok");
         Integer sendTypeNumber = messageSendTypeService.findSendTypeNumber();
-        Integer installPluginNumber = pluginManagerService.findInstallPluginNumber();
-        Integer shopPluginNumber = pluginManagerService.findShopPluginNumber();
         Version version = versionService.getVersion();
         Integer applyAuthNumber = applyAuthService.findApplyAuthNumber();
         String lastBackupsTime = backupsDbService.findLastBackupsTime();
@@ -86,8 +81,6 @@ public class SystemCountServiceImpl implements SystemCountService{
         systemCount.setUserDirNum(userDirNumber);
         systemCount.setMessageNoticeNum(noticeNumber);
         systemCount.setMessageSendTypeNum(sendTypeNumber);
-        systemCount.setInstallPluginNum(installPluginNumber);
-        systemCount.setPluginNum(shopPluginNumber);
         systemCount.setVersion(version);
         systemCount.setAuthUserNum(applyAuthNumber);
         systemCount.setBackupsTime(lastBackupsTime);
