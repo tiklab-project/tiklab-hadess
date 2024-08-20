@@ -110,6 +110,14 @@ public class LibraryController {
         return Result.ok(listByCondition);
     }
 
+    @RequestMapping(path = "/findLibraryListByCond",method = RequestMethod.POST)
+    @ApiMethod(name = "findLibraryListByCond",desc = "通过搜索信息 查询制品")
+    @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
+    public Result<Pagination<Library>> findLibraryListByCond(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
+        Pagination<Library> listByCondition = libraryService.findLibraryListByCond(libraryQuery);
+        return Result.ok(listByCondition);
+    }
+
     @RequestMapping(path = "/findNotPushLibraryList",method = RequestMethod.POST)
     @ApiMethod(name = "findNotPushLibraryList",desc = "查询未添加到推送中央仓库的记录的制品列表")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)

@@ -333,6 +333,8 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
 
+
+
     @Override
     public Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
         findRepositoryGroup(libraryQuery);
@@ -364,6 +366,15 @@ public class LibraryServiceImpl implements LibraryService {
         }
         return libraryList;
     }
+
+
+    @Override
+    public Pagination<Library> findLibraryListByCond(LibraryQuery libraryQuery) {
+        Pagination<Library> libraryList=libraryDao.findLibraryListByCond(libraryQuery);
+        return libraryList;
+    }
+
+
 
     @Override
     public List<Library> findNotPushLibraryList(LibraryQuery libraryQuery) {
