@@ -200,4 +200,9 @@ public interface LibraryService {
      * @param name 制品名字 (包名)
      */
     List<Library> findLibraryList(String repositoryId, String name);
+
+    /**通过类型、搜索信息分页查询制品文件
+     * @param libraryQuery libraryQuery
+     */
+    Pagination<Library> findLibraryListByCond(LibraryQuery libraryQuery);
 }

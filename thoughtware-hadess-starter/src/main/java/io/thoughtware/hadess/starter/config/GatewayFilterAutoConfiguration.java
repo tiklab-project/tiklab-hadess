@@ -104,7 +104,6 @@ public class GatewayFilterAutoConfiguration {
                         "/plugin",
                         "/authConfig",
                         "/services",
-                        "/repository",
                         "/library",
                         "/repository",
                         "/generic",

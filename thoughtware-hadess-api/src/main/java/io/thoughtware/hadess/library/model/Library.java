@@ -107,6 +107,10 @@ public class Library extends BaseModel {
     @ApiProperty(name="oldVersion",desc="原版本")
     private String oldVersion;
 
+    @ApiProperty(name="versionCount",desc="版本数量")
+    private Integer versionCount;
+
+
     public java.lang.String getId() {
         return id;
     }
@@ -295,5 +299,13 @@ public class Library extends BaseModel {
 
     public void setLibrarySize(Long librarySize) {
         this.librarySize = librarySize;
+    }
+
+    public Integer getVersionCount() {
+        return versionCount;
+    }
+
+    public void setVersionCount(Integer versionCount) {
+        this.versionCount = versionCount;
     }
 }

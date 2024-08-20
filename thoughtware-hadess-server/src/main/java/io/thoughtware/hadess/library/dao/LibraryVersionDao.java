@@ -109,18 +109,13 @@ public class LibraryVersionDao{
      * @return Pagination <LibraryVersionEntity>
      */
     public Pagination<LibraryVersionEntity> findLibraryVersionPage(LibraryVersionQuery libraryVersionQuery) {
-
-
         QueryBuilders pagination = QueryBuilders.createQuery(LibraryVersionEntity.class)
                 .eq("repositoryId", libraryVersionQuery.getRepositoryId())
                 .eq("version", libraryVersionQuery.getVersion())
                 .eq("libraryId", libraryVersionQuery.getLibraryId())
                 .orders(libraryVersionQuery.getOrderParams())
                 .pagination(libraryVersionQuery.getPageParam());
-       /* if (StringUtils.isNotEmpty(libraryVersionQuery.getCurrentVersionId())){
-            String[] versionIds = {libraryVersionQuery.getCurrentVersionId()};
-            pagination=pagination.notIn("id",versionIds);
-        }*/
+
         QueryCondition queryCondition = pagination.get();
 
 

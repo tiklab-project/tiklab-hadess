@@ -51,7 +51,10 @@ public class LibraryQuery implements Serializable {
         private String scanPlayId;
 
         @ApiProperty(name ="versionType",desc = "查询版本类型 all、new")
-        private String versionType;
+        private String versionType="new";
+
+        @ApiProperty(name ="searchName",desc = "搜索名字")
+        private String searchName;
 
         public List<Order> getOrderParams() {
             return orderParams;
@@ -152,5 +155,13 @@ public class LibraryQuery implements Serializable {
 
         public void setVersionType(String versionType) {
             this.versionType = versionType;
+        }
+
+        public String getSearchName() {
+            return searchName;
+        }
+
+        public void setSearchName(String searchName) {
+            this.searchName = searchName;
         }
 }

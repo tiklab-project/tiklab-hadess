@@ -124,19 +124,19 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public LibraryVersion findLibraryVersion(@NotNull String id) {
         LibraryVersion libraryVersion = findOne(id);
 
-        List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
-        if (CollectionUtils.isNotEmpty(libraryMavenList)){
-            libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
-            libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+        if (ObjectUtils.isEmpty(libraryVersion)){
+            return null;
+        }
 
-            List<PullInfo> pullInfoList = pullInfoService.findPullInfoList(new PullInfoQuery().setLibraryVersionId(libraryMavenList.get(0).getId()));
-            if (CollectionUtils.isNotEmpty(pullInfoList)){
-                PullInfo pullInfo = pullInfoList.get(0);
-                libraryVersion.setPullUser(pullInfo.getUser().getName());
-                libraryVersion.setPullTime(pullInfo.getPullCreate());
-                libraryVersion.setPullNum(pullInfoList.size());
+        if (("maven").equals(libraryVersion.getLibraryType())){
+            List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
+            if (CollectionUtils.isNotEmpty(libraryMavenList)){
+                libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
+                libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+
             }
         }
+
         //制品的大小
         String librarySize = librarySize(libraryVersion.getId());
         libraryVersion.setShowSize(librarySize);
@@ -145,6 +145,10 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
         return libraryVersion;
     }
+
+
+
+
 
     @Override
     public LibraryVersion findLibraryVersionById(String versionId) {
@@ -310,6 +314,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     }
 
 
+
+
     @Override
     public void deleteVersionByCondition(String field, String value) {
         DeleteCondition deleteCondition = DeleteBuilders.createDelete(LibraryVersionEntity.class)
@@ -344,7 +350,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                 libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
 
             }
-
             List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
             librarySize = RepositoryUtil.formatSizeSum(sizeList);
 
