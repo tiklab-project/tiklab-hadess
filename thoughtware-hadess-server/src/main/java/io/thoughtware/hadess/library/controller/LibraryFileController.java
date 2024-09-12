@@ -62,6 +62,15 @@ public class LibraryFileController  {
         return Result.ok();
     }
 
+    @RequestMapping(path="/deleteSnapshotFile",method = RequestMethod.POST)
+    @ApiMethod(name = "deleteSnapshotFile",desc = "通过快照版本和版本id删除")
+    @ApiParam(name = "id",desc = "id",required = true)
+    public Result<Void> deleteSnapshotFile(@NotNull String versionId,@NotNull String snapshotVersion){
+        libraryFileService.deleteLibraryFile(versionId,snapshotVersion);
+
+        return Result.ok();
+    }
+
     @RequestMapping(path="/findLibraryFile",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryFile",desc = "通过id查询制品文件")
     @ApiParam(name = "id",desc = "id",required = true)

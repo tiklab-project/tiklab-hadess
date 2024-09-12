@@ -333,11 +333,11 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
 
-
-
     @Override
     public Pagination<Library> findLibraryListByRepository(LibraryQuery libraryQuery) {
+        //仓库为组合库 查询组合库关联的制品库
         findRepositoryGroup(libraryQuery);
+
         Pagination<Library> mavenLibraryList = libraryDao.findLibraryListByRepository(libraryQuery);
 
         if (CollectionUtils.isNotEmpty(mavenLibraryList.getDataList())){

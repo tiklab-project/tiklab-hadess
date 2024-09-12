@@ -71,6 +71,10 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
         libraryVersionDao.updateLibraryVersion(libraryVersionEntity);
     }
 
+    @Override
+    public void deleteOnlyVersion(String id) {
+        libraryVersionDao.deleteLibraryVersion(id);
+    }
 
 
     @Override
@@ -122,6 +126,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
     @Override
     public LibraryVersion findLibraryVersion(@NotNull String id) {
+
         LibraryVersion libraryVersion = findOne(id);
 
         if (ObjectUtils.isEmpty(libraryVersion)){
@@ -133,19 +138,58 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
             if (CollectionUtils.isNotEmpty(libraryMavenList)){
                 libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
                 libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
-
             }
         }
 
         //制品的大小
-        String librarySize = librarySize(libraryVersion.getId());
-        libraryVersion.setShowSize(librarySize);
+        List<String> libraryFile = getLibraryFile(libraryVersion.getId());
+        if (CollectionUtils.isNotEmpty(libraryFile)){
+            String librarySize = RepositoryUtil.formatSizeSum(libraryFile);
+            libraryVersion.setShowSize(librarySize);
+            libraryVersion.setFileNum(libraryFile.size());
+        }
 
         joinTemplate.joinQuery(libraryVersion);
-
         return libraryVersion;
     }
 
+    @Override
+    public LibraryVersion findVersionByLibraryId(String libraryId, String versionId) {
+        List<LibraryVersionEntity> libraryVersionEntityList = libraryVersionDao.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(libraryId));
+        List<LibraryVersion> libraryVersionList = BeanMapper.mapList(libraryVersionEntityList,LibraryVersion.class);
+        LibraryVersion libraryVersion=null;
+        if (CollectionUtils.isNotEmpty(libraryVersionList)){
+            List<LibraryVersion> versions;
+            if (StringUtils.isNotEmpty(versionId)){
+                 versions = libraryVersionList.stream().filter(a -> versionId.equals(a.getId())).collect(Collectors.toList());
+            }else {
+                //第一次进入制品版本，查询最新的版本
+               versions = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
+            }
+            if (CollectionUtils.isNotEmpty(versions)){
+                 libraryVersion = versions.get(0);
+                //maven类型的制品需要查询 maven特有的数据
+                if (("maven").equals(libraryVersion.getLibraryType())){
+                    List<LibraryMaven> libraryMavenList = libraryMavenService.findLibraryMavenList(new LibraryMavenQuery().setLibraryId(libraryVersion.getLibrary().getId()));
+                    if (CollectionUtils.isNotEmpty(libraryMavenList)){
+                        libraryVersion.setArtifactId(libraryMavenList.get(0).getArtifactId());
+                        libraryVersion.setGroupId(libraryMavenList.get(0).getGroupId());
+                    }
+                }
+
+                //制品的大小
+                List<String> libraryFile = getLibraryFile(libraryVersion.getId());
+                if (CollectionUtils.isNotEmpty(libraryFile)){
+                    String librarySize = RepositoryUtil.formatSizeSum(libraryFile);
+                    libraryVersion.setShowSize(librarySize);
+                    libraryVersion.setFileNum(libraryFile.size());
+                }
+                libraryVersion.setVersionNum(libraryVersionList.size());
+                joinTemplate.joinQuery(libraryVersion);
+            }
+        }
+        return libraryVersion;
+    }
 
 
 
@@ -215,10 +259,13 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                 libraryFileList = libraryFileService.findLibraryFileList(libraryVersionList.get(0).getLibrary().getId());
             }
             for (LibraryVersion libraryVersion:libraryVersionList){
-                //制品的大小
-                String librarySize = librarySize(libraryVersion.getId());
-                libraryVersion.setShowSize(librarySize);
 
+                //制品的大小
+                List<String> libraryFile = getLibraryFile(libraryVersion.getId());
+                if (CollectionUtils.isNotEmpty(libraryFile)){
+                    String librarySize = RepositoryUtil.formatSizeSum(libraryFile);
+                    libraryVersion.setShowSize(librarySize);
+                }
 
                 //查询快照版本的时间戳版本
                 if (libraryVersion.getVersion().toUpperCase().endsWith("SNAPSHOT")){
@@ -315,7 +362,6 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
 
 
 
-
     @Override
     public void deleteVersionByCondition(String field, String value) {
         DeleteCondition deleteCondition = DeleteBuilders.createDelete(LibraryVersionEntity.class)
@@ -339,22 +385,27 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
      * @param libraryVersionId    制品版本id
      * @return
      */
-    public String librarySize( String libraryVersionId){
-        String librarySize=null;
+    public List<String> getLibraryFile( String libraryVersionId){
+        List<String> sizeList=null;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
 
+        //制品文件 类型为docker
         if (!CollectionUtils.isEmpty(libraryFileList)){
             LibraryFile libraryFile = libraryFileList.get(0);
             if (("docker").equals(libraryFile.getRepository().getType())){
                 List<LibraryFile> libraryFiles = libraryFileService.dockerFile(libraryFile);
                 libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
-
             }
-            List<String> sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
-            librarySize = RepositoryUtil.formatSizeSum(sizeList);
 
+            //maven 快照版本的时候
+            LibraryVersion version = libraryFile.getLibraryVersion();
+            if(("maven").equals(version.getLibraryType())&&version.getVersion().endsWith("SNAPSHOT")){
+                libraryFileList=libraryFileList.stream().filter(a->!a.getRelativePath().contains("maven-metadata.xml")).collect(Collectors.toList());
+            }
+
+             sizeList = libraryFileList.stream().map(LibraryFile::getFileSize).collect(Collectors.toList());
         }
-        return librarySize;
+        return sizeList;
     }
 
     @Override
@@ -390,7 +441,8 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
                     long summed = files.stream().mapToLong(LibraryFile::getSize).sum();
 
                     Map<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("version",version);
+                    hashMap.put("versionId",libraryVersion.getId());
+                    hashMap.put("version",version);   //快照版本
                     hashMap.put("showSize",RepositoryUtil.formatSize(summed));
                     hashMap.put("pusher",libraryVersion.getPusher());
                     hashMap.put("updateTime",formattedDateTime);

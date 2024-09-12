@@ -121,11 +121,11 @@ public class GatewayFilterAutoConfiguration {
 
 
     //路由转发配置
-    @Value("${eas.address:null}")
+    @Value("${soular.address:null}")
     String authUrl;
 
 
-    @Value("${eas.embbed.enable}")
+    @Value("${soular.embbed.enable}")
     Boolean enableEam;
 
 

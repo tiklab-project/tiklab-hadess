@@ -35,12 +35,12 @@ postgresql:
 eas:
   embbed:
     enable: false
-  address: http://eas-ce.demo.thoughtware.cn
+  address: http://eas-ce.demo.tiklab.net
 
 DATA_HOME: /opt/tiklab/thoughtware_hadess
 
 base:
-  url: http://eas-ce.demo.thoughtware.cn
+  url: http://eas-ce.demo.tiklab.net
 
 #dfs config
 dfs:
@@ -83,7 +83,7 @@ plugin.path: ${APP_HOME}/plugin
 
 
 homes:
-  address: http://homes.thoughtware.cn
+  address: http://homes.tiklab.net
 
 
 #licences config

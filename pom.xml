@@ -47,7 +47,7 @@
         <thoughtware-message.version>1.0.1-SNAPSHOT</thoughtware-message.version>
         <thoughtware-todotask.version>1.0.1-SNAPSHOT</thoughtware-todotask.version>
         <thoughtware-eam.version>1.0.1-SNAPSHOT</thoughtware-eam.version>
-        <thoughtware-postgresql.version>1.0.2-SNAPSHOT</thoughtware-postgresql.version>
+        <thoughtware-postgresql.version>1.0.3-SNAPSHOT</thoughtware-postgresql.version>
         <thoughtware-jdk.version>1.0.1-SNAPSHOT</thoughtware-jdk.version>
 
         <!--thoughtware-->

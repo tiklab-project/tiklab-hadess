@@ -24,8 +24,6 @@ INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('bcdf98dcf501','删除代理地址', 'hadess_proxy_delete','7ee226136c94' ,52, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('6c73e4bd0d4c','应用访问权限', 'access_auth',null ,1, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('e67450b47a1d','删除扫描方案漏洞', 'hadess_scan_hole_delete','484a5c1b9417' ,55, 1);
-INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('301002068f78','添加制品库', 'hadess_rpy_add',null ,40, 1);
-INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('5806f877751e','操作指引', 'hadess_operate_guide',null ,57, 1);
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('84440b3f89c9','制品删除', 'hadess_library_delete',null ,58, 1);
 
 INSERT INTO pcs_prc_function (id,name,code,parent_function_id,sort,type) VALUES ('4e560bf41209','制品库设置', 'rpy_setting',null ,39, 2);
@@ -85,8 +83,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('56ad
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('dea767404643', '111111', '6575d360e072');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4280eec78021', '111111', '69ef12e9dfd0');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('e6450b34001d', '111111', 'e67450b47a1d');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('7e3deb429cee', '111111', '301002068f78');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('51501f17751e', '111111', '5806f877751e');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('8441489189c9', '111111', '84440b3f89c9');
 
 
@@ -135,8 +131,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('811c
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('654cb5ff8da2', '1', '6575d360e072');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('6e30e535b9fa', '1', '69ef12e9dfd0');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('e16410b47a1d', '1', 'e67450b47a1d');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('6415723657e0', '1', '301002068f78');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('161411703541', '1', '5806f877751e');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('520das4f89c9', '1', '84440b3f89c9');
 
 -- ---------------------------
@@ -147,7 +141,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('6526
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4c994dd988e9', '2', 'b70aeb4ccd60');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('34fbb100ca01', '2', 'f7249f3f0b63');
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('99968e743b91', '2', '43622a8ad389');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('10das0243225', '2', '5806f877751e');
 
 
 -- ---------------------------

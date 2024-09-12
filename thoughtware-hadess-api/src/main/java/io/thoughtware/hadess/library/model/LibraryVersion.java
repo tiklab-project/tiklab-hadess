@@ -100,6 +100,12 @@ public class LibraryVersion extends BaseModel {
     @ApiProperty(name="whether",desc="是否当前 1 当前")
     private java.lang.Integer whether;
 
+    @ApiProperty(name="fileNum",desc="文件数")
+    private java.lang.Integer fileNum;
+
+    @ApiProperty(name="versionNum",desc="版本数量")
+    private java.lang.Integer versionNum;
+
     private List children;
 
     public java.lang.String getId() {
@@ -259,5 +265,21 @@ public class LibraryVersion extends BaseModel {
 
     public void setWhether(Integer whether) {
         this.whether = whether;
+    }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
+
+    public Integer getVersionNum() {
+        return versionNum;
+    }
+
+    public void setVersionNum(Integer versionNum) {
+        this.versionNum = versionNum;
     }
 }

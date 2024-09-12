@@ -33,6 +33,15 @@ public interface LibraryFileService {
     */
     void deleteLibraryFile(@NotNull String id);
 
+
+    /**
+     * 通过快照版本和版本id删除
+     * @param versionId 版本id
+     * @param snapshotVersion 时间搓版本
+     */
+    void deleteLibraryFile(@NotNull String versionId,@NotNull String snapshotVersion);
+
+
     /**
      * 通过条件删除
      * @param field  删除条件字段
@@ -63,6 +72,13 @@ public interface LibraryFileService {
     * @return
     */
     List<LibraryFile> findLibraryFileList(LibraryFileQuery libraryFileQuery);
+
+    /**
+     * 查询列表
+     * @param libraryFileQuery
+     * @return
+     */
+    List<LibraryFile> findLibraryFiles(LibraryFileQuery libraryFileQuery);
 
     /**
      * 通过制品id 查询

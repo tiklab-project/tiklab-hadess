@@ -79,6 +79,16 @@ public class LibraryVersionController {
         return Result.ok(libraryVersion);
     }
 
+    @RequestMapping(path="/findLibraryVersionByRpyId",method = RequestMethod.POST)
+    @ApiMethod(name = "findLibraryVersion",desc = "通过制品库id查询最新")
+    @ApiParam(name = "id",desc = "id",required = true)
+    public Result<LibraryVersion> findLibraryVersionByRpyId(@NotNull String id){
+        LibraryVersion libraryVersion = libraryVersionService.findLibraryVersion(id);
+
+        return Result.ok(libraryVersion);
+    }
+
+
 
     @RequestMapping(path="/findLibraryVersionById",method = RequestMethod.POST)
     @ApiMethod(name = "findLibraryVersionById",desc = "通过id查询制品版本")
@@ -134,4 +144,12 @@ public class LibraryVersionController {
         return Result.ok(libraryVersion);
     }
 
+    @RequestMapping(path = "/findVersionByLibraryId",method = RequestMethod.POST)
+    @ApiMethod(name = "findVersionByLibraryId",desc = "通过制品id查询对应的版本详情")
+    @ApiParam(name = "libraryId",desc = "libraryId、versionId",required = true)
+    public Result<LibraryVersion> findVersionByLibraryId(@NotNull String libraryId,String versionId){
+        LibraryVersion libraryVersion = libraryVersionService.findVersionByLibraryId(libraryId,versionId);
+
+        return Result.ok(libraryVersion);
+    }
 }

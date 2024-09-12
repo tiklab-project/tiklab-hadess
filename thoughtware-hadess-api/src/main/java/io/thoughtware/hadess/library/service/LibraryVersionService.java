@@ -42,6 +42,12 @@ public interface LibraryVersionService {
     */
     void updateLibraryVersion(@NotNull @Valid LibraryVersion libraryVersion);
 
+    /**
+     * 仅删除版本
+     * @param id
+     */
+    void deleteOnlyVersion(@NotNull String id);
+
 
     /**
     * 删除
@@ -132,7 +138,6 @@ public interface LibraryVersionService {
      */
     Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery);
 
-     String librarySize( String libraryVersionId);
 
     /**
      * 通过制品ids 查询
@@ -148,5 +153,10 @@ public interface LibraryVersionService {
      */
     String redactLibraryVersion( LibraryVersion libraryVersion);
 
-
+    /**
+     * 通过制品id查询对应的版本详情
+     * @param libraryId  制品id
+     * @param versionId  版本id
+     */
+    LibraryVersion findVersionByLibraryId(String libraryId, String versionId);
 }
