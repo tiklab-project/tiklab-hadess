@@ -1,12 +1,13 @@
 #application config
 app:
-  name: thoughtware-hadess
+  name: thoughtware-hadess-public
   path: ${APP_HOME}
   version: ee
 
 spring:
-  config:
-    import: optional:classpath:/config/${env:dev}/application.yaml
+  profiles:
+    active: test
+
 #web config
 server:
   port: 8083
@@ -16,7 +17,7 @@ server:
 #dal config for mysql jdbc
 jdbc:
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5583/hadess_public?stringtype=unspecified
+  url: jdbc:postgresql://localhost:5483/hadess_public?stringtype=unspecified
   username: postgres
   password: darth2020
 
@@ -26,72 +27,80 @@ postgresql:
     enable: true
   database: hadess_public
   db:
-    port: 5583
+    port: 5483
     username: postgres
     password: darth2020
     address: ${DATA_HOME}/postgresql
-
-#eas config
-eas:
+soular:
   embbed:
     enable: true
 
-DATA_HOME: /opt/thoughtware/hadess-public
-
-base:
-  url: http://e.hadess.tiklab.net
+DATA_HOME: /opt/tiklab/hadess_public
 
 #dfs config
 dfs:
   server:
     enabled: false
     mode: server
-    port: 4083
+    port: 8000
     datapath: ${DATA_HOME}/files
   client:
-    url: 127.0.0.1:4083
+    url: 127.0.0.1:8000
     bucket: ${app.name}
 
 #dcs config
 dcs:
   server:
-    enabled: ture
-    mode: server
-    port: 5083
-    datapath: ${DATA_HOME}/caches
+    enabled: true
+    port: 8000
+    datapath: ${DATA_HOME}/data
   client:
-    url: 127.0.0.1:5083
+    url: 127.0.0.1:8000
     group: g1
     database: dcs1
-    expire: 7200
+    expire: 6000
 
 #dcs config
 dss:
   server:
     enabled: false
     mode: server
-    port: 6083
+    port: 8000
     datapath: ${DATA_HOME}/index
   client:
-    url: 127.0.0.1:6083
+    url: 127.0.0.1:8000
     bucket: ${app.name}
-
 
 #plugin config
 plugin.path: ${APP_HOME}/plugin
 
 
-homes:
-  address: http://homes.tiklab.net
+base:
+  url: http://eas-ee.test.tiklab.net
 
+
+#rpc
+homes:
+  address: http://172.11.1.11:8080
 
 #licences config
 licences:
   path: ${DATA_HOME}/licences
 
+db:
+  path: 127.0.0.1:3306
+  shell:
+    path: ${APP_HOME}/script/create_db_local_02.sh
+
+
+template:
+  shell:
+    path: ${APP_HOME}/script/create_db_local_02.sh
+
 #file
 file:
-  path: http://file.thoughtware.net
+  path: http://file.dev.tiklab.net
+
 
 repository:
   address: ${DATA_HOME}/repository
@@ -100,8 +109,9 @@ repository:
 
 backups:
   time: 0 0 2 * * ?
-  dir: /data/backup
-
+  dir: /data
+  xpack:
+    dir: ${DATA_HOME}/repository
 
 openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public
