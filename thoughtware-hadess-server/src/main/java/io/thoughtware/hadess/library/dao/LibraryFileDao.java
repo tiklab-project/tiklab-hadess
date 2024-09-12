@@ -93,15 +93,21 @@ public class LibraryFileDao{
      * @return List <LibraryFileEntity>
      */
     public List<LibraryFileEntity> findLibraryFileList(LibraryFileQuery libraryFileQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
-                .eq("libraryId",libraryFileQuery.getLibraryId())
-                .eq("libraryVersionId",libraryFileQuery.getLibraryVersionId())
-                .eq("fileName",libraryFileQuery.getFileName())
-                .eq("relativePath",libraryFileQuery.getRelativePath())
-                .eq("repositoryId",libraryFileQuery.getRepositoryId())
-                .eq("fileUrl",libraryFileQuery.getFileUrl())
-                .orders(libraryFileQuery.getOrderParams())
-                .get();
+        QueryBuilders builders = QueryBuilders.createQuery(LibraryFileEntity.class)
+                .eq("libraryId", libraryFileQuery.getLibraryId())
+                .eq("libraryVersionId", libraryFileQuery.getLibraryVersionId())
+                .eq("relativePath", libraryFileQuery.getRelativePath())
+                .eq("repositoryId", libraryFileQuery.getRepositoryId())
+                .eq("fileUrl", libraryFileQuery.getFileUrl())
+                .orders(libraryFileQuery.getOrderParams());
+
+
+        if (("like").equals(libraryFileQuery.getFindNameWay())){
+            builders.like("fileName",libraryFileQuery.getFileName());
+         }else {
+            builders.eq("fileName", libraryFileQuery.getFileName());
+        }
+        QueryCondition queryCondition = builders.get();
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 

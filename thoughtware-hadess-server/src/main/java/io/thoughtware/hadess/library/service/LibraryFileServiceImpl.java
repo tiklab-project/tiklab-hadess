@@ -71,6 +71,29 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
+    public void deleteLibraryFile(String versionId, String snapshotVersion) {
+        DeleteCondition libraryFile = DeleteBuilders.createDelete(LibraryFileEntity.class)
+                .eq("libraryVersionId",versionId)
+                .eq("snapshotVersion",snapshotVersion)
+                .get();
+        libraryFileDao.deleteLibraryFile(libraryFile);
+
+        List<LibraryFile> libraryFiles = this.findLibraryFiles(new LibraryFileQuery().setLibraryVersionId(versionId));
+         libraryFiles = libraryFiles.stream().filter(a -> !a.getFileName().contains("maven-metadata.xml")).collect(Collectors.toList());
+        //该版本不存在制品文件 删除该版本
+        if (CollectionUtils.isEmpty(libraryFiles)){
+            libraryVersionService.deleteOnlyVersion(versionId);
+
+            //删除maven-metadata.xml 数据
+            DeleteCondition file = DeleteBuilders.createDelete(LibraryFileEntity.class)
+                    .eq("libraryVersionId",versionId)
+                    .get();
+            libraryFileDao.deleteLibraryFile(file);
+        }
+
+    }
+
+    @Override
     public void deleteLibraryFileByCondition(String field,String value) {
         List<LibraryFile> libraryFileList=null;
         switch (field){
@@ -151,12 +174,18 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     @Override
     public List<LibraryFile> findLibraryFileList(LibraryFileQuery libraryFileQuery) {
         List<LibraryFileEntity> libraryFileEntityList = libraryFileDao.findLibraryFileList(libraryFileQuery);
-
         List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntityList,LibraryFile.class);
-
         joinTemplate.joinQuery(libraryFileList);
+
         List<LibraryFile> libraryFiles = libraryFileList.stream().sorted(Comparator.comparing(LibraryFile::getFileName)).collect(Collectors.toList());
         return libraryFiles;
+    }
+
+    @Override
+    public List<LibraryFile> findLibraryFiles(LibraryFileQuery libraryFileQuery) {
+        List<LibraryFileEntity> libraryFileEntityList = libraryFileDao.findLibraryFileList(libraryFileQuery);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntityList,LibraryFile.class);
+        return libraryFileList;
     }
 
     @Override
@@ -184,14 +213,17 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     @Override
     public List<LibraryFile> findLibraryNewFileList(LibraryFileQuery libraryFileQuery) {
         LibraryVersion libraryVersion = libraryVersionService.findOne(libraryFileQuery.getLibraryVersionId());
-        List<LibraryFile> libraryFileList = findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersion.getId()));
+        List<LibraryFile> libraryFileList = findLibraryFiles(new LibraryFileQuery()
+                .setLibraryVersionId(libraryVersion.getId()).setFindNameWay("like").setFileName(libraryFileQuery.getFileName()));
        //快照版本
         if (libraryVersion.getVersion().toUpperCase().endsWith("SNAPSHOT")){
             List<LibraryFile> collected = libraryFileList.stream().filter(b -> !b.getFileUrl().contains("maven-metadata.xml")).collect(Collectors.toList());
             List<LibraryFile> libraryFiles = collected.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
-            String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
-            libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
-        }
+            if (CollectionUtils.isNotEmpty(libraryFiles)){
+                String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
+                libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+            }
+       }
         //处理docker 特殊情况
         if (CollectionUtils.isNotEmpty(libraryFileList)){
             LibraryFile libraryFile = libraryFileList.get(0);

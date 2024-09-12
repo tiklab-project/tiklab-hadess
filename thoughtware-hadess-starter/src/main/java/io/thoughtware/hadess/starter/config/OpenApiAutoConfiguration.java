@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiAutoConfiguration {
-    @Value("${eas.address:null}")
+    @Value("${soular.address:null}")
     String authAddress;
 
-    @Value("${eas.embbed.enable:false}")
+    @Value("${soular.embbed.enable:false}")
     Boolean enableEam;
 
     //路由

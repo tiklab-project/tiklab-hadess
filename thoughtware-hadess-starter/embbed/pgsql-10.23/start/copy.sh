@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir=""
-file=""
+dbAddress=""
 
 #解析参数
 echo "Parse startup parameters"
@@ -11,8 +11,8 @@ for arg in "$@"; do
       dir=$2
       shift 2
       ;;
-    -f)
-      file=$2
+    -D)
+      dbAddress=$2
       shift 2
       ;;
   esac
@@ -24,26 +24,29 @@ valid_parameters(){
     echo "Apply address Cannot be empty"
     exit 1
   fi
-  if [ -z "${file}" ]; then
+  if [ -z "${dbAddress}" ]; then
       echo "Data version Name Cannot be empty"
       exit 1
   fi
 }
 
-#解压文件
-tar_xvf(){
-  echo "tar file ${file}"
-  tar -xzvf "${file}" -C "${dir}"
+remove_file(){
+    echo "delete file ${dbAddress}/*"
+    rm -rf ${dbAddress}/pg_hba.conf
+    rm -rf ${dbAddress}/postgresql.conf
 }
 
-mv_file(){
-  echo "mv file ${dir}/tmp ${dir}"
-  mv ${dir}/tmp/* ${dir}
+cp_file(){
+  echo "cp file ${dir}/conf/*"
+  cp ${dir}/conf/pg_hba.conf ${dbAddress}/
+  cp ${dir}/conf/postgresql.conf ${dbAddress}/
 }
 
 copy(){
   valid_parameters
-  tar_xvf
+  remove_file
+  cp_file
 }
 
 copy
+

@@ -39,7 +39,7 @@ eas:
 DATA_HOME: /opt/thoughtware/hadess-public
 
 base:
-  url: http://e.hadess.thoughtware.cn
+  url: http://e.hadess.tiklab.net
 
 #dfs config
 dfs:
@@ -82,7 +82,7 @@ plugin.path: ${APP_HOME}/plugin
 
 
 homes:
-  address: http://homes.thoughtware.cn
+  address: http://homes.tiklab.net
 
 
 #licences config

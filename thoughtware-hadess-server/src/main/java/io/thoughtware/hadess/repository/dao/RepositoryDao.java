@@ -90,13 +90,18 @@ public class RepositoryDao{
      * @return List <RepositoryEntity>
      */
     public List<RepositoryEntity> findRepositoryList(RepositoryQuery repositoryQuery) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryEntity.class)
-                .eq("repositoryType",repositoryQuery.getRepositoryType())
-                .eq("type",repositoryQuery.getType())
-                .eq("category",repositoryQuery.getCategory())
-                .eq("name",repositoryQuery.getName())
-                .orders(repositoryQuery.getOrderParams())
-                .get();
+        QueryBuilders builders = QueryBuilders.createQuery(RepositoryEntity.class)
+                .eq("repositoryType", repositoryQuery.getRepositoryType())
+                .eq("type", repositoryQuery.getType())
+                .eq("category", repositoryQuery.getCategory())
+                .orders(repositoryQuery.getOrderParams());
+
+        if(("like").equals(repositoryQuery.getFindType())){
+            builders.like("name",repositoryQuery.getName());
+        }else {
+            builders.eq("name", repositoryQuery.getName());
+        }
+        QueryCondition queryCondition = builders.get();
         return jpaTemplate.findList(queryCondition,RepositoryEntity.class);
     }
 

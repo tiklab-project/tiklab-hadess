@@ -40,11 +40,25 @@ public class SystemCount {
     @ApiProperty(name="authUserNum",desc="授权人数数量")
     private Integer authUserNum;
 
-    @ApiProperty(name="scanSchemeNum",desc="扫描方案数量")
-    private Integer scanSchemeNum;
+
 
     @ApiProperty(name="backupsTime",desc="备份时间")
     private String backupsTime;
+
+    @ApiProperty(name="scanSchemeNum",desc="扫描方案数量")
+    private Integer scanSchemeNum;
+
+    @ApiProperty(name="scanRuleNum",desc="扫描规则")
+    private Integer scanRuleNum;
+
+    @ApiProperty(name="useNum",desc="可用人数")
+    private Integer useNum;
+    @ApiProperty(name="subScribe",desc="订阅状态")
+    private boolean subScribe;
+
+    @ApiProperty(name="endTime",desc="订阅结束时间")
+    private String endTime;
+
 
     public Integer getUserNum() {
         return userNum;
@@ -149,5 +163,37 @@ public class SystemCount {
 
     public void setScanSchemeNum(Integer scanSchemeNum) {
         this.scanSchemeNum = scanSchemeNum;
+    }
+
+    public Integer getScanRuleNum() {
+        return scanRuleNum;
+    }
+
+    public void setScanRuleNum(Integer scanRuleNum) {
+        this.scanRuleNum = scanRuleNum;
+    }
+
+    public Integer getUseNum() {
+        return useNum;
+    }
+
+    public void setUseNum(Integer useNum) {
+        this.useNum = useNum;
+    }
+
+    public boolean isSubScribe() {
+        return subScribe;
+    }
+
+    public void setSubScribe(boolean subScribe) {
+        this.subScribe = subScribe;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

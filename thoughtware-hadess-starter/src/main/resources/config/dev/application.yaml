@@ -32,7 +32,7 @@ postgresql:
   type: local
 
 #eas config
-eas:
+soular:
   embbed:
     enable: true
 

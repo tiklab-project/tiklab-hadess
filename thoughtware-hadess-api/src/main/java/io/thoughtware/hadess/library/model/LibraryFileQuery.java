@@ -35,6 +35,9 @@ public class LibraryFileQuery {
         @ApiProperty(name ="relativePath",desc = "制品文件相对路径")
         private String relativePath;
 
+        @ApiProperty(name ="findNameWay",desc = "查询文件名字的方式 默认是eq、like: 模糊匹配")
+        private String findNameWay;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -102,6 +105,15 @@ public class LibraryFileQuery {
 
         public LibraryFileQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public String getFindNameWay() {
+            return findNameWay;
+        }
+
+        public LibraryFileQuery setFindNameWay(String findNameWay) {
+            this.findNameWay = findNameWay;
             return this;
         }
 }
