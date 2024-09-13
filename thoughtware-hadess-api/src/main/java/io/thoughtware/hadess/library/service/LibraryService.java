@@ -141,12 +141,6 @@ public interface LibraryService {
      */
      Library createLibraryData(String libraryName, String libraryType, Repository repository);
 
-    /**
-     * 条件查询制品文件
-     * @param libraryQuery
-     * @return
-     */
-    Pagination<Library> findLibraryListByCondition(LibraryQuery libraryQuery);
 
     /**
      * 查询未添加到推送中央仓库的记录的制品列表

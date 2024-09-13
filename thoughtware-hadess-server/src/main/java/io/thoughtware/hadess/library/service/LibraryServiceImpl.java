@@ -340,33 +340,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         Pagination<Library> mavenLibraryList = libraryDao.findLibraryListByRepository(libraryQuery);
 
-        if (CollectionUtils.isNotEmpty(mavenLibraryList.getDataList())){
-            for (Library library:mavenLibraryList.getDataList()){
-                if (!ObjectUtils.isEmpty(library.getLibrarySize())){
-                    String size = RepositoryUtil.formatSize(library.getLibrarySize());
-                    library.setVersionSize(size);
-                }
-            }
-        }
         return mavenLibraryList;
     }
-
-    @Override
-    public Pagination<Library> findLibraryListByCondition(LibraryQuery libraryQuery) {
-        findRepositoryGroup(libraryQuery);
-        Pagination<Library> libraryList = libraryDao.findLibraryListByCondition(libraryQuery);
-
-        if (CollectionUtils.isNotEmpty(libraryList.getDataList())){
-            for (Library library:libraryList.getDataList()){
-                if (!ObjectUtils.isEmpty(library.getLibrarySize())){
-                    String size = RepositoryUtil.formatSize(library.getLibrarySize());
-                    library.setVersionSize(size);
-                }
-            }
-        }
-        return libraryList;
-    }
-
 
     @Override
     public Pagination<Library> findLibraryListByCond(LibraryQuery libraryQuery) {
