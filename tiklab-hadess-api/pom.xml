@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.tiklab</groupId>
+        <artifactId>tiklab-hadess</artifactId>
+        <version>1.0.2</version>
+    </parent>
+    <artifactId>tiklab-hadess-api</artifactId>
+    <name>${project.artifactId}</name>
+    <version>1.0.2</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-core</artifactId>
+            <version>${tiklab-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postin-annotation</artifactId>
+            <version>${tiklab-postin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-user-api</artifactId>
+            <version>${tiklab-user.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-security-api</artifactId>
+            <version>${tiklab-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-message-api</artifactId>
+            <version>${tiklab-message.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-licence-api</artifactId>
+            <version>${tiklab-licence.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>*.properties</exclude>
+                        <exclude>*.xml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
