@@ -334,7 +334,6 @@ public class RepositoryServiceImpl implements RepositoryService {
             String substring = repository.getRepositoryUrl().substring(0, repository.getRepositoryUrl().indexOf(repository.getName()));
             repository.setPrefixPath(substring);
         }
-
         return repository;
     }
 
@@ -477,25 +476,54 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     public String findRepositoryUrl(Repository repository){
         String absoluteAddress=null;
-       if (!ObjectUtils.isEmpty(repository)){
+
+
+        if (!ObjectUtils.isEmpty(repository)){
            String type = repository.getType().toLowerCase();
-           //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
-           String serverIp = RepositoryUtil.getServerIp();
-           if (("docker").equals(repository.getType())){
-               absoluteAddress= serverIp + ":" + port + "/"+repository.getRepositoryUrl();
+            String visitAddress = yamlDataMaService.findVisitAddress();
+           if (!ObjectUtils.isEmpty(visitAddress)){
+               if (("docker").equals(type)){
+                   if (visitAddress.startsWith("http://")){
+                       String s = StringUtils.substringAfter(visitAddress, "http://");
+                       absoluteAddress= s + ":80/"+repository.getRepositoryUrl();
+                   }
+                   if (visitAddress.startsWith("https://")){
+                       String s = StringUtils.substringAfter(visitAddress, "https://");
+                       absoluteAddress= s + "/"+repository.getRepositoryUrl();
+                   }
+               }
+               if (("generic").equals(type)){
+                   absoluteAddress=visitAddress+ "/generic/"+repository.getRepositoryUrl();
+               }
+               if (("npm").equals(type)||("maven").equals(type)){
+                   absoluteAddress=visitAddress + "/repository/"+repository.getRepositoryUrl();
+               }
+               if (("helm").equals(type)){
+                   absoluteAddress=visitAddress + "/helm/"+repository.getRepositoryUrl();
+               }
+               if (("go").equals(type)){
+                   absoluteAddress=visitAddress + "/go/"+repository.getRepositoryUrl();
+               }
+           }else {
+               //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
+               String serverIp = RepositoryUtil.getServerIp();
+               if (("docker").equals(type)){
+                   absoluteAddress= serverIp + ":" + port + "/"+repository.getRepositoryUrl();
+               }
+               if (("generic").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port + "/generic/"+repository.getRepositoryUrl();
+               }
+               if (("npm").equals(type)||("maven").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port + "/repository/"+repository.getRepositoryUrl();
+               }
+               if (("helm").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port + "/helm/"+repository.getRepositoryUrl();
+               }
+               if (("go").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port + "/go/"+repository.getRepositoryUrl();
+               }
            }
-           if (("generic").equals(repository.getType())){
-               absoluteAddress="http://" + serverIp + ":" + port + "/generic/"+repository.getRepositoryUrl();
-           }
-           if (("npm").equals(repository.getType())||("maven").equals(repository.getType())){
-               absoluteAddress="http://" + serverIp + ":" + port + "/repository/"+repository.getRepositoryUrl();
-           }
-           if (("helm").equals(repository.getType())){
-               absoluteAddress="http://" + serverIp + ":" + port + "/helm/"+repository.getRepositoryUrl();
-           }
-           if (("go").equals(repository.getType())){
-               absoluteAddress="http://" + serverIp + ":" + port + "/go/"+repository.getRepositoryUrl();
-           }
+
        }
         return absoluteAddress;
     }

@@ -37,6 +37,9 @@ public class HadessFinal {
 
 
 
+    //hadess中央地址
+    public static final String HADESS_PATH = "https://mirror.tiklab.net/";
+
 
 
 }

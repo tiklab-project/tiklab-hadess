@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.common.context.LoginContext;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.library.model.*;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,7 +50,7 @@ public class PushOperationServiceImpl implements PushOperationService{
     LibraryVersionService libraryVersionService;
 
     @Autowired
-    XpackYamlDataMaService xpakYamlDataMaService;
+    XpackYamlDataMaService yamlDataMaService;
 
     @Autowired
     LibraryMavenService libraryMavenService;
@@ -74,27 +77,36 @@ public class PushOperationServiceImpl implements PushOperationService{
         executorService.submit(new Runnable(){
             @Override
             public void run() {
-                String jsonString = JSON.toJSONString(pushOperationQuery.getPushGroupIds());
-                JSONArray objects = JSON.parseArray(jsonString);
+                List<String> pushGroupIds = pushOperationQuery.getPushGroupIds();
 
-                for (int i = 0; i < objects.size(); i++){
-                    String pushGroupId = objects.get(i).toString();
+              /*  String jsonString = JSON.toJSONString(pushOperationQuery.getPushGroupIds());
+                JSONArray objects = JSON.parseArray(jsonString);*/
+
+                for (int i = 0; i < pushGroupIds.size(); i++){
+                    String pushGroupId = pushGroupIds.get(i);
                     //查询推送组下面的制品
                     List<PushLibrary> pushLibraryList = pushLibraryService.findPushLibraryList(new PushLibraryQuery().setPushGroupId(pushGroupId));
 
                     PushGroup pushGroup = pushGroupService.findPushGroup(pushGroupId);
                     if (CollectionUtils.isNotEmpty(pushLibraryList)){
                         joinScanLog(loginId,"开始推送组"+pushGroup.getGroupName());
-                        String libraryType = pushLibraryList.get(0).getLibrary().getLibraryType();
-                        if (("maven").equals(libraryType)){
-                            mavenPush(pushLibraryList,pushOperation,loginId);
+                        //推送中央仓库
+                        if (("center").equals(pushOperationQuery.getPushType())){
+                            String libraryType = pushLibraryList.get(0).getLibrary().getLibraryType();
+                            if (("maven").equals(libraryType)){
+                                mavenPush(pushLibraryList,pushOperation,loginId);
+                            }
+                            if (("npm").equals(libraryType)){
+                                npmPush(pushLibraryList,pushOperation,loginId);
+                            }
                         }
-                        if (("npm").equals(libraryType)){
-                            npmPush(pushLibraryList,pushOperation,loginId);
+                        //推送到hadess
+                        if (("hadess").equals(pushOperationQuery.getPushType())){
+                            hadessPush(pushLibraryList,pushOperation);
                         }
                     }
                     //推送组里面推送制品为空
-                    if (i+1==objects.size()&&CollectionUtils.isEmpty(pushLibraryList)){
+                    if (i+1==pushGroupIds.size()&&CollectionUtils.isEmpty(pushLibraryList)){
                         logger.info("仓库组"+pushGroup.getGroupName()+"没有推送制品");
                         joinScanLog(loginId,"仓库组"+pushGroup.getGroupName()+"没有推送制品");
                         initPushState(pushOperation,"fail");
@@ -165,6 +177,116 @@ public class PushOperationServiceImpl implements PushOperationService{
         return pushOperation;
     }
 
+    /**
+     * 推送hadess
+     * @param pushLibraryList
+     */
+    public void hadessPush(List<PushLibrary> pushLibraryList,PushOperation pushOperation){
+        String loginId = LoginContext.getLoginId();
+        String libraryType = pushLibraryList.get(0).getLibrary().getLibraryType();
+        try {
+            for (PushLibrary pushLibrary:pushLibraryList){
+                logger.info("开始推送制品"+pushLibrary.getLibrary().getName());
+                joinScanLog(loginId, "开始推送制品" + pushLibrary.getLibrary().getName());
+                String libraryId = pushLibrary.getLibrary().getId();
+
+                // 查询最新的版本
+                LibraryVersion newVersion = libraryVersionService.findLibraryNewVersion(new LibraryVersionQuery().setLibraryId(libraryId));
+
+                //maven 方式推送
+                if (("maven").equals(libraryType)){
+                    List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery()
+                            .setLibraryId(libraryId)
+                            .setLibraryVersionId(newVersion.getId()));
+                    if (CollectionUtils.isNotEmpty(libraryFileList)) {
+                        for (LibraryFile libraryFile:libraryFileList){
+                            //推送的时候排除源码包
+                            if (libraryFile.getFileName().contains("sources.jar")){
+                                continue;
+                            }
+                            joinScanLog(loginId, "开始推送制品"+pushLibrary.getLibrary().getName()+"的文件："+libraryFile.getFileName());
+                            String address = HadessFinal.HADESS_PATH + "repository/maven-releases/" + libraryFile.getRelativePath();
+                            URL url = new URL(address);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setReadTimeout(30000); //设置连接超时时间 单位毫秒
+                            conn.setRequestMethod("PUT");
+                            conn.setDoOutput(true);
+
+                            //添加头部信息
+                            byte[] bytes = "hadess".getBytes();
+                            String authorization = Base64.getEncoder().encodeToString(bytes);
+                            // 添加自定义头部用户认证信息
+                            conn.setRequestProperty("Authorization", authorization);
+
+                            String filePath=yamlDataMaService.repositoryAddress() + "/" +libraryFile.getFileUrl();
+                            File file = new File(filePath);
+                            byte[] fileData = RepositoryUtil.readFileData(file);
+                            // 传递数据流
+                            try (OutputStream os = conn.getOutputStream()) {
+                                os.write(fileData);
+                                os.flush();
+                            }
+
+                            int responseCode = conn.getResponseCode();
+                            if (responseCode==200||responseCode==201){
+                                joinScanLog(loginId, "制品" + pushLibrary.getLibrary().getName()+" 推送成功");
+                            }else {
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    joinScanLog(loginId, "制品" + pushLibrary.getLibrary().getName()+" 推送失败："+line);
+                                }
+                                reader.close();
+                            }
+                        }
+                    }else {
+                        joinScanLog(loginId, pushLibrary.getLibrary().getName()+ " 制品不存在文件");
+                    }
+                }
+                // npm 类型推送
+                if (("npm").equals(libraryType)){
+                    String address =  HadessFinal.HADESS_PATH+"repository/npm-hosted/"+pushLibrary.getLibrary().getName();
+                    URL url = new URL(address);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(30000); //设置连接超时时间 单位毫秒
+                    conn.setRequestMethod("PUT");
+                    conn.setDoOutput(true);
+
+                    //添加head信息
+                    conn.setRequestProperty("user-agent", "npm/6.14.15 node");
+                    conn.setRequestProperty("referer", "publish");
+                    // 使用 Base64 编码
+                    byte[] bytes = "admin".getBytes();
+                    String authorization = Base64.getEncoder().encodeToString(bytes);
+                    // 添加自定义头部用户认证信息
+                    conn.setRequestProperty("Authorization", authorization);
+
+                    String contentJson = newVersion.getContentJson();
+                    byte[] fileData = contentJson.getBytes();
+                    // 传递数据流
+                    try (OutputStream os = conn.getOutputStream()) {
+                        os.write(fileData);
+                        os.flush();
+                    }
+                    int responseCode = conn.getResponseCode();
+                    if (responseCode==200){
+                        joinScanLog(loginId, "制品" + pushLibrary.getLibrary().getName()+" 推送成功");
+                    }else {
+                        //推送失败 获取失败信息
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            joinScanLog(loginId, "制品" + pushLibrary.getLibrary().getName()+" 推送失败："+line);
+                        }
+                        reader.close();
+                    }
+                }
+            }
+        }catch (Exception e){
+            joinScanLog(loginId, "推送失败："+e.getMessage());
+        }
+    }
+
 
     /**
      * maven类型推送
@@ -227,7 +349,7 @@ public class PushOperationServiceImpl implements PushOperationService{
      */
     public Integer mavenExec( LibraryMaven libraryMaven, LibraryFile libraryFile,String key,String type) throws Exception {
         String durl;
-        String libraryAddress = xpakYamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
+        String libraryAddress = yamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
         if (StringUtils.isNotEmpty(libraryFile.getSnapshotVersion())){
             durl="https://s01.oss.sonatype.org/content/repositories/snapshots";
         }else {
@@ -322,11 +444,11 @@ public class PushOperationServiceImpl implements PushOperationService{
             String extractPath = libraryFile.getFileUrl().substring(0, libraryFile.getFileUrl().lastIndexOf(libraryFile.getFileName()));
 
             //文件的文件夹在服务器中存储的位置
-            extractPath=xpakYamlDataMaService.repositoryAddress()+"/"+extractPath;
+            extractPath=yamlDataMaService.repositoryAddress()+"/"+extractPath;
 
             try {
                 //文件在服务器中的存储位置
-                String filePath=xpakYamlDataMaService.repositoryAddress()+"/"+libraryFile.getFileUrl();
+                String filePath=yamlDataMaService.repositoryAddress()+"/"+libraryFile.getFileUrl();
                 joinScanLog(key,"获取制品存储位置"+filePath);
 
                 // 解压tgz
