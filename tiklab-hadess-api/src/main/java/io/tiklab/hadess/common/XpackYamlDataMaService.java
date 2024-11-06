@@ -65,4 +65,8 @@ public interface XpackYamlDataMaService {
      * 获取openscan的本地漏洞路径
      */
     String getLocalHoleUrl();
+
+
+    //查询visible地址 配置的域名地址
+    String findVisitAddress();
 }

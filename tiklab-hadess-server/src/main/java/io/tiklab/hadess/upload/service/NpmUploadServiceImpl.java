@@ -263,6 +263,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             libraryFile.setLibrary(library);
             libraryFile.setFileName(tgzName);
             libraryFile.setFileSize(size);
+            libraryFile.setSize(Long.valueOf(length));
             libraryFile.setFileUrl(replace+"/"+tgzName);
             libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);

@@ -87,8 +87,11 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         }
 
         //制品
-        String fileName = split[3];
-        String libraryName = fileName.substring(0, fileName.indexOf("."));
+        String fileName = split[1];
+        String libraryName=fileName;
+        if (fileName.contains(".")){
+             libraryName = fileName.substring(0, fileName.indexOf("."));
+        }
         Library library= libraryService.findLibraryByNameAndType(libraryName,"generic");
         if (ObjectUtils.isEmpty(library)){
             return Result.error(400,"制品不存在");
@@ -136,9 +139,10 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         String[] split = repositoryPath.split("/");
         String repositoryName = split[0];
         String fileName = split[1];
-        String name = fileName.substring(0, fileName.indexOf("."));
-
-
+        String name=fileName;
+        if (fileName.contains(".")){
+             name = fileName.substring(0, fileName.indexOf("."));
+        }
         Repository repository = repositoryService.findRepositoryByName(repositoryName);
         if (ObjectUtils.isEmpty(repository)&&("generic").equals(repository.getType())){
             return "{code:400,msg:制品库不能存在}";

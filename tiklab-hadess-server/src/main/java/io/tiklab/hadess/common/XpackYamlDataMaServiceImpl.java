@@ -32,6 +32,9 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     String environment;
 
 
+    @Value("${visible.address:null}")
+    String visibleAddress;
+
     @Override
     public String uploadAddress() {
         return dataHome+"/upload";
@@ -109,4 +112,11 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     }
 
 
+    @Override
+    public String findVisitAddress() {
+        if (("null".equals(visibleAddress))){
+            return null;
+        }
+        return visibleAddress;
+    }
 }
