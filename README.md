@@ -20,9 +20,21 @@ Hadess 支持多种格式的制品管理，如 Maven、NPM、Docker、helm 等�
 * Java 16+
 * Maven 3.4+
 ### 克隆仓库
+```
 git clone https://gitee.com/tiklab/tiklab-hadess.git
 
 cd tiklab-hadess
+```
+### 配置MAVEN仓库
+配置maven的settings.xml文件的远程仓库为一下内容
+```
+<mirror>
+    <id>hadess</id>
+    <name>hadess</name>
+    <url>https://mirror.tiklab.net/repository/tiklab-maven</url>  
+    <mirrorOf>*</mirrorOf>
+</mirror> 
+```
 
 ### 构建项目
 

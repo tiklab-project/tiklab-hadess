@@ -1,5 +1,6 @@
 package io.tiklab.hadess.repository.service;
 import com.alibaba.fastjson.JSON;
+import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.hadess.common.*;
 import io.tiklab.hadess.library.dao.LibraryDao;
 import io.tiklab.hadess.library.service.LibraryFileService;
@@ -265,6 +266,13 @@ public class RepositoryServiceImpl implements RepositoryService {
                 try {
                     String folderPath = yamlDataMaService.repositoryAddress() + "/" + id;
                     FileUtils.deleteDirectory(new File(folderPath));
+
+                    //删除演示仓库的时候 清除项目中的示例包文件
+                    if (repository.getCategory()==1){
+                        String fileName=("npm").equals(repository.getType())?"npm-sample.tgz":"maven-sample.zip";
+                        File tgzFile = new File(AppHomeContext.getAppHome()+"/file/"+fileName);
+                        FileUtils.delete(tgzFile);
+                    }
                 }catch (Exception e){
                     logger.info("删除制品库:"+id+"失败:"+e.getMessage());
                 }
