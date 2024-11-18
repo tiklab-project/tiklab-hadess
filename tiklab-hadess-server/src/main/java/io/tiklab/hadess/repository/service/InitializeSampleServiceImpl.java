@@ -67,13 +67,21 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         try {
             List<Repository> npmRepositories = repositoryList.stream().filter(a -> ("npm").equals(a.getType())).collect(Collectors.toList());
            if (CollectionUtils.isEmpty(npmRepositories)){
-                //创建npm 示例数据
-                String repositoryNpmId = createSampleRepository("npm");
-                copyData(repositoryNpmId,"npm");
+               String s = AppHomeContext.getAppHome() + "/file/npm-sample.tgz";
+               if (new File(s).exists()){
+                   //创建npm 示例数据
+                   String repositoryNpmId = createSampleRepository("npm");
+                   copyData(repositoryNpmId,"npm");
+               }
             }
 
             List<Repository> mavenRepositories = repositoryList.stream().filter(a -> ("maven").equals(a.getType())).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(mavenRepositories)){
+                //示例文件不存在 不创建示例数据
+                String s = AppHomeContext.getAppHome() + "/file/maven-sample.zip";
+                if (!new File(s).exists()){
+                  return;
+                }
 
                 //创建maven 示例数据
                 String repositoryMvnId = createSampleRepository("maven");
