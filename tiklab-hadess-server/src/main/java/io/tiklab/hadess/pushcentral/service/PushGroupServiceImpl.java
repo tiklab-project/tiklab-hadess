@@ -141,7 +141,6 @@ public class PushGroupServiceImpl implements PushGroupService {
 
                 pushGroup.setPushLibraryNum(pushNum);
 
-
             }
         }
         joinTemplate.joinQuery(pushGroupList);

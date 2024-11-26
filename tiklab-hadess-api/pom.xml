@@ -45,6 +45,12 @@
             <artifactId>tiklab-licence-api</artifactId>
             <version>${tiklab-licence.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postin-annotation</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

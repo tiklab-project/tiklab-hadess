@@ -131,6 +131,12 @@
             <artifactId>quartz-jobs</artifactId>
             <version>${quartz.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-core</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 
