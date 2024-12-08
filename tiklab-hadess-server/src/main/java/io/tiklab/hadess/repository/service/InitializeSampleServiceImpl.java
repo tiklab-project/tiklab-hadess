@@ -115,7 +115,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         String version = ("npm").equals(type) ? "1.0.0" : "1.0.0-SNAPSHOT";
         //创建仓库
         Repository repository = new Repository();
-        String repositoryName=type+"-sample-rpy";
+        String repositoryName=type+"-sample-local";
         repository.setName(repositoryName);
         repository.setRepositoryUrl(repositoryName);
         repository.setType(type);

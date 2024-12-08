@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -143,6 +145,9 @@ public class LibraryVersionDao{
      * @param libraryIds 制品ids
      */
     public List<LibraryVersionEntity> findVersionByLibraryIds(String[] libraryIds) {
+        if (ObjectUtils.isEmpty(libraryIds)){
+            return Collections.emptyList();
+        }
         QueryCondition condition = QueryBuilders.createQuery(LibraryVersionEntity.class)
                 .in("libraryId", libraryIds)
                 .get();

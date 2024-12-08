@@ -48,7 +48,7 @@
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-postin-annotation</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${tiklab-postin.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

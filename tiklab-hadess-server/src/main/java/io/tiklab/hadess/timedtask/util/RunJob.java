@@ -45,7 +45,7 @@ public  class RunJob implements org.quartz.Job {
         logger.info("定时任务group:"+group);
 
         String loginId = LoginContext.getLoginId();
-        /*//执行扫描计划
+      /*  //执行扫描计划
         scanService.execScan(execObjectId);
         taskService.updateTimeTask(taskInstanceId);
 

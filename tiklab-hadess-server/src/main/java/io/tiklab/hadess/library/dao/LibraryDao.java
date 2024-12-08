@@ -245,11 +245,14 @@ public class LibraryDao{
      * @return List <LibraryEntity>
      */
     public List<LibraryEntity> findNotPushLibraryList(String[] libraryIds,String repositoryId,String name) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .notIn("id",libraryIds)
-                .like("name",name)
-                .eq("repositoryId", repositoryId)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryEntity.class)
+                .like("name", name)
+                .eq("repositoryId", repositoryId);
+
+        if (!ObjectUtils.isEmpty(libraryIds)){
+            queryBuilders.notIn("id",libraryIds);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
@@ -259,11 +262,14 @@ public class LibraryDao{
      * @return List <LibraryEntity>
      */
     public List<LibraryEntity> findNotInLibraryList(String[] libraryIds,String repositoryId,String name) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .notIn("id",libraryIds)
-                .like("name",name)
-                .eq("repositoryId", repositoryId)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryEntity.class)
+                .like("name", name)
+                .eq("repositoryId", repositoryId);
+
+        if (!ObjectUtils.isEmpty(libraryIds)){
+            queryBuilders.notIn("id",libraryIds);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
@@ -282,11 +288,13 @@ public class LibraryDao{
     }
 
     public List<LibraryEntity> findLibraryByCondition(String name, String type, String[] rpyIds) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .eq("name",name)
-                .eq("libraryType",type)
-                .in("repositoryId",rpyIds)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name", name)
+                .eq("libraryType", type);
+        if (!ObjectUtils.isEmpty(rpyIds)){
+            queryBuilders.in("repositoryId", rpyIds);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 

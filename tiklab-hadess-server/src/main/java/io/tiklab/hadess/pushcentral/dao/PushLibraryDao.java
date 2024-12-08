@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,9 @@ public class PushLibraryDao {
     }
 
     public List<PushLibraryEntity> findPushLibraryListByGroupId(String[] pushGroupIds) {
+        if (ObjectUtils.isEmpty(pushGroupIds)){
+            return Collections.emptyList();
+        }
         QueryCondition condition = QueryBuilders.createQuery(PushLibraryEntity.class)
                 .in("pushGroupId", pushGroupIds)
                 .get();

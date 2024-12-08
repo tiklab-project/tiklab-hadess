@@ -49,8 +49,8 @@
         <tiklab-jdk.version>1.0.2</tiklab-jdk.version>
 
         <!--tiklab-->
-        <tiklab-postin-doclet-version>1.0.0</tiklab-postin-doclet-version>
-        <tiklab-postin.version>1.0.0</tiklab-postin.version>
+        <tiklab-postin-doclet-version>1.0.2</tiklab-postin-doclet-version>
+        <tiklab-postin.version>1.0.2</tiklab-postin.version>
         <tiklab-install.version>1.0.2</tiklab-install.version>
         <!--other-->
         <jdbc-mapper.version>1.2.2</jdbc-mapper.version>
