@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -126,14 +128,20 @@ public class RepositoryRemoteProxyDao{
     }
 
     public List<RepositoryRemoteProxyEntity> findAgencyByRpyIdAndPath(String[] repositoryIds, String agencyId) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
-                .in("repositoryId",repositoryIds)
-                .eq("remoteProxyId",agencyId)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
+                .eq("remoteProxyId", agencyId);
+
+        if (!ObjectUtils.isEmpty(repositoryIds)){
+            queryBuilders.in("repositoryId",repositoryIds);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
     }
 
     public List<RepositoryRemoteProxyEntity> findAgencyByRpyIds(String[] repositoryIds) {
+        if (ObjectUtils.isEmpty(repositoryIds)){
+            return Collections.emptyList();
+        }
         QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
                 .in("repositoryId",repositoryIds)
                 .get();

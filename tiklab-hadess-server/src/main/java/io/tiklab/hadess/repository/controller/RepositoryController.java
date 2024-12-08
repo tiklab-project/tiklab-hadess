@@ -18,10 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * @pi.protocol: http
- * @pi.groupName: repository
- */
+
 @RestController
 @RequestMapping("/xpackRepository")
 @Api(name = "RepositoryController",desc = "制品库管理 ")
@@ -32,13 +29,6 @@ public class RepositoryController {
     @Autowired
     private RepositoryService repositoryService;
 
-    /**
-     * @pi.name:创建制品库
-     * @pi.path:/xpackRepository/createRepository
-     * @pi.methodType:post
-     * @pi.request-type:json
-     * @pi.param: model=Repository ;
-     */
     @RequestMapping(path="/createRepository",method = RequestMethod.POST)
     @ApiMethod(name = "createRepository",desc = "创建制品库")
     @ApiParam(name = "repository",desc = "repository",required = true)
@@ -48,13 +38,7 @@ public class RepositoryController {
         return Result.ok(id);
     }
 
-    /**
-     * @pi.name:更新制品库
-     * @pi.path:/xpackRepository/updateRepository
-     * @pi.methodType:post
-     * @pi.request-type:json
-     * @pi.param: model=Repository ;
-     */
+
     @RequestMapping(path="/updateRepository",method = RequestMethod.POST)
     @ApiMethod(name = "updateRepository",desc = "更新制品库")
     @ApiParam(name = "repository",desc = "repository",required = true)
@@ -64,13 +48,7 @@ public class RepositoryController {
         return Result.ok();
     }
 
-    /**
-     * @pi.name:删除制品库
-     * @pi.path:/xpackRepository/deleteRepository
-     * @pi.methodType:post
-     * @pi.request-type:formdata
-     * @pi.param:  name=id;dataType=string;value=id;
-     */
+
     @RequestMapping(path="/deleteRepository",method = RequestMethod.POST)
     @ApiMethod(name = "deleteRepository",desc = "删除制品库")
     @ApiParam(name = "id",desc = "id",required = true)
@@ -79,13 +57,7 @@ public class RepositoryController {
 
         return Result.ok();
     }
-    /**
-     * @pi.name:通过id查询制品库
-     * @pi.path:/xpackRepository/findRepository
-     * @pi.methodType:post
-     * @pi.request-type:formdata
-     * @pi.param:  name=id;dataType=string;value=id;
-     */
+
     @RequestMapping(path="/findRepository",method = RequestMethod.POST)
     @ApiMethod(name = "findRepository",desc = "通过id查询制品库")
     @ApiParam(name = "id",desc = "id",required = true)
@@ -95,12 +67,7 @@ public class RepositoryController {
         return Result.ok(repository);
     }
 
-    /**
-     * @pi.name:查询所有制品库
-     * @pi.path:/xpackRepository/findAllRepository
-     * @pi.methodType:post
-     * @pi.request-type:none
-     */
+
     @RequestMapping(path="/findAllRepository",method = RequestMethod.POST)
     @ApiMethod(name = "findAllRepository",desc = "查询所有制品库")
     public Result<List<Repository>> findAllRepository(){
@@ -109,13 +76,7 @@ public class RepositoryController {
         return Result.ok(repositoryList);
     }
 
-    /**
-     * @pi.name:通过条件查询制品库
-     * @pi.path:/xpackRepository/findRepositoryList
-     * @pi.methodType:post
-     * @pi.request-type:json
-     * @pi.param: model=RepositoryQuery ;
-     */
+
     @RequestMapping(path = "/findRepositoryList",method = RequestMethod.POST)
     @ApiMethod(name = "findRepositoryList",desc = "通过条件查询制品库")
     @ApiParam(name = "repositoryQuery",desc = "repositoryQuery",required = true)
@@ -125,13 +86,7 @@ public class RepositoryController {
         return Result.ok(repositoryList);
     }
 
-    /**
-     * @pi.name:通过条件查询本地库和远程库
-     * @pi.path:/xpackRepository/findLocalAndRemoteRepository
-     * @pi.methodType:post
-     * @pi.request-type:formdata
-     * @pi.param:  name=type;dataType=string;value=type;
-     */
+
     @RequestMapping(path = "/findLocalAndRemoteRepository",method = RequestMethod.POST)
     @ApiMethod(name = "findLocalAndRemoteRepository",desc = "通过条件查询本地库和远程库")
     @ApiParam(name = "type",desc = "库类型",required = true)
@@ -141,13 +96,7 @@ public class RepositoryController {
         return Result.ok(repositoryList);
     }
 
-    /**
-     * @pi.name:通过条件分页查询
-     * @pi.path:/xpackRepository/findRepositoryPage
-     * @pi.methodType:post
-     * @pi.request-type:json
-     * @pi.param: model=RepositoryQuery ;
-     */
+
     @RequestMapping(path = "/findRepositoryPage",method = RequestMethod.POST)
     @ApiMethod(name = "findRepositoryPage",desc = "通过条件分页查询")
     @ApiParam(name = "repositoryQuery",desc = "repositoryQuery",required = true)
@@ -157,13 +106,7 @@ public class RepositoryController {
         return Result.ok(pagination);
     }
 
-    /**
-     * @pi.name:组合库关联的制品库集合
-     * @pi.path:/xpackRepository/findRepositoryByGroup
-     * @pi.methodType:post
-     * @pi.request-type:formdata
-     * @pi.param:  name=repositoryGroupId;dataType=string;value=repositoryGroupId;
-     */
+
     @RequestMapping(path = "/findRepositoryByGroup",method = RequestMethod.POST)
     @ApiMethod(name = "findRepositoryByGroup",desc = "组合库关联的制品库集合")
     @ApiParam(name = "repositoryGroupId",desc = "组合库id",required = true)

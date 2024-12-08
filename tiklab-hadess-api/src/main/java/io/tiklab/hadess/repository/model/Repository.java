@@ -12,65 +12,35 @@ import io.tiklab.postin.annotation.ApiProperty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- *  @pi.model: io.thoughtware.xpack.repository.model.Repository
- */
+
 @ApiModel
 @Mapper
 public class Repository extends BaseModel {
 
-    /**
-     * @pi.name: id
-     * @pi.dataType:string
-     * @pi.desc: id
-     * @pi.value: id
-     */
+
     @ApiProperty(name="id",desc="id")
     private java.lang.String id;
 
-    /**
-     * @pi.name: name
-     * @pi.dataType:string
-     * @pi.desc: 制品库名字
-     * @pi.value: name
-     */
+
     @NotNull
     @ApiProperty(name="name",desc="制品库名字",required = true)
     private java.lang.String name;
 
-    /**
-     * @pi.name: repositoryUrl
-     * @pi.dataType:string
-     * @pi.desc: 制品库路径
-     * @pi.value: repositoryUrl
-     */
+
     @ApiProperty(name="repositoryUrl",desc="制品库路径")
     private java.lang.String repositoryUrl;
 
-    /**
-     * @pi.name: type
-     * @pi.dataType:string
-     * @pi.desc: 创建类型 maven、npm、generic、docker等
-     * @pi.value: type
-     */
+
     @NotNull
     @ApiProperty(name="type",desc="创建类型 maven、npm、generic、docker等 ",required = true)
     private java.lang.String type;
 
-    /**
-     * @pi.name: repositoryType
-     * @pi.dataType:string
-     * @pi.desc: 类型  本地库：local、远程库：remote、组合库：group
-     * @pi.value: repositoryType
-     */
+
     @NotNull
     @ApiProperty(name="repositoryType",desc="类型  本地库：local、远程库：remote、组合库：group",required = true)
     private java.lang.String repositoryType;
 
-    /**
-     * @pi.model: Storage
-     * @pi.desc: 存储库
-     */
+
     @ApiProperty(name="storage",desc="存储库id")
     @Mappings({
             @Mapping(source = "storage.id",target = "storageId")
@@ -79,96 +49,44 @@ public class Repository extends BaseModel {
     private Storage storage;
 
 
-    /**
-     * @pi.name: category
-     * @pi.dataType:Integer
-     * @pi.desc: 1 、演示 ；2、正式仓库
-     * @pi.value: category
-     */
     @ApiProperty(name="category",desc="1 、演示 ；2、正式仓库;3、公共库")
     private Integer category;
 
-    /**
-     * @pi.name: color
-     * @pi.dataType:Integer
-     * @pi.desc: 制品库图标颜色0-4
-     * @pi.value: category
-     */
     @ApiProperty(name="color",desc="制品库图标颜色0-4")
     private Integer color;
 
-    /**
-     * @pi.name: rules
-     * @pi.dataType:String
-     * @pi.desc: 权限 public、private
-     * @pi.value: rules
-     */
+
     @ApiProperty(name="rules",desc="权限 public、private")
     private java.lang.String rules= "public";
 
-    /**
-     * @pi.name: description
-     * @pi.dataType:String
-     * @pi.desc: 描述
-     * @pi.value: description
-     */
+
     @ApiProperty(name="description",desc="描述")
     private java.lang.String description;
 
-    /**
-     * @pi.name: createUser
-     * @pi.dataType:String
-     * @pi.desc: 创建人
-     * @pi.value: createUser
-     */
+
     @ApiProperty(name="createUser",desc="创建人")
     private java.lang.String createUser;
 
-    /**
-     * @pi.name: createTime
-     * @pi.dataType:Timestamp
-     * @pi.desc: 创建时间
-     * @pi.value: createTime
-     */
+
     @ApiProperty(name="createTime",desc="创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private java.sql.Timestamp createTime;
 
-    /**
-     * @pi.name: updateTime
-     * @pi.dataType:Timestamp
-     * @pi.desc: 更新时间
-     * @pi.value: updateTime
-     */
+
     @ApiProperty(name="updateTime",desc="更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private java.sql.Timestamp updateTime;
 
     /*------------其他字段----------*/
-    /**
-     * @pi.name: libraryNum
-     * @pi.dataType:Integer
-     * @pi.desc: 制品数量
-     * @pi.value: libraryNum
-     */
+
     @ApiProperty(name="libraryNum",desc="制品数量")
     private Integer  libraryNum;
 
-    /**
-     * @pi.name: prefixPath
-     * @pi.dataType:String
-     * @pi.desc: 前缀地址
-     * @pi.value: prefixPath
-     */
+
     @ApiProperty(name="prefixPath",desc="前缀地址")
     private java.lang.String prefixPath;
 
-    /**
-     * @pi.name: versionType
-     * @pi.dataType:String
-     * @pi.desc: 版本控制
-     * @pi.value: versionType
-     */
+
     @ApiProperty(name="versionType",desc="版本控制")
     private String  versionType;
 

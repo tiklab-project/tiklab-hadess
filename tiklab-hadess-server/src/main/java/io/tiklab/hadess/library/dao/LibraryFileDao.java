@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -113,6 +115,9 @@ public class LibraryFileDao{
 
 
     public List<LibraryFileEntity> findLibraryFileListByNames(String [] names) {
+        if (ObjectUtils.isEmpty(names)){
+            return Collections.emptyList();
+        }
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
                 .in("fileName",names)
                 .get();
@@ -138,10 +143,13 @@ public class LibraryFileDao{
     }
 
     public List<LibraryFileEntity> findLibraryFileList(String [] repositoryIds,String relativePath){
-        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class)
-                .in("repositoryId",repositoryIds)
-                .eq("relativePath",relativePath)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryFileEntity.class)
+                .eq("relativePath", relativePath);
+
+        if (!ObjectUtils.isEmpty(repositoryIds)){
+            queryBuilders.in("repositoryId",repositoryIds);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 

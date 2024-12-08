@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -117,10 +118,13 @@ public class RepositoryMavenDao {
      * @return Pagination <RepositoryMavenEntity>
      */
     public List<RepositoryMavenEntity> findRepositoryMavenByRpyIds(String []ids,String version) {
-        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryMavenEntity.class)
-                .in("repositoryId",ids)
-                .eq("version",version)
-                .get();
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(RepositoryMavenEntity.class)
+                .eq("version", version);
+
+        if (!ObjectUtils.isEmpty(ids)){
+            queryBuilders.in("repositoryId",ids);
+        }
+        QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,RepositoryMavenEntity.class);
     }
 }
