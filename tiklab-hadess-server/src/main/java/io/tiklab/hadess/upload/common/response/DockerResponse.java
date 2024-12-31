@@ -203,7 +203,7 @@ public class DockerResponse {
      * @param  response response
      */
     public static void dockerCreateTag(String tag,HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
-        String sha256 = RepositoryUtil.generateSHA256(tag);
+        String sha256 = RepositoryUtil.sha256Encryption(tag);
 
         // 设置响应的内容类型和状态码
         response.setContentType("application/vnd.docker.distribution.manifest.v2+json");

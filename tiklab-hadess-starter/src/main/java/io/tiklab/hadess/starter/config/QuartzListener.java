@@ -1,6 +1,7 @@
 package io.tiklab.hadess.starter.config;
 
 import io.tiklab.core.exception.ApplicationException;
+import io.tiklab.eam.client.author.config.TiklabApplicationRunner;
 import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.timedtask.model.TimeTaskInstance;
 import io.tiklab.hadess.timedtask.service.TimeTaskInstanceService;
@@ -10,8 +11,6 @@ import io.tiklab.hadess.timedtask.util.RunJob;
 import org.apache.commons.collections.CollectionUtils;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  * @date 2021/8/18 10:24
  **/
 @Component
-public class QuartzListener implements ApplicationRunner {
+public class QuartzListener implements TiklabApplicationRunner {
 
 
     @Autowired
@@ -39,12 +38,12 @@ public class QuartzListener implements ApplicationRunner {
 
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        run();
+    public void run() {
+        exec();
     }
 
     //定时任务执行
-    public void run(){
+    public void exec(){
         List<TimeTaskInstance> timeTaskInstance = taskInstanceService.findAllTimeTaskInstance();
         if (CollectionUtils.isNotEmpty(timeTaskInstance)){
             //过滤出触发过后的

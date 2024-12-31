@@ -41,5 +41,10 @@ public class HadessFinal {
     public static final String HADESS_PATH = "https://mirror.tiklab.net/";
 
 
+    //没有查询到文件
+    public static final Integer NOT_FILE = 4041;
+
+    //读取文件失败
+    public static final Integer READ_FILE_FAIL = 5001;
 
 }

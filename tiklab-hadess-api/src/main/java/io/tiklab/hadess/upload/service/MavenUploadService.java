@@ -3,6 +3,7 @@ package io.tiklab.hadess.upload.service;
 import io.tiklab.core.Result;
 import io.tiklab.hadess.repository.model.Repository;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -33,7 +34,7 @@ public interface MavenUploadService {
      * @param contextPath 客户端拉取文件的地址
      * @return
      */
-    Result<byte[]> mavenPull(String contextPath);
+    void mavenPull(HttpServletResponse response, String contextPath);
 
 
     /**

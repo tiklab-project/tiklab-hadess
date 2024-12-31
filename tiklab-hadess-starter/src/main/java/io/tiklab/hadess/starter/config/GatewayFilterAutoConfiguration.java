@@ -95,7 +95,8 @@ public class GatewayFilterAutoConfiguration {
 
                         "/message/messageItem/syncUpdateMessage",
                         "/message/messageItem/syncDeleteMessage",
-                        "/permission/findPermissions"
+                        "/permission/findPermissions",
+                        "/init/install/findStatus"
 
                 })
                 .ignorePreUrls(new String[]{

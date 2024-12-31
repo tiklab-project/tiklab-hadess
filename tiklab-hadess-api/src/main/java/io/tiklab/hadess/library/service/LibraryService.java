@@ -103,7 +103,7 @@ public interface LibraryService {
     /**
      * 通过制品名字查询制品和类型查询
      * @param name 制品名字
-     * @param type 制品类型  maven、npm
+     * @param type 制品类型  maven、npm、docker
      * @return
      */
     Library findLibraryByNameAndType(String name,String type);

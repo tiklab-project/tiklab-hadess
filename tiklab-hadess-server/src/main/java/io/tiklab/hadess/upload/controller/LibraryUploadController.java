@@ -115,19 +115,8 @@ public  class LibraryUploadController extends HttpServlet {
                     response.getWriter().print(result.getMsg());
                 }
             }else {
-                Result<byte[]> result = downloadMavenService.mavenPull(repositoryPath);
-                if (result.getCode()==200){
-                    response.setStatus(200,result.getMsg());
-                    byte[] data = result.getData();
-                    String s = new String(data, "UTF-8");
-
-                    ServletOutputStream outputStream = response.getOutputStream();
-
-                    outputStream.write(data);
-                }else {
-                    response.setStatus(result.getCode(),result.getMsg());
-                    response.getWriter().print(result.getMsg());
-                }
+                //拉取制品
+                 downloadMavenService.mavenPull(response,repositoryPath);
             }
         }catch (Exception e){
             throw new SystemException(e);

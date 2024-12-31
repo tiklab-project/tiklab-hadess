@@ -1,6 +1,13 @@
 package io.tiklab.hadess.library.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.InspectImageResponse;
+import com.github.dockerjava.core.DockerClientBuilder;
+import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.library.dao.LibraryFileDao;
@@ -16,10 +23,12 @@ import io.tiklab.core.page.PaginationBuilder;
 import io.tiklab.toolkit.join.JoinTemplate;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,6 +37,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -218,8 +228,16 @@ public class LibraryFileServiceImpl implements LibraryFileService {
             List<LibraryFile> collected = libraryFileList.stream().filter(b -> !b.getFileUrl().contains("maven-metadata.xml")).collect(Collectors.toList());
             List<LibraryFile> libraryFiles = collected.stream().sorted(Comparator.comparing(LibraryFile::getCreateTime).reversed()).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(libraryFiles)){
-                String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
-                libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+
+                //客户端上传了快照版本时间戳
+                String snapshotVer = libraryFileQuery.getSnapshotVersion();
+                if(StringUtils.isNotEmpty(snapshotVer)){
+                   libraryFileList = libraryFiles.stream().filter(a -> (snapshotVer).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+
+                }else {
+                    String snapshotVersion = libraryFiles.get(0).getSnapshotVersion();
+                    libraryFileList = collected.stream().filter(a -> (snapshotVersion).equals(a.getSnapshotVersion())).collect(Collectors.toList());
+                }
             }
        }
         //处理docker 特殊情况
@@ -287,6 +305,9 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
         String address = xpakYamlDataMaService.repositoryAddress();
         String filePath = address + "/" + libraryFile.getFileUrl();
+        if (!new File(filePath).exists()){
+            throw  new SystemException(HadessFinal.NOT_FILE,"文件不存在");
+        }
         String readFile = RepositoryUtil.readFile(new File(filePath));
 
         JSONObject allData = JSONObject.parseObject(readFile);
@@ -319,6 +340,68 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         List<LibraryFile> libraryFileList = BeanMapper.mapList(fileByLibraryId,LibraryFile.class);
 
         return libraryFileList;
+    }
+
+    @Override
+    public String readLibraryFileData(LibraryFileQuery libraryFileQuery) {
+
+        String address = xpakYamlDataMaService.repositoryAddress();
+        String filePath = address + "/" + libraryFileQuery.getFileUrl();
+        File file = new File(filePath);
+        if (!file.exists()){
+            String fileName = StringUtils.substringAfterLast(libraryFileQuery.getFileUrl(),"/");
+            throw new SystemException(HadessFinal.NOT_FILE,fileName+"文件不存在");
+        }
+        String data = RepositoryUtil.readFile(file);
+        return data;
+    }
+
+    @Override
+    public List<String> findDockerLayers(LibraryFileQuery libraryFileQuery) {
+        List<String> resultList = new ArrayList<>();
+        // 创建 Docker 客户端
+        DockerClient dockerClient = DockerClientBuilder.getInstance().build();
+        try {
+            String address = xpakYamlDataMaService.repositoryAddress();
+            String manifestFilePath = address + "/" + libraryFileQuery.getFileUrl();
+
+            // 读取 manifest.json 文件
+            File manifestFile = new File(manifestFilePath);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> configData = objectMapper.readValue(manifestFile, Map.class);
+
+            // 获取第一个镜像的配置文件的哈希值
+            Map<String,Object> data = (Map) configData.get("config");
+            String configDigest = data.get("digest").toString();
+
+            //查询配置文件的路径
+            List<LibraryFile> fileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryFileQuery.getLibraryId()).setFileName(configDigest));
+            if (CollectionUtils.isNotEmpty(fileList)){
+                LibraryFile libraryFile = fileList.get(0);
+
+                // 读取配置文件
+                String confPath = address + "/" + libraryFile.getFileUrl();
+                String s = RepositoryUtil.readFile(new File(confPath));
+                if (!ObjectUtils.isEmpty(s)){
+                    ObjectMapper mapper = new ObjectMapper();
+
+                    // 将 JSON 字符串转换为 Map
+                    Map<String, Object> config = mapper.readValue(s, Map.class);
+                    // 获取 history 字段
+                    List<Map<String, Object>> history = (List<Map<String, Object>>) config.get("history");
+                    for (int i = 0; i < history.size(); i++) {
+                        Map<String, Object> item = history.get(i);
+                        Object command = item.get("created_by");
+                        resultList.add(command.toString());
+                    }
+                }
+            }
+            // 关闭 Docker 客户端
+            dockerClient.close();
+            return resultList;
+        } catch (Exception e) {
+           throw new SystemException(e.getMessage()) ;
+        }
     }
 
     public static <T> java.util.function.Predicate<T> distinctByKey(java.util.function.Function<? super T, ?> keyExtractor) {

@@ -139,4 +139,15 @@ public interface LibraryFileService {
      */
     List<LibraryFile> findLibraryFileList(String[] repositoryIds ,String relativePath);
 
+    /**
+     * 读取制品文件内容
+     * @param libraryFileQuery libraryFileQuery
+     */
+    String readLibraryFileData(LibraryFileQuery libraryFileQuery);
+
+    /**
+     * 查询docker镜像的历史层
+     * @param libraryFileQuery libraryFileQuery
+     */
+    List<String> findDockerLayers(LibraryFileQuery libraryFileQuery);
 }

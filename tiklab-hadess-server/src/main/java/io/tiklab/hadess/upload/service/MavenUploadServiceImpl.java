@@ -32,6 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.Base64;
@@ -108,7 +110,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
     }
 
     @Override
-    public Result<byte[]> mavenPull(String contextPath) {
+    public void mavenPull(HttpServletResponse response,String contextPath) {
         logger.info("maven拉取1-路径:"+contextPath);
         //通过访问路径获取仓库名称
         String repositoryName=cutRepositoryName(contextPath);
@@ -144,34 +146,41 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
                     String fileData = gainFileData(file);
                     if (StringUtils.isEmpty(fileData)){
-                        return Result.error(404,"no find");
+                        response.setStatus(404,"no find");
+                        response.getWriter().print("no find");
+                        return;
                     }
-                   return readFileData(file);
+                    readFileData(file,response);
+                    return ;
                 }
 
                 logger.info("进入拉取:"+new Timestamp(System.currentTimeMillis()));
-                //拉取 走组合库
-                if ("group".equals(repository.getRepositoryType())){
-                    logger.info("maven拉取2-进入组合库:"+new Timestamp(System.currentTimeMillis()));
-                    Result result = groupRepositoryPull(repository, relativePath);
-                    return  result;
+                //配置的拉取地址为组合库或者本地库
+                if ("group".equals(repository.getRepositoryType())||"remote".equals(repository.getRepositoryType())){
+                     repositoryPull(repository, relativePath,response);
+                    return ;
                 }
+
+
             }
+            response.setStatus(404,"制品不存在");
+            response.getWriter().print("制品不存在");
+            return;
         }catch (Exception e){
             throw new SystemException(e);
           /*  logger.info("拉取失败:"+e.getMessage());
             result(500,null,e.getMessage());*/
         }
-        return result(404,null,"制品不存在");
+
     }
 
     /**
-     *  maven拉取-组合库
+     *  maven拉取-组合库、远程库
      * @param repository     组合制品库
      * @param relativePath
      * @return
      */
-    public Result groupRepositoryPull(Repository repository,String relativePath ) throws IOException {
+    public void repositoryPull(Repository repository,String relativePath,HttpServletResponse response) throws IOException {
         int lastIndexOf = relativePath.lastIndexOf("/");
         //文件名称
         String fileName = relativePath.substring(lastIndexOf+1);
@@ -183,7 +192,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         //直接走代理拉取 例如：com/spotify/maven-metadata.xml
         if(!libraryPath.contains("/")&&relativePath.contains("maven-metadata")){
-            return proxyPull(repository,relativePath);
+             proxyPull(repository,relativePath,response);
+            return;
         }
 
         String groupId = libraryPath.substring(0, libraryPath.lastIndexOf("/"));
@@ -215,7 +225,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 List<LibraryVersion> versionList = libraryVersionService.findLibraryVersionList(new LibraryVersionQuery().setLibraryId(library.getId()).setVersion(version));
                 if (CollectionUtils.isEmpty(versionList)){
                     logger.info("maven拉取错误-快照版本的制品版本为空");
-                    return result(404,null,fileName+"文件不存在");
+                    response.setStatus(404,fileName+"文件不存在");
+                    response.getWriter().print(fileName+"文件不存在");
+                    return;
                 }
                 libraryFileQuery.setLibraryVersionId(versionList.get(0).getId()) ;
             }
@@ -235,7 +247,8 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 if (("remote").equals(repositoryType)){
                     logger.info("maven拉取5-制品存在制品文件不存在进入代理拉取通道");
                     //走代理拉取
-                    return proxyPull(repository,relativePath);
+                     proxyPull(repository,relativePath,response);
+                    return;
                 }
 
                 //仓库类型为正式版本 并且是maven-metadata文件
@@ -248,7 +261,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                     fileAbsolutePath = repositoryPath + "/" +collect1.get(0).getRepository().getId()+"/"+ relativePath;
                 }else {
                     logger.info("maven拉取错误该文件为空："+fileName);
-                    return result(404,null,fileName+"文件不存在");
+                    response.setStatus(404,fileName+"文件不存在");
+                    response.getWriter().print(fileName+"文件不存在");
+                    return;
                 }
             }else {
                 fileAbsolutePath = repositoryPath + "/" + libraryFileList.get(0).getFileUrl();
@@ -262,17 +277,19 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 //制品和制品文件都存在 制品数据不存在 走代理
                 if (!file.exists()){
                     logger.info("maven拉取5-制品存在制品数据不存在进入代理拉取通道");
-                    return proxyPull(repository,relativePath);
+                    proxyPull(repository,relativePath,response);
+                    return;
                 }
             }
             //私服库拉取 （读取文件信息）
             File file = new File(fileAbsolutePath);
             logger.info("maven拉取5-进入本地服务器拉取");
-            return readFileData(file);
+             readFileData(file,response);
+            return;
         }
         //制品不存在 走代理拉取
         logger.info("maven拉取4-制品不存在进入代理拉取通道");
-        return proxyPull(repository,relativePath);
+         proxyPull(repository,relativePath,response);
     }
 
     /**
@@ -281,34 +298,57 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      * @param relativePath 客户端请求路径
      * @return
      */
-    public Result proxyPull(Repository repository,String relativePath) throws IOException {
-        List<RepositoryGroup> libraryList = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+    public void proxyPull(Repository repository,String relativePath,HttpServletResponse response) throws IOException {
+        String repositoryType = repository.getRepositoryType();
 
-        // 过滤代理库信息
-        List<RepositoryGroup> groupList = libraryList.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(groupList)){
+        Repository remoteRpy;
+        if (("group").equals(repositoryType)){
+            List<RepositoryGroup> repositoryGroups = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+            // 过滤代理库信息
+            List<RepositoryGroup> groupList = repositoryGroups.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+            //组合库中未关联代理库
+            if (CollectionUtils.isEmpty(groupList)){
+                response.setStatus(404,"组合库未关联代理库");
+                response.getWriter().print("组合库未关联代理库");
+                return;
+            }
             logger.info("maven拉取-进入远程库");
-            //这里展示用关联的一个远程库
+            //这里暂时用关联的一个远程库
             RepositoryGroup repositoryGroup = groupList.get(0);
 
             //远程库
-            Repository remoteRpy = repositoryGroup.getRepository();
+            remoteRpy = repositoryGroup.getRepository();
+        }else {
 
-            //解析相对路径 获取文件名称、版本、groupId
-            Map<String, String> relativeMap = resolverRelativePath(relativePath,remoteRpy.getId());
-            relativeMap.put("userName","remote");
-            relativeMap.put("type","pull");
-
-            //远程代理路径
-            List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryGroup.getRepository().getId()));
-            if (CollectionUtils.isNotEmpty(remoteProxyList)){
-                logger.info("maven拉取-进入远程库代理地址");
-                //转发到远程
-                Result result = restTemplateMethod(remoteProxyList, 0, relativeMap, remoteRpy);
-                return result;
-            }
+            //客户端直接配置的代理库地址
+            remoteRpy=repository;
         }
-        return result(404,null,"制品不存在");
+
+
+        //解析相对路径 获取文件名称、版本、groupId
+        Map<String, String> relativeMap = resolverRelativePath(relativePath,remoteRpy.getId());
+        relativeMap.put("userName","remote");
+        relativeMap.put("type","pull");
+
+        //远程代理路径
+        List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(remoteRpy.getId()));
+        if (CollectionUtils.isNotEmpty(remoteProxyList)){
+            logger.info("maven拉取-进入远程库代理地址");
+            //转发到远程
+            Result<byte[]> result = restTemplateMethod(remoteProxyList, 0, relativeMap, remoteRpy);
+            if (result.getCode()==200){
+                response.setStatus(200,result.getMsg());
+                byte[] data = result.getData();
+                ServletOutputStream outputStream = response.getOutputStream();
+                outputStream.write(data);
+                return;
+            }
+            response.setStatus(result.getCode(),result.getMsg());
+            response.getWriter().print(result.getMsg());
+            return;
+        }
+
+
     }
 
     /**
@@ -490,19 +530,33 @@ public class MavenUploadServiceImpl implements MavenUploadService {
      *  @param file     文件
      * @return
      */
-    public Result readFileData(File file) throws IOException {
+    public void readFileData(File file,HttpServletResponse response) throws IOException {
+        ServletOutputStream outputStream = response.getOutputStream();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
+        InputStream inputStream = new FileInputStream(file);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        // 关闭输入流和输出流
+        inputStream.close();
+        outputStream.close();
+
+        /*ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         int buf_size = 1024;
         byte[] buffer = new byte[buf_size];
         int len = 0;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
         while (-1 != (len = in.read(buffer, 0, buf_size))) {
             bos.write(buffer, 0, len);
         }
         byte[] bytes = bos.toByteArray();
 
-        return  result(200,bytes,"OK");
+        return  result(200,bytes,"OK");*/
     }
 
     /**
