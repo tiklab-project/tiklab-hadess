@@ -1,8 +1,10 @@
 package io.tiklab.hadess.upload.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.tiklab.core.Result;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.hadess.library.model.*;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.hadess.common.RepositoryUtil;
@@ -10,7 +12,9 @@ import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.library.service.LibraryFileService;
 import io.tiklab.hadess.library.service.LibraryService;
 import io.tiklab.hadess.library.service.LibraryVersionService;
-import io.tiklab.hadess.repository.model.Repository;
+import io.tiklab.hadess.repository.model.*;
+import io.tiklab.hadess.repository.service.RepositoryGroupService;
+import io.tiklab.hadess.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.hadess.repository.service.RepositoryService;
 import io.tiklab.hadess.common.UserCheckService;
 import io.tiklab.hadess.upload.model.error.DockerErrorResponse;
@@ -18,11 +22,19 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
+import javax.security.auth.Subject;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +44,12 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     private static Logger logger = LoggerFactory.getLogger(DockerUploadServiceImpl.class);
     @Autowired
     RepositoryService repositoryService;
+
+    @Autowired
+    RepositoryGroupService repositoryGroupService;
+
+    @Autowired
+    RepositoryRemoteProxyService remoteProxyService;
 
     @Autowired
     UserPassportService userPassportService;
@@ -241,7 +259,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         File TagFile = new File(tagFolder + "/" + version);
         String readFile = readFile(TagFile);
 
-        String sha256 = RepositoryUtil.generateSHA256(readFile);
+        String sha256 = RepositoryUtil.sha256Encryption(readFile);
         String fileName = "sha256:" + sha256;
         String manFolder = repositoryAddress + "/" + repository.getId() + "/" + libraryName + "/manifests";
 
@@ -293,20 +311,42 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Map<String, String> pullManifests(String repositoryPath) {
-
-        //版本
-        String version = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
-
+    public Map<String, String> pullManifests(String requestAddress) {
         //仓库名称
-        String repositoryName = repositoryPath.substring(0,repositoryPath.indexOf("/"));
+        String repositoryName = StringUtils.substringBefore(requestAddress, "/");
+        //版本
+        String version = requestAddress.substring(requestAddress.lastIndexOf("/") + 1);
         //制品名称
-        String libraryName = getLibraryName(repositoryPath,"/manifests");
+        String libraryName = getLibraryName(requestAddress,"/manifests");
 
         Repository repository = repositoryService.findRepository(repositoryName,"docker");
         if (ObjectUtils.isEmpty(repository)){
             return putMapData("404",
                     responseError(repositoryName+" 制品库不存在",repositoryName+"/"+libraryName,version));
+        }
+
+
+        //仓库类型为组合库。注意： docker镜像在国内通过/v2的方式超时，这个方法暂时不可用
+        if (("group").equals(repository.getRepositoryType())){
+
+            List<RepositoryGroup> repositoryGroups = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery().setRepositoryGroupId(repository.getId()));
+            // 过滤代理库信息
+            List<RepositoryGroup> groupList = repositoryGroups.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+            List<RepositoryRemoteProxy> proxyList=null;
+            if (!CollectionUtils.isEmpty(groupList)){
+                //通过代理代理库的ID，查询对应的代理地址
+                List<String> rpyIds = groupList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
+                String[] repositoryIds = rpyIds.toArray(new String[rpyIds.size()]);
+                proxyList = remoteProxyService.findAgencyByRpyIds(repositoryIds);
+            }
+            //通过制品名字和类型查询 制品是否存在
+            Library library = libraryService.findLibraryByNameAndType(libraryName, "docker");
+            if (ObjectUtils.isEmpty(library)&&!CollectionUtils.isEmpty(proxyList)){
+                logger.info("Docker拉取-进入远程库校验/manifests");
+               return RemotePullManifests(proxyList,requestAddress);
+               // String a="sha256:45cb9583f823ccba269220f7f403340e69c32cb5e1a3266db6608e0b783ee179";
+              //  return putMapData("200",a);
+            }
         }
 
         List<LibraryFile> libraryFile = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, version);
@@ -324,6 +364,48 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         String fileName = libraryFiles.get(0).getFileName();
         return putMapData("200",fileName);
     }
+
+    /**
+     *  远程拉取Manifests
+     * @param proxyList 代理地址
+     * @param requestAddress 请求地址
+     */
+   public Map<String, String> RemotePullManifests( List<RepositoryRemoteProxy> proxyList,String requestAddress){
+       //版本
+       String version = requestAddress.substring(requestAddress.lastIndexOf("/") + 1);
+
+       String relativePath = StringUtils.substringAfter(requestAddress,"/" );
+
+       //判断镜像是否有仓库名，没有就添加默认的仓库名library
+       String imageName = StringUtils.substringBefore(relativePath, "/manifests");
+       if (!imageName.contains("/")){
+           relativePath="library/"+relativePath;
+           imageName="library/"+imageName;
+       }
+
+       for (RepositoryRemoteProxy proxyUrl:proxyList){
+           String relativeAbsoluteUrl=proxyUrl+"/v2/"+relativePath;
+           try {
+
+               //获取docker的认证token
+               String dockerToken = getDockerToken(imageName);
+               if (("获取docker失败").equals(dockerToken)){
+                   putMapData("404",
+                           responseError(dockerToken,imageName,version));
+               }
+
+               String manifestsData = restTemplateGet(relativeAbsoluteUrl, dockerToken);
+
+               String sha256Encryption = RepositoryUtil.sha256Encryption(manifestsData);
+
+               return putMapData("200",sha256Encryption);
+           }catch (Exception e){
+               logger.info("docker拉取manifests转发："+proxyUrl+"失败："+e.getMessage());
+           }
+       }
+       return putMapData("404",
+               responseError("镜像文件不存在",imageName,version));
+   }
 
     @Override
     public String verifyManifests(String repositoryPath) {
@@ -353,18 +435,6 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
 
-    // 创建错误信息对象
-    private static Map<String, Object> createErrorObject(String message, String digest) {
-        Map<String, Object> errorObject = new HashMap<>();
-        errorObject.put("code", "BLOB_UNKNOWN");
-        errorObject.put("message", message);
-
-        Map<String, String> detail = new HashMap<>();
-        detail.put("digest", digest);
-
-        errorObject.put("detail", detail);
-        return errorObject;
-    }
 
     public String readFile( File file) throws IOException {
         InputStream inputStream = new FileInputStream(file);
@@ -460,6 +530,49 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             logger.info("转获取img:"+imageName+"失败结果为json失败："+e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 获取docker的token
+     * @param imageName imageName
+     */
+    public String getDockerToken(String imageName){
+       // String tokenUrl = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:" +imageName+ ":pull";
+        String tokenUrl = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/hello-world:pull";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JSONObject> forEntity = restTemplate.getForEntity(tokenUrl, JSONObject.class);
+        int code = forEntity.getStatusCode().value();
+        if (code==200){
+            JSONObject resultBody = forEntity.getBody();
+            String accessToken = resultBody.get("access_token").toString();
+            return accessToken;
+        }
+        logger.info("docker获取token失败");
+        return "获取docker失败";
+    }
+
+    /**
+     * 执行get请求
+     * @param relativeAbsoluteUrl 地址
+     * @param token
+     */
+    public String restTemplateGet(String relativeAbsoluteUrl,String token){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders newHeaders = new HttpHeaders();
+        //token不为空的时候为获取manifest数据
+        if (!ObjectUtils.isEmpty(token)){
+            newHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            newHeaders.add(HttpHeaders.ACCEPT, "application/vnd.docker.distribution.manifest.v2+json");
+        }
+       
+        ResponseEntity<JSONObject> retryResponse = restTemplate.exchange(relativeAbsoluteUrl, HttpMethod.GET,
+                new HttpEntity<>(newHeaders), JSONObject.class);
+
+        String jsonString = retryResponse.getBody().toJSONString();
+        return jsonString;
 
     }
+  
+
 }

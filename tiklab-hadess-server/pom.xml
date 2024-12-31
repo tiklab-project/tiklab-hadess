@@ -137,6 +137,12 @@
             <version>1.0.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java</artifactId>
+            <version>3.3.0</version> <!-- 使用最新版本 -->
+        </dependency>
     </dependencies>
 
 

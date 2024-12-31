@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 @RestController
@@ -36,6 +39,14 @@ public class DockerUploadController {
 
         String method = request.getMethod();
         StringBuffer requestURL = request.getRequestURL();
+
+       /* ServletInputStream inputStream = request.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println("内容"+line);
+        }*/
+
         //客户端的get请求
         if (("GET").equals(method)){
             //请求路径中存在sha256 代表pull拉取 请求
@@ -43,7 +54,7 @@ public class DockerUploadController {
                 Map<String, String> resultMap = dockerUploadService.readMirroringData(repositoryPath);
                 DockerResponse.dockerReadMirroring(contextPath,resultMap,response);
             }else {
-                //EAD请求拉取-manifests返回404，执行该get请求校验Manifests数据
+                //HEAD请求拉取-manifests返回404，执行该get请求校验Manifests数据
                 if (contextPath.contains("/manifests")){
                     Map<String, String> manifests = dockerUploadService.pullManifests(repositoryPath);
                     DockerResponse.dockerPullManifests(manifests,"GET",response);

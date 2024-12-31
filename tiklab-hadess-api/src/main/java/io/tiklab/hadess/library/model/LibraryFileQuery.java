@@ -38,6 +38,9 @@ public class LibraryFileQuery {
         @ApiProperty(name ="findNameWay",desc = "查询文件名字的方式 默认是eq、like: 模糊匹配")
         private String findNameWay;
 
+        @ApiProperty(name ="snapshotVersion",desc = "快照版本的时间戳")
+        private String snapshotVersion;
+
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -116,4 +119,12 @@ public class LibraryFileQuery {
             this.findNameWay = findNameWay;
             return this;
         }
+
+    public String getSnapshotVersion() {
+        return snapshotVersion;
+    }
+
+    public void setSnapshotVersion(String snapshotVersion) {
+        this.snapshotVersion = snapshotVersion;
+    }
 }

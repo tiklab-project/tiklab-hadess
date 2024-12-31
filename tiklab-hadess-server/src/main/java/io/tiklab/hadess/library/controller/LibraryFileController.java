@@ -115,4 +115,21 @@ public class LibraryFileController  {
         return Result.ok(libraryFileList);
     }
 
+    @RequestMapping(path = "/readLibraryFileData",method = RequestMethod.POST)
+    @ApiMethod(name = "readLibraryFileData",desc = "读取制品文件的内容")
+    @ApiParam(name = "libraryFileQuery",desc = "libraryFileQuery",required = true)
+    public Result<String> readLibraryFileData(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
+        String data = libraryFileService.readLibraryFileData(libraryFileQuery);
+
+        return Result.ok(data);
+    }
+
+    @RequestMapping(path = "/findDockerLayers",method = RequestMethod.POST)
+    @ApiMethod(name = "findDockerLayers",desc = "读取docker镜像历史列表")
+    @ApiParam(name = "libraryFileQuery",desc = "findDockerLayers",required = true)
+    public Result<List<String>> findDockerLayers(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
+        List<String> data = libraryFileService.findDockerLayers(libraryFileQuery);
+
+        return Result.ok(data);
+    }
 }

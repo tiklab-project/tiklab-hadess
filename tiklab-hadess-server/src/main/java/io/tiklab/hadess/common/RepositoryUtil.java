@@ -186,8 +186,6 @@ public class RepositoryUtil {
         conn.setReadTimeout(30000); //设置连接超时时间 单位毫秒
         conn.setRequestMethod("GET");
 
-        int responseCode = conn.getResponseCode();
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
         StringBuilder response = new StringBuilder();
@@ -200,6 +198,7 @@ public class RepositoryUtil {
             }
         }
         reader.close();
+        conn.disconnect();
         return response.toString();
     }
 
@@ -381,26 +380,7 @@ public class RepositoryUtil {
         return i;
     }
 
-    /**
-     * SHA256 加密
-     * @param input 加密内容
-     * @return 时间
-     */
-    public static String generateSHA256(String input) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder();
 
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-
-        return hexString.toString();
-    }
 
 
     public static String   getSHA256ByPath(String filePath)  {
@@ -452,7 +432,7 @@ public class RepositoryUtil {
 
             return string;
         }catch (Exception e){
-           throw  new SystemException("读取信息失败");
+           throw  new SystemException(HadessFinal.READ_FILE_FAIL,"读取信息失败");
         }
     }
 
@@ -594,6 +574,28 @@ public class RepositoryUtil {
                 throw new RuntimeException("创建helm索引文件失败："+e);
             }
         }
+    }
 
+    /**
+     *  256加密
+     *  @param data   需要加密的内容
+     */
+    public static String sha256Encryption(String data) throws NoSuchAlgorithmException {
+        // 创建 SHA-256 MessageDigest 实例
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+        // 计算哈希值
+        byte[] hashBytes = digest.digest(data.getBytes());
+
+        // 将字节数组转换为十六进制字符串
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return  hexString.toString();
     }
 }
