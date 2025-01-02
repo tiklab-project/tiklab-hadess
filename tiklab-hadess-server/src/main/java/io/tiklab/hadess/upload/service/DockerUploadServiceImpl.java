@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.tiklab.core.Result;
-import io.tiklab.core.exception.SystemException;
 import io.tiklab.hadess.library.model.*;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.hadess.common.RepositoryUtil;
@@ -37,6 +36,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +76,9 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     public static Map<String , String> blobsDataSize = new HashMap<>();
 
     public static Map<String , InputStream> blobsData = new HashMap<>();
+
+    //添加制品数据到数据库的状态
+    public static Map<String , Boolean> insertLibState = new HashMap<>();
     @Override
     public Result<String> userCheck(String authorization) {
 
@@ -123,7 +130,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     }
 
     @Override
-    public Result uploadData(InputStream inputStream, String repositoryPath) throws IOException {
+    public Result uploadData(InputStream inputStream, String repositoryPath) throws Exception {
 
         String fileName = repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
 
@@ -138,8 +145,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //制品名称
         String libraryName =getLibraryName(repositoryPath,"/blobs");
 
-        //创建制品
-        Library library = libraryService.createLibraryData(libraryName, "docker", repository);
+
+
         String repositoryAddress = yamlDataMaService.repositoryAddress();
 
         //blobs的文件夹(数据)
@@ -162,7 +169,23 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
         }
-        outputStream.flush();
+
+        outputStream.flush(); ExecutorService executorService = Executors.newCachedThreadPool();
+
+        // 提交任务到线程池
+        Future<Library> future = executorService.submit(() -> {
+            Boolean aBoolean = insertLibState.get(libraryName);
+            while (aBoolean!=null&&!aBoolean){
+            }
+            insertLibState.put(libraryName,false);
+            //创建制品
+            Library library = libraryService.createLibraryData(libraryName, "docker", repository);
+            insertLibState.put(libraryName,true);
+            return library;
+        });
+
+        //获取结果
+        Library library = future.get();
 
         //创建文件
         long fileLength = blobsFile.length();
@@ -177,10 +200,11 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         String fileUrl = repository.getId() + "/" + libraryName + "/" + "blobs/" + fileName;
         libraryFile.setFileUrl(fileUrl);
         libraryFile.setRelativePath("blobs/" + fileName);
-        libraryFileService.redactLibraryFile(libraryFile,null);
 
+        libraryFileService.redactLibraryFile(libraryFile, null);
 
-        blobsDataSize.put(fileName,String.valueOf(fileLength));
+        blobsDataSize.put(fileName, String.valueOf(fileLength));
+
         return Result.ok();
     }
 
@@ -344,8 +368,6 @@ public class DockerUploadServiceImpl implements DockerUploadService {
             if (ObjectUtils.isEmpty(library)&&!CollectionUtils.isEmpty(proxyList)){
                 logger.info("Docker拉取-进入远程库校验/manifests");
                return RemotePullManifests(proxyList,requestAddress);
-               // String a="sha256:45cb9583f823ccba269220f7f403340e69c32cb5e1a3266db6608e0b783ee179";
-              //  return putMapData("200",a);
             }
         }
 

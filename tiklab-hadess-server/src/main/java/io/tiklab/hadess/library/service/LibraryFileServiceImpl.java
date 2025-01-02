@@ -391,8 +391,11 @@ public class LibraryFileServiceImpl implements LibraryFileService {
                     List<Map<String, Object>> history = (List<Map<String, Object>>) config.get("history");
                     for (int i = 0; i < history.size(); i++) {
                         Map<String, Object> item = history.get(i);
-                        Object command = item.get("created_by");
-                        resultList.add(command.toString());
+                        String command = item.get("created_by").toString();
+                        if (command.startsWith("/bin/sh -c #(nop)")){
+                             command = command.replace("/bin/sh -c #(nop)", "");
+                        }
+                        resultList.add(command);
                     }
                 }
             }
