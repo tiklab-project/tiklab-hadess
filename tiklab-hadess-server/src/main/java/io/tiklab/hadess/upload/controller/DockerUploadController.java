@@ -6,6 +6,8 @@ import io.tiklab.postin.annotation.Api;
 import io.tiklab.postin.annotation.ApiMethod;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.upload.service.DockerUploadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/v2")
 @Api(name = "DockerUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
 public class DockerUploadController {
-
+    private static Logger logger = LoggerFactory.getLogger(DockerUploadController.class);
     @Autowired
     DockerUploadService dockerUploadService;
 
@@ -35,11 +37,12 @@ public class DockerUploadController {
     public void dockerPush(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String contextPath = request.getRequestURI();
 
+
         String repositoryPath =contextPath.substring(contextPath.indexOf("/", 1) + 1);
 
         String method = request.getMethod();
         StringBuffer requestURL = request.getRequestURL();
-
+        logger.info("客户端请求方法："+method+",路径："+contextPath);
        /* ServletInputStream inputStream = request.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;

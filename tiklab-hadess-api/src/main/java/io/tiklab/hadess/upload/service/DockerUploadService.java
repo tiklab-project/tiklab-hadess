@@ -24,7 +24,7 @@ public interface DockerUploadService {
      * 推送-文件上传
      * @param inputStream 文件流
      */
-    Result uploadData(InputStream inputStream, String repositoryPath) throws IOException;
+    Result uploadData(InputStream inputStream, String repositoryPath) throws Exception;
 
     /**
      * 推送-创建会话 判断制品库是否存在

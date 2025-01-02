@@ -104,6 +104,11 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                         String jsonString = JSON.toJSONString(map);
                         return resultString(200,jsonString,1 );
                     }
+                    if ("GET".equals(uploadData.getMethod())){
+                        map.put("ok","true");
+                        String jsonString = JSON.toJSONString(map);
+                        return resultString(200,jsonString,1 );
+                    }
                 }
             }else {
                 if(!uploadData.getAgentType().contains("got")){
