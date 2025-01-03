@@ -359,6 +359,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
                     //替换Tarball （修改第二次请求路径）
                     String json = replaceTarball(entityBody,remoteProxy.getRepository().getName(), npmPubData.getRequestFullURL());
+                    logger.info("npm拉取(json)远程拉取："+decode+"完成");
                     return resultString(200,json,1);
                 }catch (Exception e){
                     logger.info("npm拉取(json)转发远程拉取报错:"+e.getMessage());
