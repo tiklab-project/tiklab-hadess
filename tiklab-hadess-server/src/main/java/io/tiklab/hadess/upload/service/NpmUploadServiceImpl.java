@@ -323,7 +323,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                     logger.info("npm拉取(json)-本地制品库制品文件不存在且没有关联远程库");
                     return  resultString(500,"没有关联远程库",0) ;
                 }
-                logger.info("npm拉取(json)-本地制品库制品文件不存在进入代理通道");
+                logger.info("npm拉取(json)-进入代理通道");
                 return pullProxyJson(npmPubData);
             }
             logger.info("npm拉取(json)-本地服务器拉取");
@@ -354,7 +354,9 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                     //转发第三方 路径
                     String decode = URLDecoder.decode(after, "UTF-8");
                     String sendPath = agencyUrl +"/"+decode;
+                    logger.info("npm拉取(json)远程拉取地址："+sendPath);
                     String entityBody = RepositoryUtil.httpGet(sendPath,"npm");
+
                     //替换Tarball （修改第二次请求路径）
                     String json = replaceTarball(entityBody,remoteProxy.getRepository().getName(), npmPubData.getRequestFullURL());
                     return resultString(200,json,1);
