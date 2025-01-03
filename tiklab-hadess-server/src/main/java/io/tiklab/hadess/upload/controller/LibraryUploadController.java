@@ -54,7 +54,7 @@ public  class LibraryUploadController extends HttpServlet {
         String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"repository");
         String repositoryName=repositoryPath.substring(0,repositoryPath.indexOf("/", 1));
 
-
+        logger.info("客户端请求："+contextPath);
         if (StringUtils.isNotEmpty(repositoryName)){
             Repository repository = repositoryService.findRepositoryByName(repositoryName);
             if (ObjectUtils.isEmpty(repository)){
