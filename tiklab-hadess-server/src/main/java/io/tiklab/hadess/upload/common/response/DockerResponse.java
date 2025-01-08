@@ -94,8 +94,11 @@ public class DockerResponse {
         if (("200").equals(resultMap.get("code"))){
             response.setContentType("application/vnd.docker.distribution.manifest.v2+json");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setHeader("Docker-Content-Digest",resultMap.get("data"));
-            response.getWriter().close();
+            response.setHeader("Docker-Content-Digest",resultMap.get("name"));
+            PrintWriter writer = response.getWriter();
+            writer.print(resultMap.get("data"));
+            writer.close();
+            //response.getWriter().close();
         }else {
             response.setContentType("application/json; charset=UTF-8");
             PrintWriter writer = response.getWriter();

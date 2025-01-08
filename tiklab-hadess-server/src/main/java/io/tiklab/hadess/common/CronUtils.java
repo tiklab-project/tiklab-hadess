@@ -73,7 +73,7 @@ public class CronUtils {
             SimpleDateFormat dateFormat = new SimpleDateFormat(dtFormat);
             return dateFormat.format(parse);
         }catch (ParseException e){
-            throw new ApplicationException("时间格式转换错误，错误时间："+e);
+            throw new ApplicationException(HadessFinal.TIME_EXCEPTION,"时间格式转换错误，错误时间："+e);
         }
     }
 
@@ -90,7 +90,7 @@ public class CronUtils {
             SimpleDateFormat dateFormat = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
             return dateFormat.parse(cron);
         } catch (ParseException e) {
-            throw new RuntimeException("core表达式日志去转化错误："+e);
+            throw new ApplicationException(HadessFinal.TIME_EXCEPTION,"core表达式日志去转化错误："+e);
         }
     }
 

@@ -1,6 +1,7 @@
 package io.tiklab.hadess.starter.config;
 
 import io.tiklab.core.exception.ApplicationException;
+import io.tiklab.core.exception.SystemException;
 import io.tiklab.eam.client.author.config.TiklabApplicationRunner;
 import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.timedtask.model.TimeTaskInstance;
@@ -54,6 +55,7 @@ public class QuartzListener implements TiklabApplicationRunner {
                     try {
                         jobManager.addJob(taskInstance, RunJob.class, HadessFinal.DEFAULT);
                     } catch (SchedulerException e) {
+
                         throw new ApplicationException(e);
                     }
                 }

@@ -2,6 +2,7 @@ package io.tiklab.hadess.upload.common.response;
 
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.upload.model.LibraryHelmClient;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -109,7 +110,7 @@ public class HelmResponse {
                 libraryHelm.setFileSize(sizeInBytes);
             }
         } catch (Exception e) {
-            throw new SystemException(500,"获取上传信息失败："+e);
+            throw new SystemException(HadessFinal.FILE_EXCEPTION,"获取上传信息失败："+e.getMessage());
         }
         return libraryHelm;
 

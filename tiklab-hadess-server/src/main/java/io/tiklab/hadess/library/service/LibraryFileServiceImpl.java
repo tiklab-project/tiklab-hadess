@@ -306,7 +306,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         String address = xpakYamlDataMaService.repositoryAddress();
         String filePath = address + "/" + libraryFile.getFileUrl();
         if (!new File(filePath).exists()){
-            throw  new SystemException(HadessFinal.NOT_FILE,"文件不存在");
+            throw  new SystemException(HadessFinal.NOT_FOUNT_EXCEPTION,"文件不存在");
         }
         String readFile = RepositoryUtil.readFile(new File(filePath));
 
@@ -350,7 +350,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         File file = new File(filePath);
         if (!file.exists()){
             String fileName = StringUtils.substringAfterLast(libraryFileQuery.getFileUrl(),"/");
-            throw new SystemException(HadessFinal.NOT_FILE,fileName+"文件不存在");
+            throw new SystemException(HadessFinal.NOT_FOUNT_EXCEPTION,fileName+"文件不存在");
         }
         String data = RepositoryUtil.readFile(file);
         return data;
@@ -403,7 +403,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
             dockerClient.close();
             return resultList;
         } catch (Exception e) {
-           throw new SystemException(e.getMessage()) ;
+           throw new SystemException(HadessFinal.SYSTEM_EXCEPTION,e.getMessage()) ;
         }
     }
 

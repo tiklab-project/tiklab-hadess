@@ -33,7 +33,7 @@ public class DockerUploadController {
 
     @RequestMapping(path="/**",method = {RequestMethod.GET,RequestMethod.HEAD,RequestMethod.POST,
             RequestMethod.PATCH,RequestMethod.PUT})
-    @ApiMethod(name = "dockerPush",desc = "docker上传")
+    @ApiMethod(name = "dockerPush",desc = "docker上传、拉取")
     public void dockerPush(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String contextPath = request.getRequestURI();
 
@@ -77,7 +77,6 @@ public class DockerUploadController {
             if (contextPath.contains("/manifests")){
                 //获取manifests 镜像校验数据
                 Map<String, String> manifests = dockerUploadService.pullManifests(repositoryPath);
-                response.setContentType("application/vnd.docker.distribution.manifest.v2+json");
                 DockerResponse.dockerPullManifests(manifests,"HEAD",response);
             }else {
                 //校验Sha256
@@ -108,6 +107,7 @@ public class DockerUploadController {
             }else {
                 Map<String, String[]> parameterMap = request.getParameterMap();
                 String digest = parameterMap.get("digest")[0];
+                logger.info("put请求digest："+digest);
                 String file = dockerUploadService.createFile(digest, repositoryPath);
                 DockerResponse.dockerCreateFile(file,requestURL,digest,response);
             }

@@ -47,7 +47,7 @@ public class TimeTaskInstanceServiceImpl implements TimeTaskInstanceService {
                 .setExecTime(timeTaskInstance.getExecTime()));
 
         if (CollectionUtils.isNotEmpty(timeTaskInstanceList)){
-            throw new ApplicationException(50001,"当前时间已经添加过，无需重复添加。");
+            throw new ApplicationException(HadessFinal.SYSTEM_EXCEPTION,"当前时间已经添加过，无需重复添加。");
         }
 
         String cron = CronUtils.getCron(timeTaskInstance.getWeekDay(), timeTaskInstance.getExecTime());
@@ -61,7 +61,7 @@ public class TimeTaskInstanceServiceImpl implements TimeTaskInstanceService {
             jobManager.addJob(timeTaskInstance, RunJob.class,HadessFinal.DEFAULT);
         } catch (SchedulerException e) {
             e.printStackTrace();
-            throw new ApplicationException(50001,"当前时间已经添加过，无需重复添加。");
+            throw new ApplicationException(HadessFinal.SYSTEM_EXCEPTION,"当前时间已经添加过，无需重复添加。");
         }
 
         return timeTaskInstanceId;

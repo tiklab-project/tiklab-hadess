@@ -7,7 +7,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectImageResponse;
 import com.github.dockerjava.api.model.ContainerConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,6 +35,9 @@ public class test {
         //getHttp(token);
         //postHttp();
 
+        String beforePath = org.apache.commons.lang.StringUtils.substringBefore("docker-test/hadess/blobs/sha256:f2a868e4472b8516e8f1a8e4430c62c5a42ac16b8fb21aa80434840703585dfc", "/blobs/");
+        String s = StringUtils.substringAfterLast(beforePath, "/");
+
         // 创建 Docker 客户端
         DockerClient dockerClient = DockerClientBuilder.getInstance().build();
         try {
@@ -54,32 +57,6 @@ public class test {
                 System.out.println("结果："+layer);
             }*/
 
-            String configDigest ="sha256:d83c7f637787efd251cadd2e9c5c3c301a308d8e392c7806cc29374af5aa44f5";
-            String a="/Users/limingliang/tiklab/thoughtware-hadess/repository/FW4n2rY9hhbd/test-bulid/blobs" +
-                    "/sha256:d83c7f637787efd251cadd2e9c5c3c301a308d8e392c7806cc29374af5aa44f5";
-
-            String path="/Users/limingliang/tiklab/thoughtware-hadess/repository/FW4n2rY9hhbd/test-bulid/blobs/" +
-                    "sha256:d83c7f637787efd251cadd2e9c5c3c301a308d8e392c7806cc29374af5aa44f5";
-            // 读取配置文件
-            File configFile = new File(path);
-            if (configFile.exists()){
-                System.out.println("");
-            }
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> config = objectMapper.readValue(configFile, Map.class);
-
-            // 获取 history 字段
-            List<Map<String, Object>> history = (List<Map<String, Object>>) config.get("history");
-            for (int i = 0; i < history.size(); i++) {
-                Map<String, Object> item = history.get(i);
-                System.out.println(i);
-                System.out.println("Command: " + item.get("created_by"));
-                System.out.println("Size: " + formatSize((Long) item.getOrDefault("size", 0L)));
-                System.out.println("----------------------------------------");
-            }
-
-            // 关闭 Docker 客户端
-            dockerClient.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

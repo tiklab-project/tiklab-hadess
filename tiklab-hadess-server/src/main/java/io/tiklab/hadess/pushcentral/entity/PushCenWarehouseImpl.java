@@ -1,5 +1,6 @@
 package io.tiklab.hadess.pushcentral.entity;
 
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.library.model.*;
@@ -307,13 +308,13 @@ public class PushCenWarehouseImpl implements PushCenWarehouse {
                     updateLibraryExecState(pushLibrary,"end","fail");
                     this.updatePushLibrary(pushLibrary,"fail");
                     pushResultMap.put(libraryId,"解压文件失败");
-                    throw new SystemException("npm推送解压tgz包失败");
+                    throw new SystemException(HadessFinal.FILE_EXCEPTION,"npm推送解压tgz包失败");
                 }
             } catch (IOException | InterruptedException e) {
                 updateLibraryExecState(pushLibrary,"end","fail");
                 this.updatePushLibrary(pushLibrary,"fail");
                 pushResultMap.put(libraryId,"解压文件失败");
-               throw new SystemException(e.getMessage());
+               throw new SystemException(HadessFinal.FILE_EXCEPTION,e.getMessage());
             }
         }
     }

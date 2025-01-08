@@ -1,6 +1,7 @@
 package io.tiklab.hadess.upload.service;
 
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.*;
 import io.tiklab.hadess.library.model.*;
 import io.tiklab.hadess.library.service.*;
 import io.tiklab.hadess.repository.model.*;
@@ -9,14 +10,10 @@ import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.eam.passport.user.service.UserPassportService;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.user.user.service.UserService;
-import io.tiklab.hadess.common.RepositoryUtil;
-import io.tiklab.hadess.common.UuidGenerator;
-import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.repository.service.RepositoryGroupService;
 import io.tiklab.hadess.repository.service.RepositoryMavenService;
 import io.tiklab.hadess.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.hadess.repository.service.RepositoryService;
-import io.tiklab.hadess.common.UserCheckService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -728,7 +725,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
                 return null;
             }
         }catch (IOException e){
-            throw new ApplicationException(e.getMessage());
+            throw new ApplicationException(HadessFinal.FILE_EXCEPTION,e.getMessage());
         }
     }
 

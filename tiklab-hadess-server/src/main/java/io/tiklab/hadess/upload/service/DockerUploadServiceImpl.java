@@ -113,7 +113,21 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         if (ObjectUtils.isEmpty(repository)){
             return Result.error(404,"can not find repository,制品库"+repositoryName+"没有找到，请输入正确的制品库");
         }
-        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setFileName(sha256).setRepositoryId(repository.getId()));
+
+        //制品名称
+        String beforePath = StringUtils.substringBefore(repositoryPath, "/blobs/");
+        String libraryName = StringUtils.substringAfterLast(beforePath, "/");
+
+        List<Library> libraryList = libraryService.findLibraryList(repository.getId(), libraryName);
+        if (CollectionUtils.isEmpty(libraryList)){
+            return Result.error(404,"can not find library,制品"+libraryName+"没有找到");
+
+        }
+
+        List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery()
+                .setFileName(sha256)
+                .setRepositoryId(repository.getId())
+                .setLibraryId(libraryList.get(0).getId()));
         if (CollectionUtils.isEmpty(libraryFileList)){
             return Result.error(404,"制品不存在:"+sha256);
         }
@@ -383,8 +397,20 @@ public class DockerUploadServiceImpl implements DockerUploadService {
                     responseError(repositoryName+" 制品文件不存在",repositoryName+"/"+libraryName,version));
         }
 
-        String fileName = libraryFiles.get(0).getFileName();
-        return putMapData("200",fileName);
+
+        LibraryFile file = libraryFiles.get(0);
+        String fileName = file.getFileName();
+
+        String s = yamlDataMaService.repositoryAddress() + "/" + file.getFileUrl();
+        File file1 = new File(s);
+        if (!file1.exists()){
+            return putMapData("404",
+                    responseError(repositoryName+" 制品文件内容不存在",repositoryName+"/"+libraryName,version));
+
+        }
+        String readFile = RepositoryUtil.readFile(file1);
+
+        return putMapData("200",fileName,readFile);
     }
 
     /**
@@ -512,6 +538,19 @@ public class DockerUploadServiceImpl implements DockerUploadService {
     public  Map<String, String> putMapData(String code,String data){
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("code",code);
+        resultMap.put("data",data);
+        return resultMap;
+    }
+
+    /**
+     * 输入结果数据
+     * @param code code
+     * @param  data 数据
+     */
+    public  Map<String, String> putMapData(String code,String name,String data){
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("code",code);
+        resultMap.put("name",name);
         resultMap.put("data",data);
         return resultMap;
     }

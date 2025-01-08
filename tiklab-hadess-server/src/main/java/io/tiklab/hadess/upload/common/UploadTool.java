@@ -1,6 +1,7 @@
 package io.tiklab.hadess.upload.common;
 
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.HadessFinal;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -29,7 +30,7 @@ public class UploadTool {
             byte[] bytes = bos.toByteArray();
             return  bytes;
         } catch (IOException e) {
-            throw new SystemException(500,"读取文件失败:"+e);
+            throw new SystemException(HadessFinal.FILE_EXCEPTION,"读取文件失败:"+e.getMessage());
         }
     }
 
