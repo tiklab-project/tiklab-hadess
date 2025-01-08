@@ -2,6 +2,7 @@ package io.tiklab.hadess.upload.service;
 
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.UserCheckService;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
@@ -186,7 +187,7 @@ public class HelmUploadServiceImpl implements HelmUploadService {
             File[] subDirectories = folder.listFiles(File::isDirectory);
             if (subDirectories==null){
                 logger.info("没有找到解压helm的文件");
-                throw new SystemException(500,"没有找到解压helm的文件");
+                throw new SystemException(HadessFinal.NOT_FOUNT_EXCEPTION,"没有找到解压helm的文件");
             }
             String name = subDirectories[0].getName();
 
@@ -201,7 +202,7 @@ public class HelmUploadServiceImpl implements HelmUploadService {
             return helmChart;
         } catch (IOException e) {
             logger.info("创建临时文件 "+fileName+" 失败："+e.getMessage());
-            throw new SystemException(e.getMessage());
+            throw new SystemException(HadessFinal.FILE_EXCEPTION,e.getMessage());
         }
     }
 
@@ -360,7 +361,7 @@ public class HelmUploadServiceImpl implements HelmUploadService {
             return trim;
         }catch (IOException e){
             logger.info("读取文件："+filePath+" 失败");
-            throw new SystemException(e.getMessage());
+            throw new SystemException(HadessFinal.FILE_EXCEPTION,e.getMessage());
         }
     }
 

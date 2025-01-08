@@ -3,6 +3,8 @@ package io.tiklab.hadess.upload.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.Result;
+import io.tiklab.core.exception.ApplicationException;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.library.model.*;
 import io.tiklab.hadess.repository.model.*;
 import io.tiklab.core.exception.SystemException;
@@ -80,6 +82,17 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
         String authorization = uploadData.getAuthorization();
         String relativePath = uploadData.getRelativePath();
+
+        //如果存在域名，将第二次拉取地址替换为域名，防止ip不可访问
+        String visitAddress = yamlDataMaService.findVisitAddress();
+        if (!ObjectUtils.isEmpty(visitAddress)){
+            String absolutePath = uploadData.getAbsolutePath();
+            String endPath = StringUtils.substringAfter( absolutePath,"/repository/");
+
+            String s = visitAddress + "/repository/" + endPath;
+            uploadData.setAbsolutePath(s);
+        }
+
         try {
             //类型为yarn类型
             if (uploadData.getAgentType().contains("yarn")) {
@@ -105,9 +118,14 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                         return resultString(200,jsonString,1 );
                     }
                     if ("GET".equals(uploadData.getMethod())){
-                        map.put("ok","true");
-                        String jsonString = JSON.toJSONString(map);
-                        return resultString(200,jsonString,1 );
+                        //拉取第一次交互 拉取json
+                        if (!relativePath.endsWith(".tgz")){
+                            return pullJson(uploadData);
+
+                        }else{
+                            //拉取第二次交互 拉取tag包文件
+                            return pullTgzData(uploadData);
+                        }
                     }
                 }
             }else {
@@ -157,7 +175,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 result.append(lineTxt).append("\n");
             }
         }catch (Exception e){
-            throw new SystemException(e);
+            throw new SystemException(HadessFinal.FILE_EXCEPTION,"npm登录获取账号信息失败"+e.getMessage());
         }
 
         JSONObject allData =(JSONObject) JSONObject.parse(result.toString());
@@ -327,7 +345,12 @@ public class NpmUploadServiceImpl implements NpmUploadService {
                 return pullProxyJson(npmPubData);
             }
             logger.info("npm拉取(json)-本地服务器拉取");
-            return  resultString(200,libraryVersion.getContentJson(),1);
+            String contentJson = libraryVersion.getContentJson();
+            //如果存在域名，本地存的json文件中拉取tag地址也修改为域名
+            if (!ObjectUtils.isEmpty(yamlDataMaService.findVisitAddress())){
+                contentJson = replaceTarball(contentJson,libraryVersion.getRepository().getName(), npmPubData.getRequestFullURL());
+            }
+            return  resultString(200,contentJson,1);
         }
         logger.info("npm拉取(json)报错-不是配置的组合库");
         return  resultString(404,"请配置组合库拉取制品库",0);

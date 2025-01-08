@@ -523,7 +523,7 @@ public class PushOperationServiceImpl implements PushOperationService{
                     joinScanLog(key,"解压失败");
                     initPushState(pushOperation,"fail");
                     this.updatePushLibrary(pushLibrary,"fail");
-                    throw new SystemException("npm推送解压tgz包失败");
+                    throw new SystemException(HadessFinal.FILE_EXCEPTION,"npm推送解压tgz包失败");
                 }
             } catch (IOException | InterruptedException e) {
                 logger.info("推送制品"+pushLibrary.getLibrary().getName()+"失败："+e.getMessage());

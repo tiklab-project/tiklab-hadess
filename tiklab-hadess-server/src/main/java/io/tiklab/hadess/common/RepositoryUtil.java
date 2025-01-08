@@ -432,7 +432,7 @@ public class RepositoryUtil {
 
             return string;
         }catch (Exception e){
-           throw  new SystemException(HadessFinal.READ_FILE_FAIL,"读取信息失败");
+           throw  new SystemException(HadessFinal.FILE_EXCEPTION,"读取信息失败");
         }
     }
 
@@ -532,7 +532,7 @@ public class RepositoryUtil {
         try {
             targetTime = sdf.parse(time);
         } catch (ParseException e) {
-            throw new ApplicationException("时间转换失败，不是yyyy-MM-dd HH:mm:ss格式:"+time);
+            throw new ApplicationException(HadessFinal.TIME_EXCEPTION,"时间转换失败，不是yyyy-MM-dd HH:mm:ss格式:"+time);
         }
         return targetTime;
     }
