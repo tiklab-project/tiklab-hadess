@@ -598,4 +598,16 @@ public class RepositoryUtil {
         }
         return  hexString.toString();
     }
+
+    /**
+     *  获取随机数
+     *  @param num   取摸数
+     */
+    public static int getRandomNum(int num) {
+        // 获取当前时间的纳秒数
+        long nanoTime = System.nanoTime();
+
+        return (int) (nanoTime % num);
+    }
+
 }

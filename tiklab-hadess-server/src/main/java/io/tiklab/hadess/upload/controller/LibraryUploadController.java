@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Base64;
+import java.util.Enumeration;
 
 /*
 * maven、npm 制品上传拉取
@@ -131,6 +132,8 @@ public  class LibraryUploadController extends HttpServlet {
         try {
             String method = request.getMethod();
 
+            Enumeration<String> headerNames = request.getHeaderNames();
+
             //请求全路径
             String absolutePath = request.getRequestURL().toString();
             //请求方式yarn、npm
@@ -140,7 +143,10 @@ public  class LibraryUploadController extends HttpServlet {
 
             //npm 请求的方式
             String referer = request.getHeader("referer");
-
+            if (ObjectUtils.isEmpty(referer)){
+                //在npm 最新版本中请求方式放在了npm-command字段 里面
+                referer = request.getHeader("npm-command");
+            }
             LibraryUploadData uploadData = new LibraryUploadData();
             if (StringUtils.isNotEmpty(referer)&&referer.contains("adduser")) {
                 //npm 登陆信息

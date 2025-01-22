@@ -108,13 +108,11 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Override
     @Transactional
     public String createRepository(@NotNull @Valid Repository repository) {
-
         RepositoryEntity repositoryEntity = setRepositoryEntity(repository);
-        Random random = new Random();
-        // 生成0到4之间的随机数
-        int randomNum = random.nextInt(5);
-        repositoryEntity.setColor(randomNum);
 
+        // 生成0到4之间的随机数
+        int randomNum = RepositoryUtil.getRandomNum(5);
+        repositoryEntity.setColor(randomNum);
 
         String repositoryId = getRandom(repository.getRepositoryType());
         repositoryEntity.setId(repositoryId);

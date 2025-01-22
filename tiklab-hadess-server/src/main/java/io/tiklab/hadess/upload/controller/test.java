@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,7 +30,28 @@ import java.util.Map;
 public class test {
 
     public static void main(String[] args) throws Exception {
-      // String token = getToken();
+        // 获取当前年、月
+        LocalDate currentDate = LocalDate.now();
+        int year = currentDate.getYear();
+        // 获取当前月份
+        int month = currentDate.getMonthValue();
+        System.out.println("当前月份: " + month);
+        if (String.valueOf(month).length()<2){
+            System.out.println("当前月份2: " + "0"+month);
+        }
+
+        // 测试生成 0 到 3 之间的随机数
+        for (int i = 0; i < 10; i++) {
+            // 获取当前时间的纳秒数
+            long nanoTime = System.nanoTime();
+            // 取模 4，得到 0 到 3 之间的随机数
+            int randomNumber = (int) (nanoTime % 4);
+            System.out.println("随机数: " + randomNumber);
+        }
+
+
+
+        // String token = getToken();
        // getURL1();
         //getURL();
         //getHttp(token);
