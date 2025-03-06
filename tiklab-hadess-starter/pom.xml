@@ -52,11 +52,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-install-starter</artifactId>
-            <version>${tiklab-install.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-security-spring-boot-starter</artifactId>
@@ -126,6 +122,17 @@
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-postin-doclet</artifactId>
             <version>${tiklab-postin-doclet-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-install-server</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-install-client</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 

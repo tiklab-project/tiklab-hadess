@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.Cipher;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
@@ -131,7 +132,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             }else {
                 if(!uploadData.getAgentType().contains("got")){
                     //登陆
-                    if (uploadData.getReferer().contains("adduser")){
+                    if (uploadData.getReferer().contains("adduser")||uploadData.getReferer().equals("login")){
                         return  this.npmLogin(uploadData.getUserReader());
                     }
                     //提交制品
@@ -183,16 +184,20 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         String password = allData.get("password").toString();
         logger.info("登陆信息，姓名："+userName+"密码："+password);
         try{
+
             userCheckService.npmUserCheck(userName, password);
             Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("result",true);
+            //将密码base64
+            String encode = Base64.getEncoder().encodeToString(password.getBytes());
+            resultMap.put("ok",true);
+            resultMap.put("token","Npm token "+encode);
             String jsonString = JSON.toJSONString(resultMap);
             logger.info("登陆成功");
             return resultString(201,jsonString,1);
         }catch (Exception e){
             logger.info("登陆失败："+e.getMessage());
             Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("result",false);
+            resultMap.put("ok",false);
             resultMap.put("error","Bad username or password");
             String jsonString = JSON.toJSONString(resultMap);
             return resultString(401,jsonString,1);
@@ -671,7 +676,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             uploadResult.setContentType("text/plain");
         }
         if (resultType==1){
-            uploadResult.setContentType("application/json ");
+            uploadResult.setContentType("application/json");
         }
         return uploadResult;
     }

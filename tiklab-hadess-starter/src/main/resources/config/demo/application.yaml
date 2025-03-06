@@ -1,17 +1,23 @@
 #application config
 app:
-  name: thoughtware-hadess
-  path: ${APP_HOME}
-  version: ce
+  name: hadess
+
 
 spring:
-  config:
-    import: optional:classpath:/config/${env:dev}/application.yaml
+  profiles:
+    active: demo
+
 #web config
 server:
   port: 8080
+  tomcat:
+    max-threads: 200       # 最大线程数
+    max-connections: 10000 # 最大连接数
+    accept-count: 100      # 等待队列长度
 
-#dal config
+APP_HOME: ${APP_HOME}
+
+DATA_HOME: ${user.home}/tiklab/hadess
 
 #dal config for mysql jdbc
 jdbc:
@@ -31,28 +37,6 @@ postgresql:
     password: darth2020
     address: ${DATA_HOME}/postgresql
 
-#eas config
-eas:
-  embbed:
-    enable: false
-  address: http://eas-ce.demo.tiklab.net
-
-DATA_HOME: /opt/tiklab/thoughtware_hadess
-
-base:
-  url: http://eas-ce.demo.tiklab.net
-
-#dfs config
-dfs:
-  server:
-    enabled: false
-    mode: server
-    port: 4000
-    datapath: ${DATA_HOME}/files
-  client:
-    url: 127.0.0.1:4000
-    bucket: ${app.name}
-
 #dcs config
 dcs:
   server:
@@ -66,37 +50,26 @@ dcs:
     database: dcs1
     expire: 7200
 
-#dcs config
-dss:
-  server:
-    enabled: false
-    mode: server
-    port: 6000
-    datapath: ${DATA_HOME}/index
-  client:
-    url: 127.0.0.1:6000
-    bucket: ${app.name}
+#soular config
+soular:
+  embbed:
+    enable: false
+  address: http://eas-ce.demo.tiklab.net
 
-
-#plugin config
-plugin.path: ${APP_HOME}/plugin
-
-
-homes:
-  address: http://homes.tiklab.net
-
+base:
+  url: http://eas-ce.demo.tiklab.net
 
 #licences config
 licences:
   path: ${DATA_HOME}/licences
 
-#file
-file:
-  path: http://file.thoughtware.net
+
 
 repository:
   address: ${DATA_HOME}/repository
 
+visible:
+  address: ""
 
 
 backups:
@@ -109,3 +82,4 @@ openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public
   user: admin
   password: 123456
+
