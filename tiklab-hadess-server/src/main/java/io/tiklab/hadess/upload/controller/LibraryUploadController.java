@@ -148,7 +148,8 @@ public  class LibraryUploadController extends HttpServlet {
                 referer = request.getHeader("npm-command");
             }
             LibraryUploadData uploadData = new LibraryUploadData();
-            if (StringUtils.isNotEmpty(referer)&&referer.contains("adduser")) {
+
+            if (StringUtils.isNotEmpty(referer)&&(referer.contains("adduser")||referer.equals("login"))) {
                 //npm 登陆信息
                 uploadData.setUserReader(request.getReader());
             }else {
@@ -162,6 +163,7 @@ public  class LibraryUploadController extends HttpServlet {
             uploadData.setAbsolutePath(absolutePath);
             uploadData.setReferer(referer);
             uploadData.setRepository(repository);
+
 
             //发送请求
             LibraryUploadResult uploadResult = downloadNpmService.uploadEntrance(uploadData);

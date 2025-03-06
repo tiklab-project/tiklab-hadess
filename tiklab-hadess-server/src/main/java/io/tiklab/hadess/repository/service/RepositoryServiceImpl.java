@@ -490,8 +490,13 @@ public class RepositoryServiceImpl implements RepositoryService {
            if (!ObjectUtils.isEmpty(visitAddress)){
                if (("docker").equals(type)){
                    if (visitAddress.startsWith("http://")){
+                       String[] parts = visitAddress.split(":");
+                       int i = parts.length - 1;
                        String s = StringUtils.substringAfter(visitAddress, "http://");
-                       absoluteAddress= s + ":80/"+repository.getRepositoryUrl();
+                       if (i==1){
+                           s=s + ":80/";
+                       }
+                       absoluteAddress= s +repository.getRepositoryUrl();
                    }
                    if (visitAddress.startsWith("https://")){
                        String s = StringUtils.substringAfter(visitAddress, "https://");

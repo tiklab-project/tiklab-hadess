@@ -29,4 +29,5 @@ public interface NpmUploadService {
      * @param libraryUploadData  上传数据
      */
     LibraryUploadResult uploadEntrance(LibraryUploadData libraryUploadData);
+
 }

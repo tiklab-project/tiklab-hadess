@@ -1,8 +1,7 @@
 #application config
 app:
-  name: thoughtware-hadess
-  path: ${APP_HOME}
-  version: ce
+  name: hadess
+
 
 spring:
   profiles:
@@ -16,7 +15,9 @@ server:
     max-connections: 10000 # 最大连接数
     accept-count: 100      # 等待队列长度
 
-#dal config
+APP_HOME: ${APP_HOME}
+
+DATA_HOME: ${user.home}/tiklab/hadess
 
 #dal config for mysql jdbc
 jdbc:
@@ -35,28 +36,6 @@ postgresql:
   database: thoughtware_hadess
   type: local
 
-#eas config
-soular:
-  embbed:
-    enable: true
-
-DATA_HOME: ${user.home}/tiklab/${app.name}
-
-base:
-  url: http://192.168.10.9:3030
-
-
-#dfs config
-dfs:
-  server:
-    enabled: false
-    mode: server
-    port: 4000
-    datapath: ${DATA_HOME}/files
-  client:
-    url: 127.0.0.1:4000
-    bucket: ${app.name}
-
 #dcs config
 dcs:
   server:
@@ -69,57 +48,37 @@ dcs:
     database: dcs1
     expire: 6000
 
-#dcs config
-dss:
-  server:
-    enabled: false
-    mode: server
-    port: 6000
-    datapath: ${DATA_HOME}/index
-  client:
-    url: 127.0.0.1:6000
-    bucket: ${app.name}
+#soular config
+soular:
+  embbed:
+    enable: true
 
 
-#plugin config
-plugin.path: ${APP_HOME}/plugin
-
-#rpc
-homes:
-  address: http://192.168.10.7:8080
-
+base:
+  url: http://192.168.10.9:3030
 
 #licences config
 licences:
   path: ${DATA_HOME}/licences
 
-#file
-file:
-  path: http://file.dev.tiklab.net
 
-
-
+#repositroy config
 repository:
   address: ${DATA_HOME}/repository
 
+visible:
+  address: ""
 
 
 backups:
   time: 0 0 2 * * ?
-  dir: ${DATA_HOME}
+  dir: /data
   xpack:
-    dir: /Users/limingliang/tiklab/tiklab-xpack/repository
-  pgsql:
-    dir: /Users/limingliang/postgreSQL/bin
-
-
-
+    dir: ${DATA_HOME}/repository
 
 openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public
   user: admin
   password: 123456
 
-visible:
-  address: ""
 

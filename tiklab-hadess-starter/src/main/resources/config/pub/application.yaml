@@ -1,18 +1,19 @@
 #application config
 app:
   name: thoughtware-hadess-public
-  path: ${APP_HOME}
-  version: ee
+
 
 spring:
   profiles:
-    active: test
+    active: pub
 
 #web config
 server:
   port: 8083
 
-#dal config
+APP_HOME: ${APP_HOME}
+
+DATA_HOME: /opt/tiklab/hadess_public
 
 #dal config for mysql jdbc
 jdbc:
@@ -31,22 +32,7 @@ postgresql:
     username: postgres
     password: darth2020
     address: ${DATA_HOME}/postgresql
-soular:
-  embbed:
-    enable: true
 
-DATA_HOME: /opt/tiklab/hadess_public
-
-#dfs config
-dfs:
-  server:
-    enabled: false
-    mode: server
-    port: 8000
-    datapath: ${DATA_HOME}/files
-  client:
-    url: 127.0.0.1:8000
-    bucket: ${app.name}
 
 #dcs config
 dcs:
@@ -60,51 +46,24 @@ dcs:
     database: dcs1
     expire: 6000
 
-#dcs config
-dss:
-  server:
-    enabled: false
-    mode: server
-    port: 8000
-    datapath: ${DATA_HOME}/index
-  client:
-    url: 127.0.0.1:8000
-    bucket: ${app.name}
+soular:
+  embbed:
+    enable: true
 
-#plugin config
-plugin.path: ${APP_HOME}/plugin
+message:
+  sms:
+    enabled: true
 
 
 base:
   url: http://eas-ee.test.tiklab.net
 
-
-#rpc
-homes:
-  address: http://172.11.1.11:8080
+repository:
+  address: ${DATA_HOME}/repository
 
 #licences config
 licences:
   path: ${DATA_HOME}/licences
-
-db:
-  path: 127.0.0.1:3306
-  shell:
-    path: ${APP_HOME}/script/create_db_local_02.sh
-
-
-template:
-  shell:
-    path: ${APP_HOME}/script/create_db_local_02.sh
-
-#file
-file:
-  path: http://file.dev.tiklab.net
-
-
-repository:
-  address: ${DATA_HOME}/repository
-
 
 
 backups:
