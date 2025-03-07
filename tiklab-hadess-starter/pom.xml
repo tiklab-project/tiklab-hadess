@@ -134,6 +134,22 @@
             <artifactId>tiklab-install-client</artifactId>
             <version>1.0.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-user-dingding</artifactId>
+            <version>${tiklab-user-extension.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-user-ldap</artifactId>
+            <version>${tiklab-user-extension.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-user-wechat</artifactId>
+            <version>${tiklab-user-extension.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>

@@ -36,6 +36,7 @@
         <tiklab-join.version>1.0.2</tiklab-join.version>
         <tiklab-openapi-version>1.0.2</tiklab-openapi-version>
         <tiklab-dsm.version>1.0.2</tiklab-dsm.version>
+        <tiklab-user-extension.version>1.0.2</tiklab-user-extension.version>
 
         <!--平台组件-->
         <tiklab-privilege.version>1.0.2</tiklab-privilege.version>

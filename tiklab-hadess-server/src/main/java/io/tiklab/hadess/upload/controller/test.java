@@ -30,11 +30,11 @@ import java.util.Map;
 public class test {
 
     public static void main(String[] args) throws Exception {
-        String http="http://172.12.1.1:9700";
 
-        String s1 = StringUtils.substringAfterLast(http, ":");
+        String expression="{{systems.io.used(/)}}<[40]";
+        String sa = expression.replaceAll("^\\{\\{(.*?)\\}\\}([<>]=?|==)\\[.*?\\]$", "$1");;
 
-
+        System.out.println("12");
         // 测试生成 0 到 3 之间的随机数
         for (int i = 0; i < 10; i++) {
             // 获取当前时间的纳秒数
@@ -43,6 +43,7 @@ public class test {
             int randomNumber = (int) (nanoTime % 4);
             System.out.println("随机数: " + randomNumber);
         }
+
 
 
         String beforePath = org.apache.commons.lang.StringUtils.substringBefore("docker-test/hadess/blobs/sha256:f2a868e4472b8516e8f1a8e4430c62c5a42ac16b8fb21aa80434840703585dfc", "/blobs/");
