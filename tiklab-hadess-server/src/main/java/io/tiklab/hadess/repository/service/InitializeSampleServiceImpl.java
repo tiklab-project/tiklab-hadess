@@ -85,7 +85,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
 
                 //创建maven 示例数据
                 String repositoryMvnId = createSampleRepository("maven");
-                String filePath = copyData( repositoryMvnId, "maven");
+                String filePath = copyData(repositoryMvnId, "maven");
                 RepositoryUtil.decompressionZip(filePath+"/maven-sample.zip",filePath);
                 //修改压缩后仓库名字
                 File sourceFile = new File(filePath + "/maven-sample");

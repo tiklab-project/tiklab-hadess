@@ -14,4 +14,5 @@ INSERT INTO pack_scan_hole(id,vendor,product,version,language,hole_name,hole_num
 (3)升级到noneautotype版本，为了方便使用老版本用户兼容安全加固需求，提供了noneautotype版本，效果和1.2.68的safeMode效果一样，完全禁止autotype功能。目前发布的版本：1.2.8_noneautotype、1.2.48_noneautotype、1.2.50_noneautotype、1.2.54_noneautotype、1.2.60_noneautotype、1.2.71_noneautotype','Fastjson使用黑白名单用于防御反序列化漏洞，这个漏洞在特定条件下可绕过默认autoType关闭限制，攻击远程服务器，风险影响较大'),
 ('123456781002', 'com.google.guava','guava','[11.0,24.x)||[24.1.1,24.1.2)','java','Google Guava 代码问题漏洞','CVE-2018-10237、CNNVD-201804-1461、CNVD-2018-10064、CWE-770',3,'2018-04-26','目前厂商已发布升级补丁以修复漏洞，补丁获取链接：
 https://groups.google.com/forum/#!topic/guava-announce/xqWALw4W1vs/discussion','Google Guava是美国谷歌（Google）公司的一款包括图形库、函数类型、I/O和字符串处理等的Java核心库。
-Google Guava 11.0版本至24.1.1版本（不包括24.1.1版本）中存在代码问题漏洞。该漏洞源于网络系统或产品的代码开发过程中存在设计或实现不当的问题。');
+Google Guava 11.0版本至24.1.1版本（不包括24.1.1版本）中存在代码问题漏洞。该漏洞源于网络系统或产品的代码开发过程中存在设计或实现不当的问题。'),
+('123456781003', null,'Node.js','[16.x - 16.6.0)||[14.x - 14.17.4)||[12.x - 12.22.4)','js','Use After Free 攻击','CWE-502',1,'2020-06-03',null,'此漏洞存在于 Node.js 版本 16.6.0 之前、14.17.4 之前和 12.22.4 之前，攻击者可以利用该漏洞进行“使用后释放”（Use After Free）攻击，从而导致内存损坏和进程行为的改变');

@@ -84,3 +84,7 @@ openscan_mvn:
 
 visible:
   address: http://e.hadess.tiklab.net
+
+postin:
+  scan:
+    package: io.tiklab.hadess

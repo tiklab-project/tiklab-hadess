@@ -79,3 +79,7 @@ openscan_mvn:
 
 visible:
   address: https://mirror.tiklab.net
+
+postin:
+  scan:
+    package: io.tiklab.hadess

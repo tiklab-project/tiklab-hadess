@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.Result;
 import io.tiklab.core.exception.ApplicationException;
-import io.tiklab.hadess.common.HadessFinal;
+import io.tiklab.hadess.common.*;
 import io.tiklab.hadess.library.model.*;
 import io.tiklab.hadess.repository.model.*;
 import io.tiklab.core.exception.SystemException;
@@ -13,15 +13,12 @@ import io.tiklab.hadess.upload.model.LibraryUploadData;
 import io.tiklab.hadess.upload.model.LibraryUploadResult;
 import io.tiklab.hadess.upload.model.NpmPubData;
 import io.tiklab.user.user.service.UserService;
-import io.tiklab.hadess.common.RepositoryUtil;
-import io.tiklab.hadess.common.XpackYamlDataMaService;
 import io.tiklab.hadess.library.service.LibraryFileService;
 import io.tiklab.hadess.library.service.LibraryService;
 import io.tiklab.hadess.library.service.LibraryVersionService;
 import io.tiklab.hadess.repository.service.RepositoryGroupService;
 import io.tiklab.hadess.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.hadess.repository.service.RepositoryService;
-import io.tiklab.hadess.common.UserCheckService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -215,7 +212,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
         String relativePath = uploadData.getRelativePath();
 
         //读取上传的数据
-        String readData = readData(uploadData.getInputStream());
+        String readData = FileUtil.readInputStream(uploadData.getInputStream());
         //替换上传内容的Tarball
         String s = replaceTarball(readData, uploadData.getAbsolutePath());
         JSONObject allData =(JSONObject) JSONObject.parse(s);
@@ -284,18 +281,20 @@ public class NpmUploadServiceImpl implements NpmUploadService {
             //libraryVersion.setPullUser(name);
             libraryVersion.setPusher(name);
             String libraryVersionId =libraryVersionService.createLibraryVersionSplice(libraryVersion,tgzName);
-
+            libraryVersion.setId(libraryVersionId);
 
             //创建制品文件
             LibraryFile libraryFile = new LibraryFile();
+            libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setLibrary(library);
+            libraryFile.setLibraryVersion(libraryVersion);
+
             libraryFile.setFileName(tgzName);
             libraryFile.setFileSize(size);
             libraryFile.setSize(Long.valueOf(length));
             libraryFile.setFileUrl(replace+"/"+tgzName);
-            libraryFile.setRepository(repositoryList.get(0));
             libraryFile.setRelativePath(tgzName);
-            libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
+            libraryFileService.redactLibraryFile(libraryFile);
             return resultString(200,null,2);
         }else {
             return  resultString(404,"制品库不存在",0);
@@ -463,7 +462,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
             //走本地制品库拉取
             logger.info("npm拉取(tgz)-存储的文件存在进入本地拉取:"+libraryName);
-            byte[] bytes = RepositoryUtil.readFileData(file);
+            byte[] bytes = RepositoryUtil.readFileByte(file);
             return  resultByte(200,bytes);
         }catch (Exception e){
             logger.info("npm拉取(tgz)-存储的文件file进入本地拉取报错:"+e.getMessage());
@@ -637,8 +636,14 @@ public class NpmUploadServiceImpl implements NpmUploadService {
      */
 
     public String getUserName(String authorization,String type) throws UnsupportedEncodingException {
+        String basic;
         //用户信息
-        String basic = authorization.replace(type, "").trim();
+      if (authorization.startsWith("Bearer Npm token")){
+           basic = authorization.replace("Bearer Npm token", "").trim();
+      }else {
+           basic = authorization.replace(type, "").trim();
+      }
+
         byte[] decode = Base64.getDecoder().decode(basic);
         //用户信息
         String userData = new String(decode, "UTF-8");
@@ -761,7 +766,7 @@ public class NpmUploadServiceImpl implements NpmUploadService {
 
         DataInputStream dataInputStream = new DataInputStream(inputStream);
         DataOutputStream dataOutputStream = new DataOutputStream(OutputStream);
-        byte[]  buf=new byte[6];
+        byte[]  buf=new byte[8192];
         int len=-1;
         while((len=dataInputStream.read(buf)) != -1){
             dataOutputStream.write(buf,0,len);
@@ -959,18 +964,20 @@ public class NpmUploadServiceImpl implements NpmUploadService {
        // libraryVersion.setPullUser(user.getName());
         libraryVersion.setPusher("center");
         String libraryVersionId = libraryVersionService.createLibraryVersionSplice(libraryVersion, fileName);
+        libraryVersion.setId(libraryVersionId);
 
         //创建制品文件
         LibraryFile libraryFile = new LibraryFile();
+        libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
+        libraryFile.setLibraryVersion(libraryVersion);
+
         libraryFile.setFileName(fileName);
         libraryFile.setFileSize(RepositoryUtil.formatSize(npmPubData.getFileSize()));
-
         libraryFile.setFileUrl(npmPubData.getRelativePath());
-        libraryFile.setRepository(repository);
         libraryFile.setRelativePath(fileName);
         libraryFile.setSize(npmPubData.getFileSize());
-        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile);
     }
 
     /**

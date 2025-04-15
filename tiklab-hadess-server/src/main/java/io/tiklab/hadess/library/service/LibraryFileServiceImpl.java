@@ -2,11 +2,13 @@ package io.tiklab.hadess.library.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectImageResponse;
 import com.github.dockerjava.core.DockerClientBuilder;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.common.FileUtil;
 import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
@@ -17,6 +19,10 @@ import io.tiklab.hadess.library.model.LibraryFileQuery;
 import io.tiklab.hadess.library.model.LibraryVersion;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.DeleteBuilders;
+import io.tiklab.hadess.repository.model.Repository;
+import io.tiklab.hadess.repository.model.RepositoryRemoteProxy;
+import io.tiklab.hadess.repository.service.NetworkProxyService;
+import io.tiklab.hadess.repository.service.RepositoryRemoteProxyService;
 import io.tiklab.toolkit.beans.BeanMapper;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.core.page.PaginationBuilder;
@@ -27,12 +33,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,7 +71,13 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     LibraryVersionService libraryVersionService;
 
     @Autowired
+    RepositoryRemoteProxyService remoteProxyService;
+
+    @Autowired
     XpackYamlDataMaService xpakYamlDataMaService;
+
+    @Autowired
+    NetworkProxyService networkProxyService;
 
     @Override
     public String createLibraryFile(@NotNull @Valid LibraryFile libraryFile) {
@@ -260,22 +280,27 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     /**
      *  制品文件创建、修改
      *  @param libraryFile     制品文件
-     *  @param versionId   制品版本id
      * @return
      */
-    public void redactLibraryFile(LibraryFile libraryFile,String versionId){
-        LibraryVersion libraryVersion = new LibraryVersion();
-        libraryVersion.setId(versionId);
-        libraryFile.setLibraryVersion(libraryVersion);
+    public String redactLibraryFile(LibraryFile libraryFile){
+        String fileId;
 
-        List<LibraryFile> libraryFileList = this.findLibraryFileList(new LibraryFileQuery().setLibraryId(libraryFile.getLibrary().getId()).setLibraryVersionId(versionId)
-                .setFileName(libraryFile.getFileName()));
+        LibraryFileQuery libraryFileQuery = new LibraryFileQuery();
+        libraryFileQuery.setLibraryId(libraryFile.getLibrary().getId());
+        libraryFileQuery.setFileName(libraryFile.getFileName());
+        if (!ObjectUtils.isEmpty(libraryFile.getLibraryVersion())){
+            libraryFileQuery.setLibraryVersionId(libraryFile.getLibraryVersion().getId());
+        }
+
+        List<LibraryFile> libraryFileList = this.findLibraryFileList(libraryFileQuery);
         if (CollectionUtils.isNotEmpty(libraryFileList)){
             libraryFile.setId(libraryFileList.get(0).getId());
             this.updateLibraryFile(libraryFile);
+            fileId=libraryFile.getId();
         }else {
-            this.createLibraryFile(libraryFile);
+             fileId = this.createLibraryFile(libraryFile);
         }
+        return fileId;
     }
 
     @Override
@@ -289,6 +314,13 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
     @Override
     public List<LibraryFile> findFileByReAndLibraryAndVer(String repositoryId, String libraryName, String version) {
+        List<LibraryFileEntity> libraryFileEntity = libraryFileDao.findFileByReAndLibraryAndVer(repositoryId, libraryName, version);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntity,LibraryFile.class);
+
+        return libraryFileList;
+    }
+    @Override
+    public List<LibraryFile> findFileByReAndLibraryAndVer(String[] repositoryId, String libraryName, String version) {
         List<LibraryFileEntity> libraryFileEntity = libraryFileDao.findFileByReAndLibraryAndVer(repositoryId, libraryName, version);
         List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntity,LibraryFile.class);
 
@@ -311,6 +343,9 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         String readFile = RepositoryUtil.readFile(new File(filePath));
 
         JSONObject allData = JSONObject.parseObject(readFile);
+       if (ObjectUtils.isEmpty(allData)){
+           return null;
+       }
         JSONObject config = (JSONObject) allData.get("config");
         String digest = config.get("digest").toString();
 
@@ -381,14 +416,27 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
                 // 读取配置文件
                 String confPath = address + "/" + libraryFile.getFileUrl();
-                String s = RepositoryUtil.readFile(new File(confPath));
-                if (!ObjectUtils.isEmpty(s)){
-                    ObjectMapper mapper = new ObjectMapper();
+                File file = new File(confPath);
+                String fileData=null;
+                if (!file.exists()){
+                    Repository repository = libraryFile.getRepository();
 
-                    // 将 JSON 字符串转换为 Map
-                    Map<String, Object> config = mapper.readValue(s, Map.class);
+                    if (("remote").equals(repository.getRepositoryType())){
+                        List<RepositoryRemoteProxy> remoteProxyList = remoteProxyService.findAgencyByRepId(repository.getId());
+                         fileData = readRemoteData(remoteProxyList, libraryFile);
+                    }
+                }else {
+                     fileData = RepositoryUtil.readFile(file);
+                }
+
+                if (!ObjectUtils.isEmpty(fileData)){
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonNode = objectMapper.readTree(fileData);
+                    List<Map> history = objectMapper.convertValue(jsonNode.get("history"), List.class);
+                  /*  // 将 JSON 字符串转换为 Map
+                    Map<String, Object> config = mapper.readValue(fileData, Map.class);
                     // 获取 history 字段
-                    List<Map<String, Object>> history = (List<Map<String, Object>>) config.get("history");
+                    List<Map<String, Object>> history = (List<Map<String, Object>>) config.get("history");*/
                     for (int i = 0; i < history.size(); i++) {
                         Map<String, Object> item = history.get(i);
                         String command = item.get("created_by").toString();
@@ -403,7 +451,8 @@ public class LibraryFileServiceImpl implements LibraryFileService {
             dockerClient.close();
             return resultList;
         } catch (Exception e) {
-           throw new SystemException(HadessFinal.SYSTEM_EXCEPTION,e.getMessage()) ;
+            e.printStackTrace();
+           throw new SystemException(HadessFinal.SYSTEM_EXCEPTION,"读取文件失败") ;
         }
     }
 
@@ -412,6 +461,94 @@ public class LibraryFileServiceImpl implements LibraryFileService {
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
+    /**
+     * 转发远程读取数据
+     * @param remoteProxyList 代理地址
+     * @param libraryFile 文件信息
+     */
+    public String readRemoteData(List<RepositoryRemoteProxy> remoteProxyList,LibraryFile libraryFile ){
+        String fileData=null;
+
+        //存储到本地的地址
+        String confPath = xpakYamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
+
+        String s1 = StringUtils.substringAfter(libraryFile.getFileUrl(), "/");
+        String imageName = StringUtils.substringBefore(s1, "/blobs/");
+        //判断镜像是否有仓库名，没有就添加默认的仓库名library
+        if (!imageName.contains("/")){
+            s1="library/" +s1;
+            imageName="library/"+imageName;
+        }
+        for (int i=0;i<=remoteProxyList.size();i++){
+            String path = remoteProxyList.get(i).getRemoteProxy().getAgencyUrl() + "/v2/"+s1;
+
+            //获取token
+            String token = getDockerToken(imageName);
+
+            try {
+                byte[] bytes = restTemplateGetByte(path, token);
+                 fileData = new String(bytes);
+                //读取后写入
+                InputStream inputStream = new ByteArrayInputStream(bytes);
+                String s = StringUtils.substringBeforeLast(confPath, "/");
+                FileUtil.copyFileData(inputStream,s,libraryFile.getFileName());
+
+                return fileData;
+            } catch (Exception e) {
+                if (("写入数据失败").equals(e.getMessage())){
+                    throw new SystemException(HadessFinal.WRITE_EXCEPTION,e.getMessage()) ;
+                }
+                //一直循环到最后一个代理地址仍然报错
+                if(i+1==remoteProxyList.size()){
+                    throw new SystemException(HadessFinal.READ_REMOTE_EXCEPTION,"访问地址："+path+"失败") ;
+                }
+            }
+        }
+        return fileData;
+
+    }
+
+    /**
+     * 获取docker的token
+     * @param imageName imageName
+     */
+    public String getDockerToken(String imageName){
+        String tokenUrl =HadessFinal.DOCKER_TOKEN+"?service=registry.docker.io&scope=repository:"+imageName+ ":pull";
+        //String tokenUrl = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:" +imageName+ ":pull";
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(RepositoryUtil.getNetworkProxy(networkProxyService));
+        ResponseEntity<JSONObject> forEntity = restTemplate.getForEntity(tokenUrl, JSONObject.class);
+        int code = forEntity.getStatusCode().value();
+        if (code==200){
+            JSONObject resultBody = forEntity.getBody();
+            String accessToken = resultBody.get("access_token").toString();
+            return accessToken;
+        }
+        logger.info("docker获取token失败");
+        return "获取token失败";
+    }
+
+    /**
+     * 执行get请求
+     * @param relativeAbsoluteUrl 地址
+     * @param token
+     */
+    public byte[] restTemplateGetByte(String relativeAbsoluteUrl,String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(RepositoryUtil.getNetworkProxy(networkProxyService));
+        HttpHeaders newHeaders = new HttpHeaders();
+        //token不为空的时候为获取manifest数据
+        if (!ObjectUtils.isEmpty(token)){
+            newHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            newHeaders.set("Accept", "application/vnd.docker.distribution.manifest.v2+json");
+        }
+
+        ResponseEntity<byte[]> exchange = restTemplate.exchange(relativeAbsoluteUrl, HttpMethod.GET,
+                new HttpEntity<>(newHeaders), byte[].class);
+        byte[] body = exchange.getBody();
+        return body;
+    }
 
 
 }

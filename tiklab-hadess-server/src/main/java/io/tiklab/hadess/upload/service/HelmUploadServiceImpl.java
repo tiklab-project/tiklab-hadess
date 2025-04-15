@@ -398,13 +398,14 @@ public class HelmUploadServiceImpl implements HelmUploadService {
         libraryVersion.setSize(allLength);
         libraryVersion.setLibraryType("helm");
         String libraryVersionId = libraryVersionService.redactLibraryVersion(libraryVersion);
-
+        libraryVersion.setId(libraryVersionId);
 
 
        //创建制品
         LibraryFile libraryFile = new LibraryFile();
         libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
+        libraryFile.setLibraryVersion(libraryVersion);
 
         //创建 chart 信息文件
         libraryFile.setFileName(infoName);
@@ -413,8 +414,7 @@ public class HelmUploadServiceImpl implements HelmUploadService {
         //Chart信息文件
         libraryFile.setFileSize(RepositoryUtil.formatSize(infoLength));
         libraryFile.setSize(infoLength);
-        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
-
+        libraryFileService.redactLibraryFile(libraryFile);
 
         //创建chart
         libraryFile.setFileName(chartName);
@@ -423,6 +423,6 @@ public class HelmUploadServiceImpl implements HelmUploadService {
         //Chart信息文件
         libraryFile.setFileSize(RepositoryUtil.formatSize(chartLength));
         libraryFile.setSize(chartLength);
-        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile);
     }
 }

@@ -1,6 +1,7 @@
 package io.tiklab.hadess.repository.dao;
 
 import io.tiklab.hadess.repository.entity.RepositoryRemoteProxyEntity;
+import io.tiklab.hadess.repository.model.RemoteProxy;
 import io.tiklab.hadess.repository.model.RepositoryRemoteProxyQuery;
 import io.tiklab.dal.jdbc.JdbcTemplate;
 import io.tiklab.core.page.Pagination;
@@ -116,16 +117,7 @@ public class RepositoryRemoteProxyDao{
         return jpaTemplate.findPage(queryCondition,RepositoryRemoteProxyEntity.class);
     }
 
-    public List<String> findAgencyUrl(String repositoryName){
-        String sql="SELECT pr.remote_proxy_id from pack_repository_remote_proxy pr " +
-                " LEFT JOIN pack_repository_group_items gr ON gr.repository_id=pr.repository_id  " +
-                "LEFT JOIN pack_repository re ON gr.repository_group_id=re.id" +
-                " WHERE re.name='"+repositoryName +"'";
-        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
-        List<String> agencyUrlList = jdbcTemplate.queryForList(sql,String.class);
 
-        return agencyUrlList;
-    }
 
     public List<RepositoryRemoteProxyEntity> findAgencyByRpyIdAndPath(String[] repositoryIds, String agencyId) {
         QueryBuilders queryBuilders = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
@@ -146,5 +138,12 @@ public class RepositoryRemoteProxyDao{
                 .in("repositoryId",repositoryIds)
                 .get();
         return jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
+    }
+
+    public List<RepositoryRemoteProxyEntity> findRemoteProxyRepId(String repositoryId) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(RepositoryRemoteProxyEntity.class)
+                .eq("repositoryId",repositoryId)
+                .get();
+        return  jpaTemplate.findList(queryCondition,RepositoryRemoteProxyEntity.class);
     }
 }

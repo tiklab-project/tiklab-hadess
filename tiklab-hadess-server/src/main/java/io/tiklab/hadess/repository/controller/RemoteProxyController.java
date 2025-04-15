@@ -97,7 +97,7 @@ public class RemoteProxyController {
 
     @RequestMapping(path = "/findProxyListByRpyId",method = RequestMethod.POST)
     @ApiMethod(name = "findProxyListByRpyId",desc = "通过仓库id查询代理")
-    @ApiParam(name = "remoteProxyQuery",desc = "remoteProxyQuery",required = true)
+    @ApiParam(name = "repositoryId",desc = "仓库id",required = true)
     public Result<List<RemoteProxy>> findProxyListByRpyId(@NotNull String repositoryId){
         List<RemoteProxy> remoteProxyList = remoteProxyService.findProxyListByRpyId(repositoryId);
 
@@ -106,7 +106,7 @@ public class RemoteProxyController {
 
     @RequestMapping(path = "/findRepositoryByProxyId",method = RequestMethod.POST)
     @ApiMethod(name = "findRepositoryByProxyId",desc = "通过代理地址的id 查询是关联的仓库")
-    @ApiParam(name = "remoteProxyQuery",desc = "remoteProxyQuery",required = true)
+    @ApiParam(name = "id",desc = "id",required = true)
     public Result<List<String>> findRepositoryByProxyId(@NotNull String id){
         List<String> repositoryName = remoteProxyService.findRepositoryByProxyId(id);
 

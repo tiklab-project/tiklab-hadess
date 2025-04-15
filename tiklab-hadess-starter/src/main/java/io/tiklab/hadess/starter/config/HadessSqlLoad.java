@@ -42,6 +42,7 @@ public class HadessSqlLoad {
                 "xprivilege_1.0.1",
                 "apply-auth_1.0.1",
                 "privilege_1.0.1",
+                "hadess_1.0.1",
 
         });
         dsmConfig.newVersion("1.0.2", new String[]{
@@ -52,6 +53,7 @@ public class HadessSqlLoad {
                 "apply-auth_1.0.2",
                 "privilege_1.0.2",
                 "xprivilege_1.0.2",
+                "hadess_1.0.2",
         });
         dsmConfig.newVersion("1.0.3", new String[]{
                 "xpack_1.0.3",
@@ -59,6 +61,7 @@ public class HadessSqlLoad {
                 "oplog_1.0.3",
                 "apply-auth_1.0.3",
                 "privilege_1.0.3",
+                "hadess_1.0.3",
         });
         dsmConfig.newVersion("1.0.4", new String[]{
                 "message_1.0.4",

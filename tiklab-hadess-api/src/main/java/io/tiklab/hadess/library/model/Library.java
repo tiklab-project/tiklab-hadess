@@ -53,8 +53,6 @@ public class Library extends BaseModel {
     @ApiProperty(name="newVersion",desc="最新版本")
     private java.lang.String newVersion;
 
-    @ApiProperty(name="size",desc="制品大小")
-    private java.lang.Long size;
 
     /*---------其他字段----------*/
     @ApiProperty(name="size",desc="制品大小")
@@ -236,14 +234,6 @@ public class Library extends BaseModel {
         this.scanLibraryId = scanLibraryId;
     }
 
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
 
     public String getVersionSize() {
         return versionSize;
@@ -308,4 +298,6 @@ public class Library extends BaseModel {
     public void setVersionCount(Integer versionCount) {
         this.versionCount = versionCount;
     }
+
+
 }

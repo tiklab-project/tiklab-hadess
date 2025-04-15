@@ -17,7 +17,7 @@ server:
 
 APP_HOME: ${APP_HOME}
 
-DATA_HOME: ${user.home}/tiklab/hadess
+DATA_HOME: ${user.home}/tiklab/thoughtware-hadess
 
 #dal config for mysql jdbc
 jdbc:
@@ -80,5 +80,9 @@ openscan_mvn:
   repo: http://172.13.1.24:8080/repository/maven-public
   user: admin
   password: 123456
+
+postin:
+  scan:
+    package: io.tiklab.hadess
 
 

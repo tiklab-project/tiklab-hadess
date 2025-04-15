@@ -67,7 +67,7 @@
 
     <profiles>
         <profile>
-            <id>deploy-hadess</id>
+            <id>deploy-hadess-local-cloud</id>
             <distributionManagement>
                 <snapshotRepository>
                     <id>hadess-cloud</id>
@@ -84,19 +84,19 @@
         </profile>
 
         <profile>
-            <id>deploy-xpack</id>
+            <id>deploy-hadess-lcoal</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>xpack</id>
-                    <url>http://192.168.10.9:8080/repository/maven-snapshots</url>
+                    <id>hadess</id>
+                    <url>http://192.168.10.21:8081/repository/maven-local</url>
                 </snapshotRepository>
                 <repository>
-                    <id>xpack</id>
-                    <url>http://192.168.10.9:8080/repository/maven-releases</url>
+                    <id>hadess</id>
+                    <url>http://192.168.10.21:8081/repository/maven-local</url>
                 </repository>
             </distributionManagement>
             <properties>
-                <profile.assembly.package.suffix>deploy-xpack</profile.assembly.package.suffix>
+                <profile.assembly.package.suffix>deploy-hadess-lcoal</profile.assembly.package.suffix>
             </properties>
         </profile>
     </profiles>

@@ -83,3 +83,7 @@ openscan_mvn:
   user: admin
   password: 123456
 
+postin:
+  scan:
+    package: io.tiklab.hadess
+

@@ -531,7 +531,7 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         ServletOutputStream outputStream = response.getOutputStream();
 
         InputStream inputStream = new FileInputStream(file);
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[8192];
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
@@ -539,21 +539,6 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         // 关闭输入流和输出流
         inputStream.close();
         outputStream.close();
-
-        /*ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-        int buf_size = 1024;
-        byte[] buffer = new byte[buf_size];
-        int len = 0;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        while (-1 != (len = in.read(buffer, 0, buf_size))) {
-            bos.write(buffer, 0, len);
-        }
-        byte[] bytes = bos.toByteArray();
-
-        return  result(200,bytes,"OK");*/
     }
 
     /**
@@ -626,13 +611,14 @@ public class MavenUploadServiceImpl implements MavenUploadService {
 
         //制品文件 创建、更新
         LibraryFile libraryFile = new LibraryFile();
+        libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
-        libraryFile.setFileName(dataMap.get("fileName"));
+        libraryFile.setLibraryVersion(libraryVersion);
 
+        libraryFile.setFileName(dataMap.get("fileName"));
         String size = RepositoryUtil.formatSize(fileSize);
         libraryFile.setFileSize(size);
         libraryFile.setSize(fileSize);
-        libraryFile.setRepository(repository);
 
         libraryFile.setFileUrl(dataMap.get("contextPath"));
         if (dataMap.get("version").endsWith("-SNAPSHOT")&&!relativePath.contains("maven-metadata")){
@@ -643,11 +629,9 @@ public class MavenUploadServiceImpl implements MavenUploadService {
         }
         libraryFile.setRelativePath(relativePath);
 
-        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile);
 
         logger.info("文件"+dataMap.get("fileName")+"大小："+fileSize);
-        //修改制品最新版本的大小
-        libraryService.updateMvnLibrarySize(libraryFile,libraryVersion,fileSize);
     }
 
     /**

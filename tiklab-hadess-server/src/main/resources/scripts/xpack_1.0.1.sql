@@ -53,7 +53,7 @@ create table pack_scan_rely(
        rely_vendor varchar(64),
        rely_version varchar(64),
        rely_language varchar(32),
-       rely_path   varchar(428),
+       rely_path   text,
        rely_type  varchar(32),
        rely_parent_id varchar(12),
        rely_one_id varchar(12),
@@ -125,7 +125,7 @@ create table pack_scan_scheme_hole(
 -- ----------------------------
 create table pack_scan_hole(
        id          varchar(12) PRIMARY KEY,
-       vendor  varchar (64) NOT NULL,
+       vendor  varchar (64),
        product varchar(32),
        version varchar(528),
        language    varchar(12),

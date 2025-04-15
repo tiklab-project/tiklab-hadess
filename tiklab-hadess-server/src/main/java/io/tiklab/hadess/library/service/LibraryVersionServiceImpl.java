@@ -247,6 +247,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     @Override
     public Pagination<LibraryVersion> findHistoryVersionPage(LibraryVersionQuery libraryVersionQuery) {
         Pagination<LibraryVersionEntity>  pagination = libraryVersionDao.findLibraryVersionPage(libraryVersionQuery);
+
         List<LibraryVersion> libraryVersionList=null;
         if (CollectionUtils.isNotEmpty(pagination.getDataList())){
              libraryVersionList = BeanMapper.mapList(pagination.getDataList(),LibraryVersion.class);
@@ -388,17 +389,20 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     public List<String> getLibraryFile( String libraryVersionId){
         List<String> sizeList=null;
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryVersionId(libraryVersionId));
-
+        List<LibraryFile> filesList = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
         //制品文件 类型为docker
         if (!CollectionUtils.isEmpty(libraryFileList)){
-            LibraryFile libraryFile = libraryFileList.get(0);
-            if (("docker").equals(libraryFile.getRepository().getType())){
+
+           /* if (("docker").equals(libraryFile.getRepository().getType())){
                 List<LibraryFile> libraryFiles = libraryFileService.dockerFile(libraryFile);
-                libraryFileList = Stream.concat(libraryFileList.stream(), libraryFiles.stream()).collect(Collectors.toList());
-            }
+                if (CollectionUtils.isNotEmpty(libraryFiles)){
+                    return null;
+                }
+                libraryFileList = Stream.concat(filesList.stream(), libraryFiles.stream()).collect(Collectors.toList());
+            }*/
 
             //maven 快照版本的时候
-            LibraryVersion version = libraryFile.getLibraryVersion();
+            LibraryVersion version = libraryFileList.get(0).getLibraryVersion();
             if(("maven").equals(version.getLibraryType())&&version.getVersion().endsWith("SNAPSHOT")){
                 libraryFileList=libraryFileList.stream().filter(a->!a.getRelativePath().contains("maven-metadata.xml")).collect(Collectors.toList());
             }

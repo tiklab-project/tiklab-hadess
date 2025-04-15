@@ -1,14 +1,18 @@
 package io.tiklab.hadess.upload.common.response;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.tiklab.core.Result;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.UuidGenerator;
+import io.tiklab.hadess.upload.model.error.DockerErrorResponse;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Map;
 
 public class DockerResponse {
@@ -81,6 +85,20 @@ public class DockerResponse {
                 outputStream.close();
             }
         }
+    }
+
+
+    public static void dockerReadManifest(HttpServletResponse response,String contextPath,String data) throws IOException {
+        long length = new File(contextPath).length();
+
+        String sha256 = contextPath.substring(contextPath.lastIndexOf("sha256"));
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("Docker-Content-Digest", sha256);
+        response.setContentType("application/vnd.docker.distribution.manifest.v2+json");
+        response.setHeader("Content-Length",String.valueOf(length));
+        PrintWriter writer = response.getWriter();
+        writer.write(data);
+        writer.close();
     }
 
 
@@ -233,5 +251,44 @@ public class DockerResponse {
         response.setHeader("Location", location);
         response.setHeader("Content-Range", range);
         response.getWriter().close();
+    }
+
+    /**
+     * 返回的失败结果
+     * @param massage massage
+     */
+    public String errorToClient(String massage,String imageName,String version){
+        DockerErrorResponse errorResponse = new DockerErrorResponse();
+
+        DockerErrorResponse.ErrorDetail errorDetail = new DockerErrorResponse.ErrorDetail();
+        errorDetail.setCode("MANIFEST_UNKNOWN");
+        errorDetail.setMessage(massage);
+        DockerErrorResponse.ErrorDetail.DetailItem detailItem = new DockerErrorResponse.ErrorDetail.DetailItem();
+        detailItem.setName(imageName);
+        detailItem.setTag(version);
+
+        errorDetail.setDetail(Arrays.asList(detailItem));
+        errorResponse.setErrors(Arrays.asList(errorDetail));
+
+        //转json字符串
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String s = objectMapper.writeValueAsString(errorResponse);
+            return s;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * 读取blobs文件错误信息
+     * @param data data
+     * @param  response response
+     */
+    public static void errorMirroringData(HttpServletResponse response,String data) throws IOException {
+        response.setContentType("application/json; charset=UTF-8");
+        PrintWriter writer = response.getWriter();
+        response.setStatus(404);
+        writer.print(data);
+        writer.close();
     }
 }

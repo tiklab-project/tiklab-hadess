@@ -186,18 +186,20 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         libraryVersion.setSize(Long.valueOf(FileLength));
         libraryVersion.setLibraryType("generic");
         String libraryVersionId = libraryVersionService.redactLibraryVersion(libraryVersion);
+        libraryVersion.setId(libraryVersionId);
 
         //创建制品文件
         LibraryFile libraryFile = new LibraryFile();
         libraryFile.setRepository(repository);
         libraryFile.setLibrary(library);
+        libraryFile.setLibraryVersion(libraryVersion);
 
         libraryFile.setFileName(fileName);
         libraryFile.setFileUrl(versionPath+"/"+fileName);
         libraryFile.setRelativePath(name+"/"+version+"/"+fileName);
         libraryFile.setFileSize(size);
         libraryFile.setSize(Long.valueOf(FileLength));
-        libraryFileService.redactLibraryFile(libraryFile,libraryVersionId);
+        libraryFileService.redactLibraryFile(libraryFile);
         return "{code:200,msg:upload上传成功}";
     }
 

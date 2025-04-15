@@ -35,7 +35,7 @@ public class PushOperationController {
 
     @RequestMapping(path = "/executePushLibrary",method = RequestMethod.POST)
     @ApiMethod(name = "findPushLibraryPage",desc = "推送制品")
-    @ApiParam(name = "pushLibraryQuery",desc = "pushLibraryQuery",required = true)
+    @ApiParam(name = "pushOperationQuery",desc = "pushOperationQuery",required = true)
     public Result<String> pushLibrary(@RequestBody @Valid @NotNull PushOperationQuery pushOperationQuery){
         String state = pushOperationService.pushLibrary(pushOperationQuery);
 

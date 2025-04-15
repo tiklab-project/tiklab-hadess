@@ -74,11 +74,10 @@ public interface RepositoryRemoteProxyService {
     Pagination<RepositoryRemoteProxy> findRepositoryRemoteProxyPage(RepositoryRemoteProxyQuery repositoryRemoteProxyQuery);
 
     /**
-     * 通过制品库名字查询代理地址
-     * @param repositoryId repositoryId
-     * @return
+     * 通过仓库id查询代理地址
+     * @param repositoryId 仓库id
      */
-    List<String> findAgencyUrl(String repositoryId);
+    List<RepositoryRemoteProxy> findAgencyByRepId(String repositoryId);
 
 
 
@@ -86,7 +85,6 @@ public interface RepositoryRemoteProxyService {
     /**
      * 通过仓库的ids 和代理地址查询
      * @param repositoryIds 制品库ids
-     * @return
      */
     RepositoryRemoteProxy findAgencyByRpyIdAndPath(String[] repositoryIds,String agencyUrl);
 

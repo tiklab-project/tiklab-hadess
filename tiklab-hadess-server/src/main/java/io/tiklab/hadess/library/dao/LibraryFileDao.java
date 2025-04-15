@@ -1,5 +1,6 @@
 package io.tiklab.hadess.library.dao;
 
+import io.tiklab.hadess.library.entity.LibraryEntity;
 import io.tiklab.hadess.library.entity.LibraryFileEntity;
 import io.tiklab.core.page.Pagination;
 import io.tiklab.dal.jdbc.JdbcTemplate;
@@ -7,7 +8,10 @@ import io.tiklab.dal.jpa.JpaTemplate;
 import io.tiklab.dal.jpa.criterial.condition.DeleteCondition;
 import io.tiklab.dal.jpa.criterial.condition.QueryCondition;
 import io.tiklab.dal.jpa.criterial.conditionbuilder.QueryBuilders;
+import io.tiklab.hadess.library.entity.LibraryVersionEntity;
 import io.tiklab.hadess.library.model.LibraryFileQuery;
+import io.tiklab.hadess.repository.entity.RepositoryEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,14 +178,54 @@ public class LibraryFileDao{
      * @return Pagination <LibraryFileEntity>
      */
     public List<LibraryFileEntity> findFileByReAndLibraryAndVer(String repositoryId,String libraryName,String version){
-        String sql="SELECT lf.*   FROM pack_library_file lf\n" +
-                "LEFT JOIN pack_library_version lv ON lv.id=lf.library_version_id\n" +
-                "LEFT JOIN pack_library li ON li.id=lv.library_id\n" +
-                "WHERE lf.repository_id='"+repositoryId+"' AND li.name='"+libraryName+"' AND lv.version='"+version+"'";
+        QueryCondition queryCondition;
+        if (StringUtils.isNotEmpty(version)){
+            queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class, "file")
+                    .leftJoin(LibraryVersionEntity.class, "ver", "file.libraryVersionId=ver.id")
+                    .leftJoin(LibraryEntity.class, "li", "ver.libraryId=li.id")
+                    .leftJoin(RepositoryEntity.class, "re", "li.repositoryId=re.id")
+                    .eq("li.name", libraryName)
+                    .eq("ver.version", version)
+                    .eq("re.id", repositoryId)
+                    .get();
+        }else {
+            queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class, "file")
+                    .leftJoin(LibraryEntity.class, "li", "file.libraryId=li.id")
+                    .leftJoin(RepositoryEntity.class, "re", "li.repositoryId=re.id")
+                    .eq("li.name", libraryName)
+                    .eq("re.id", repositoryId)
+                    .get();
+        }
+        return   jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
+    }
 
-        JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
-        List<LibraryFileEntity> libraryFileEntities = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LibraryFileEntity.class));
+    /**
+     * 通过制品库和制品以及版本查询
+     * @param repositoryId  制品库id
+     * @param libraryName   制品名称
+     * @param version       版本
+     * @return Pagination <LibraryFileEntity>
+     */
+    public List<LibraryFileEntity> findFileByReAndLibraryAndVer(String[] repositoryId,String libraryName,String version){
 
-        return libraryFileEntities;
+        QueryCondition queryCondition;
+        if (StringUtils.isNotEmpty(version)){
+             queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class, "file")
+                    .leftJoin(LibraryVersionEntity.class, "ver", "file.libraryVersionId=ver.id")
+                    .leftJoin(LibraryEntity.class, "li", "ver.libraryId=li.id")
+                    .leftJoin(RepositoryEntity.class, "re", "li.repositoryId=re.id")
+                    .eq("li.name", libraryName)
+                    .eq("ver.version", version)
+                    .in("re.id", repositoryId)
+                    .get();
+        }else {
+             queryCondition = QueryBuilders.createQuery(LibraryFileEntity.class, "file")
+                    .leftJoin(LibraryEntity.class, "li", "file.libraryId=li.id")
+                    .leftJoin(RepositoryEntity.class, "re", "li.repositoryId=re.id")
+                    .eq("li.name", libraryName)
+                    .in("re.id", repositoryId)
+                    .get();
+        }
+        return   jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 }

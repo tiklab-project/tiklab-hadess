@@ -36,11 +36,7 @@
         </dependency>
 
         <!--tiklab-->
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-postin-client</artifactId>
-            <version>${tiklab-postin.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-codegen-core</artifactId>
@@ -142,6 +138,18 @@
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
             <version>3.3.0</version> <!-- 使用最新版本 -->
+        </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postin-client</artifactId>
+            <version>${tiklab-postin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.15.3</version>
         </dependency>
     </dependencies>
 

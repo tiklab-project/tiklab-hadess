@@ -32,11 +32,6 @@ public interface LibraryService {
     */
     void updateLibrary(@NotNull @Valid Library library);
 
-    /**
-     * 更新制品大小
-     * @param libraryFile
-     */
-    void updateMvnLibrarySize(LibraryFile libraryFile, LibraryVersion libraryVersion, Long fileSize);
 
     /**
     * 删除
@@ -112,7 +107,7 @@ public interface LibraryService {
      * 通过制品名字、类型、制品ids查询
      * @param name 制品名字
      * @param type 制品类型  maven、npm
-     * @return
+     * @param rpyIds 仓库ids
      */
     List<Library> findLibraryByCondition(String name,String type,String[] rpyIds);
 

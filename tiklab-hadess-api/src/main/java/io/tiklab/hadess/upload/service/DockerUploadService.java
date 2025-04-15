@@ -2,6 +2,7 @@ package io.tiklab.hadess.upload.service;
 
 import io.tiklab.core.Result;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -40,29 +41,25 @@ public interface DockerUploadService {
     String createFile(String digest,String repositoryPath) throws IOException;
 
     /**
-     * 推送-创建tag（版本）信息
+     * 推送-创建Manifests、tag（版本）信息
      * @param inputStream 文件流
      * @param  authorization 用户信息
      */
-    String createTag(InputStream inputStream, String repositoryPath,String authorization) throws IOException, NoSuchAlgorithmException;
+    String createManifests(InputStream inputStream, String repositoryPath,String authorization) throws IOException, NoSuchAlgorithmException;
+
 
     /**
-     * 拉取-manifests
+     * 拉取docker-获取manifests镜像校验数据
      * @param repositoryPath
      */
-    Map<String, String> pullManifests(String repositoryPath);
+    Map<String, String> downloadManifests(String repositoryPath,String userAgent);
+
 
     /**
-     * HEAD请求拉取-manifests返回404，执行该get请求校验Manifests数据
-     * @param repositoryPath
+     * 拉取docker-读取manifests、blobs镜像数据。这一步是已经校验了manifests数据后执行
+     * @param repositoryPath  客户端请求路径
      */
-    String  verifyManifests(String repositoryPath);
-
-    /**
-     * 拉取-读取manifests、镜像数据
-     * @param repositoryPath
-     */
-    Map<String, String> readMirroringData(String repositoryPath) throws IOException;
+    void downloadMirroringData(HttpServletResponse response,String repositoryPath) throws IOException;
 
 
 }

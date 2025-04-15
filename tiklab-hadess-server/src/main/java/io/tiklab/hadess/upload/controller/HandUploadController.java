@@ -34,7 +34,7 @@ public class HandUploadController {
 
     @RequestMapping(path = "/maven/**",method = {RequestMethod.PUT,RequestMethod.GET})
     @ApiMethod(name = "mavenSubmit",desc = "通过xpack界面手动上传maven")
-    @ApiParam(name = "requestParam",desc = "requestParam")
+    @ApiParam(name = "request",desc = "request")
     public void mavenSubmit(HttpServletRequest request, HttpServletResponse response) {
         String contextPath = request.getRequestURI();
 

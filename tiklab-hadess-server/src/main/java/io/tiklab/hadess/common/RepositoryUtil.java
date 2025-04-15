@@ -4,23 +4,31 @@ import com.alibaba.fastjson.JSONObject;
 import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.hadess.repository.model.NetworkProxy;
+import io.tiklab.hadess.repository.model.NetworkProxyQuery;
+import io.tiklab.hadess.repository.service.NetworkProxyService;
 import io.tiklab.hadess.upload.common.UploadTool;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -176,7 +184,7 @@ public class RepositoryUtil {
 
     /**
      * 原生http  get调用
-     * @param address 解压路径
+     * @param address 路径
      * @ type 类型
      */
     public static String httpGet(String address,String type) throws Exception {
@@ -540,9 +548,8 @@ public class RepositoryUtil {
     /**
      *  读取文件信息
      *  @param file     文件
-     * @return
      */
-    public static byte[] readFileData(File file) throws IOException {
+    public static byte[] readFileByte(File file) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         int buf_size = 1024;
@@ -609,5 +616,34 @@ public class RepositoryUtil {
 
         return (int) (nanoTime % num);
     }
+
+    /**
+     * 添加网络代理地址
+     */
+    public static SimpleClientHttpRequestFactory getNetworkProxy(NetworkProxyService networkProxyService ) {
+
+        List<NetworkProxy> proxyList = networkProxyService.findNetworkProxyList(new NetworkProxyQuery().setEnable(1));
+        if (CollectionUtils.isEmpty(proxyList)){
+            return null;
+        }
+        NetworkProxy networkProxy = proxyList.get(0);
+
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        //单位为ms
+        factory.setReadTimeout(10 * 1000);
+        //单位为ms
+        factory.setConnectTimeout(30 * 1000);
+        // 代理的url网址或ip, port端口
+        InetSocketAddress address = new InetSocketAddress(networkProxy.getAddress(), networkProxy.getPort());
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
+        factory.setProxy(proxy);
+        return factory;
+    }
+
+
+
+
+
+
 
 }

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
@@ -43,40 +44,32 @@ public class DockerUploadController {
         String method = request.getMethod();
         StringBuffer requestURL = request.getRequestURL();
         logger.info("客户端请求方法："+method+",路径："+contextPath);
-       /* ServletInputStream inputStream = request.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println("内容"+line);
-        }*/
-
+        Enumeration<String> headerNames = request.getHeaderNames();
+        String userAgent=request.getHeader("user-agent");
         //客户端的get请求
         if (("GET").equals(method)){
             //请求路径中存在sha256 代表pull拉取 请求
             if (contextPath.contains("/sha256:")){
-                Map<String, String> resultMap = dockerUploadService.readMirroringData(repositoryPath);
-                DockerResponse.dockerReadMirroring(contextPath,resultMap,response);
-            }else {
+               dockerUploadService.downloadMirroringData(response,repositoryPath);
+            }else if (contextPath.contains("/manifests")){
                 //HEAD请求拉取-manifests返回404，执行该get请求校验Manifests数据
-                if (contextPath.contains("/manifests")){
-                    Map<String, String> manifests = dockerUploadService.pullManifests(repositoryPath);
-                    DockerResponse.dockerPullManifests(manifests,"GET",response);
-
-                }else {
-                    //登陆、推送。校验用户信息
-                    String authorization = request.getHeader("Authorization");
-                    Result<String> userCheck = dockerUploadService.userCheck(authorization);
-                    DockerResponse.dockerAccountVerify(userCheck,response);
-                }
+                Map<String, String> manifests = dockerUploadService.downloadManifests(repositoryPath,userAgent);
+                DockerResponse.dockerPullManifests(manifests,"GET",response);
+            }else {
+                //登陆、推送。校验用户信息
+                String authorization = request.getHeader("Authorization");
+                Result<String> userCheck = dockerUploadService.userCheck(authorization);
+                DockerResponse.dockerAccountVerify(userCheck,response);
             }
         }
+
 
         //docker 校验sha256
         if (("HEAD").equals(method)){
             //HEAD类型的请求带有/manifests 为拉取；否则推送
             if (contextPath.contains("/manifests")){
                 //获取manifests 镜像校验数据
-                Map<String, String> manifests = dockerUploadService.pullManifests(repositoryPath);
+                Map<String, String> manifests = dockerUploadService.downloadManifests(repositoryPath,userAgent);
                 DockerResponse.dockerPullManifests(manifests,"HEAD",response);
             }else {
                 //校验Sha256
@@ -96,14 +89,14 @@ public class DockerUploadController {
             Result result = dockerUploadService.uploadData(request.getInputStream(), repositoryPath);
             DockerResponse.DockerUploadBlobs(result,contextPath,request,response);
         }
+
         //docker 上传镜像层数据校验
         if (("PUT").equals(method)){
             //路径中存在manifests为校验 ;否则为上传数据
             if (contextPath.contains("/manifests")){
                 String authorization = request.getHeader("Authorization");
-                String tag = dockerUploadService.createTag(request.getInputStream(), repositoryPath, authorization);
+                String tag = dockerUploadService.createManifests(request.getInputStream(), repositoryPath, authorization);
                 DockerResponse.dockerCreateTag(tag,response);
-
             }else {
                 Map<String, String[]> parameterMap = request.getParameterMap();
                 String digest = parameterMap.get("digest")[0];

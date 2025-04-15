@@ -515,6 +515,12 @@ public class RepositoryServiceImpl implements RepositoryService {
                if (("go").equals(type)){
                    absoluteAddress=visitAddress + "/go/"+repository.getRepositoryUrl();
                }
+               if (("pypi").equals(type)){
+                   absoluteAddress=visitAddress + "/pypi/"+repository.getRepositoryUrl();
+               }
+               if (("composer").equals(type)){
+                   absoluteAddress=visitAddress + "/composer/"+repository.getRepositoryUrl();
+               }
            }else {
                //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
                String serverIp = RepositoryUtil.getServerIp();
@@ -532,6 +538,12 @@ public class RepositoryServiceImpl implements RepositoryService {
                }
                if (("go").equals(type)){
                    absoluteAddress="http://" + serverIp + ":" + port + "/go/"+repository.getRepositoryUrl();
+               }
+               if (("pypi").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port +  "/pypi/"+repository.getRepositoryUrl();
+               }
+               if (("composer").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port +  "/composer/"+repository.getRepositoryUrl();
                }
            }
 
@@ -615,6 +627,4 @@ public class RepositoryServiceImpl implements RepositoryService {
             hadessMessageService.settingLog(map,HadessFinal.LOG_TYPE_CREATE,"repository");
         }
     }
-
-
 }

@@ -33,8 +33,6 @@ public class LibraryEntity extends BaseModel {
     @Column(name = "repository_id",length = 12,notNull = true)
     private String repositoryId;
 
-    @Column(name = "size")
-    private Integer size;
 
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -122,13 +120,6 @@ public class LibraryEntity extends BaseModel {
         this.artifactId = artifactId;
     }
 
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
 
     public String getVersion() {
         return version;

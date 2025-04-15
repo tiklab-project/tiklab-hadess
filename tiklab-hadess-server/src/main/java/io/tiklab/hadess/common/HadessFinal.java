@@ -3,7 +3,7 @@ package io.tiklab.hadess.common;
 public class HadessFinal {
 
 
-    // 日志类型
+    // 日志消息类型
     public static final String LOG_TYPE_CREATE = "HDS_CREATE";
     public static final String LOG_TYPE_UPDATE = "HDS_UPDATE";
     public static final String LOG_TYPE_DELETE = "HDS_DELETE";
@@ -11,11 +11,16 @@ public class HadessFinal {
 
 
     //仓库创建
-    public static final String LOG_RPY_CREATE = "/repository/${repositoryId}/setting/repositoryInfo";
+    public static final String LOG_RPY_CREATE = "/repository/${repositoryId}/setting/info";
     //仓库删除
     public static final String LOG_RPY_DELETE = "/repository";
     //仓库修改
-    public static final String LOG_RPY_UPDATE = "/repository/${repositoryId}/setting/repositoryInfo";
+    public static final String LOG_RPY_UPDATE = "/repository/${repositoryId}/setting/info";
+
+
+    public static final String SCAN_MESSAGE_TYPE = "SCAN_RESULT";
+    //制品扫码路径
+    public static final String SCAN_RESULT_PATH = "/repository/${repositoryId}/scanDetails/${scanRecordId}";
 
 
     /**
@@ -40,6 +45,8 @@ public class HadessFinal {
     //hadess中央地址
     public static final String HADESS_PATH = "https://mirror.tiklab.net/";
 
+    //docker-获取token
+    public static final String DOCKER_TOKEN = "https://auth.docker.io/token";
 
 
 
@@ -55,4 +62,13 @@ public class HadessFinal {
     //时间异常
     public static final Integer TIME_EXCEPTION = 57102;
 
+
+    //写入数据失败
+    public static final Integer WRITE_EXCEPTION = 57103;
+
+    //读取远程文件失败
+    public static final Integer READ_REMOTE_EXCEPTION = 57104;
+
+    //读取本地文件失败
+    public static final Integer READ_LOCAL_EXCEPTION = 571045;
 }

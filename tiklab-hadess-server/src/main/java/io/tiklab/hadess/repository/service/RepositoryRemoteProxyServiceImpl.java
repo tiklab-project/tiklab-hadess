@@ -132,22 +132,19 @@ public class RepositoryRemoteProxyServiceImpl implements RepositoryRemoteProxySe
 
         List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(pagination.getDataList(),RepositoryRemoteProxy.class);
 
-        joinTemplate.joinQuery(repositoryRemoteProxyList);
+
 
         return PaginationBuilder.build(pagination,repositoryRemoteProxyList);
     }
 
     @Override
-    public List<String> findAgencyUrl(String repositoryName) {
-        List<String> agencyUrl = repositoryRemoteProxyDao.findAgencyUrl(repositoryName);
+    public List<RepositoryRemoteProxy> findAgencyByRepId(String repositoryId) {
+        List<RepositoryRemoteProxyEntity> remoteProxyEntities = repositoryRemoteProxyDao.findRemoteProxyRepId(repositoryId);
 
-        List<RemoteProxy> list = remoteProxyService.findList(agencyUrl);
-        List<String> stringList = list.stream().map(RemoteProxy::getAgencyUrl).collect(Collectors.toList());
-        // List<RepositoryRemoteProxy> repositoryRemoteProxyList = this.findRepositoryRemoteProxyList(new RepositoryRemoteProxyQuery().setRepositoryId(repositoryId));
+        List<RepositoryRemoteProxy> repositoryRemoteProxyList = BeanMapper.mapList(remoteProxyEntities,RepositoryRemoteProxy.class);
+        joinTemplate.joinQuery(repositoryRemoteProxyList);
 
-        //List<String> stringList = repositoryRemoteProxyList.stream().map(a->a.getRemoteProxy().getAgencyUrl()).collect(Collectors.toList());
-
-        return stringList;
+        return repositoryRemoteProxyList;
     }
 
     @Override

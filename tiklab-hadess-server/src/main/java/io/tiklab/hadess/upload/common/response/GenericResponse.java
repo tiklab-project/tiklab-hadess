@@ -20,6 +20,16 @@ public class GenericResponse {
             outputStream.write(result.getData());
             outputStream.close();
         }else {
+          /*  PrintWriter out = response.getWriter();
+            // 文件存在，发送文件内容
+            String errorMessage = "Error: File not found - file";
+            out.print("HTTP/1.1 404 Not Found\r\n");
+            out.print("Content-Type: text/plain\r\n");
+            out.print("Content-Length: "  +errorMessage.length()+ "\r\n");
+            out.print("\r\n"); // 头部结束的空行
+            out.print(errorMessage);
+            out.flush();*/
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             PrintWriter writer = response.getWriter();
             writer.println(result.getMsg());
             writer.close();

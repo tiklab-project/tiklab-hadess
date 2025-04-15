@@ -220,7 +220,7 @@ public class PushOperationServiceImpl implements PushOperationService{
 
                             String filePath=yamlDataMaService.repositoryAddress() + "/" +libraryFile.getFileUrl();
                             File file = new File(filePath);
-                            byte[] fileData = RepositoryUtil.readFileData(file);
+                            byte[] fileData = RepositoryUtil.readFileByte(file);
                             // 传递数据流
                             try (OutputStream os = conn.getOutputStream()) {
                                 os.write(fileData);

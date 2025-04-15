@@ -92,41 +92,6 @@ public class LibraryServiceImpl implements LibraryService {
         libraryDao.updateLibrary(libraryEntity);
     }
 
-    @Override
-    public void updateMvnLibrarySize(LibraryFile libraryFile, LibraryVersion libraryVersion, Long fileSize) {
-
-        Library library = libraryFile.getLibrary();
-
-
-        Library lib = this.findOne(library.getId());
-
-        //快照版本
-        if (libraryVersion.getVersion().endsWith("-SNAPSHOT")){
-           if (!libraryFile.getRelativePath().contains("maven-metadata.xml")){
-               List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(new LibraryFileQuery().setLibraryId(library.getId())
-                       .setLibraryVersionId(libraryVersion.getId()));
-               if (CollectionUtils.isNotEmpty(libraryFileList)){
-                   List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> (libraryFile.getSnapshotVersion()).equals(a.getSnapshotVersion())).collect(Collectors.toList());
-                   if (CollectionUtils.isNotEmpty(libraryFiles)&&libraryFiles.size()>1){
-                       long l = lib.getSize() + fileSize;
-                       lib.setSize(l);
-                   }else {
-                       //不同版本的时候重制
-                       lib.setSize(fileSize);
-                   }
-               }
-           }
-        }else {
-            //推送相同版本 制品大小叠加
-            if (libraryVersion.getVersion().equals(library.getOldVersion())){
-                lib.setSize(lib.getSize()+fileSize);
-            }else {
-                //不同版本的时候重制
-                lib.setSize(fileSize);
-            }
-        }
-        this.updateLibrary(lib);
-    }
 
     @Override
     public void deleteLibrary(@NotNull String id) {

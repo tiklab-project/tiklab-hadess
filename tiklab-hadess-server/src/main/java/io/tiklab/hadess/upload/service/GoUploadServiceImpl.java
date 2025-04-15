@@ -173,7 +173,7 @@ public class GoUploadServiceImpl implements GoUploadService{
                 return Result.error(404,"文件不存在");
             }
             logger.info("读取go文件"+path+"方式：本地拉取");
-            byte[] bytes = RepositoryUtil.readFileData(file);
+            byte[] bytes = RepositoryUtil.readFileByte(file);
             return  Result.ok(bytes);
         } catch (IOException e) {
             logger.info("读取go文件："+filePath+"失败");
@@ -330,17 +330,19 @@ public class GoUploadServiceImpl implements GoUploadService{
                     //libraryVersion.setSize(file.length());
                     libraryVersion.setLibraryType("go");
                     String versionId = versionService.redactLibraryVersion(libraryVersion);
+                    libraryVersion.setId(versionId);
 
                     //创建制品文件
                     LibraryFile libraryFile = new LibraryFile();
                     libraryFile.setRepository(repository);
                     libraryFile.setLibrary(libraryLiv);
+                    libraryFile.setLibraryVersion(libraryVersion);
                     libraryFile.setFileName(endPath);
                     libraryFile.setFileUrl(repository.getId()+"/"+path);
                     libraryFile.setRelativePath(path);
                     libraryFile.setFileSize(RepositoryUtil.formatSize(file.length()));
                     libraryFile.setSize(file.length());
-                    libraryFileService.redactLibraryFile(libraryFile,versionId);
+                    libraryFileService.redactLibraryFile(libraryFile);
                 }
             }finally {
                 lock.notify();

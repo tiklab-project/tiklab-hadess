@@ -74,7 +74,7 @@ public class UserCheckServiceImpl implements UserCheckService {
         userPassport.setAccount(userName);
         userPassport.setPassword(password);
         userPassport.setDirId("1");
-         userPassportService.validLogin(userPassport);
+        userPassportService.validLogin(userPassport);
     }
 
     @Override

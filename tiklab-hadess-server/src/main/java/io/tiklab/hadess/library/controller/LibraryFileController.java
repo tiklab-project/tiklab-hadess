@@ -64,7 +64,7 @@ public class LibraryFileController  {
 
     @RequestMapping(path="/deleteSnapshotFile",method = RequestMethod.POST)
     @ApiMethod(name = "deleteSnapshotFile",desc = "通过快照版本和版本id删除")
-    @ApiParam(name = "id",desc = "id",required = true)
+    @ApiParam(name = "snapshotVersion",desc = "versionId、snapshotVersion",required = true)
     public Result<Void> deleteSnapshotFile(@NotNull String versionId,@NotNull String snapshotVersion){
         libraryFileService.deleteLibraryFile(versionId,snapshotVersion);
 

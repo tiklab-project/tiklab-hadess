@@ -105,9 +105,8 @@ public interface LibraryFileService {
     /**
      * 编辑制品文件
      * @param libraryFile
-     * @param versionId
      */
-     void redactLibraryFile(LibraryFile libraryFile,String versionId);
+    String redactLibraryFile(LibraryFile libraryFile);
 
     /**
      * 通过地址like 查询
@@ -124,6 +123,15 @@ public interface LibraryFileService {
      * @return Pagination <LibraryFileEntity>
      */
     List<LibraryFile> findFileByReAndLibraryAndVer(String repositoryId,String libraryName,String version);
+
+    /**
+     * 通过制品库和制品以及版本查询
+     * @param repositoryId  制品库id
+     * @param libraryName   制品名称
+     * @param version       版本
+     * @return Pagination <LibraryFileEntity>
+     */
+    List<LibraryFile> findFileByReAndLibraryAndVer(String[] repositoryId,String libraryName,String version);
 
     /**
      * 查询docker 文件的镜像文件

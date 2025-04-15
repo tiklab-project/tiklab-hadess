@@ -62,7 +62,7 @@ public class LibraryVersionController {
 
     @RequestMapping(path="/deleteLibraryVersion",method = RequestMethod.POST)
     @ApiMethod(name = "deleteLibraryVersion",desc = "删除制品版本")
-    @ApiParam(name = "id",desc = "id",required = true)
+    @ApiParam(name = "libraryId",desc = "制品id",required = true)
     public Result<Void> deleteLibraryVersion(@NotNull String versionId,@NotNull String libraryId){
         libraryVersionService.deleteLibraryVersion(versionId,libraryId);
 
