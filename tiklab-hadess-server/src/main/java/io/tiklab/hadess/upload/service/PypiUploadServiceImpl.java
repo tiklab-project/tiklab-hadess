@@ -117,7 +117,6 @@ public class PypiUploadServiceImpl implements PypiUploadService{
             //客户端请求拉取元数据仓库地址为组合库
             if (("group").equals(repository.getRepositoryType())){
                 result = downloadMetadataByGroupRep(repository, libraryName);
-
             }
         }
 
@@ -292,7 +291,7 @@ public class PypiUploadServiceImpl implements PypiUploadService{
         String[] repIdList = repIds.toArray(new String[repIds.size()]);
         List<Library> libraryList = libraryService.findLibraryByCondition(libraryName, "pypi", repIdList);
 
-        //客户端拉取的制品不为空走代理
+        //客户端拉取的制品不为空
         if (CollectionUtils.isNotEmpty(libraryList)){
             //客户端拉取的制品不为空且为本地库的
             List<String> localLibraryIds = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType()))

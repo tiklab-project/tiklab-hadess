@@ -71,4 +71,28 @@ public class HadessFinal {
 
     //读取本地文件失败
     public static final Integer READ_LOCAL_EXCEPTION = 571045;
+
+
+
+     /** docker  * */
+
+    //manifest 的类型
+    public static final String MEDIA_TYPE_V2 ="application/vnd.docker.distribution.manifest.v2+json";
+
+    // 镜像配置的格式的类型
+    public static final String MEDIA_TYPE_CONFIG_V1 ="application/vnd.docker.container.image.v1+json";
+
+    // 镜像清单类型
+    public static final String MEDIA_TYPE_LAYER_GZIP ="application/vnd.docker.image.rootfs.diff.tar.gzip";
+    public static final String MEDIA_TYPE_LAYER_TAR ="application/vnd.docker.image.rootfs.diff.tar";
+
+
+
+    /** composer  * */
+
+    //manifest 的类型
+
+    public static final String COMPOSER_PACKAGES_LIST ="https://packagist.org/packages/list.json";
+
+    public static final String COMPOSER_METADATA_CHANGES ="https://packagist.org/metadata/changes.json";
 }

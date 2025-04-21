@@ -1,6 +1,14 @@
 
 
 
+-- ---------------------------
+-- composer制品扩展数据
+-- ----------------------------
+CREATE TABLE pack_library_composer(
+      id VARCHAR(12) PRIMARY KEY,
+      library_id varchar(12) NOT NULL,
+      metadata_path varchar(448) NOT NULL
+);
 
 
 

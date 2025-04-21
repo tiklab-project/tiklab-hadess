@@ -30,14 +30,14 @@ public class ComposerUploadController extends HttpServlet {
 
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                logger.info("composer拉取请求路径："+request.getRequestURI());
-                composerUploadService.downloadPackage(request,response);
+                logger.info("composer download json path:"+request.getRequestURI());
+                composerUploadService.downloadJsonData(request,response);
         }
 
 
         @Override
         protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                logger.info("composer上传请求路径："+req.getRequestURI());
+                logger.info("composer upload path："+req.getRequestURI());
                 composerUploadService.uploadPackage(req,resp);
         }
 

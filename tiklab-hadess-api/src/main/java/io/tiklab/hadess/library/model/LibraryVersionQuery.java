@@ -36,8 +36,8 @@ public class LibraryVersionQuery implements Serializable {
 
         /*-------其他字段-------*/
 
-        @ApiProperty(name ="currentVersionId",desc = "当前版本id")
-        private String sortField;
+        @ApiProperty(name ="versionList",desc = "版本ids")
+        private List<String> versionList;
 
 
         public List<Order> getOrderParams() {
@@ -98,5 +98,13 @@ public class LibraryVersionQuery implements Serializable {
 
     public void setCurrentVersionId(String currentVersionId) {
         this.currentVersionId = currentVersionId;
+    }
+
+    public List<String> getVersionList() {
+        return versionList;
+    }
+
+    public void setVersionList(List<String> versionList) {
+        this.versionList = versionList;
     }
 }

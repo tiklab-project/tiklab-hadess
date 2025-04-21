@@ -1200,7 +1200,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //token不为空的时候为获取manifest数据
         if (!ObjectUtils.isEmpty(token)){
             newHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            newHeaders.set("Accept", "application/vnd.docker.distribution.manifest.v2+json");
+            newHeaders.set("Accept", HadessFinal.MEDIA_TYPE_V2);
         }
        
         ResponseEntity<JSONObject> retryResponse = restTemplate.exchange(relativeAbsoluteUrl, HttpMethod.GET,
@@ -1229,7 +1229,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //token不为空的时候为获取manifest数据
         if (!ObjectUtils.isEmpty(token)){
             newHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            newHeaders.set("Accept", "application/vnd.docker.distribution.manifest.v2+json");
+            newHeaders.set("Accept", HadessFinal.MEDIA_TYPE_V2);
         }
         HttpEntity<String> entity = new HttpEntity<>(newHeaders);
 
@@ -1289,13 +1289,14 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         // 获取versions对象
         String allMediaType = jsonObject.get("mediaType").toString();
-        if (!("application/vnd.docker.distribution.manifest.v2+json").equals(allMediaType)){
-            jsonObject.put("mediaType", "application/vnd.docker.distribution.manifest.v2+json");
+        if (!(HadessFinal.MEDIA_TYPE_V2).equals(allMediaType)){
+            jsonObject.put("mediaType", HadessFinal.MEDIA_TYPE_V2);
+
             // 描述了镜像配置的格式
             JSONObject config = jsonObject.getJSONObject("config");
             String configMediaType = config.getString("mediaType");
-            if (!("application/vnd.docker.container.image.v1+json").equals(configMediaType)){
-                config.put("mediaType","application/vnd.docker.container.image.v1+json");
+            if (!(HadessFinal.MEDIA_TYPE_CONFIG_V1).equals(configMediaType)){
+                config.put("mediaType",HadessFinal.MEDIA_TYPE_CONFIG_V1);
             }
 
             //便利镜像清单
@@ -1306,9 +1307,9 @@ public class DockerUploadServiceImpl implements DockerUploadService {
                 if (layerMediaType.startsWith("application/vnd.oci.image")) {
                     String  type;
                     if (layerMediaType.endsWith("gzip")){
-                         type="application/vnd.docker.image.rootfs.diff.tar.gzip";
+                         type=HadessFinal.MEDIA_TYPE_LAYER_GZIP;
                     }else {
-                        type="application/vnd.docker.image.rootfs.diff.tar";
+                        type=HadessFinal.MEDIA_TYPE_LAYER_TAR;
                     }
                     layer.put("mediaType", type);
                 }

@@ -92,7 +92,7 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         if (fileName.contains(".")){
              libraryName = fileName.substring(0, fileName.indexOf("."));
         }
-        Library library= libraryService.findLibraryByNameAndType(libraryName,"generic");
+        Library library= libraryService.findLibraryByCondition(libraryName,"generic",repository.getId());
         if (ObjectUtils.isEmpty(library)){
             return Result.error(400,"制品不存在");
         }

@@ -13,11 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * LibraryVersionDao-制品版本数据访问
@@ -153,5 +156,17 @@ public class LibraryVersionDao{
                 .get();
 
         return jpaTemplate.findList(condition,LibraryVersionEntity.class)    ;
+    }
+
+    /**
+     * 批量删除制品
+     * @param ids ids
+     */
+    public void deleteBatchesVersion(String ids) {
+        if (!ObjectUtils.isEmpty(ids)){
+            String sql="  DELETE FROM pack_library_version WHERE id IN ("+ids+")";
+            JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
+            jdbcTemplate.execute(sql);
+        }
     }
 }

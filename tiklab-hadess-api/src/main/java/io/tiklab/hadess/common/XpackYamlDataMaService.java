@@ -69,4 +69,11 @@ public interface XpackYamlDataMaService {
 
     //查询visible地址 配置的域名地址
     String findVisitAddress();
+
+    /**
+     * 获取下载ComposerPackage的地址
+     * @param hostPath 客户端请求网络地址
+     * @param filePath 文件地址
+     */
+    String getComposerPackageUrl(String hostPath,String filePath);
 }

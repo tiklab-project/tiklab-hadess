@@ -210,9 +210,9 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Library findLibraryByNameAndType(String name,String type) {
+    public Library findLibraryByCondition(String name,String type,String repId) {
         Library library=null;
-        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByNameAndType(name,type);
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByCondition(name,type,repId);
         List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
         joinTemplate.joinQuery(libraryList);
         if (CollectionUtils.isNotEmpty(libraryList)){

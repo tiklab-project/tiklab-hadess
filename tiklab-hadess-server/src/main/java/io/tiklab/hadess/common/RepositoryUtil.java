@@ -607,6 +607,33 @@ public class RepositoryUtil {
     }
 
     /**
+     *  获取文件的sha1
+     *  @param filePath   需要加密的地址
+     */
+    public static String SHA1Encryption(String filePath) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        File file = new File(filePath);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] byteArray = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(byteArray)) != -1) {
+                digest.update(byteArray, 0, bytesRead);
+            }
+        }
+
+        // 获取 SHA-1 的字节数组
+        byte[] sha1Bytes = digest.digest();
+
+        // 转换为十六进制字符串
+        StringBuilder sb = new StringBuilder();
+        for (byte b : sha1Bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    /**
      *  获取随机数
      *  @param num   取摸数
      */

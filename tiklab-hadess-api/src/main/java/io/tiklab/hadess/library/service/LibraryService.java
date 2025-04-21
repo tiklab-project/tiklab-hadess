@@ -99,9 +99,10 @@ public interface LibraryService {
      * 通过制品名字查询制品和类型查询
      * @param name 制品名字
      * @param type 制品类型  maven、npm、docker
+     * @param  repId 仓库id
      * @return
      */
-    Library findLibraryByNameAndType(String name,String type);
+    Library findLibraryByCondition(String name,String type,String repId);
 
     /**
      * 通过制品名字、类型、制品ids查询

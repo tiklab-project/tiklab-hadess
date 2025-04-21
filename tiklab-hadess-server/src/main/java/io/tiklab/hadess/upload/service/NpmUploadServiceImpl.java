@@ -780,39 +780,6 @@ public class NpmUploadServiceImpl implements NpmUploadService {
      * @param  version 版本
      * @return
      */
-    public String findLibraryVersion(String contextPath,String version){
-
-        String libraryName = contextPath.substring(contextPath.lastIndexOf("/") + 1);
-        String contentJson =null;
-        //通过制品名称查询制品
-        LibraryQuery libraryQuery = new LibraryQuery();
-        libraryQuery.setLibraryType("npm");
-        libraryQuery.setName(libraryName);
-        Library library = libraryService.findLibraryByNameAndType(libraryName,"npm");
-        if (!ObjectUtils.isEmpty(library)){
-            //查询版本
-            LibraryVersionQuery libraryVersionQuery = new LibraryVersionQuery();
-            libraryVersionQuery.setLibraryId(library.getId());
-            libraryVersionQuery.setVersion(version);
-
-            List<LibraryVersion>  libraryVersionList = libraryVersionService.findLibraryVersionList(libraryVersionQuery);
-            //版本为空取最后创建的
-           if (StringUtils.isEmpty(version)){
-              libraryVersionList = libraryVersionList.stream().sorted(Comparator.comparing(LibraryVersion::getCreateTime).reversed()).collect(Collectors.toList());
-           }
-            if (CollectionUtils.isNotEmpty(libraryVersionList)){
-                contentJson = libraryVersionList.get(0).getContentJson();
-            }
-        }
-        return contentJson;
-    }
-
-    /**
-     *  npm拉取-查询npm的json数据
-     * @param contextPath: contextPath
-     * @param  version 版本
-     * @return
-     */
     public LibraryVersion findLibraryVersion(List<String> rpyIds,String contextPath,String version){
         LibraryVersion libraryVersion=null;
 

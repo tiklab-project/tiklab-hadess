@@ -278,10 +278,11 @@ public class LibraryDao{
      * @param name
      * @return List <LibraryEntity>
      */
-    public List<LibraryEntity> findLibraryByNameAndType(String name,String type) {
+    public List<LibraryEntity> findLibraryByCondition(String name,String type,String repId) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
                 .eq("name",name)
                 .eq("libraryType",type)
+                .eq("repositoryId",repId)
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
 

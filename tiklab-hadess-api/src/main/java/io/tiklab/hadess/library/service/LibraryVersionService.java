@@ -159,4 +159,10 @@ public interface LibraryVersionService {
      * @param versionId  版本id
      */
     LibraryVersion findVersionByLibraryId(String libraryId, String versionId);
+
+    /**
+     * 批量删除
+     * @param libraryVersionQuery  libraryVersionQuery
+     */
+    void deleteBatchesVersion(LibraryVersionQuery libraryVersionQuery);
 }

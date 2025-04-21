@@ -119,4 +119,9 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
         }
         return visibleAddress;
     }
+
+    @Override
+    public String getComposerPackageUrl(String hostPath,String filePath) {
+        return hostPath+"/composerPack/"+filePath;
+    }
 }

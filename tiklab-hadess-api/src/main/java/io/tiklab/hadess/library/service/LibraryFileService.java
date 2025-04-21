@@ -119,7 +119,7 @@ public interface LibraryFileService {
      * 通过制品库和制品以及版本查询
      * @param repositoryId  制品库id
      * @param libraryName   制品名称
-     * @param version       版本
+     * @param version       版本 版本可以为null
      * @return Pagination <LibraryFileEntity>
      */
     List<LibraryFile> findFileByReAndLibraryAndVer(String repositoryId,String libraryName,String version);

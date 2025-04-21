@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class FileUtil {
 
@@ -76,5 +78,45 @@ public class FileUtil {
         }
     }
 
+
+    /**
+     * 写入string到文件路径中
+     * @param content 内容
+     * @param filePath 文件路径
+     */
+    public static void writeStringToFile(String content, String filePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,false))) {
+            writer.write(content);
+        }
+    }
+
+
+    /**
+     * 读取zip压缩包里面的文件内容
+     * @param zipFilePath 压缩包地址
+     * @param fileNameInZip 文件名字
+     */
+    public static String readFileInZip(String zipFilePath,String fileNameInZip){
+        try (
+
+           ZipFile zipFile = new ZipFile(zipFilePath)) {
+            ZipEntry entry = zipFile.getEntry(fileNameInZip);
+            if (entry != null) {
+                StringBuilder fileContent = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        fileContent.append(line).append(System.lineSeparator()); // 添加内容和换行符
+                    }
+                }
+                return fileContent.toString();
+            } else {
+                return "500";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SystemException(HadessFinal.READ_LOCAL_EXCEPTION,e.getMessage()) ;
+        }
+    }
 
 }

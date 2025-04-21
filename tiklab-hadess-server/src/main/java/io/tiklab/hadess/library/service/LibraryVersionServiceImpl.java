@@ -107,6 +107,15 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     }
 
     @Override
+    public void deleteBatchesVersion(LibraryVersionQuery libraryVersionQuery) {
+        List<String> versionList = libraryVersionQuery.getVersionList();
+        String ids = versionList.stream()
+                .map(s -> "'" + s + "'")
+                .collect(Collectors.joining(", "));
+        libraryVersionDao.deleteBatchesVersion(ids);
+    }
+
+    @Override
     public LibraryVersion findOne(String id) {
         LibraryVersionEntity libraryVersionEntity = libraryVersionDao.findLibraryVersion(id);
 
