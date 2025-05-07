@@ -146,8 +146,10 @@ public class RepositoryServiceImpl implements RepositoryService {
             file.mkdirs();
         }
 
-        //初始化helm制品库的索引文件
-        RepositoryUtil.initHelmIndexFile(repositoryBolder+"/index.yaml");
+        if (("helm").equals(repository.getType())){
+            //初始化helm制品库的索引文件
+            RepositoryUtil.initHelmIndexFile(repositoryBolder+"/index.yaml");
+        }
 
         String userId;
         //初始化示例仓库用户id 取Repository里面用户
@@ -521,6 +523,9 @@ public class RepositoryServiceImpl implements RepositoryService {
                if (("composer").equals(type)){
                    absoluteAddress=visitAddress + "/composer/"+repository.getRepositoryUrl();
                }
+               if (("nuget").equals(type)){
+                   absoluteAddress=visitAddress + "/nuget/"+repository.getRepositoryUrl()+"/index.json";
+               }
            }else {
                //若配置文件配置了地址就取配置的地址 没配置就获取服务器ip
                String serverIp = RepositoryUtil.getServerIp();
@@ -545,8 +550,10 @@ public class RepositoryServiceImpl implements RepositoryService {
                if (("composer").equals(type)){
                    absoluteAddress="http://" + serverIp + ":" + port +  "/composer/"+repository.getRepositoryUrl();
                }
+               if (("nuget").equals(type)){
+                   absoluteAddress="http://" + serverIp + ":" + port +  "/nuget/"+repository.getRepositoryUrl()+"/index.json";
+               }
            }
-
        }
         return absoluteAddress;
     }

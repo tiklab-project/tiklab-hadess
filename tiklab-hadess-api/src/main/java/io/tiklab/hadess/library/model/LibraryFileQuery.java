@@ -42,6 +42,8 @@ public class LibraryFileQuery {
         private String snapshotVersion;
 
 
+        @ApiProperty(name ="repositoryIds",desc = "制品库ids")
+        private String[] repositoryIds;
 
 
 
@@ -123,6 +125,15 @@ public class LibraryFileQuery {
             this.findNameWay = findNameWay;
             return this;
         }
+
+    public String[] getRepositoryIds() {
+        return repositoryIds;
+    }
+
+    public LibraryFileQuery setRepositoryIds(String[] repositoryIds) {
+        this.repositoryIds = repositoryIds;
+        return this;
+    }
 
     public String getSnapshotVersion() {
         return snapshotVersion;

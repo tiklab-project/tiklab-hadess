@@ -1,5 +1,6 @@
 package io.tiklab.hadess.repository.service;
 
+import io.tiklab.hadess.library.model.Library;
 import io.tiklab.hadess.repository.model.RepositoryMaven;
 import io.tiklab.hadess.repository.model.RepositoryMavenQuery;
 import io.tiklab.toolkit.beans.BeanMapper;
@@ -104,6 +105,17 @@ public class RepositoryMavenServiceImpl implements RepositoryMavenService {
 
         return repositoryMavenList;
     }
+
+    @Override
+    public List<RepositoryMaven> findRepositoryMavenByRep(RepositoryMavenQuery repositoryMavenQuery) {
+        List<RepositoryMavenEntity> repositoryMavenEntityList = repositoryMavenDao.findRepositoryMavenByRep(repositoryMavenQuery);
+
+        List<RepositoryMaven> repositoryMavenList = BeanMapper.mapList(repositoryMavenEntityList,RepositoryMaven.class);
+
+
+        return repositoryMavenList;
+    }
+
 
     @Override
     public Pagination<RepositoryMaven> findRepositoryMavenPage(RepositoryMavenQuery repositoryMavenQuery) {

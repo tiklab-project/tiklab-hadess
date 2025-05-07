@@ -3,6 +3,7 @@ package io.tiklab.hadess.timedtask.util;
 import io.tiklab.eam.common.context.LoginContext;
 
 
+import io.tiklab.hadess.timedtask.service.TimeTaskJob;
 import io.tiklab.hadess.timedtask.service.TimeTaskService;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -21,6 +22,8 @@ public  class RunJob implements org.quartz.Job {
 
     public static   JobManager jobManager;
 
+    public static   TimeTaskJob timeTaskJob;
+
     @Autowired
     public void setTimeTaskService(TimeTaskService taskService) {
         this.taskService = taskService;
@@ -29,6 +32,11 @@ public  class RunJob implements org.quartz.Job {
     @Autowired
     public void setJobManager(JobManager jobManager) {
         this.jobManager = jobManager;
+    }
+
+    @Autowired
+    public void setTimeTaskJob(TimeTaskJob timeTaskJob) {
+        this.timeTaskJob = timeTaskJob;
     }
 
 
@@ -43,14 +51,13 @@ public  class RunJob implements org.quartz.Job {
         JobDataMap map = jobExecutionContext.getMergedJobDataMap();
         String group = (String)map.get("group");
         logger.info("定时任务group:"+group);
+        String taskType = (String)map.get("taskType");
 
-        String loginId = LoginContext.getLoginId();
-      /*  //执行扫描计划
-        scanService.execScan(execObjectId);
+        //执行具体定时任务
+        timeTaskJob.execTaskJob(execObjectId,taskType);
+
         taskService.updateTimeTask(taskInstanceId);
-
-        logger.warn("定时任务触发完成:"+jobName);
-        jobManager.removeJob(group,jobName);*/
+        jobManager.removeJob(group,jobName);
     }
 
 }

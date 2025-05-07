@@ -74,7 +74,7 @@ public interface TimeTaskService {
     List<TimeTask> findTimeTaskList(TimeTaskQuery timeTaskQuery);
 
     /**
-     * 通过扫描计划id 查询
+     * 通过定时对象id 查询
      * @param scanPlayId
      * @return
      */

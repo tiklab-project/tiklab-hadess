@@ -74,6 +74,19 @@ public interface LibraryService {
     List<Library> findLibraryList(LibraryQuery libraryQuery);
 
     /**
+     * 通过仓库ids查询
+     * @param repIds repIds
+     */
+    List<Library> findLibraryByRepIds(String[] repIds);
+
+
+    /**
+     * 通过仓库id查询
+     * @param repId repId
+     */
+    List<Library> findLibraryByRepId(String repId);
+
+    /**
      * 制品匹配仓库
      * @param libraryQuery
      * @return

@@ -1,11 +1,14 @@
 package io.tiklab.hadess.upload.service;
 
+import io.tiklab.hadess.common.FileUtil;
 import io.tiklab.hadess.library.model.Library;
 import io.tiklab.hadess.library.model.LibraryFile;
 import io.tiklab.hadess.library.model.LibraryFileQuery;
 import io.tiklab.hadess.library.model.LibraryVersion;
 import io.tiklab.core.Result;
 import io.tiklab.eam.passport.user.service.UserPassportService;
+import io.tiklab.hadess.upload.common.response.GenericResponse;
+import io.tiklab.hadess.upload.common.response.PypiResponse;
 import io.tiklab.rpc.annotation.Exporter;
 import io.tiklab.hadess.common.RepositoryUtil;
 import io.tiklab.hadess.common.XpackYamlDataMaService;
@@ -15,6 +18,8 @@ import io.tiklab.hadess.library.service.LibraryVersionService;
 import io.tiklab.hadess.repository.model.Repository;
 import io.tiklab.hadess.repository.service.RepositoryService;
 import io.tiklab.hadess.common.UserCheckService;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,48 +61,58 @@ public class GenericUploadServiceImpl implements GenericUploadService {
     UserCheckService userCheckService;
 
     @Override
-    public String GenericUpload(InputStream inputStream,String repositoryPath,String userData,String version) {
-        String userName=null;
-        try {
-            //账号校验
-             userName = userCheckService.genericUserCheck(userData);
-        }catch (Exception e){
-            return "{code:401,msg:"+e.getMessage()+"}";
+    public void GenericUpload(HttpServletRequest request, HttpServletResponse response) {
+        String contextPath = request.getRequestURI();
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"generic");
+        response.setCharacterEncoding("UTF-8");
+
+        //校验用户信息
+        String authorization = request.getHeader("Authorization");
+        Result userCheckResult = userCheck(authorization);
+        if (userCheckResult.getCode()==401){
+            GenericResponse.correctToClient(response,userCheckResult.getMsg());
+            return;
         }
 
-        try {
-          return   fileWriteData(repositoryPath,inputStream,userName,version);
-        } catch (IOException e) {
-            return "{code:400,msg:"+e.getMessage()+"}";
-        }
+        //写入文件
+        Result result = fileWriteData(request, repositoryPath, userCheckResult.getData().toString());
+        GenericResponse.correctToClient(response,result.getMsg());
     }
 
     @Override
-    public Result<byte[]> GenericDownload(String repositoryPath, String userData, String version) {
-        try {
-            //账号校验
-          userCheckService.genericUserCheck(userData);
-        }catch (Exception e){
-            return Result.error(401,e.getMessage());
+    public void GenericDownload(HttpServletRequest request, HttpServletResponse response) {
+        String contextPath = request.getRequestURI();
+        String repositoryPath = yamlDataMaService.getUploadRepositoryUrl(contextPath,"generic");
+        response.setCharacterEncoding("UTF-8");
+
+        //校验用户信息
+        String authorization = request.getHeader("Authorization");
+        Result userCheckResult = userCheck(authorization);
+        if (userCheckResult.getCode()==401){
+            GenericResponse.errorToClient(response,userCheckResult.getMsg());
+            return;
         }
 
+        //版本
+        String substring = request.getQueryString();
+        String version = substring.substring(substring.indexOf("=")+  1);
+
+        //拉取
         String[] split = repositoryPath.split("/");
         //制品库
         String repositoryName = split[0];
         Repository repository = repositoryService.findRepositoryByName(repositoryName);
         if (ObjectUtils.isEmpty(repository)){
-            return Result.error(400,"仓库不存在");
+            GenericResponse.errorToClient(response,"仓库不存在");
+            return;
         }
 
         //制品
         String fileName = split[1];
-        String libraryName=fileName;
-        if (fileName.contains(".")){
-             libraryName = fileName.substring(0, fileName.indexOf("."));
-        }
-        Library library= libraryService.findLibraryByCondition(libraryName,"generic",repository.getId());
+        Library library= libraryService.findLibraryByCondition(fileName,"generic",repository.getId());
         if (ObjectUtils.isEmpty(library)){
-            return Result.error(400,"制品不存在");
+            GenericResponse.errorToClient(response,"制品不存在");
+            return;
         }
 
 
@@ -104,12 +122,14 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         fileQuery.setLibraryId(library.getId());
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(fileQuery);
         if (CollectionUtils.isEmpty(libraryFileList)){
-            return Result.error(400,"制品文件不存在");
+            GenericResponse.errorToClient(response,"制品文件不存在");
+            return;
         }
 
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains(version)).collect(Collectors.toList());
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains(version)).toList();
         if (CollectionUtils.isEmpty(libraryFiles)){
-            return Result.error(400,"当前版本制品不存在");
+            GenericResponse.errorToClient(response,"当前版本制品不存在");
+            return;
         }
 
         LibraryFile libraryFile = libraryFiles.get(0);
@@ -118,109 +138,136 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         String filePah = yamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
 
         try {
-           return readFileData(new File(filePah));
+            File file = new File(filePah);
+            if (!file.exists()){
+                GenericResponse.errorToClient(response,"文件不存在");
+            }
+            response.setContentType("application/json; charset=UTF-8");
+            FileUtil.readFileData(file,response);
         } catch (IOException e) {
-            return Result.error(400,"读取文件信息失败");
+            GenericResponse.errorToClient(response,"读取文件信息失败");
         }
 
     }
+
 
     /**
      * fileWriteData  写入文件
      * @param userName 用户名称
-     * @param inputStream inputStream
      * @param repositoryPath 制品库
-     * @param version  产品版本
      */
-    public String fileWriteData(String repositoryPath, InputStream inputStream,
-                                String userName ,String version) throws IOException {
+    public Result fileWriteData(HttpServletRequest request,String repositoryPath, String userName )  {
 
-        //仓库和文件名称
-        String[] split = repositoryPath.split("/");
-        String repositoryName = split[0];
-        String fileName = split[1];
-        String name=fileName;
-        if (fileName.contains(".")){
-             name = fileName.substring(0, fileName.indexOf("."));
+        try {
+            InputStream inputStream = request.getInputStream();
+            //版本
+            String substring = request.getQueryString();
+            String version = substring.substring(substring.indexOf("=")+  1);
+
+            //仓库和文件名称
+            String[] split = repositoryPath.split("/");
+            String repositoryName = split[0];
+            String fileName = split[1];
+
+
+            //文件存储的路径名
+            String name=fileName;
+            if (fileName.contains(".")){
+              if (fileName.endsWith(".gz")){
+                  String beforeLast = StringUtils.substringBeforeLast(fileName, ".");
+                   name = StringUtils.substringBeforeLast(beforeLast, ".");
+
+              }else {
+                  name = fileName.substring(0, fileName.indexOf("."));
+              }
+            }
+            Repository repository = repositoryService.findRepositoryByName(repositoryName);
+            if (ObjectUtils.isEmpty(repository)&&("generic").equals(repository.getType())){
+                return Result.error(400,"{code:400,msg:制品库不存在}");
+            }
+
+            //仓库地址
+            String versionPath= repository.getId()+"/"+name+"/"+version;
+            String folderPath = yamlDataMaService.repositoryAddress() + "/" +versionPath;
+            //写入文件
+            FileUtil.copyFileData(inputStream,folderPath,fileName);
+
+            //文件大小
+            String filePath = folderPath + "/" + fileName;
+            File fileData = new File(filePath);
+            long FileLength = fileData.length();
+            String size = RepositoryUtil.formatSize(FileLength);
+
+            //创建制品
+            Library library = libraryService.createLibraryData(fileName,"generic",repository);
+
+            //制品版本创建、修改
+            LibraryVersion libraryVersion = new LibraryVersion();
+            libraryVersion.setPusher(userName);
+            libraryVersion.setLibrary(library);
+            libraryVersion.setVersion(version);
+            libraryVersion.setRepository(repository);
+            libraryVersion.setSize(Long.valueOf(FileLength));
+            libraryVersion.setLibraryType("generic");
+            String libraryVersionId = libraryVersionService.redactLibraryVersion(libraryVersion);
+            libraryVersion.setId(libraryVersionId);
+
+            //创建制品文件
+            LibraryFile libraryFile = new LibraryFile();
+            libraryFile.setRepository(repository);
+            libraryFile.setLibrary(library);
+            libraryFile.setLibraryVersion(libraryVersion);
+
+            libraryFile.setFileName(fileName);
+            libraryFile.setFileUrl(versionPath+"/"+fileName);
+            libraryFile.setRelativePath(name+"/"+version+"/"+fileName);
+            libraryFile.setFileSize(size);
+            libraryFile.setSize(FileLength);
+            libraryFileService.redactLibraryFile(libraryFile);
+            return Result.ok(200,"{code:200,msg:upload上传成功}");
+        }catch (Exception e){
+            return Result.error(500,"{code:500,msg:upload上传失败:"+e.getMessage()+"}");
         }
-        Repository repository = repositoryService.findRepositoryByName(repositoryName);
-        if (ObjectUtils.isEmpty(repository)&&("generic").equals(repository.getType())){
-            return "{code:400,msg:制品库不能存在}";
-        }
-
-        //仓库地址
-        String versionPath= repository.getId()+"/"+name+"/"+version;
-        String folderPath = yamlDataMaService.repositoryAddress() + "/" +versionPath;
-        File folder = new File(folderPath);
-        if (!folder.exists() && !folder.isDirectory()) {
-            folder.mkdirs();
-        }
-        String filePath = folderPath + "/" + fileName;
-        File fileData = new File(filePath);
-        if (!fileData.exists()){
-            fileData.createNewFile();
-        }
-
-        //用字节流写入文件
-        FileOutputStream outputStream = new FileOutputStream(filePath);
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        outputStream.flush();
-
-        //文件大小
-        long FileLength = fileData.length();
-        String size = RepositoryUtil.formatSize(FileLength);
-
-        //创建制品
-        Library library = libraryService.createLibraryData(name,"generic",repository);
-
-        //制品版本创建、修改
-        LibraryVersion libraryVersion = new LibraryVersion();
-        libraryVersion.setPusher(userName);
-        libraryVersion.setLibrary(library);
-        libraryVersion.setVersion(version);
-        libraryVersion.setRepository(repository);
-        libraryVersion.setSize(Long.valueOf(FileLength));
-        libraryVersion.setLibraryType("generic");
-        String libraryVersionId = libraryVersionService.redactLibraryVersion(libraryVersion);
-        libraryVersion.setId(libraryVersionId);
-
-        //创建制品文件
-        LibraryFile libraryFile = new LibraryFile();
-        libraryFile.setRepository(repository);
-        libraryFile.setLibrary(library);
-        libraryFile.setLibraryVersion(libraryVersion);
-
-        libraryFile.setFileName(fileName);
-        libraryFile.setFileUrl(versionPath+"/"+fileName);
-        libraryFile.setRelativePath(name+"/"+version+"/"+fileName);
-        libraryFile.setFileSize(size);
-        libraryFile.setSize(Long.valueOf(FileLength));
-        libraryFileService.redactLibraryFile(libraryFile);
-        return "{code:200,msg:upload上传成功}";
     }
+
+
+
+
 
 
 
     /**
-     *  读取文件信息
-     *  @param file     文件
-     * @return
+     * 校验用户信息
+     * @param authorization  客户端上传的用户信息
      */
-    public Result readFileData(File file) throws IOException {
+    public Result userCheck(String authorization) {
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-        int buf_size = 1024;
-        byte[] buffer = new byte[buf_size];
-        int len = 0;
-        while (-1 != (len = in.read(buffer, 0, buf_size))) {
-            bos.write(buffer, 0, len);
+        //docker第一次访问没有用户信息 为了获取支持的验证机制
+        if (ObjectUtils.isEmpty(authorization)){
+            logger.info("pypi拉取推送没有用户信息");
+            return  Result.error(401,"{code:401,msg:用户信息不存在}");
         }
-        byte[] bytes = bos.toByteArray();
-        return Result.ok(bytes);
+
+        try {
+            String basic = authorization.replace("Basic", "").trim();
+            byte[] decode = Base64.getDecoder().decode(basic);
+            //用户信息
+            String userData = new String(decode, "UTF-8");
+            String[] split = userData.split(":");
+            String userName = split[0];
+            String password = split[1];
+
+            //generic制品库里面上传 制品
+            if (("xpackhand").equals(password)){
+                return Result.ok(userName);
+            }
+
+            userCheckService.basicsUserCheck(userData);
+            return Result.ok(userName);
+        }catch (Exception e){
+            return  Result.error(401,"{code:401,msg:"+e.getMessage()+"}");
+        }
     }
+
+
 }

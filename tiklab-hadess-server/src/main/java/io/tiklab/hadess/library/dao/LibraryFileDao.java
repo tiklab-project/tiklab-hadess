@@ -128,6 +128,18 @@ public class LibraryFileDao{
         return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
 
+    public List<LibraryFileEntity> findLibraryFileByRep(LibraryFileQuery libraryFileQuery) {
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(LibraryFileEntity.class);
+        if (!ObjectUtils.isEmpty(libraryFileQuery.getRepositoryIds())){
+            queryBuilders.in("repositoryId",libraryFileQuery.getRepositoryIds());
+        }
+        if (!ObjectUtils.isEmpty(libraryFileQuery.getRepositoryId())){
+            queryBuilders.eq("repositoryId",libraryFileQuery.getRepositoryId());
+        }
+        QueryCondition queryCondition = queryBuilders.get();
+        return jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
+    }
+
     /**
      * 条件分页查询制品文件
      * @param libraryFileQuery
@@ -228,4 +240,6 @@ public class LibraryFileDao{
         }
         return   jpaTemplate.findList(queryCondition,LibraryFileEntity.class);
     }
+
+
 }

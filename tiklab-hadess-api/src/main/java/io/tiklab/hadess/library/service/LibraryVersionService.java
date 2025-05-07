@@ -97,11 +97,11 @@ public interface LibraryVersionService {
     List<LibraryVersion> findLibraryVersionList(LibraryVersionQuery libraryVersionQuery);
 
     /**
-     * 查询列表
+     * 通过仓库id查询版本
      * @param repositoryId
      * @return
      */
-    List<LibraryVersion> findLibraryVersionList(String repositoryId);
+    List<LibraryVersion> findLibraryVersionByRepId(String repositoryId);
 
     /**
     * 按分页查询
@@ -141,11 +141,15 @@ public interface LibraryVersionService {
 
     /**
      * 通过制品ids 查询
-     * @param libraryIds
+     * @param libraryIds libraryIds
      */
     List<LibraryVersion> findVersionByLibraryIds(String[] libraryIds);
 
-
+    /**
+     * 通过仓库的ids 查询
+     * @param repIds repIds
+     */
+    List<LibraryVersion> findVersionByRepIds(String[] repIds);
 
     /**
      *  编辑制品

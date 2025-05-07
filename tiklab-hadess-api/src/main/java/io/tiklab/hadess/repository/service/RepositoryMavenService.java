@@ -2,6 +2,7 @@ package io.tiklab.hadess.repository.service;
 
 
 import io.tiklab.core.page.Pagination;
+import io.tiklab.hadess.library.model.Library;
 import io.tiklab.toolkit.join.annotation.FindAll;
 import io.tiklab.toolkit.join.annotation.FindList;
 import io.tiklab.toolkit.join.annotation.FindOne;
@@ -71,6 +72,14 @@ public interface RepositoryMavenService {
     * @return
     */
     List<RepositoryMaven> findRepositoryMavenList(RepositoryMavenQuery repositoryMavenQuery);
+
+
+
+    /**
+     * 通过仓库查询
+     * @param repositoryMavenQuery repositoryMavenQuery
+     */
+    List<RepositoryMaven> findRepositoryMavenByRep(RepositoryMavenQuery repositoryMavenQuery);
 
     /**
     * 按分页查询

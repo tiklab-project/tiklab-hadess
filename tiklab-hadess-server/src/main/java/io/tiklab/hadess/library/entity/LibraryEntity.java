@@ -26,7 +26,7 @@ public class LibraryEntity extends BaseModel {
     private String libraryType;
 
     //最新版本
-    @Column(name = "new_version",length = 32)
+    @Column(name = "new_version",length = 248)
     private String newVersion;
 
     //制品库id

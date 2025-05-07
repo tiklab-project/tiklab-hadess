@@ -233,6 +233,18 @@ public class LibraryDao{
 
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
+    /**
+     * 通过仓库id、制品名字查询
+     * @param repositoryId  仓库id
+     * @param name 制品名字
+     */
+    public List<LibraryEntity> findLibraryList(String repositoryId, String name){
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("name",name)
+                .eq("repositoryId", repositoryId)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
 
     public JdbcTemplate getJdbcTemplate() {
         io.tiklab.dal.jdbc.JdbcTemplate jdbcTemplate = jpaTemplate.getJdbcTemplate();
@@ -344,15 +356,17 @@ public class LibraryDao{
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
 
-    /**
-     * 通过仓库id、制品名字查询
-     * @param repositoryId  仓库id
-     * @param name 制品名字
-     */
-    public List<LibraryEntity> findLibraryList(String repositoryId, String name){
+    public List<LibraryEntity> findLibraryByRepIds(String[] repIds) {
         QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
-                .eq("name",name)
-                .eq("repositoryId", repositoryId)
+                .in("repositoryId", repIds)
+                .get();
+        return jpaTemplate.findList(queryCondition,LibraryEntity.class);
+    }
+
+
+    public List<LibraryEntity> findLibraryByRepId(String repId) {
+        QueryCondition queryCondition = QueryBuilders.createQuery(LibraryEntity.class)
+                .eq("repositoryId", repId)
                 .get();
         return jpaTemplate.findList(queryCondition,LibraryEntity.class);
     }
@@ -441,5 +455,6 @@ public class LibraryDao{
         }
         return sql;
     }
+
 
 }

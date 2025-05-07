@@ -58,7 +58,7 @@ public class TimeTaskInstanceServiceImpl implements TimeTaskInstanceService {
         String timeTaskInstanceId = timeTaskInstanceDao.createTimeTaskInstance(timeTaskInstanceEntity);
         timeTaskInstance.setId(timeTaskInstanceId);
         try {
-            jobManager.addJob(timeTaskInstance, RunJob.class,HadessFinal.DEFAULT);
+            jobManager.addJob(timeTaskInstance, RunJob.class,timeTaskInstance.getTaskType());
         } catch (SchedulerException e) {
             e.printStackTrace();
             throw new ApplicationException(HadessFinal.SYSTEM_EXCEPTION,"当前时间已经添加过，无需重复添加。");

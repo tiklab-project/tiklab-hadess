@@ -210,6 +210,15 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     }
 
     @Override
+    public List<LibraryFile> findLibraryFileByRep(LibraryFileQuery libraryFileQuery) {
+        List<LibraryFileEntity> libraryFileEntityList = libraryFileDao.findLibraryFileByRep(libraryFileQuery);
+        List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntityList,LibraryFile.class);
+
+        return libraryFileList;
+
+    }
+
+    @Override
     public List<LibraryFile> findLibraryFiles(LibraryFileQuery libraryFileQuery) {
         List<LibraryFileEntity> libraryFileEntityList = libraryFileDao.findLibraryFileList(libraryFileQuery);
         List<LibraryFile> libraryFileList = BeanMapper.mapList(libraryFileEntityList,LibraryFile.class);

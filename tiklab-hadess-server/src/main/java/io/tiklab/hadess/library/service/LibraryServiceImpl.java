@@ -92,6 +92,11 @@ public class LibraryServiceImpl implements LibraryService {
         libraryDao.updateLibrary(libraryEntity);
     }
 
+    public void updateLibrary(@NotNull @Valid LibraryEntity libraryEntity) {
+        libraryEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        libraryDao.updateLibrary(libraryEntity);
+    }
+
 
     @Override
     public void deleteLibrary(@NotNull String id) {
@@ -188,6 +193,24 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
+    public List<Library> findLibraryByRepIds(String[] repIds) {
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByRepIds(repIds);
+
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        return libraryList;
+    }
+
+    @Override
+    public List<Library> findLibraryByRepId(String repId) {
+        List<LibraryEntity> libraryEntityList = libraryDao.findLibraryByRepId(repId);
+
+        List<Library> libraryList = BeanMapper.mapList(libraryEntityList,Library.class);
+
+        return libraryList;
+    }
+
+    @Override
     public List<Library> likeLibraryListNo(LibraryQuery libraryQuery) {
         List<LibraryEntity> libraryEntityList = libraryDao.findLibraryListNo(libraryQuery);
 
@@ -268,7 +291,7 @@ public class LibraryServiceImpl implements LibraryService {
         //查询制品是否存在
         List<LibraryEntity> libraryEntity = libraryDao.findLibraryByRpyIdAndName(repository.getId(), libraryName);
         if (CollectionUtils.isNotEmpty(libraryEntity)){
-            List<String> libraryIds = libraryEntity.stream().map(LibraryEntity::getId).collect(Collectors.toList());
+            List<String> libraryIds = libraryEntity.stream().map(LibraryEntity::getId).toList();
             String[] libraryIdList = libraryIds.toArray(new String[libraryIds.size()]);
             List<LibraryMaven> libraryMavens = libraryMavenService.libraryMavenByLibraryIds(libraryIdList);
             List<LibraryMaven> collect = libraryMavens.stream().filter(a -> (groupId).equals(a.getGroupId())).collect(Collectors.toList());
@@ -276,6 +299,9 @@ public class LibraryServiceImpl implements LibraryService {
                 library.setId(collect.get(0).getLibrary().getId());
             }
             library.setOldVersion(libraryEntity.get(0).getNewVersion());
+
+            //更新制品
+            updateLibrary(libraryEntity.get(0));
         }else {
             library.setName(libraryName);
             //创建制品信息
@@ -400,22 +426,22 @@ public class LibraryServiceImpl implements LibraryService {
      * @return
      */
     public Library createLibraryData(String libraryName,String libraryType,Repository repository){
-        Library library = new Library();
-        library.setLibraryType(libraryType);
+
         //查询制品包是否有创建
         List<LibraryEntity> libraryList =libraryDao.findEqLibraryList(new LibraryQuery().setName(libraryName).setRepositoryId(repository.getId()));
 
+        Library library = new Library();
+        library.setLibraryType(libraryType);
+        library.setName(libraryName);
+        library.setRepository(repository);
         String libraryId=null;
         if (CollectionUtils.isEmpty(libraryList)){
-            library.setName(libraryName);
-            //创建制品信息
-            library.setRepository(repository);
             libraryId = this.createLibrary(library);
         }else {
+            //更新
+            this.updateLibrary(libraryList.get(0));
             libraryId = libraryList.get(0).getId();
         }
-        library.setRepository(repository);
-        library.setLibraryType(libraryType);
         library.setId(libraryId);
 
         return library;

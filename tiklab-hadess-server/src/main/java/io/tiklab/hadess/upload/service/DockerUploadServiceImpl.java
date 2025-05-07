@@ -1071,37 +1071,6 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         }
     }
 
-    /**
-     * 写入文件数据
-     * @param inputStream 文件流
-     * @param folderPath 文件路径
-     * @param  fileName 文件名字
-     */
-    public Long writeFileData(InputStream inputStream,String folderPath,String fileName) throws IOException {
-        File TagFolderFile = new File(folderPath);
-        if (!TagFolderFile.exists()){
-            TagFolderFile.mkdirs();
-        }
-
-        //tags 文件
-        String tagFile = folderPath+"/"+fileName;
-        File TagFile = new File(tagFile);
-        if (!TagFile.exists()){
-            TagFile.createNewFile();
-        }
-
-        //用字节流写入文件
-        FileOutputStream outputStream = new FileOutputStream(tagFile);
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        outputStream.flush();
-
-        return TagFile.length();
-    }
-
 
     /**
      * 输入结果数据

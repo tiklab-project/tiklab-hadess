@@ -21,6 +21,9 @@ public class RepositoryMavenQuery {
 
         @ApiProperty(name ="repositoryId",desc = "制品库id")
         private String repositoryId;
+
+        @ApiProperty(name ="repositoryId",desc = "制品库ids")
+        private String[] repIds;
         public List<Order> getOrderParams() {
             return orderParams;
         }
@@ -43,6 +46,15 @@ public class RepositoryMavenQuery {
 
         public RepositoryMavenQuery setRepositoryId(String repositoryId) {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public String[] getRepIds() {
+            return repIds;
+        }
+
+        public RepositoryMavenQuery setRepIds(String[] repIds) {
+            this.repIds = repIds;
             return this;
         }
 }

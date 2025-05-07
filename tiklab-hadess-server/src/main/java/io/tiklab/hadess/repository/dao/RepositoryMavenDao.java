@@ -127,4 +127,18 @@ public class RepositoryMavenDao {
         QueryCondition queryCondition = queryBuilders.get();
         return jpaTemplate.findList(queryCondition,RepositoryMavenEntity.class);
     }
+
+
+
+    public List<RepositoryMavenEntity> findRepositoryMavenByRep(RepositoryMavenQuery repositoryMavenQuery) {
+        QueryBuilders queryBuilders = QueryBuilders.createQuery(RepositoryMavenEntity.class);
+        if (!ObjectUtils.isEmpty(repositoryMavenQuery.getRepIds())){
+            queryBuilders.in("repositoryId",repositoryMavenQuery.getRepIds());
+        }
+        if (!ObjectUtils.isEmpty(repositoryMavenQuery.getRepositoryId())){
+            queryBuilders.eq("repositoryId",repositoryMavenQuery.getRepositoryId());
+        }
+        QueryCondition queryCondition = queryBuilders.get();
+        return jpaTemplate.findList(queryCondition,RepositoryMavenEntity.class);
+    }
 }

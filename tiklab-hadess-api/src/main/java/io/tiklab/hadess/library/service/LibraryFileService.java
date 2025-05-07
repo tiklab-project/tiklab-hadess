@@ -74,6 +74,13 @@ public interface LibraryFileService {
     List<LibraryFile> findLibraryFileList(LibraryFileQuery libraryFileQuery);
 
     /**
+     * 通过仓库查询
+     * @param libraryFileQuery libraryFileQuery
+     * @return
+     */
+    List<LibraryFile> findLibraryFileByRep(LibraryFileQuery libraryFileQuery);
+
+    /**
      * 查询列表
      * @param libraryFileQuery
      * @return

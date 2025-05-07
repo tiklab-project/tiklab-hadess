@@ -1,6 +1,7 @@
 package io.tiklab.hadess.timedtask.util;
 
 import io.tiklab.hadess.common.CronUtils;
+import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.timedtask.model.TimeTaskInstance;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -51,6 +53,9 @@ public class JobManager {
 
         Boolean isNewTrigger = false;
 
+        if (ObjectUtils.isEmpty(group)){
+            group= HadessFinal.DEFAULT;
+        }
         JobKey jobKey = JobKey.jobKey(group);
         JobDetail jobDetail = scheduler.getJobDetail(jobKey);
 
@@ -59,12 +64,13 @@ public class JobManager {
 
         if (Objects.isNull(jobDetail)){
             JobBuilder jobBuilder = JobBuilder.newJob(jobClass);
-            //添加pipelineId执行信息
+            //添加执行信息
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("group",group);
             jobDataMap.put("objectId",execObjectId);
             jobDataMap.put("cron",cron);
             jobDataMap.put("weekTime",weekTime);
+            jobDataMap.put("taskType",taskInstance.getTaskType());
             jobBuilder.setJobData(jobDataMap);
 
             jobDetail = jobBuilder.withIdentity(group).build();

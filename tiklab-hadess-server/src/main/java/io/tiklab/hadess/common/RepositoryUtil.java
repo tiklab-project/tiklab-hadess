@@ -12,9 +12,14 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -668,6 +673,20 @@ public class RepositoryUtil {
     }
 
 
+
+    /**
+     * RestTemplate get请求获取json
+     * @param relativeAbsoluteUrl 地址
+     */
+    public static String restTemplateJsonGet(String relativeAbsoluteUrl) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders newHeaders = new HttpHeaders();
+        ResponseEntity<String> exchange = restTemplate.exchange(relativeAbsoluteUrl, HttpMethod.GET,
+                new HttpEntity<>(newHeaders), String.class);
+
+        String jsonString = exchange.getBody();
+        return jsonString;
+    }
 
 
 

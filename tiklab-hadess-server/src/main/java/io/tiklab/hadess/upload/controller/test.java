@@ -8,14 +8,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 
 public class test {
 
     public static void main(String[] args) throws Exception {
-        String s = RepositoryUtil.SHA1Encryption("/Users/limingliang/Downloads/tiklab_test.zip");
-        System.out.println("s:"+s);
 
+        LocalDate currentDate = LocalDate.now();
+        LocalDate localDate = currentDate.minusDays(30);
+        ZoneId zoneId = ZoneId.systemDefault(); // 使用系统默认时区
+        ZonedDateTime zonedDateTime = localDate.atStartOfDay(zoneId); // 转换为ZonedDateTime表示当天的开始时间
+        long millis = zonedDateTime.toInstant().toEpochMilli(); // 转换为毫秒
+
+        long l = System.currentTimeMillis();
+        System.out.println();
     }
 
 }

@@ -299,31 +299,20 @@ public class GoUploadServiceImpl implements GoUploadService{
 
         synchronized (lock) {
             try {
-                List<Library> goLibraryByCond = libraryService.findLibraryList(repository.getId(), packageName);
-                Library libraryLiv ;
-                if (CollectionUtils.isEmpty(goLibraryByCond)) {
-                    //创建制品
-                    libraryLiv = new Library();
-                    libraryLiv.setRepository(repository);
-                    libraryLiv.setName(packageName);
-                    libraryLiv.setLibraryType("go");
-                    String libraryId = libraryService.createLibrary(libraryLiv);
-                    libraryLiv.setId(libraryId);
-                }else {
-                    libraryLiv=goLibraryByCond.get(0);
-                }
+
+                //创建制品
+                Library library = libraryService.createLibraryData(packageName,"go",repository);
 
 
                 String filePath = yamlDataMaService.repositoryAddress() + "/" + repository.getId() + "/" + path;
                 File file = new File(filePath);
-
                 //以.info、.zip、.mod 结尾的请求 是拉取版本数据
                 if ((path.endsWith(".info")||path.endsWith(".zip")||path.endsWith(".mod"))){
                     String endPath  = StringUtils.substringAfterLast(path, "@v/");
                     String version = StringUtils.substringBeforeLast(endPath, ".");
                     LibraryVersion libraryVersion = new LibraryVersion();
                     libraryVersion.setRepository(repository);
-                    libraryVersion.setLibrary(libraryLiv);
+                    libraryVersion.setLibrary(library);
                     libraryVersion.setPusher("系统");
                     libraryVersion.setVersion(version);
                     libraryVersion.setHash(RepositoryUtil.getSHA256ByPath(filePath));
@@ -335,7 +324,7 @@ public class GoUploadServiceImpl implements GoUploadService{
                     //创建制品文件
                     LibraryFile libraryFile = new LibraryFile();
                     libraryFile.setRepository(repository);
-                    libraryFile.setLibrary(libraryLiv);
+                    libraryFile.setLibrary(library);
                     libraryFile.setLibraryVersion(libraryVersion);
                     libraryFile.setFileName(endPath);
                     libraryFile.setFileUrl(repository.getId()+"/"+path);

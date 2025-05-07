@@ -1,23 +1,28 @@
 package io.tiklab.hadess.common;
 
 import io.tiklab.core.exception.SystemException;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class FileUtil {
 
 
     /**
-     *  读取文件信息并写入response
-     *  @param file     文件
+     * 读取文件信息并写入response
+     *
+     * @param file 文件
      * @return
      */
     public static void readFileData(File file, HttpServletResponse response) throws IOException {
@@ -36,11 +41,12 @@ public class FileUtil {
 
 
     /**
-     *  读取输入流中的数据
-     * @param  inputStream 数据流
-     * @return  data 读取的数据
+     * 读取输入流中的数据
+     *
+     * @param inputStream 数据流
+     * @return data 读取的数据
      */
-    public static  String readInputStream(InputStream inputStream) throws IOException {
+    public static String readInputStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(inputStream.available());
         BufferedInputStream in = new BufferedInputStream(inputStream);
         int buf_size = 1024;
@@ -55,11 +61,12 @@ public class FileUtil {
 
     /**
      * copy文件内容
+     *
      * @param inputStream 内容流
-     * @param folderPath 文件需要复制到的地址
-     * @param fileName 文件名字
+     * @param folderPath  文件需要复制到的地址
+     * @param fileName    文件名字
      */
-    public static Path copyFileData(InputStream inputStream, String folderPath, String fileName)  {
+    public static Path copyFileData(InputStream inputStream, String folderPath, String fileName) {
         try {
             // 规范化路径并创建目录（如果不存在）
             Path dirPath = Paths.get(folderPath);
@@ -73,19 +80,20 @@ public class FileUtil {
             // 使用 try-with-resources 确保流关闭，并直接复制输入流到文件
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return filePath;
-        }catch (IOException e){
-            throw new SystemException(HadessFinal.WRITE_EXCEPTION,"写入数据失败") ;
+        } catch (IOException e) {
+            throw new SystemException(HadessFinal.WRITE_EXCEPTION, "写入数据失败");
         }
     }
 
 
     /**
      * 写入string到文件路径中
-     * @param content 内容
+     *
+     * @param content  内容
      * @param filePath 文件路径
      */
     public static void writeStringToFile(String content, String filePath) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,false))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             writer.write(content);
         }
     }
@@ -93,13 +101,14 @@ public class FileUtil {
 
     /**
      * 读取zip压缩包里面的文件内容
-     * @param zipFilePath 压缩包地址
+     *
+     * @param zipFilePath   压缩包地址
      * @param fileNameInZip 文件名字
      */
-    public static String readFileInZip(String zipFilePath,String fileNameInZip){
+    public static String readFileInZip(String zipFilePath, String fileNameInZip) {
         try (
 
-           ZipFile zipFile = new ZipFile(zipFilePath)) {
+                ZipFile zipFile = new ZipFile(zipFilePath)) {
             ZipEntry entry = zipFile.getEntry(fileNameInZip);
             if (entry != null) {
                 StringBuilder fileContent = new StringBuilder();
@@ -115,8 +124,28 @@ public class FileUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new SystemException(HadessFinal.READ_LOCAL_EXCEPTION,e.getMessage()) ;
+            throw new SystemException(HadessFinal.READ_LOCAL_EXCEPTION, e.getMessage());
         }
     }
 
+    /**
+     * 用于nuget读取.nupkg 压缩包里面的文件内容
+     * @param filePath   fileData
+     */
+    public static String readFileInNupkg(String filePath)  {
+        // 解压 .nupkg 并读取 .nuspec 文件
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            // 1. 查找 .nuspec 文件（通常位于根目录）
+            ZipEntry nuspecEntry = zipFile.stream()
+                    .filter(e -> e.getName().endsWith(".nuspec"))
+                    .findFirst()
+                    .orElseThrow(() -> new Exception("No .nuspec file found"));
+            try (InputStream nuspecStream = zipFile.getInputStream(nuspecEntry)) {
+                String nuspecContent = IOUtils.toString(nuspecStream, StandardCharsets.UTF_8);
+                return  nuspecContent;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

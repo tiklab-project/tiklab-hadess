@@ -347,17 +347,11 @@ public class ComposerUploadServiceImpl implements ComposerUploadService{
                 String fileUrl = libraryFileList.get(0).getFileUrl();
                 String filePath = yamlDataMaService.repositoryAddress() + "/" + fileUrl;
                 File file = new File(filePath);
+
                 //文件存在直接本地拉取
                 if (file.exists()){
-                    InputStream inputStream = new FileInputStream(filePath);
-                    ServletOutputStream outputStream = response.getOutputStream();
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                    inputStream.close();
-                    outputStream.close();
+                    FileUtil.readFileData(file,response);
+                    return;
                 }
             }
 
@@ -579,7 +573,7 @@ public class ComposerUploadServiceImpl implements ComposerUploadService{
                 repository=localRepList.get(0).getRepository();
             }
 
-            //将文件先写入/sample文件夹
+            //将文件先写入/sample文件夹。先随机生成文件名字存入文件流，再读取文件内容获取真正的文件名字和版本，最后将随机名替换成真正的文件名
             String math =  UuidGenerator.gen(5);
             String path = yamlDataMaService.repositoryAddress() + "/" + repository.getId();
             String borderPath =path+"/sample";
@@ -589,6 +583,7 @@ public class ComposerUploadServiceImpl implements ComposerUploadService{
             String zipFilePath = borderPath+"/"+math+".zip";
             String fileNameInZip = "composer.json";
             String composerData = FileUtil.readFileInZip(zipFilePath, fileNameInZip);
+
             //composer.json不存在
             if (("500").equals(composerData)){
                 ComposerResponse.errorUpToClient(response,500,"Invalid composer package 无效的composer包");

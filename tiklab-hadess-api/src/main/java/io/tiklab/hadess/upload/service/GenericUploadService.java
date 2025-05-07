@@ -2,6 +2,8 @@ package io.tiklab.hadess.upload.service;
 
 import io.tiklab.core.Result;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 public interface GenericUploadService {
@@ -9,20 +11,19 @@ public interface GenericUploadService {
 
     /**
      * generic提交
-     * @param inputStream 文件liu
-     * @param   repositoryPath 仓库名称/制品文件
-     * @param userData 用户信息
-     * @param version 产品版本
+     * @param request request
+     * @param   response response
      * @return
      */
-     String GenericUpload( InputStream inputStream,String repositoryPath,String userData,String version );
+     void GenericUpload(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * generic下载
-     * @param   repositoryPath 仓库名称/制品文件
-     * @param userData 用户信息
-     * @param version 产品版本
+     * @param   request request
+     * @param response response
      * @return
      */
-    Result<byte[]> GenericDownload(String repositoryPath, String userData, String version);
+    void GenericDownload(HttpServletRequest request, HttpServletResponse response);
+
+
 }

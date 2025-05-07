@@ -37,7 +37,7 @@ public class LibraryVersionEntity extends BaseModel {
     private String version;
 
     //hash
-    @Column(name = "hash",length = 320)
+    @Column(name = "hash",length = 248)
     private String hash;
 
     //推送人

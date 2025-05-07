@@ -169,4 +169,14 @@ public class LibraryVersionDao{
             jdbcTemplate.execute(sql);
         }
     }
+
+    public List<LibraryVersionEntity> findVersionByRepIds(String[] repIds) {
+        if (ObjectUtils.isEmpty(repIds)){
+            return Collections.emptyList();
+        }
+        QueryCondition condition = QueryBuilders.createQuery(LibraryVersionEntity.class)
+                .in("repositoryId", repIds)
+                .get();
+        return jpaTemplate.findList(condition,LibraryVersionEntity.class)    ;
+    }
 }

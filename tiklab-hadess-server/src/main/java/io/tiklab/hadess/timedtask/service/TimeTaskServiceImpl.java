@@ -63,6 +63,7 @@ public class TimeTaskServiceImpl implements TimeTaskService {
                 timeTaskInstance.setWeekDay(integer);
                 timeTaskInstance.setTaskWay(timeTask.getTaskWay());
                 timeTaskInstance.setExecObjectId(timeTask.getScanPlayId());
+                timeTaskInstance.setTaskType(timeTask.getTaskType());
                 taskInstanceService.createTimeTaskInstance(timeTaskInstance);
             }
             return timeTaskId;

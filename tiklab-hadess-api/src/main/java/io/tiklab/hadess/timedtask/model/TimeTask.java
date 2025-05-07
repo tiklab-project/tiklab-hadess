@@ -17,13 +17,13 @@ public class TimeTask extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @ApiProperty(name="scanPlayId",desc="扫描计划id")
+    @ApiProperty(name="scanPlayId",desc="定时任务对象的id")
     private String scanPlayId;
 
     @ApiProperty(name="taskName",desc="定时任务名字")
     private String taskName;
 
-    @ApiProperty(name="taskType",desc="定时任务类型 scan")
+    @ApiProperty(name="taskType",desc="定时任务类型 scan、repClean")
     private String taskType;
 
     @ApiProperty(name="taskWay",desc="任务方式 1：单次触发、2：循环触发")

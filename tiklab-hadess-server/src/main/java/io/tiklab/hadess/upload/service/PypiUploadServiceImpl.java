@@ -108,7 +108,6 @@ public class PypiUploadServiceImpl implements PypiUploadService{
             //客户端请求拉取元数据仓库地址为本地库
             if (("local").equals(repository.getRepositoryType())){
                 result = downloadMetadataByLocalRep(repository, libraryName);
-
             }
             //客户端请求拉取元数据仓库地址为远程库
             if (("remote").equals(repository.getRepositoryType())){
@@ -219,7 +218,7 @@ public class PypiUploadServiceImpl implements PypiUploadService{
             String userName = split[0];
             return Result.ok(userName);
         }catch (Exception e){
-            logger.info("docker登陆错误："+e.getMessage());
+            logger.info("pypi拉取推送错误："+e.getMessage());
             return Result.error(401,e.getMessage());
         }
     }
@@ -448,6 +447,7 @@ public class PypiUploadServiceImpl implements PypiUploadService{
 
                 //远程获取
                 restTemplateGetByte(response,path,storePath);
+                return;
             }catch (Exception e){
                 e.printStackTrace();
                 logger.info("pypi拉取报文件失败，地址："+agencyUrl);
@@ -582,8 +582,9 @@ public class PypiUploadServiceImpl implements PypiUploadService{
     public void addDownloadMetadataLibraryData(Repository repository,String libraryName,String metadataData) throws FileNotFoundException {
 
         //创建制品
-        Library library = libraryService.createLibraryData(libraryName, "pypi", repository);
+       libraryService.createLibraryData(libraryName, "pypi", repository);
 
+        //拉取代理的制品元数据json没有写到本地hadess服务中
    /*     //创建pypi制品扩展数据
         LibraryPypi libraryPypi = new LibraryPypi();
         libraryPypi.setLibraryId(library.getId());

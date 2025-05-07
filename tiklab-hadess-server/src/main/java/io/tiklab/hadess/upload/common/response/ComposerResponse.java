@@ -62,6 +62,7 @@ public class ComposerResponse {
         try {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
             PrintWriter writer = resp.getWriter();
             writer.write(data);
 

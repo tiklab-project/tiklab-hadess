@@ -95,4 +95,8 @@ public class HadessFinal {
     public static final String COMPOSER_PACKAGES_LIST ="https://packagist.org/packages/list.json";
 
     public static final String COMPOSER_METADATA_CHANGES ="https://packagist.org/metadata/changes.json";
+
+    /*---Nuget----*/
+    //查询可用制品列表
+    public static final String NUGET_FIND_QUERY ="https://azuresearch-ea.nuget.org/query";
 }

@@ -235,7 +235,7 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     }
 
     @Override
-    public List<LibraryVersion> findLibraryVersionList(String repositoryId) {
+    public List<LibraryVersion> findLibraryVersionByRepId(String repositoryId) {
         List<LibraryVersionEntity> libraryVersionEntityList = libraryVersionDao.findLibraryVersionList(new LibraryVersionQuery().setRepositoryId(repositoryId));
 
         List<LibraryVersion> libraryVersionList = BeanMapper.mapList(libraryVersionEntityList,LibraryVersion.class);
@@ -424,6 +424,13 @@ public class LibraryVersionServiceImpl implements LibraryVersionService {
     @Override
     public List<LibraryVersion> findVersionByLibraryIds(String[] libraryIds) {
         List<LibraryVersionEntity>  libraryVersionEntities = libraryVersionDao.findVersionByLibraryIds(libraryIds);
+        List<LibraryVersion> libraryVersions = BeanMapper.mapList(libraryVersionEntities, LibraryVersion.class);
+        return libraryVersions;
+    }
+
+    @Override
+    public List<LibraryVersion> findVersionByRepIds(String[] repIds) {
+        List<LibraryVersionEntity>  libraryVersionEntities = libraryVersionDao.findVersionByRepIds(repIds);
         List<LibraryVersion> libraryVersions = BeanMapper.mapList(libraryVersionEntities, LibraryVersion.class);
         return libraryVersions;
     }

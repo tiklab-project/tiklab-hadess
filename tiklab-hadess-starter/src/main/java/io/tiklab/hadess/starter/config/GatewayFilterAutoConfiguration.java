@@ -117,6 +117,7 @@ public class GatewayFilterAutoConfiguration {
                         "/pypi",
                         "/composer",
                         "/composerPack",
+                        "/nuget",
                         "/pushCenWarehouse",
                         "/libraryFile",
                         "/xpack",

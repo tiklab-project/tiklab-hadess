@@ -50,6 +50,8 @@ public class TimeTaskInstance extends BaseModel {
     @ApiProperty(name="dataList",desc="天数,周几")
     private List<Integer> dataList;
 
+    @ApiProperty(name="dataList",desc="任务类型 scan、clean")
+    private String taskType;
 
     public String getId() {
         return id;
@@ -131,5 +133,13 @@ public class TimeTaskInstance extends BaseModel {
 
     public void setExecObjectId(String execObjectId) {
         this.execObjectId = execObjectId;
+    }
+
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
     }
 }

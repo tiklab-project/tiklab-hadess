@@ -36,5 +36,46 @@ public class GenericResponse {
         }
     }
 
+    /**
+     * 拉取返回错误信息
+     * @param response response
+     */
+    public  static void  errorToClient(HttpServletResponse response,String msg)  {
+        try {
+            response.setContentType("application/json; charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            PrintWriter writer = response.getWriter();
+            writer.println(msg);
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * 拉取返回
+     * @param response response
+     */
+    public  static void  correctToClient(HttpServletResponse response,byte[] data )  {
+        try {
+            response.setContentType("application/json; charset=UTF-8");
+            ServletOutputStream outputStream = response.getOutputStream();
+            outputStream.write(data);
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void correctToClient(HttpServletResponse resp,String message) {
+        try {
+            resp.getWriter().write(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
