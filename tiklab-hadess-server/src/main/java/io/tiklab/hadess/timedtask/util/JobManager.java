@@ -42,20 +42,17 @@ public class JobManager {
         String weekTime = CronUtils.dateChangeString(execTime);
 
         if (execTime.getTime() <= new Date().getTime()){
-            logger.warn("定时任务时间已过，跳过添加：{}，执行对象id：{}，执行时间：{}，cron表达式：{}",group,execObjectId, weekTime,cron);
+            logger.warn("The scheduled task time has passed. Skip adding：{}，execution object：{}，execution time：{}，cron expression：{}",group,execObjectId, weekTime,cron);
             return;
         }
 
-        logger.warn("添加定时任务，定时任务组：{}，执行对象id：{}，执行时间：{}，cron表达式：{}",group,execObjectId, weekTime,cron);
+        logger.warn("Add scheduled tasks and scheduled task groups：{}，execution object：{}，execution time：{}，cron expression：{}",group,execObjectId, weekTime,cron);
 
         // 任务名，任务组，任务执行类
         Scheduler scheduler = schedulerFactory.getScheduler();
 
         Boolean isNewTrigger = false;
 
-        if (ObjectUtils.isEmpty(group)){
-            group= HadessFinal.DEFAULT;
-        }
         JobKey jobKey = JobKey.jobKey(group);
         JobDetail jobDetail = scheduler.getJobDetail(jobKey);
 

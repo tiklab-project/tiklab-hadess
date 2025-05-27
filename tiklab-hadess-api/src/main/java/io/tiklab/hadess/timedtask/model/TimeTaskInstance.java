@@ -2,11 +2,16 @@ package io.tiklab.hadess.timedtask.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.tiklab.core.BaseModel;
+import io.tiklab.hadess.repository.model.Repository;
 import io.tiklab.postin.annotation.ApiModel;
 import io.tiklab.postin.annotation.ApiProperty;
 import io.tiklab.toolkit.beans.annotation.Mapper;
+import io.tiklab.toolkit.beans.annotation.Mapping;
+import io.tiklab.toolkit.beans.annotation.Mappings;
 import io.tiklab.toolkit.join.annotation.Join;
+import io.tiklab.toolkit.join.annotation.JoinQuery;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -18,8 +23,13 @@ public class TimeTaskInstance extends BaseModel {
     @ApiProperty(name="id",desc="id")
     private String id;
 
-    @ApiProperty(name="timeTaskId",desc="定时任务id")
-    private String timeTaskId;
+    @NotNull
+    @ApiProperty(name="timeTask",desc="定时任务id",required = true)
+    @Mappings({
+            @Mapping(source = "timeTask.id",target = "timeTaskId")
+    })
+    @JoinQuery(key = "id")
+    private TimeTask timeTask;
 
     @ApiProperty(name="execObjectId",desc="执行对象的id")
     private String execObjectId;
@@ -61,12 +71,12 @@ public class TimeTaskInstance extends BaseModel {
         this.id = id;
     }
 
-    public String getTimeTaskId() {
-        return timeTaskId;
+    public TimeTask getTimeTask() {
+        return timeTask;
     }
 
-    public void setTimeTaskId(String timeTaskId) {
-        this.timeTaskId = timeTaskId;
+    public void setTimeTask(TimeTask timeTask) {
+        this.timeTask = timeTask;
     }
 
     public String getCron() {

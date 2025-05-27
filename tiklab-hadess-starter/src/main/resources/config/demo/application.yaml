@@ -74,7 +74,7 @@ visible:
 
 backups:
   time: 0 0 2 * * ?
-  dir: /data/backup
+  dir:  ${DATA_HOME}/backups
   xpack:
     dir: ${DATA_HOME}/repository
 

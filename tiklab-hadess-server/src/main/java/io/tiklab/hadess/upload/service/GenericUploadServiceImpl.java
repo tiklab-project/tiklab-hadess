@@ -89,7 +89,7 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         String authorization = request.getHeader("Authorization");
         Result userCheckResult = userCheck(authorization);
         if (userCheckResult.getCode()==401){
-            GenericResponse.errorToClient(response,userCheckResult.getMsg());
+            GenericResponse.errorToClient(response,userCheckResult.getMsg(),401);
             return;
         }
 
@@ -103,7 +103,7 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         String repositoryName = split[0];
         Repository repository = repositoryService.findRepositoryByName(repositoryName);
         if (ObjectUtils.isEmpty(repository)){
-            GenericResponse.errorToClient(response,"仓库不存在");
+            GenericResponse.errorToClient(response,"仓库不存在",404);
             return;
         }
 
@@ -111,7 +111,7 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         String fileName = split[1];
         Library library= libraryService.findLibraryByCondition(fileName,"generic",repository.getId());
         if (ObjectUtils.isEmpty(library)){
-            GenericResponse.errorToClient(response,"制品不存在");
+            GenericResponse.errorToClient(response,"制品不存在",404);
             return;
         }
 
@@ -122,13 +122,13 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         fileQuery.setLibraryId(library.getId());
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(fileQuery);
         if (CollectionUtils.isEmpty(libraryFileList)){
-            GenericResponse.errorToClient(response,"制品文件不存在");
+            GenericResponse.errorToClient(response,"制品文件不存在",404);
             return;
         }
 
         List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains(version)).toList();
         if (CollectionUtils.isEmpty(libraryFiles)){
-            GenericResponse.errorToClient(response,"当前版本制品不存在");
+            GenericResponse.errorToClient(response,"当前版本制品不存在",404);
             return;
         }
 
@@ -140,12 +140,12 @@ public class GenericUploadServiceImpl implements GenericUploadService {
         try {
             File file = new File(filePah);
             if (!file.exists()){
-                GenericResponse.errorToClient(response,"文件不存在");
+                GenericResponse.errorToClient(response,"文件不存在",404);
             }
             response.setContentType("application/json; charset=UTF-8");
             FileUtil.readFileData(file,response);
         } catch (IOException e) {
-            GenericResponse.errorToClient(response,"读取文件信息失败");
+            GenericResponse.errorToClient(response,"读取文件信息失败",500);
         }
 
     }

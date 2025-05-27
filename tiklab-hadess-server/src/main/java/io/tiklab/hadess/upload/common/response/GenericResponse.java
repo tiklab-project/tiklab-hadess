@@ -40,17 +40,16 @@ public class GenericResponse {
      * 拉取返回错误信息
      * @param response response
      */
-    public  static void  errorToClient(HttpServletResponse response,String msg)  {
+    public  static void  errorToClient(HttpServletResponse response,String msg,Integer code)  {
         try {
-            response.setContentType("application/json; charset=UTF-8");
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setContentType("text/plain; charset=UTF-8");
+            response.setStatus(code);
             PrintWriter writer = response.getWriter();
-            writer.println(msg);
+            writer.write(msg);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
@@ -71,6 +70,7 @@ public class GenericResponse {
 
     public static void correctToClient(HttpServletResponse resp,String message) {
         try {
+            resp.setStatus(500);
             resp.getWriter().write(message);
         } catch (IOException e) {
             throw new RuntimeException(e);

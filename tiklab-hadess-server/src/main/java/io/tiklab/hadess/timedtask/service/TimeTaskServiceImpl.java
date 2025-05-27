@@ -53,13 +53,13 @@ public class TimeTaskServiceImpl implements TimeTaskService {
             timeTaskEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
             timeTaskEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             String timeTaskId = timeTaskDao.createTimeTask(timeTaskEntity);
-
+            timeTask.setId(timeTaskId);
 
             String object = JSON.toJSONString(timeTask.getInstanceData());
             TimeTaskInstance timeTaskInstance = JSON.parseObject(object, TimeTaskInstance.class);
             List<Integer> dataList = timeTaskInstance.getDataList();
             for (Integer integer : dataList) {
-                timeTaskInstance.setTimeTaskId(timeTaskId);
+                timeTaskInstance.setTimeTask(timeTask);
                 timeTaskInstance.setWeekDay(integer);
                 timeTaskInstance.setTaskWay(timeTask.getTaskWay());
                 timeTaskInstance.setExecObjectId(timeTask.getScanPlayId());
@@ -86,7 +86,7 @@ public class TimeTaskServiceImpl implements TimeTaskService {
 
         TimeTaskInstance taskInstance = taskInstanceService.findOne(taskInstanceId);
 
-        String timeTaskId = taskInstance.getTimeTaskId();
+        String timeTaskId = taskInstance.getTimeTask().getId();
 
         TimeTaskEntity timeTask = timeTaskDao.findTimeTask(timeTaskId);
 
@@ -99,7 +99,7 @@ public class TimeTaskServiceImpl implements TimeTaskService {
             String cron = CronUtils.getCron(taskInstance.getWeekDay(), taskInstance.getExecTime());
             taskInstance.setCron(cron);
             try {
-                jobManager.addJob(taskInstance, RunJob.class, HadessFinal.DEFAULT);
+                jobManager.addJob(taskInstance, RunJob.class, taskInstance.getTimeTask().getTaskType());
             } catch (SchedulerException e) {
                 e.printStackTrace();
                 throw new ApplicationException(HadessFinal.SYSTEM_EXCEPTION,"当前时间已经添加过，无需重复添加。");

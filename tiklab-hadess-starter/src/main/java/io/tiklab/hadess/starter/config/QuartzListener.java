@@ -53,7 +53,7 @@ public class QuartzListener implements TiklabApplicationRunner {
             if (CollectionUtils.isNotEmpty(instances)){
                 for (TimeTaskInstance taskInstance:instances){
                     try {
-                        jobManager.addJob(taskInstance, RunJob.class, HadessFinal.DEFAULT);
+                        jobManager.addJob(taskInstance, RunJob.class, taskInstance.getTimeTask().getTaskType());
                     } catch (SchedulerException e) {
 
                         throw new ApplicationException(e);

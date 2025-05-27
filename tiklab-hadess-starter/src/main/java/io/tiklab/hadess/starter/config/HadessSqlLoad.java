@@ -1,6 +1,6 @@
 package io.tiklab.hadess.starter.config;
 
-import io.tiklab.dsm.config.model.DsmConfig;
+import io.tiklab.dsm.model.DsmConfig;
 import io.tiklab.dsm.support.DsmConfigBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -43,6 +43,7 @@ public class HadessSqlLoad {
                 "apply-auth_1.0.1",
                 "privilege_1.0.1",
                 "hadess_1.0.1",
+                "scan_1.0.1",
 
         });
         dsmConfig.newVersion("1.0.2", new String[]{

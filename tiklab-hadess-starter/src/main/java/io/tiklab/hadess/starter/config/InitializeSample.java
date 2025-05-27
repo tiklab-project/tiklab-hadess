@@ -21,5 +21,9 @@ public class InitializeSample implements TiklabApplicationRunner {
     public void run() {
         // 在这里执行需要最后加载的操作，例如创建和初始化特定Bean
         sampleService.createSampleData();
+
+
+        //修改仓库的角色
+        sampleService.updateRepRole();
     }
 }

@@ -984,7 +984,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
 
         //客户端请求blobs文件时候，需要读取Manifest内容中对应blobs的数据的类型、大小返回给客户端
-        readManifests(response,libraryFiles.get(0).getFileUrl(),fileName);
+        List<LibraryFile> manifests = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+        readManifests(response,manifests.get(0).getFileUrl(),fileName);
         readBlobsFile(response,file);
     }
 

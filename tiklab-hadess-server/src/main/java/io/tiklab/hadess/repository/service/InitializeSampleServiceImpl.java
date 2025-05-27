@@ -15,6 +15,11 @@ import io.tiklab.hadess.repository.model.RepositoryMaven;
 import io.tiklab.hadess.repository.model.RepositoryQuery;
 import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.core.exception.SystemException;
+import io.tiklab.privilege.dmRole.model.DmRole;
+import io.tiklab.privilege.dmRole.model.DmRoleQuery;
+import io.tiklab.privilege.dmRole.service.DmRoleService;
+import io.tiklab.privilege.role.model.Role;
+import io.tiklab.privilege.role.service.RoleService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -57,6 +62,12 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
 
     @Autowired
     XpackYamlDataMaService xpackYamlDataMaService;
+
+    @Autowired
+    RoleService roleService;
+
+    @Autowired
+    DmRoleService dmRoleService;
 
     @Override
     public void createSampleData() {
@@ -105,6 +116,44 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         }
     }
 
+    @Override
+    public void updateRepRole() {
+        List<Role> allRole = roleService.findAllRole();
+
+
+        if (CollectionUtils.isNotEmpty(allRole)){
+            for (Role role:allRole){
+                //移除项目管理员
+                if ((("3").equals(role.getParentId()))||("3").equals(role.getId())){
+                    roleService.deleteRole(role.getId());
+
+                    DmRoleQuery dmRoleQuery = new DmRoleQuery();
+                    dmRoleQuery.setRoleId(role.getId());
+                    List<DmRole> dmRoleList = dmRoleService.findDmRoleListByQuery(dmRoleQuery);
+                    if (CollectionUtils.isNotEmpty(dmRoleList)){
+                        for (DmRole dmRole:dmRoleList){
+                            dmRoleService.deleteDmRole(dmRole.getId());
+                        }
+                    }
+                }
+
+                //修改项目超级管理员
+                if (("pro_111111").equals(role.getParentId()) ||("pro_111111").equals(role.getId())){
+                    role.setName("项目管理员");
+                    roleService.updateRole(role);
+                }
+
+                if (("管理员角色").equals(role.getName())){
+                    role.setName("管理员");
+                    roleService.updateRole(role);
+                }
+                if (("普通角色").equals(role.getName())){
+                    role.setName("普通用户");
+                    roleService.updateRole(role);
+                }
+            }
+        }
+    }
 
 
     /**

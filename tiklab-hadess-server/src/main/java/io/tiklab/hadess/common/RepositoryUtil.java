@@ -689,7 +689,67 @@ public class RepositoryUtil {
     }
 
 
+    /**
+     * 执行cmd命令
+     * @param rawPath 执行文件夹
+     * @param order 执行命令
+     * @return 执行信息
+     * @throws IOException 调取命令行失败
+     */
+    public static Process process(String rawPath,String order) throws IOException {
+        //根据系统类型转换地址
+        String path = SystemTypeAddress(rawPath);
 
+        Runtime runtime=Runtime.getRuntime();
+        Process process;
+        if (RepositoryUtil.findSystemType()==1){
+            if (StringUtils.isBlank(path)){
+                process = runtime.exec(" cmd.exe /c " + " " + order);
+            }else {
+                process = runtime.exec(" cmd.exe /c " + " " + order,null,new File(path));
+            }
+        }else {
+            if (StringUtils.isBlank(path)){
+                String[]  cmd = new String[] { "/bin/sh", "-c", " source /etc/profile;"+ order };
+                process = runtime.exec(cmd);
+            }else {
+                String[]  cmd = new String[] { "/bin/sh", "-c", "cd " + path + ";"+" source /etc/profile;"+ order };
+                process = runtime.exec(cmd,null,new File(path));
+            }
+        }
+        return process;
+    }
 
+    /**
+     * 系统类型
+     * @return 1.windows 2.其他
+     */
+    public static int findSystemType(){
+        String property = System.getProperty("os.name");
+        String[] s1 = property.split(" ");
+        switch (s1[0]){
+            case "Windows":
+                return 1;
+            case "Mac":
+                return 2;
+            default:
+                return 3;
+        }
+    }
+
+    /**
+     * 不同系统返回的地址
+     * @param address address
+     * @return 位置
+     */
+    public static String SystemTypeAddress(String address) {
+        if (StringUtils.isNotBlank(address)){
+            int systemType = findSystemType();
+            if (systemType == 1) {
+                return address.replace("/", "\\");
+            }
+        }
+        return address;
+    }
 
 }

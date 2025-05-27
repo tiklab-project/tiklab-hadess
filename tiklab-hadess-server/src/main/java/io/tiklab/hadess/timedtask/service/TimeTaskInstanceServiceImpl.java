@@ -85,7 +85,7 @@ public class TimeTaskInstanceServiceImpl implements TimeTaskInstanceService {
             List<TimeTaskInstance> timeTaskInstanceList = this.findTimeTaskInstanceList(new TimeTaskInstanceQuery().setTimeTaskId(value));
             if (CollectionUtils.isNotEmpty(timeTaskInstanceList)){
                 for (TimeTaskInstance taskInstance:timeTaskInstanceList){
-                    jobManager.removeJob(HadessFinal.DEFAULT,taskInstance.getId()+"_"+taskInstance.getExecObjectId());
+                    jobManager.removeJob(taskInstance.getTimeTask().getTaskType(),taskInstance.getId()+"_"+taskInstance.getExecObjectId());
                 }
             }
         }

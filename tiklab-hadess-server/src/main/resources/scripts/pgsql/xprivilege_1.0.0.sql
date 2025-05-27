@@ -1,6 +1,5 @@
-INSERT INTO pcs_prc_role VALUES ('1', '管理员角色', NULL, 'system', '1', 1, 0, 1);
-INSERT INTO pcs_prc_role VALUES ('2', '普通角色', NULL, 'system', '1', 0, 1, 1);
-INSERT INTO pcs_prc_role VALUES ('3', '项目管理员', NULL, 'system', '2', 1, 0, 1);
+INSERT INTO pcs_prc_role VALUES ('1', '管理员', NULL, 'system', '1', 1, 0, 1);
+INSERT INTO pcs_prc_role VALUES ('2', '普通用户', NULL, 'system', '1', 0, 1, 1);
 INSERT INTO pcs_prc_role VALUES ('4', '项目成员', NULL, 'system', '2', 0, 1, 1);
 
 
@@ -158,19 +157,6 @@ INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('943c
 INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('350f30c864d9', 'pro_111111', '10941027da0c');
 
 
--- ---------------------------
--- 制品库管理员权限
--- ----------------------------
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4a4a8f128bbf', '3', 'd7b517e67879');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4bbeddbb8a2b', '3', '2b87261ca9da');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('cb30a826dec7', '3', 'e2647d27302c');
 
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('4d361f7ffdf6', '3', '4e560bf41209');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('a136f687899e', '3', '0890b8644d64');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('2d1501bfe6b5', '3', 'bbe25463ce0a');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('fbd0d7a943b0', '3', '4f2543a2a7c8');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('2fb847cab609', '3', 'dd03b9487749');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('43959ef5d937', '3', '2d9a47355b6e');
-INSERT INTO pcs_prc_role_function ("id", "role_id", "function_id") VALUES ('006a213fec2c', '3', '10941027da0c');
 
 

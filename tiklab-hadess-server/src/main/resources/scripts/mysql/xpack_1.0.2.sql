@@ -1,4 +1,4 @@
-INSERT INTO pack_scan_scheme (id, scheme_name, language,describe,scheme_type,create_time) VALUES
+INSERT INTO pack_scan_scheme (id, scheme_name, language,description,scheme_type,create_time) VALUES
 ('0230645439', 'Maven推荐扫描方案','maven','默认maven扫描方案','default','2022-12-12 11:30:00');
 
 INSERT INTO pack_scan_scheme_hole (id, scan_scheme_id, scan_hole_id,create_time) VALUES
@@ -6,7 +6,7 @@ INSERT INTO pack_scan_scheme_hole (id, scan_scheme_id, scan_hole_id,create_time)
     ('123456781002', '0230645439','123456781001','2022-10-1 12:30:00'),
     ('123456781003', '0230645439','123456781002','2022-10-1 13:30:00');
 
-INSERT INTO pack_scan_hole(id,vendor,product,version,language,hole_name,hole_number,hole_level,create_time,suggestion,describe) VALUES
+INSERT INTO pack_scan_hole(id,vendor,product,version,language,hole_name,hole_number,hole_level,create_time,suggestion,description) VALUES
 ('123456781000', 'com.alibaba','fastjson','[1.2.62,1.3.0)','java','fastjson安全漏洞','CWE-502',2,'2020-06-03','更新到1.2.69或更高版本','fastjson受影响的版本存在反序列化漏洞'),
 ('123456781001', 'com.alibaba','fastjson','[2.0-beta9,2.12.2)||[1.2.62,1.3.0)','java','Fastjson 反序列化漏洞','CVE-2022-25845、CNNVD-202206-1037',1,'2022-06-10','官方已修复该漏洞，建议升级到1.2.83及以上版本。其他修复方案：
 (1)开启safeMode，fastjson在1.2.68及之后的版本中引入了safeMode，配置safeMode后，无论白名单和黑名单，都不支持autoType，可杜绝反序列化Gadgets类变种攻击（关闭autoType注意评估对业务的影响）。三种开启方法：代码中ParserConfig.getGlobalInstance().setSafeMode(true);启动参数-Dfastjson.parser.safeMode=true;fastjson.properties文件配置fastjson.parser.safeMode=true

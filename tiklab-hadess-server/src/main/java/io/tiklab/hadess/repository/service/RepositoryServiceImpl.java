@@ -170,7 +170,7 @@ public class RepositoryServiceImpl implements RepositoryService {
         if (!(userId).equals(userRoleAdmin.getUser().getId())){
             PatchUser patchUser1 = new PatchUser();
             patchUser1.setUserId(userId);
-            patchUser1.setRoleType(1);
+            patchUser1.setRoleType(2);
             List.add(patchUser1);
         }
         dmRoleService.initPatchDmRole(repositoryId, List);
