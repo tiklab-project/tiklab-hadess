@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/pushOperation")
-@Api(name = "PushGroupController",desc = "推送组")
+//@Api(name = "PushGroupController",desc = "推送组")
 public class PushOperationController {
 
     @Autowired

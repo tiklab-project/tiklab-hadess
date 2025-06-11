@@ -49,6 +49,7 @@ import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -236,7 +237,7 @@ public class PypiUploadServiceImpl implements PypiUploadService{
             return "404-客户端配置为本地库且制品表数据不存在";
         }
 
-        List<String> libraryIds = libraryList.stream().map(Library::getId).toList();
+        List<String> libraryIds = libraryList.stream().map(Library::getId).collect(Collectors.toList());
         String[] localLibraryIdList = libraryIds.toArray(new String[libraryIds.size()]);
         List<LibraryPypi> libraryPypiList = libraryPypiService.findLibraryPypiList(new LibraryPypiQuery().setLibraryIds(localLibraryIdList));
         for (LibraryPypi libraryPypi:libraryPypiList){
@@ -294,7 +295,7 @@ public class PypiUploadServiceImpl implements PypiUploadService{
         if (CollectionUtils.isNotEmpty(libraryList)){
             //客户端拉取的制品不为空且为本地库的
             List<String> localLibraryIds = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType()))
-                    .map(Library::getId).toList();
+                    .map(Library::getId).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(localLibraryIds)){
                 String[] localLibraryIdList = localLibraryIds.toArray(new String[localLibraryIds.size()]);
                 List<LibraryPypi> libraryPypiList = libraryPypiService.findLibraryPypiList(new LibraryPypiQuery().setLibraryIds(localLibraryIdList));

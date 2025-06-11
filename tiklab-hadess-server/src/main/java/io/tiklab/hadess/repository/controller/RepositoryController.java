@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/xpackRepository")
-@Api(name = "RepositoryController",desc = "制品库管理 ")
+@Api(name = "制品库管理",desc = "制品库管理 ")
 public class RepositoryController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryController.class);
@@ -30,7 +30,6 @@ public class RepositoryController {
     private RepositoryService repositoryService;
 
     @RequestMapping(path="/createRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "createRepository",desc = "创建制品库")
     @ApiParam(name = "repository",desc = "repository",required = true)
     public Result<String> createRepository(@RequestBody @NotNull @Valid Repository repository){
         String id = repositoryService.createRepository(repository);
@@ -40,7 +39,6 @@ public class RepositoryController {
 
 
     @RequestMapping(path="/updateRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "updateRepository",desc = "更新制品库")
     @ApiParam(name = "repository",desc = "repository",required = true)
     public Result<Void> updateRepository(@RequestBody @NotNull @Valid Repository repository){
         repositoryService.updateRepository(repository);
@@ -50,7 +48,6 @@ public class RepositoryController {
 
 
     @RequestMapping(path="/deleteRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteRepository",desc = "删除制品库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteRepository(@NotNull String id){
         repositoryService.deleteRepository(id);
@@ -59,7 +56,7 @@ public class RepositoryController {
     }
 
     @RequestMapping(path="/findRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepository",desc = "通过id查询制品库")
+    @ApiMethod(name = "通过id查询制品库",desc = "通过id查询制品库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Repository> findRepository(@NotNull String id){
         Repository repository = repositoryService.findRepository(id);
@@ -69,7 +66,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path="/findAllRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllRepository",desc = "查询所有制品库")
+    @ApiMethod(name = "查询所有制品库",desc = "查询所有制品库")
     public Result<List<Repository>> findAllRepository(){
         List<Repository> repositoryList = repositoryService.findAllRepository();
 
@@ -78,7 +75,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path = "/findRepositoryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryList",desc = "通过条件查询制品库")
+    @ApiMethod(name = "通过条件查询制品库",desc = "通过条件查询制品库")
     @ApiParam(name = "repositoryQuery",desc = "repositoryQuery",required = true)
     public Result<List<Repository>> findRepositoryList(@RequestBody @Valid @NotNull RepositoryQuery repositoryQuery){
         List<Repository> repositoryList = repositoryService.findRepositoryList(repositoryQuery);
@@ -88,7 +85,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path = "/findLocalAndRemoteRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "findLocalAndRemoteRepository",desc = "通过条件查询本地库和远程库")
+    @ApiMethod(name = "通过条件查询本地库和远程库",desc = "通过条件查询本地库和远程库")
     @ApiParam(name = "type",desc = "库类型",required = true)
     public Result<List<Repository>> findLocalAndRemoteRepository(@NotNull String type){
         List<Repository> repositoryList = repositoryService.findLocalAndRemoteRepository(type);
@@ -98,7 +95,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path = "/findRepositoryPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryPage",desc = "通过条件分页查询")
+    @ApiMethod(name = "通过条件分页查询",desc = "通过条件分页查询")
     @ApiParam(name = "repositoryQuery",desc = "repositoryQuery",required = true)
     public Result<Pagination<Repository>> findRepositoryPage(@RequestBody @Valid @NotNull RepositoryQuery repositoryQuery){
         Pagination<Repository> pagination = repositoryService.findRepositoryPage(repositoryQuery);
@@ -108,7 +105,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path = "/findRepositoryByGroup",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryByGroup",desc = "组合库关联的制品库集合")
+    @ApiMethod(name = "查询组合库关联的制品库集合",desc = "查询组合库关联的制品库集合")
     @ApiParam(name = "repositoryGroupId",desc = "组合库id",required = true)
     public Result<List<Repository>> findRepositoryByGroup( @NotNull String repositoryGroupId){
         List<Repository> repositoryList = repositoryService.findRepositoryByGroup(repositoryGroupId);
@@ -118,7 +115,7 @@ public class RepositoryController {
 
 
     @RequestMapping(path = "/findUnRelevanceRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "findUnRelevanceRepository",desc = "查询未关联组合库的本地和远程库list")
+    //@ApiMethod(name = "findUnRelevanceRepository",desc = "查询未关联组合库的本地和远程库list")
     @ApiParam(name = "repositoryType",desc = "repositoryType",required = true)
     public Result<List<Repository>> findUnRelevanceRepository( @NotNull String repositoryType,@NotNull String repositoryGroupId){
         List<Repository> repositoryList = repositoryService.findUnRelevanceRepository(repositoryType,repositoryGroupId);

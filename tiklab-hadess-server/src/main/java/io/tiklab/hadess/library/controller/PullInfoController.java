@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/pullInfo")
-@Api(name = "PullInfoController",desc = "制品拉取信息")
+//@Api(name = "PullInfoController",desc = "制品拉取信息")
 public class PullInfoController {
 
     private static Logger logger = LoggerFactory.getLogger(PullInfoController.class);
@@ -34,8 +34,6 @@ public class PullInfoController {
     private PullInfoService pullInfoService;
 
     @RequestMapping(path="/createPullInfo",method = RequestMethod.POST)
-    @ApiMethod(name = "createPullInfo",desc = "创建制品拉取信息")
-    @ApiParam(name = "pullInfo",desc = "pullInfo",required = true)
     public Result<String> createPullInfo(@RequestBody @NotNull @Valid PullInfo pullInfo){
         String id = pullInfoService.createPullInfo(pullInfo);
 
@@ -43,8 +41,6 @@ public class PullInfoController {
     }
 
     @RequestMapping(path="/updatePullInfo",method = RequestMethod.POST)
-    @ApiMethod(name = "updatePullInfo",desc = "更新制品拉取信息")
-    @ApiParam(name = "pullInfo",desc = "pullInfo",required = true)
     public Result<Void> updatePullInfo(@RequestBody @NotNull @Valid PullInfo pullInfo){
         pullInfoService.updatePullInfo(pullInfo);
 
@@ -61,8 +57,6 @@ public class PullInfoController {
     }
 
     @RequestMapping(path="/findPullInfo",method = RequestMethod.POST)
-    @ApiMethod(name = "findPullInfo",desc = "通过id查询制品文件")
-    @ApiParam(name = "id",desc = "id",required = true)
     public Result<PullInfo> findPullInfo(@NotNull String id){
         PullInfo pullInfo = pullInfoService.findPullInfo(id);
 

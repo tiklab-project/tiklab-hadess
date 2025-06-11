@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/library")
-@Api(name = "LibraryController",desc = "制品管理")
+@Api(name = "制品管理",desc = "制品管理")
 public class LibraryController {
 
     private static Logger logger = LoggerFactory.getLogger(LibraryController.class);
@@ -34,8 +34,6 @@ public class LibraryController {
     private LibraryService libraryService;
 
     @RequestMapping(path="/createLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibrary",desc = "创建制品库")
-    @ApiParam(name = "library",desc = "library",required = true)
     public Result<String> createLibrary(@RequestBody @NotNull @Valid Library library){
         String id = libraryService.createLibrary(library);
 
@@ -43,8 +41,6 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/updateLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibrary",desc = "更新制品库")
-    @ApiParam(name = "library",desc = "library",required = true)
     public Result<Void> updateLibrary(@RequestBody @NotNull @Valid Library library){
         libraryService.updateLibrary(library);
 
@@ -52,8 +48,6 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/deleteLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibrary",desc = "删除制品库")
-    @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibrary(@NotNull String id){
         libraryService.deleteLibrary(id);
 
@@ -61,7 +55,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/findLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibrary",desc = "通过id查询制品库")
+    @ApiMethod(name = "通过id查询制品库",desc = "通过id查询制品库")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<Library> findLibrary(@NotNull String id){
         Library library = libraryService.findLibrary(id);
@@ -70,7 +64,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path="/findAllLibrary",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllLibrary",desc = "查询所有制品库")
+    @ApiMethod(name = "查询所有制品",desc = "查询所有制品")
     public Result<List<Library>> findAllLibrary(){
         List<Library> libraryList = libraryService.findAllLibrary();
 
@@ -78,7 +72,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path = "/findLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryList",desc = "条件查询制品库")
+    @ApiMethod(name = "条件查询制品",desc = "条件查询制品")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<List<Library>> findLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         List<Library> libraryList = libraryService.findLibraryList(libraryQuery);
@@ -86,7 +80,7 @@ public class LibraryController {
     }
 
     @RequestMapping(path = "/findLibraryPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryPage",desc = "条件分页查询制品库")
+    @ApiMethod(name = "条件分页查询制品",desc = "条件分页查询制品")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<Pagination<Library>> findLibraryPage(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         Pagination<Library> pagination = libraryService.findLibraryPage(libraryQuery);
@@ -96,7 +90,7 @@ public class LibraryController {
 
 
     @RequestMapping(path = "/findLibraryListByRepository",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryListByRepository",desc = "查询制品库下面的制品文件")
+    @ApiMethod(name = "分页查询制品库下面的制品文件",desc = "查询制品库下面的制品文件")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<Pagination<Library>> findLibraryListByRepository(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         Pagination<Library> libraryList = libraryService.findLibraryListByRepository(libraryQuery);
@@ -104,16 +98,16 @@ public class LibraryController {
     }
 
     @RequestMapping(path = "/findLibraryListByCond",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryListByCond",desc = "通过搜索信息 查询制品")
+    @ApiMethod(name = "通过搜索信息 查询制品",desc = "通过搜索信息 查询制品")
     @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
     public Result<Pagination<Library>> findLibraryListByCond(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         Pagination<Library> listByCondition = libraryService.findLibraryListByCond(libraryQuery);
         return Result.ok(listByCondition);
     }
 
+    //查询未添加到推送中央仓库的记录的制品列表
     @RequestMapping(path = "/findNotPushLibraryList",method = RequestMethod.POST)
-    @ApiMethod(name = "findNotPushLibraryList",desc = "查询未添加到推送中央仓库的记录的制品列表")
-    @ApiParam(name = "libraryQuery",desc = "libraryQuery",required = true)
+   // @ApiMethod(name = "findNotPushLibraryList",desc = "查询未添加到推送中央仓库的记录的制品列表")
     public Result<List<Library>> findNotPushLibraryList(@RequestBody @Valid @NotNull LibraryQuery libraryQuery){
         List<Library> libraryList = libraryService.findNotPushLibraryList(libraryQuery);
         return Result.ok(libraryList);

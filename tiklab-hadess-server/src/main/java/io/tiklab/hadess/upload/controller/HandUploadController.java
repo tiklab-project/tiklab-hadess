@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("/xpack")
-@Api(name = "MavenUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
+//@Api(name = "MavenUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
 public class HandUploadController {
 
     @Autowired

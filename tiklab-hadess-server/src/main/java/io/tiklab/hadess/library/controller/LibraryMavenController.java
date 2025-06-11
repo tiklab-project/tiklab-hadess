@@ -21,11 +21,9 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * LibraryMavenController
+ * LibraryMavenController 制品maven相关字段
  */
 @RestController
-@RequestMapping("/libraryMaven")
-@Api(name = "LibraryMavenController",desc = "制品maven相关字段")
 public class LibraryMavenController {
 
     private static Logger logger = LoggerFactory.getLogger(LibraryMavenController.class);

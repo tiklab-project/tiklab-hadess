@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/networkProxy")
-@Api(name = "NetworkProxyController",desc = "网络代理地址管理")
+//@Api(name = "NetworkProxyController",desc = "网络代理地址管理")
 public class NetworkProxyController {
 
     private static Logger logger = LoggerFactory.getLogger(NetworkProxyController.class);

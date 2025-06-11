@@ -1,6 +1,6 @@
 package io.tiklab.hadess.common;
 
-import io.tiklab.core.context.AppHomeContext;
+import io.tiklab.toolkit.context.AppContext;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -82,7 +82,7 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
 
     @Override
     public String pgSqlAddress() {
-        String appHome = AppHomeContext.getAppHome();
+        String appHome = AppContext.getAppHome();
         String path = new File(appHome).getParentFile().getParentFile().getAbsolutePath();
         return path+"/embbed/pgsql-10.23/bin";
        // return "/Users/limingliang/postgreSQL/bin";
@@ -96,18 +96,18 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     @Override
     public String getOpenScanUrl() {
         if (("dev").equals(environment)){
-           return AppHomeContext.getAppHome() + "/embbed/opensca-1.0.13";
+           return AppContext.getAppHome() + "/embbed/opensca-1.0.13";
         }else {
-            return  new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/opensca-1.0.13";
+            return  new File(AppContext.getAppHome()).getParentFile().getParent()+"/embbed/opensca-1.0.13";
         }
     }
 
     @Override
     public String getLocalHoleUrl() {
         if (("dev").equals(environment)){
-            return AppHomeContext.getAppHome() + "/embbed/cve.json";
+            return AppContext.getAppHome() + "/embbed/cve.json";
         }else {
-            return  new File(AppHomeContext.getAppHome()).getParentFile().getParent()+"/embbed/cve.json";
+            return  new File(AppContext.getAppHome()).getParentFile().getParent()+"/embbed/cve.json";
         }
     }
 

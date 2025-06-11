@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/resourceMan")
-@Api(name = "ResourceManController",desc = "资源管理")
+//@Api(name = "ResourceManController",desc = "资源管理")
 public class ResourceManController {
 
     @Autowired

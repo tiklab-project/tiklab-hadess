@@ -1,13 +1,13 @@
 package io.tiklab.hadess.common;
 
 import com.alibaba.fastjson.JSONObject;
-import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.hadess.repository.model.NetworkProxy;
 import io.tiklab.hadess.repository.model.NetworkProxyQuery;
 import io.tiklab.hadess.repository.service.NetworkProxyService;
 import io.tiklab.hadess.upload.common.UploadTool;
+import io.tiklab.toolkit.context.AppContext;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -54,7 +54,7 @@ public class RepositoryUtil {
      */
     public static String findRepositoryUrl(String url){
         if (StringUtils.isEmpty(url)){
-            url = AppHomeContext.getAppHome();
+            url = AppContext.getAppHome();
         }
         String repositoryAddress = url + "/xpack";
         return repositoryAddress;

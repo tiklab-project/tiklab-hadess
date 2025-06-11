@@ -13,13 +13,13 @@ import io.tiklab.hadess.library.service.LibraryVersionService;
 import io.tiklab.hadess.repository.model.Repository;
 import io.tiklab.hadess.repository.model.RepositoryMaven;
 import io.tiklab.hadess.repository.model.RepositoryQuery;
-import io.tiklab.core.context.AppHomeContext;
 import io.tiklab.core.exception.SystemException;
 import io.tiklab.privilege.dmRole.model.DmRole;
 import io.tiklab.privilege.dmRole.model.DmRoleQuery;
 import io.tiklab.privilege.dmRole.service.DmRoleService;
 import io.tiklab.privilege.role.model.Role;
 import io.tiklab.privilege.role.service.RoleService;
+import io.tiklab.toolkit.context.AppContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         try {
             List<Repository> npmRepositories = repositoryList.stream().filter(a -> ("npm").equals(a.getType())).collect(Collectors.toList());
            if (CollectionUtils.isEmpty(npmRepositories)){
-               String s = AppHomeContext.getAppHome() + "/file/npm-sample.tgz";
+               String s = AppContext.getAppHome() + "/file/npm-sample.tgz";
                if (new File(s).exists()){
                    //创建npm 示例数据
                    String repositoryNpmId = createSampleRepository("npm");
@@ -89,7 +89,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
             List<Repository> mavenRepositories = repositoryList.stream().filter(a -> ("maven").equals(a.getType())).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(mavenRepositories)){
                 //示例文件不存在 不创建示例数据
-                String s = AppHomeContext.getAppHome() + "/file/maven-sample.zip";
+                String s = AppContext.getAppHome() + "/file/maven-sample.zip";
                 if (!new File(s).exists()){
                   return;
                 }
@@ -199,7 +199,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         libraryVersion.setPullUser("111111");
         if (("npm").equals(type)){
             // 文件路径
-            String filePath = AppHomeContext.getAppHome()+"/file/npm-sample-data";
+            String filePath = AppContext.getAppHome()+"/file/npm-sample-data";
             File file = new File(filePath);
             String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             libraryVersion.setContentJson(content);
@@ -218,7 +218,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
         if ("npm".equals(type)){
             libraryFile.setFileName("npm-sample.tgz");
             //文件大小
-            File zipFile = new File(AppHomeContext.getAppHome()+"/file/npm-sample.tgz");
+            File zipFile = new File(AppContext.getAppHome()+"/file/npm-sample.tgz");
             long length = zipFile.length();
             double i =(double)length / 1000;
             long round = Math.round(i);
@@ -229,7 +229,7 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
 
         if ("maven".equals(type)){
             libraryFile.setSnapshotVersion("1.0.0-SNAPSHOT");
-            String filePath = AppHomeContext.getAppHome()+"/file/maven-sample-data";
+            String filePath = AppContext.getAppHome()+"/file/maven-sample-data";
             File file = new File(filePath);
             String fileName = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             String result = fileName.replaceAll("\\s", "");
@@ -278,10 +278,10 @@ public class InitializeSampleServiceImpl implements InitializeSampleService{
      * @param type 类型 maven 、npm
      */
     public String copyData(String repositoryId,String type) throws IOException {
-        logger.info("appHome路径:"+AppHomeContext.getAppHome());
+        logger.info("appHome路径:"+AppContext.getAppHome());
         String fileName=("npm").equals(type)?"npm-sample.tgz":"maven-sample.zip";
 
-        File tgzFile = new File(AppHomeContext.getAppHome()+"/file/"+fileName);
+        File tgzFile = new File(AppContext.getAppHome()+"/file/"+fileName);
         String memoryAddress=xpackYamlDataMaService.repositoryAddress();
         if (("npm").equals(type)){
             memoryAddress= memoryAddress+"/"+repositoryId+"/npm-sample";

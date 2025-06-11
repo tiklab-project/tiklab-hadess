@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -387,7 +388,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //仓库类型为本地库
         List<LibraryFile> libraryFile = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, version);
-        List<LibraryFile> libraryFiles = libraryFile.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+        List<LibraryFile> libraryFiles = libraryFile.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(libraryFiles)){
             return putMapData("404",
                     responseError(repositoryName+" 制品文件不存在",repositoryName+"/"+libraryName,version));
@@ -656,14 +657,14 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         }
 
 
-        List<String> rpyIds = repositoryGroups.stream().map(a -> a.getRepository().getId()).toList();
+        List<String> rpyIds = repositoryGroups.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
         String[] repositoryIds = rpyIds.toArray(new String[rpyIds.size()]);
 
         //通过仓库id、 制品、版本查询文件
         List<LibraryFile> libraryFileList = libraryFileService.findFileByReAndLibraryAndVer(repositoryIds, libraryName, version);
 
         //查询镜像及其层的元数据结构是否存在
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(libraryFiles)){
             //通过代理代理库的ID，查询对应的代理地址
             List<RepositoryRemoteProxy> remoteProxies = getProxyAddress(repositoryGroups);
@@ -677,11 +678,11 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         }
 
         //先判断文件是否是local库中的文件。如果是存在local库中就只取local库中的
-        List<RepositoryGroup> localGroupList = repositoryGroups.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).toList();
+        List<RepositoryGroup> localGroupList = repositoryGroups.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         List<LibraryFile> fileList = libraryFiles.stream()
                 .filter(LibraryFile -> localGroupList.stream()
                         .anyMatch(RepositoryGroup -> RepositoryGroup.getRepository().getId() .equals(LibraryFile.getRepository().getId())) )
-                .toList();
+                .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(fileList)){
             for (LibraryFile file:fileList){
                 String s = yamlDataMaService.repositoryAddress() + "/" + file.getFileUrl();
@@ -735,7 +736,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         List<LibraryFile> libraryFileList = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, version);
 
         //查询镜像及其层的元数据结构是否存在
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(libraryFiles)){
             List<RepositoryRemoteProxy> remoteProxies = remoteProxyService.findAgencyByRepId(repository.getId());
             if (CollectionUtils.isEmpty(remoteProxies)){
@@ -790,15 +791,15 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //查询需要拉取文件
         List<RepositoryGroup> repositoryGroups = repositoryGroupService.findRepositoryGroupList(new RepositoryGroupQuery()
                 .setRepositoryGroupId(repository.getId()));
-        List<String> rpyIds = repositoryGroups.stream().map(a -> a.getRepository().getId()).toList();
+        List<String> rpyIds = repositoryGroups.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
         String[] repositoryIds = rpyIds.toArray(new String[rpyIds.size()]);
         List<LibraryFile> libraryFileList = libraryFileService.findFileByReAndLibraryAndVer(repositoryIds, libraryName, null);
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).toList();
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(libraryFiles)){
 
             //读取并解析Manifests内容并放入response
-            List<LibraryFile> manifestsFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+            List<LibraryFile> manifestsFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
             readManifests(response,manifestsFiles.get(0).getFileUrl(),fileName);
 
              logger.info("docker拉取，数据库数据不存在进入代理拉取");
@@ -809,15 +810,15 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         }
 
         //先判断文件是否是local库中的文件。如果是存在local库中就只取local库中的
-        List<LibraryFile> manifestsLibraryFile = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
-        List<RepositoryGroup> localGroupList = repositoryGroups.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).toList();
+        List<LibraryFile> manifestsLibraryFile = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
+        List<RepositoryGroup> localGroupList = repositoryGroups.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
         List<LibraryFile> fileList = libraryFiles.stream()
                 .filter(LibraryFile -> localGroupList.stream()
                         .anyMatch(RepositoryGroup -> RepositoryGroup.getRepository().getId() .equals(LibraryFile.getRepository().getId())) )
-                .toList();
+                .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(fileList)){
             for (LibraryFile file:fileList){
-                List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> file.getLibrary().getId().equals(a.getLibrary().getId())).toList();
+                List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> file.getLibrary().getId().equals(a.getLibrary().getId())).collect(Collectors.toList());
 
                 String s = yamlDataMaService.repositoryAddress() + "/" + file.getFileUrl();
                 File filePath = new File(s);
@@ -846,7 +847,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //都是remote库中的文件
         LibraryFile libraryFile = libraryFiles.get(0);
-        List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> libraryFile.getLibrary().getId().equals(a.getLibrary().getId())).toList();
+        List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> libraryFile.getLibrary().getId().equals(a.getLibrary().getId())).collect(Collectors.toList());
 
         String path = yamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
         File filePath = new File(path);
@@ -890,12 +891,12 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //通过制品、文件名获取对应数制品文件数据
         String fileName = StringUtils.substringAfterLast(requestAddress, "/");
         List<LibraryFile> libraryFileList = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, null);
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).toList();
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).collect(Collectors.toList());
 
         //文件不存在，转发远程拉取
         if (CollectionUtils.isEmpty(libraryFiles)){
             //读取并解析Manifests内容并放入response
-            List<LibraryFile> manifestsFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+            List<LibraryFile> manifestsFiles = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
             readManifests(response,manifestsFiles.get(0).getFileUrl(),fileName);
 
             logger.info("docker拉取，数据库数据不存在进入代理拉取");
@@ -907,8 +908,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
         //存在本地直接拉取
         LibraryFile libraryFile = libraryFiles.get(0);
-        List<LibraryFile> manifestsLibraryFile = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
-        List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> libraryFile.getLibrary().getId().equals(a.getLibrary().getId())).toList();
+        List<LibraryFile> manifestsLibraryFile = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
+        List<LibraryFile> list = manifestsLibraryFile.stream().filter(a -> libraryFile.getLibrary().getId().equals(a.getLibrary().getId())).collect(Collectors.toList());
 
         String path = yamlDataMaService.repositoryAddress() + "/" + libraryFile.getFileUrl();
         File filePath = new File(path);
@@ -953,7 +954,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
         //通过制品、文件名获取对应数制品文件数据
         String fileName = StringUtils.substringAfterLast(requestAddress, "/");
         List<LibraryFile> libraryFileList = libraryFileService.findFileByReAndLibraryAndVer(repository.getId(), libraryName, null);
-        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).toList();
+        List<LibraryFile> libraryFiles = libraryFileList.stream().filter(a -> fileName.equals(a.getFileName())).collect(Collectors.toList());
        //文件不存在
         if (CollectionUtils.isEmpty(libraryFiles)){
             logger.info("docker拉取，配置本地库且数据库数据不存在");
@@ -984,7 +985,7 @@ public class DockerUploadServiceImpl implements DockerUploadService {
 
 
         //客户端请求blobs文件时候，需要读取Manifest内容中对应blobs的数据的类型、大小返回给客户端
-        List<LibraryFile> manifests = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).toList();
+        List<LibraryFile> manifests = libraryFileList.stream().filter(a -> a.getFileUrl().contains("/manifests/")).collect(Collectors.toList());
         readManifests(response,manifests.get(0).getFileUrl(),fileName);
         readBlobsFile(response,file);
     }
@@ -997,8 +998,8 @@ public class DockerUploadServiceImpl implements DockerUploadService {
      */
     public List<RepositoryRemoteProxy> getProxyAddress(List<RepositoryGroup> repositoryGroups){
         //通过代理代理库的ID，查询对应的代理地址
-        List<RepositoryGroup> groupList = repositoryGroups.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).toList();
-        List<String> reRpyIdList = groupList.stream().map(a -> a.getRepository().getId()).toList();
+        List<RepositoryGroup> groupList = repositoryGroups.stream().filter(a -> ("remote").equals(a.getRepository().getRepositoryType())).collect(Collectors.toList());
+        List<String> reRpyIdList = groupList.stream().map(a -> a.getRepository().getId()).collect(Collectors.toList());
         String[] reRpyIds = reRpyIdList.toArray(new String[reRpyIdList.size()]);
         List<RepositoryRemoteProxy> proxyList = remoteProxyService.findAgencyByRpyIds(reRpyIds);
 

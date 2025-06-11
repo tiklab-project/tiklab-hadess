@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/repositoryClusterCfg")
-@Api(name = "RepositoryClusterCfgController",desc = "制品库复制信息")
+//@Api(name = "RepositoryClusterCfgController",desc = "制品库复制信息")
 public class RepositoryClusterCfgController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryClusterCfgController.class);

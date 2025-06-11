@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/v2")
-@Api(name = "DockerUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
+//@Api(name = "DockerUploadController",desc = "Maven提交这个用于手动提交不校验用户信息")
 public class DockerUploadController {
     private static Logger logger = LoggerFactory.getLogger(DockerUploadController.class);
     @Autowired

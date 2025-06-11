@@ -1,9 +1,9 @@
 package io.tiklab.hadess.starter.config;
 
-import io.tiklab.openapi.router.Router;
-import io.tiklab.openapi.router.RouterBuilder;
-import io.tiklab.openapi.router.config.RouterConfig;
-import io.tiklab.openapi.router.config.RouterConfigBuilder;
+
+import io.tiklab.openapi.config.AllowConfig;
+import io.tiklab.openapi.config.AllowConfigBuilder;
+import io.tiklab.openapi.config.OpenApiConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,22 +17,57 @@ public class OpenApiAutoConfiguration {
     @Value("${soular.embbed.enable:false}")
     Boolean enableEam;
 
+    @Value("${server.port}")
+    String serverPort;
+
     //路由
-    @Bean("routerForOpenApi")
-    Router router(@Qualifier("routerConfigForOpenApi") RouterConfig routerConfig){
-        return RouterBuilder.newRouter(routerConfig);
+    @Bean
+    OpenApiConfig openApiConfig(AllowConfig allowConfig){
+        OpenApiConfig openApiConfig = new OpenApiConfig();
+        openApiConfig.setAllowConfig(allowConfig);
+
+        return openApiConfig;
     }
 
-    //路由配置
-    @Bean("routerConfigForOpenApi")
-    RouterConfig routerConfig(){
-        String[] s =  new String[]{};
+    //开放许可配置
+    @Bean
+    AllowConfig allowConfig(){
+        String[] s =  new String[]{
+                "/library/findLibrary",
+                "/library/findLibraryListByRepository",
+                "/library/findAllLibrary",
+                "/library/findLibraryList",
+                "/library/findLibraryPage",
+                "/library/findLibraryListByCond",
 
-        if (enableEam){
-            s = new String[]{};
-        }
-        return RouterConfigBuilder.instance()
-                .preRoute(s, authAddress)
+                "/libraryVersion/findLibraryVersion",
+                "/libraryVersion/findAllLibraryVersion",
+                "/libraryVersion/findLibraryVersionList",
+                "/libraryVersion/findLibraryVersionPage",
+                "/libraryVersion/findVersionByLibraryId",
+
+                "/libraryFile/findLibraryFile",
+                "/libraryFile/findAllLibraryFile",
+                "/libraryFile/findLibraryFileList",
+                "/libraryFile/findLibraryFilePage",
+                "/libraryFile/findLibraryNewFileList",
+
+                "/xpackRepository/findLocalAndRemoteRepository",
+                "/xpackRepository/findAllRepository",
+                "/xpackRepository/findRepositoryList",
+                "/xpackRepository/findRepositoryPage",
+                "/xpackRepository/findRepositoryByGroup",
+                "/xpackRepository/findRepository",
+
+                "/remoteProxy/findRemoteProxyList",
+                "/remoteProxy/findRemoteProxyPage",
+                "/remoteProxy/findProxyListByRpyId",
+
+                "/repositoryRemoteProxy/findRepositoryRemoteProxyList",
+        };
+
+        return AllowConfigBuilder.instance()
+                .allowUrls(s)
                 .get();
     }
 }

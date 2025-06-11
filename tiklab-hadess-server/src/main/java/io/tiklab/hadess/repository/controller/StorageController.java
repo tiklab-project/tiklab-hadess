@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/storage")
-@Api(name = "StorageController",desc = "存储库管理")
+//@Api(name = "StorageController",desc = "存储库管理")
 public class StorageController {
 
     private static Logger logger = LoggerFactory.getLogger(StorageController.class);

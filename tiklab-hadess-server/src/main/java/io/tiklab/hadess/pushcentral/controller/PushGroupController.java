@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/pushGroup")
-@Api(name = "PushGroupController",desc = "推送组")
+//@Api(name = "PushGroupController",desc = "推送组")
 public class PushGroupController {
 
     private static Logger logger = LoggerFactory.getLogger(PushGroupController.class);

@@ -291,7 +291,7 @@ public class LibraryServiceImpl implements LibraryService {
         //查询制品是否存在
         List<LibraryEntity> libraryEntity = libraryDao.findLibraryByRpyIdAndName(repository.getId(), libraryName);
         if (CollectionUtils.isNotEmpty(libraryEntity)){
-            List<String> libraryIds = libraryEntity.stream().map(LibraryEntity::getId).toList();
+            List<String> libraryIds = libraryEntity.stream().map(LibraryEntity::getId).collect(Collectors.toList());
             String[] libraryIdList = libraryIds.toArray(new String[libraryIds.size()]);
             List<LibraryMaven> libraryMavens = libraryMavenService.libraryMavenByLibraryIds(libraryIdList);
             List<LibraryMaven> collect = libraryMavens.stream().filter(a -> (groupId).equals(a.getGroupId())).collect(Collectors.toList());

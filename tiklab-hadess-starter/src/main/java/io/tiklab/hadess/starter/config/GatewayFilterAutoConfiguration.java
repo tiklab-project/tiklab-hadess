@@ -2,14 +2,12 @@ package io.tiklab.hadess.starter.config;
 
 
 import io.tiklab.eam.author.Authenticator;
-import io.tiklab.eam.client.author.config.AuthorConfig;
-import io.tiklab.eam.client.author.config.AuthorConfigBuilder;
-import io.tiklab.eam.client.author.handler.AuthorHandler;
-import io.tiklab.gateway.router.Router;
-import io.tiklab.gateway.router.RouterBuilder;
-import  io.tiklab.gateway.router.config.RouterConfig;
-import  io.tiklab.gateway.router.config.RouterConfigBuilder;
-import org.springframework.beans.factory.annotation.Value;
+
+import io.tiklab.eam.client.author.handler.DefaultAuthorHandler;
+import io.tiklab.gateway.config.GatewayConfig;
+import io.tiklab.gateway.config.IgnoreConfig;
+import io.tiklab.gateway.config.IgnoreConfigBuilder;
+import io.tiklab.gateway.handler.author.AuthorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,21 +17,26 @@ public class GatewayFilterAutoConfiguration {
 
 
     @Bean
-    Router router(RouterConfig routerConfig){
-        return RouterBuilder.newRouter(routerConfig);
-    }
+    AuthorHandler authorHandler(Authenticator authenticator, IgnoreConfig ignoreConfig){
+        DefaultAuthorHandler authorHandler = new DefaultAuthorHandler();
+        authorHandler.setAuthenticator(authenticator);
+        authorHandler.setIgnoreConfig(ignoreConfig);
 
-    //认证filter
-    @Bean
-    AuthorHandler authorFilter(Authenticator authenticator, AuthorConfig ignoreConfig){
-        return new AuthorHandler()
-                .setAuthenticator(authenticator)
-                .setAuthorConfig(ignoreConfig);
+        return authorHandler;
     }
 
     @Bean
-    public AuthorConfig authorConfig(){
-        return AuthorConfigBuilder.instance()
+    GatewayConfig gatewayConfig(IgnoreConfig ignoreConfig){
+        GatewayConfig gatewayConfig = new GatewayConfig();
+        gatewayConfig.setIgnoreConfig(ignoreConfig);
+
+        return gatewayConfig;
+    }
+
+    @Bean
+    //许行配置
+    public IgnoreConfig ignoreConfig(){
+        return IgnoreConfigBuilder.instance()
                 .ignoreTypes(new String[]{
                         ".ico",
                         ".jpg",
@@ -125,31 +128,6 @@ public class GatewayFilterAutoConfiguration {
                         "/scan",
                         "/v2"
                 })
-                .get();
-    }
-
-
-    //路由转发配置
-    @Value("${soular.address:null}")
-    String authUrl;
-
-
-    @Value("${soular.embbed.enable}")
-    Boolean enableEam;
-
-
-    //gateway路由配置
-    @Bean
-    RouterConfig routerConfig(){
-        String[] s = new String[]{};
-
-        if (enableEam){
-
-            s = new String[]{};
-        }
-
-        return RouterConfigBuilder.instance()
-                .preRoute(s, authUrl)
                 .get();
     }
 

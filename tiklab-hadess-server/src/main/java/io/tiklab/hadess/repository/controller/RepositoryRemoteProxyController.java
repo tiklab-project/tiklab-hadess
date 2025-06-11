@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/repositoryRemoteProxy")
-@Api(name = "RepositoryRemoteProxyController",desc = "制品远程库代理信息")
+@Api(name = "制品远程库代理信息",desc = "制品远程库代理信息")
 public class RepositoryRemoteProxyController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryRemoteProxyController.class);
@@ -34,8 +34,6 @@ public class RepositoryRemoteProxyController {
     private RepositoryRemoteProxyService repositoryRemoteProxyService;
 
     @RequestMapping(path="/createRepositoryRemoteProxy",method = RequestMethod.POST)
-    @ApiMethod(name = "createRepositoryRemoteProxy",desc = "创建远程代理信息")
-    @ApiParam(name = "repositoryRemoteProxy",desc = "repositoryRemoteProxy",required = true)
     public Result<String> createRepositoryRemoteProxy(@RequestBody @NotNull @Valid RepositoryRemoteProxy repositoryRemoteProxy){
         String id = repositoryRemoteProxyService.createRepositoryRemoteProxy(repositoryRemoteProxy);
 
@@ -43,8 +41,6 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path="/updateRepositoryRemoteProxy",method = RequestMethod.POST)
-    @ApiMethod(name = "updateRepositoryRemoteProxy",desc = "更新代理信息")
-    @ApiParam(name = "repositoryRemoteProxy",desc = "repositoryRemoteProxy",required = true)
     public Result<Void> updateRepositoryRemoteProxy(@RequestBody @NotNull @Valid RepositoryRemoteProxy repositoryRemoteProxy){
         repositoryRemoteProxyService.updateRepositoryRemoteProxy(repositoryRemoteProxy);
 
@@ -52,8 +48,6 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path="/deleteRepositoryRemoteProxy",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteRepositoryRemoteProxy",desc = "删除代理信息")
-    @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteRepositoryRemoteProxy(@NotNull String id){
         repositoryRemoteProxyService.deleteRepositoryRemoteProxy(id);
 
@@ -61,8 +55,7 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path="/findRepositoryRemoteProxy",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryRemoteProxy",desc = "通过id查询代理信息")
-    @ApiParam(name = "id",desc = "id",required = true)
+    //@ApiMethod(name = "findRepositoryRemoteProxy",desc = "通过id查询代理信息")
     public Result<RepositoryRemoteProxy> findRepositoryRemoteProxy(@NotNull String id){
         RepositoryRemoteProxy repositoryRemoteProxy = repositoryRemoteProxyService.findRepositoryRemoteProxy(id);
 
@@ -70,7 +63,7 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path="/findAllRepositoryRemoteProxy",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllRepositoryRemoteProxy",desc = "查询所有代理信息")
+    //@ApiMethod(name = "findAllRepositoryRemoteProxy",desc = "查询所有代理信息")
     public Result<List<RepositoryRemoteProxy>> findAllRepositoryRemoteProxy(){
         List<RepositoryRemoteProxy> repositoryRemoteProxyList = repositoryRemoteProxyService.findAllRepositoryRemoteProxy();
 
@@ -78,7 +71,7 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path = "/findRepositoryRemoteProxyList",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryRemoteProxyList",desc = "条件查询代理信息")
+    @ApiMethod(name = "条件查询代理信息",desc = "条件查询代理信息")
     @ApiParam(name = "repositoryRemoteProxyQuery",desc = "repositoryRemoteProxyQuery",required = true)
     public Result<List<RepositoryRemoteProxy>> findRepositoryRemoteProxyList(@RequestBody @Valid @NotNull RepositoryRemoteProxyQuery repositoryRemoteProxyQuery){
         List<RepositoryRemoteProxy> repositoryRemoteProxyList = repositoryRemoteProxyService.findRepositoryRemoteProxyList(repositoryRemoteProxyQuery);
@@ -87,8 +80,6 @@ public class RepositoryRemoteProxyController {
     }
 
     @RequestMapping(path = "/findRepositoryRemoteProxyPage",method = RequestMethod.POST)
-    @ApiMethod(name = "findRepositoryRemoteProxyPage",desc = "条件分页查询代理信息")
-    @ApiParam(name = "repositoryRemoteProxyQuery",desc = "repositoryRemoteProxyQuery",required = true)
     public Result<Pagination<RepositoryRemoteProxy>> findRepositoryRemoteProxyPage(@RequestBody @Valid @NotNull RepositoryRemoteProxyQuery repositoryRemoteProxyQuery){
         Pagination<RepositoryRemoteProxy> pagination = repositoryRemoteProxyService.findRepositoryRemoteProxyPage(repositoryRemoteProxyQuery);
 

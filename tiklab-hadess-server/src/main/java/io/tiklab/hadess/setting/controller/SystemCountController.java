@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/systemCount")
-@Api(name = "AuthController",desc = "系统设置汇总")
+//@Api(name = "AuthController",desc = "系统设置汇总")
 public class SystemCountController {
 
     @Autowired

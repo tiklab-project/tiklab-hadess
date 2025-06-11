@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/libraryFile")
-@Api(name = "LibraryFileController",desc = "制品文件")
+@Api(name = "制品文件",desc = "制品文件")
 public class LibraryFileController  {
 
     private static Logger logger = LoggerFactory.getLogger(LibraryFileController.class);
@@ -36,8 +36,6 @@ public class LibraryFileController  {
 
 
     @RequestMapping(path="/createLibraryFile",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibraryFile",desc = "创建制品文件")
-    @ApiParam(name = "libraryFile",desc = "libraryFile",required = true)
     public Result<String> createLibraryFile(@RequestBody @NotNull @Valid LibraryFile libraryFile){
         String id = libraryFileService.createLibraryFile(libraryFile);
 
@@ -45,8 +43,6 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path="/updateLibraryFile",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibraryFile",desc = "更新制品文件")
-    @ApiParam(name = "libraryFile",desc = "libraryFile",required = true)
     public Result<Void> updateLibraryFile(@RequestBody @NotNull @Valid LibraryFile libraryFile){
         libraryFileService.updateLibraryFile(libraryFile);
 
@@ -54,17 +50,14 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path="/deleteLibraryFile",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibraryFile",desc = "删除制品文件")
-    @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibraryFile(@NotNull String id){
         libraryFileService.deleteLibraryFile(id);
 
         return Result.ok();
     }
 
+    //通过快照版本和版本id删除
     @RequestMapping(path="/deleteSnapshotFile",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteSnapshotFile",desc = "通过快照版本和版本id删除")
-    @ApiParam(name = "snapshotVersion",desc = "versionId、snapshotVersion",required = true)
     public Result<Void> deleteSnapshotFile(@NotNull String versionId,@NotNull String snapshotVersion){
         libraryFileService.deleteLibraryFile(versionId,snapshotVersion);
 
@@ -72,7 +65,7 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path="/findLibraryFile",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryFile",desc = "通过id查询制品文件")
+    @ApiMethod(name = "通过id查询制品文件",desc = "通过id查询制品文件")
     @ApiParam(name = "id",desc = "id",required = true)
     public Result<LibraryFile> findLibraryFile(@NotNull String id){
         LibraryFile libraryFile = libraryFileService.findLibraryFile(id);
@@ -81,7 +74,7 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path="/findAllLibraryFile",method = RequestMethod.POST)
-    @ApiMethod(name = "findAllLibraryFile",desc = "查询所有制品文件")
+    @ApiMethod(name = "查询所有制品文件",desc = "查询所有制品文件")
     public Result<List<LibraryFile>> findAllLibraryFile(){
         List<LibraryFile> libraryFileList = libraryFileService.findAllLibraryFile();
 
@@ -89,7 +82,7 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path = "/findLibraryFileList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryFileList",desc = "条件查询制品文件")
+    @ApiMethod(name = "条件查询制品文件",desc = "条件查询制品文件")
     @ApiParam(name = "libraryFileQuery",desc = "libraryFileQuery",required = true)
     public Result<List<LibraryFile>> findLibraryFileList(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryFileList(libraryFileQuery);
@@ -98,7 +91,7 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path = "/findLibraryFilePage",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryFilePage",desc = "条件分页查询制品文件")
+    @ApiMethod(name = "条件分页查询制品文件",desc = "条件分页查询制品文件")
     @ApiParam(name = "libraryFileQuery",desc = "libraryFileQuery",required = true)
     public Result<Pagination<LibraryFile>> findLibraryFilePage(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
         Pagination<LibraryFile> pagination = libraryFileService.findLibraryFilePage(libraryFileQuery);
@@ -107,7 +100,7 @@ public class LibraryFileController  {
     }
 
     @RequestMapping(path = "/findLibraryNewFileList",method = RequestMethod.POST)
-    @ApiMethod(name = "findLibraryNewFileList",desc = "查询最新版本的文件list")
+    @ApiMethod(name = "条件查询最新版本的文件list",desc = "条件查询最新版本的文件list")
     @ApiParam(name = "libraryFileQuery",desc = "libraryFileQuery",required = true)
     public Result<List<LibraryFile>> findLibraryNewFileList(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
         List<LibraryFile> libraryFileList = libraryFileService.findLibraryNewFileList(libraryFileQuery);
@@ -115,18 +108,16 @@ public class LibraryFileController  {
         return Result.ok(libraryFileList);
     }
 
+    //读取制品文件的内容
     @RequestMapping(path = "/readLibraryFileData",method = RequestMethod.POST)
-    @ApiMethod(name = "readLibraryFileData",desc = "读取制品文件的内容")
-    @ApiParam(name = "libraryFileQuery",desc = "libraryFileQuery",required = true)
     public Result<String> readLibraryFileData(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
         String data = libraryFileService.readLibraryFileData(libraryFileQuery);
 
         return Result.ok(data);
     }
 
+    //读取docker镜像历史列表
     @RequestMapping(path = "/findDockerLayers",method = RequestMethod.POST)
-    @ApiMethod(name = "findDockerLayers",desc = "读取docker镜像历史列表")
-    @ApiParam(name = "libraryFileQuery",desc = "findDockerLayers",required = true)
     public Result<List<String>> findDockerLayers(@RequestBody @Valid @NotNull LibraryFileQuery libraryFileQuery){
         List<String> data = libraryFileService.findDockerLayers(libraryFileQuery);
 

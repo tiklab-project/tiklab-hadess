@@ -25,7 +25,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/libraryPypi")
-@Api(name = "LibraryPypiController",desc = "制品pypi相关字段")
 public class LibraryPypiController {
 
     private static Logger logger = LoggerFactory.getLogger(LibraryPypiController.class);

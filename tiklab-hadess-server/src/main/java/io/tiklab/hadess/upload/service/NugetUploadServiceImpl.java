@@ -48,6 +48,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NugetUploadServiceImpl implements NugetUploadService {
@@ -351,7 +352,7 @@ public class NugetUploadServiceImpl implements NugetUploadService {
                     List<Library> LastLibraryList = libraries.stream().filter(a -> libraryName.equals(a.getName().toLowerCase())).toList();
                     if (CollectionUtils.isNotEmpty(LastLibraryList)){
                         //通过制品的id查询对应的版本，返回制品元数据
-                        List<String> libraryIds = LastLibraryList.stream().map(Library::getId).toList();
+                        List<String> libraryIds = LastLibraryList.stream().map(Library::getId).collect(Collectors.toList());
                         String[] libraryIdList = libraryIds.toArray(new String[LastLibraryList.size()]);
                         List<LibraryVersion> versions = versionService.findVersionByLibraryIds(libraryIdList);
                         String libraryMetadata = getLibraryMetadata(versions,pathData);
@@ -748,7 +749,7 @@ public class NugetUploadServiceImpl implements NugetUploadService {
         if (pathData.contains(" v3/registration5")){
 
         }else {
-            List<String> versionList = libraryVersionList.stream().map(LibraryVersion::getVersion).toList();
+            List<String> versionList = libraryVersionList.stream().map(LibraryVersion::getVersion).collect(Collectors.toList());
             metadataMap.put("versions",versionList);
         }
 

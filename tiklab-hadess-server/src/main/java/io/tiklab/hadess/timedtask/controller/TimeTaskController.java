@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/timeTask")
-@Api(name = "TimeTaskController",desc = "定时任务")
+//@Api(name = "TimeTaskController",desc = "定时任务")
 public class TimeTaskController {
 
     private static Logger logger = LoggerFactory.getLogger(TimeTaskController.class);

@@ -21,11 +21,10 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * LibraryComposerController
+ * LibraryComposerController  制品composer相关字段
  */
 @RestController
 @RequestMapping("/libraryComposer")
-@Api(name = "LibraryComposerController",desc = "制品composer相关字段")
 public class LibraryComposerController {
 
     private static Logger logger = LoggerFactory.getLogger(LibraryComposerController.class);
@@ -34,8 +33,6 @@ public class LibraryComposerController {
     private LibraryComposerService libraryComposerService;
 
     @RequestMapping(path="/createLibraryComposer",method = RequestMethod.POST)
-    @ApiMethod(name = "createLibraryComposer",desc = "创建composer制品")
-    @ApiParam(name = "libraryComposer",desc = "libraryComposer",required = true)
     public Result<String> createLibraryComposer(@RequestBody @NotNull @Valid LibraryComposer libraryComposer){
         String id = libraryComposerService.createLibraryComposer(libraryComposer);
 
@@ -43,17 +40,14 @@ public class LibraryComposerController {
     }
 
     @RequestMapping(path="/updateLibraryComposer",method = RequestMethod.POST)
-    @ApiMethod(name = "updateLibraryComposer",desc = "更新composer制品")
-    @ApiParam(name = "libraryComposer",desc = "libraryComposer",required = true)
     public Result<Void> updateLibraryComposer(@RequestBody @NotNull @Valid LibraryComposer libraryComposer){
         libraryComposerService.updateLibraryComposer(libraryComposer);
 
         return Result.ok();
     }
 
+
     @RequestMapping(path="/deleteLibraryComposer",method = RequestMethod.POST)
-    @ApiMethod(name = "deleteLibraryComposer",desc = "删除composer制品")
-    @ApiParam(name = "id",desc = "id",required = true)
     public Result<Void> deleteLibraryComposer(@NotNull String id){
         libraryComposerService.deleteLibraryComposer(id);
 

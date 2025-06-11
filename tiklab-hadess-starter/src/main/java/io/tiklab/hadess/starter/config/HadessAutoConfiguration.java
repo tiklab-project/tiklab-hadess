@@ -9,7 +9,7 @@ import io.tiklab.eam.boot.starter.annotation.EnableEamClient;
 import io.tiklab.eam.boot.starter.annotation.EnableEamServer;
 import io.tiklab.gateway.boot.starter.annotation.EnableGateway;
 import io.tiklab.hadess.annotation.EnableHadessServer;
-import io.tiklab.install.EnableInstallService;
+import io.tiklab.install.EnableInstallServer;
 import io.tiklab.licence.boot.starter.annotation.EnableLicenceServer;
 import io.tiklab.messsage.boot.starter.annotation.EnableMessageServer;
 import io.tiklab.openapi.boot.starter.annotation.EnableOpenApi;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 //common
 @EnableToolkit
-@EnableInstallService
+@EnableInstallServer
 @EnablePostgresql
 @EnableDal
 @EnableDsm

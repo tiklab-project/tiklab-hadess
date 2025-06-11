@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/repositoryGroup")
-@Api(name = "RepositoryGroupController",desc = "组合库和本地远程库关联管理")
+//@Api(name = "RepositoryGroupController",desc = "组合库和本地远程库关联管理")
 public class RepositoryGroupController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryGroupController.class);

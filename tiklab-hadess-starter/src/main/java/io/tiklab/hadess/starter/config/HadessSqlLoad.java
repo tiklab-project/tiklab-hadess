@@ -28,6 +28,7 @@ public class HadessSqlLoad {
                 "oplog_1.0.0",
                 //TodoTaskDsm
                 "todotask_1.0.0",
+                "openapi_1.0.0",
                 //xpack
                 "xpack_1.0.0",
                 "xprivilege_1.0.0",

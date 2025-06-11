@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/pushLibrary")
-@Api(name = "PushLibraryController",desc = "推送中央仓库的制品")
+//@Api(name = "PushLibraryController",desc = "推送中央仓库的制品")
 public class PushLibraryController {
 
     private static Logger logger = LoggerFactory.getLogger(PushLibraryController.class);

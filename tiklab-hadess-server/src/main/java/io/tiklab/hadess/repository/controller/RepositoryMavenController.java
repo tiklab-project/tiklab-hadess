@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/repositoryMaven")
-@Api(name = "RepositoryMavenController",desc = "maven 存储库管理")
+//@Api(name = "RepositoryMavenController",desc = "maven 存储库管理")
 public class RepositoryMavenController {
 
     private static Logger logger = LoggerFactory.getLogger(RepositoryMavenController.class);

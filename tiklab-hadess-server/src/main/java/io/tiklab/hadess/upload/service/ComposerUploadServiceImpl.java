@@ -40,6 +40,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Exporter
@@ -258,7 +259,7 @@ public class ComposerUploadServiceImpl implements ComposerUploadService{
         if (CollectionUtils.isNotEmpty(libraryList)){
             //客户端拉取的制品不为空且为本地库的
             List<String> localLibraryIds = libraryList.stream().filter(a -> ("local").equals(a.getRepository().getRepositoryType()))
-                    .map(Library::getId).toList();
+                    .map(Library::getId).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(localLibraryIds)){
                 String[] localLibraryIdList = localLibraryIds.toArray(new String[localLibraryIds.size()]);
 
