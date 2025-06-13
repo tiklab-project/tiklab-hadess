@@ -3,10 +3,6 @@ app:
   name: hadess
 
 
-spring:
-  profiles:
-    active: dev
-
 #web config
 server:
   port: 8080
@@ -14,6 +10,7 @@ server:
     max-threads: 200       # 最大线程数
     max-connections: 10000 # 最大连接数
     accept-count: 100      # 等待队列长度
+
 
 APP_HOME: ${APP_HOME}
 
@@ -48,18 +45,15 @@ dcs:
     database: dcs1
     expire: 6000
 
-#soular config
-soular:
-  embbed:
-    enable: true
 
+#  (local:本地登录  soular:统一登录)
+auth:
+  type: local
+  soular:
+    address: http://192.168.10.15:8080
 
-base:
+external:
   url: http://192.168.10.9:3030
-
-#licences config
-licences:
-  path: ${DATA_HOME}/licences
 
 
 #repositroy config
@@ -69,20 +63,5 @@ repository:
 visible:
   address: ""
 
-
-backups:
-  time: 0 0 2 * * ?
-  dir:  ${DATA_HOME}/backups
-  xpack:
-    dir: ${DATA_HOME}/repository
-
-openscan_mvn:
-  repo: http://172.13.1.24:8080/repository/maven-public
-  user: admin
-  password: 123456
-
-postin:
-  scan:
-    package: io.tiklab.hadess
 
 

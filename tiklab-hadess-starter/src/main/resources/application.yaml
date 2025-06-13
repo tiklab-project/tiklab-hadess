@@ -50,22 +50,15 @@ dcs:
     expire: 7200
 
 
-#eas config
-soular:
-  embbed:
-    enable: true
 
-message:
-  sms:
-    enabled: true
+auth:
+  type: local
 
 
-base:
+
+
+external:
   url: http://192.168.10.9:8080
-
-#licences config
-licences:
-  path: ${DATA_HOME}/licences
 
 
 repository:
@@ -74,13 +67,3 @@ repository:
 visible:
   address: ""
 
-
-backups:
-  time: 0 0 2 * * ?
-  dir: ${DATA_HOME}
-  xpack:
-    dir: ${DATA_HOME}/repository
-
-postin:
-  scan:
-    package: io.tiklab.hadess

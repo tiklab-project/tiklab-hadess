@@ -2,13 +2,13 @@ package io.tiklab.hadess.starter.config;
 
 import io.tiklab.core.exception.ApplicationException;
 import io.tiklab.core.exception.SystemException;
-import io.tiklab.eam.client.author.config.TiklabApplicationRunner;
 import io.tiklab.hadess.common.HadessFinal;
 import io.tiklab.hadess.timedtask.model.TimeTaskInstance;
 import io.tiklab.hadess.timedtask.service.TimeTaskInstanceService;
 import io.tiklab.hadess.timedtask.service.TimeTaskService;
 import io.tiklab.hadess.timedtask.util.JobManager;
 import io.tiklab.hadess.timedtask.util.RunJob;
+import io.tiklab.install.runner.TiklabApplicationRunner;
 import org.apache.commons.collections.CollectionUtils;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;

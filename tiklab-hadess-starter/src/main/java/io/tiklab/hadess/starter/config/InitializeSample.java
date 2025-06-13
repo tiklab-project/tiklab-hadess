@@ -1,8 +1,8 @@
 package io.tiklab.hadess.starter.config;
 
 
-import io.tiklab.eam.client.author.config.TiklabApplicationRunner;
 import io.tiklab.hadess.repository.service.InitializeSampleService;
+import io.tiklab.install.runner.TiklabApplicationRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

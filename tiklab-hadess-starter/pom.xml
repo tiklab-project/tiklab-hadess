@@ -60,11 +60,7 @@
             <artifactId>tiklab-security-spring-boot-starter</artifactId>
             <version>${tiklab-security.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-postgresql-starter</artifactId>
-            <version>${tiklab-postgresql.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-user-spring-boot-starter</artifactId>
@@ -125,12 +121,6 @@
             <artifactId>tiklab-postin-doclet</artifactId>
             <version>${tiklab-postin-doclet-version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.tiklab</groupId>
-            <artifactId>tiklab-install-server</artifactId>
-            <version>1.0.2</version>
-        </dependency>
         <dependency>
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-install-client</artifactId>
@@ -151,6 +141,18 @@
             <groupId>io.tiklab</groupId>
             <artifactId>tiklab-user-wechat</artifactId>
             <version>${tiklab-user-extension.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-install-spring-boot-starter</artifactId>
+            <version>${tiklab-install.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.tiklab</groupId>
+            <artifactId>tiklab-postgresql-spring-boot-starter</artifactId>
+            <version>${tiklab-postgresql.version}</version>
         </dependency>
     </dependencies>
 

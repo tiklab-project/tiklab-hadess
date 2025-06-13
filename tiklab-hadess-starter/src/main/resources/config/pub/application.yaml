@@ -3,10 +3,6 @@ app:
   name: thoughtware-hadess-public
 
 
-spring:
-  profiles:
-    active: pub
-
 #web config
 server:
   port: 8083
@@ -46,40 +42,17 @@ dcs:
     database: dcs1
     expire: 6000
 
-soular:
-  embbed:
-    enable: true
 
-message:
-  sms:
-    enabled: true
+auth:
+  type: local
 
 
-base:
+external:
   url: http://eas-ee.test.tiklab.net
 
 repository:
   address: ${DATA_HOME}/repository
 
-#licences config
-licences:
-  path: ${DATA_HOME}/licences
-
-
-backups:
-  time: 0 0 2 * * ?
-  dir:  ${DATA_HOME}/backups
-  xpack:
-    dir: ${DATA_HOME}/repository
-
-openscan_mvn:
-  repo: http://172.13.1.24:8080/repository/maven-public
-  user: admin
-  password: 123456
-
 visible:
   address: https://mirror.tiklab.net
 
-postin:
-  scan:
-    package: io.tiklab.hadess
