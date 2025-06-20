@@ -2,14 +2,9 @@
 app:
   name: tiklab-hadess
 
-
-
 server:
   port: 8080
-  tomcat:
-    max-threads: 200       # 最大线程数
-    max-connections: 10000 # 最大连接数
-    accept-count: 100      # 等待队列长度
+
 
 APP_HOME: ${APP_HOME}
 
@@ -55,13 +50,4 @@ auth:
     address: http://e.tiklab.net
 
 external:
-  url: http://e.tiklab.net
-
-repository:
-  address: ${DATA_HOME}/repository
-
-
-
-visible:
-  address: http://e.hadess.tiklab.net
-
+  url: http://e.hadess.tiklab.net

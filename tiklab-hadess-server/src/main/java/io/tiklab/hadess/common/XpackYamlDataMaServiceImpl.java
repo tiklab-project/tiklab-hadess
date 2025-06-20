@@ -21,12 +21,6 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
     @Value("${jdbc.url}")
     String jdbcUrl;
 
-    @Value("${repository.address}")
-    String memoryAddress;
-
-    @Value("${DATA_HOME}")
-    String DATA_HOME;
-
 
     @Value("${spring.profiles.active:null}")
     String environment;
@@ -61,7 +55,7 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
 
     @Override
     public String repositoryAddress() {
-        return memoryAddress;
+        return dataHome+"/repository";
     }
 
     @Override
@@ -72,12 +66,12 @@ public class XpackYamlDataMaServiceImpl implements XpackYamlDataMaService{
 
     @Override
     public String fileAddress() {
-        return DATA_HOME+"/file";
+        return dataHome+"/file";
     }
 
     @Override
     public String scanFileAddress() {
-        return DATA_HOME+"/scan";
+        return dataHome+"/scan";
     }
 
     @Override

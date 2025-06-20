@@ -51,19 +51,6 @@ dcs:
 
 
 
-auth:
-  type: local
-
-
-
-
 external:
-  url: http://192.168.10.9:8080
-
-
-repository:
-  address: ${DATA_HOME}/repository
-
-visible:
-  address: ""
+  url:
 

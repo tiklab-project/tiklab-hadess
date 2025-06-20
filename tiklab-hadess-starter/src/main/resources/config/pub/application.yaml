@@ -48,11 +48,5 @@ auth:
 
 
 external:
-  url: http://eas-ee.test.tiklab.net
-
-repository:
-  address: ${DATA_HOME}/repository
-
-visible:
-  address: https://mirror.tiklab.net
+  url: https://mirror.tiklab.net
 

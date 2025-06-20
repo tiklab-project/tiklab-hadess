@@ -6,10 +6,7 @@ app:
 #web config
 server:
   port: 8080
-  tomcat:
-    max-threads: 200       # 最大线程数
-    max-connections: 10000 # 最大连接数
-    accept-count: 100      # 等待队列长度
+
 
 
 APP_HOME: ${APP_HOME}
@@ -53,15 +50,8 @@ auth:
     address: http://192.168.10.15:8080
 
 external:
-  url: http://192.168.10.9:3030
+  url:
 
-
-#repositroy config
-repository:
-  address: ${DATA_HOME}/repository
-
-visible:
-  address: ""
 
 
 
